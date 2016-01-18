@@ -473,8 +473,7 @@ class DB {
                     if (race == null) {
                         throw new RuntimeException("Error: #PCRACE before #RACE");
                     }
-                    PCRace pcRace = read_pcrace(currentFile);
-                    race.pcRace = pcRace;
+                    race.pcRace = read_pcrace(currentFile);
                 } else if (word.equals("#$")) {
                     break;
                 } else {
@@ -486,7 +485,7 @@ class DB {
     }
 
     private static Race read_race(DikuTextFile fp) throws RuntimeException {
-        Race race = null;
+        Race race;
         String word = fp.fread_word();
         fp.fMatch = false;
         if (!word.equals("Name")) {
@@ -514,6 +513,7 @@ class DB {
                     break;
                 case 'F':
                     race.form = fp.FLAG32_SKEY("Form", word, race.form, form_flags);
+                    fp.FLAG32_SKEY("Flags", word, race.res, res_flags); //todo: SoG race
                     break;
                 case 'I':
                     race.imm = fp.FLAG32_SKEY("Imm", word, race.imm, imm_flags);
@@ -526,6 +526,10 @@ class DB {
                     break;
                 case 'R':
                     race.res = fp.FLAG32_SKEY("Res", word, race.res, res_flags);
+                    if (word.equals("Resist")) {
+                        fp.fread_string_eol();
+                        fp.fMatch = true;
+                    }
                     break;
                 case 'V':
                     race.vuln = fp.FLAG32_SKEY("Vuln", word, race.vuln, vuln_flags);
@@ -585,7 +589,6 @@ class DB {
                         return pcRace;
                     }
                     break;
-
                 case 'H':
                     pcRace.hp_bonus = fp.NKEY("HPBonus", word, pcRace.hp_bonus);
                     break;
@@ -604,11 +607,20 @@ class DB {
                     pcRace.prac_bonus = fp.NKEY("PracBonus", word, pcRace.prac_bonus);
                     break;
 
+                case 'R': //TODO: SOG race file
+                    fp.WKEY("RestrictAlign", word, "");
+                    fp.WKEY("RestrictEthos", word, "");
+                    break;
 
                 case 'S':
                     pcRace.size = fp.FLAG32_WKEY("Size", word, pcRace.size, size_table);
                     pcRace.language = fp.FLAG32_WKEY("Slang", word, pcRace.language, slang_table);
                     pcRace.who_name = fp.SKEY("ShortName", word, pcRace.who_name);
+
+                    if (word.equals("Skill")) {
+                        fp.fread_string_eol();
+                        fp.fMatch = true;
+                    }
 
                     if (!fp.fMatch && !str_cmp(word, "Stats")) {
                         for (i = 0; i < MAX_STATS; i++) {
@@ -616,6 +628,7 @@ class DB {
                         }
                         fp.fMatch = true;
                     }
+                    break;
             }
             if (!fp.fMatch) {
                 throw new RuntimeException("unknown word:" + word);
