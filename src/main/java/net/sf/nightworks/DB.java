@@ -457,6 +457,9 @@ class DB {
         currentList = new DikuTextFile(nw_config.etc_races_list);
         for (; ; ) {
             String raceFile = currentList.fread_word();
+            if (raceFile.charAt(0) == '#') {
+                continue;
+            }
             if (raceFile.charAt(0) == '$') {
                 break;
             }
