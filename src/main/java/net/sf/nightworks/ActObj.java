@@ -1,50 +1,5 @@
 package net.sf.nightworks;
 
-/*
- * ************************************************************************ *
- *   Nightworks MUD is copyright 2006 Mikhail Fursov                        *
- *       Mikhail Fursov {fmike@mail.ru}                                     *
- * ************************************************************************ *
-
- * ************************************************************************ *
- *   ANATOLIA MUD is copyright 1996-2002 Serdar BULUT, Ibrahim CANPUNAR     *
- *   ANATOLIA has been brought to you by ANATOLIA consortium		        *
- *	 Serdar BULUT {Chronos}		bulut@anatoliamud.org                       *
- *	 Ibrahim Canpunar  {Asena}	canpunar@anatoliamud.org                    *
- *	 Murat BICER  {KIO}		mbicer@anatoliamud.org       	                *
- *	 D.Baris ACAR {Powerman}	dbacar@anatoliamud.org       	            *
- *   By using this code, you have agreed to follow the terms of the         *
- *   ANATOLIA license, in the file Anatolia/doc/License/license.anatolia    *
- * ************************************************************************ *
-
- * ************************************************************************ *
- *	ROM 2.4 is copyright 1993-1995 Russ Taylor			                    *
- *	ROM has been brought to you by the ROM consortium	             	    *
- *	    Russ Taylor (rtaylor@pacinfo.com)				                    *
- *	    Gabrielle Taylor (gtaylor@pacinfo.com)			                    *
- *	    Brian Moore (rom@rom.efn.org)				                        *
- *	By using this code, you have agreed to follow the terms of the  	    *
- *	ROM license, in the file Rom24/doc/rom.license			                *
- * ************************************************************************ *
-
- * *********************************************************************** *
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- * *********************************************************************** *
- */
-
 import net.sf.nightworks.util.TextBuffer;
 
 import static net.sf.nightworks.ActComm.add_follower;
@@ -358,10 +313,6 @@ import static net.sf.nightworks.util.TextUtils.smash_tilde;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
 
-/**
- * Last mofified:           $Date: 2006-07-21 06:43:28 -0700 (Fri, 21 Jul 2006) $
- * Revision of last commit: $Revision: 27 $
- */
 class ActObj {
 /* RT part of the corpse looting code */
 

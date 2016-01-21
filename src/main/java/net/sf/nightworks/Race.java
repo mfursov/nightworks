@@ -1,22 +1,10 @@
 package net.sf.nightworks;
 
-/*
- * ************************************************************************ *
- *   Nightworks MUD is copyright 2006 Mikhail Fursov                        *
- *       Mikhail Fursov {fmike@mail.ru}                                     *
- * ************************************************************************ *
- */
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import static net.sf.nightworks.Nightworks.MAX_STATS;
-
-/**
- * Last mofified:           $Date$
- * Revision of last commit: $Revision$
- */
 
 class Race {
 

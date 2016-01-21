@@ -10,10 +10,6 @@ import static net.sf.nightworks.Nightworks.MAX_STATS;
 import static net.sf.nightworks.Nightworks.SEX_FEMALE;
 import static net.sf.nightworks.Nightworks.SEX_MALE;
 
-/**
- * Last mofified:           $Date$
- * Revision of last commit: $Revision$
- */
 public class Clazz {
 
     private static int idGen;

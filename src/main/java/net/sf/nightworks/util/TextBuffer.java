@@ -1,18 +1,7 @@
 package net.sf.nightworks.util;
 
-/*
- * ************************************************************************ *
- *   Nightworks MUD is copyright 2006 Mikhail Fursov                        *
- *       Mikhail Fursov {fmike@mail.ru}                                     *
- * ************************************************************************ *
- */
-
 import java.util.Formatter;
 
-/**
- * Last mofified:           $Date: 2006-07-11 07:29:11 -0700 (Tue, 11 Jul 2006) $
- * Revision of last commit: $Revision: 18 $
- */
 public final class TextBuffer implements CharSequence {
 
     private final StringBuilder sb = new StringBuilder();

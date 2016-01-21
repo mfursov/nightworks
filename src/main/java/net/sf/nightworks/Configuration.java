@@ -1,10 +1,5 @@
 package net.sf.nightworks;
 
-/**
- * Last mofified:           $Date$
- * Revision of last commit: $Revision$
- */
-
 class Configuration {
 /*
 * Data files used by the server.
