@@ -113,7 +113,7 @@ class ActSkill {
 
 /* RT spells and skills show the players spells (or skills) */
 
-    static void do_spells(CHAR_DATA ch, String argument) {
+    static void do_spells(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -171,7 +171,7 @@ class ActSkill {
         page_to_char(output.toString(), ch);
     }
 
-    static void do_skills(CHAR_DATA ch, String argument) {
+    static void do_skills(CHAR_DATA ch) {
 
         if (IS_NPC(ch)) {
             return;
@@ -538,7 +538,7 @@ class ActSkill {
     }
 
 
-    static void do_teach(CHAR_DATA ch, String argument) {
+    static void do_teach(CHAR_DATA ch) {
         if (IS_NPC(ch) || ch.level != LEVEL_HERO) {
             send_to_char("You must be a hero.\n", ch);
             return;

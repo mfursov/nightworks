@@ -605,7 +605,7 @@ class Quest {
                     for (obj = ch.carrying; obj != null; obj = obj_next) {
                         obj_next = obj.next_content;
 
-                        if (obj != null && obj.pIndexData.vnum == ch.pcdata.questobj && obj.extra_descr.description.contains(ch.name)) {
+                        if (obj.pIndexData.vnum == ch.pcdata.questobj && obj.extra_descr.description.contains(ch.name)) {
                             obj_found = true;
                             break;
                         }

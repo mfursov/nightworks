@@ -230,8 +230,7 @@ class ActHera {
 
             TextBuffer buf = new TextBuffer();
             if (MOUNTED(ch) != null) {
-                buf.sprintf("$n steps into $p, riding on %s.",
-                        MOUNTED(ch).short_descr);
+                buf.sprintf("$n steps into $p, riding on %s.", MOUNTED(ch).short_descr);
             } else {
                 buf.sprintf("$n steps into $p.");
             }
@@ -333,7 +332,7 @@ class ActHera {
         send_to_char("Nope, can't do it.\n", ch);
     }
 
-    static void do_settraps(CHAR_DATA ch, String argument) {
+    static void do_settraps(CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_settraps, false, 0, "You don't know how to set traps.\n")) {
             return;
         }
@@ -639,7 +638,7 @@ class ActHera {
             ch.hunting = null;
             return;
         }
-        move_char(ch, dir, false);
+        move_char(ch, dir);
         if (ch.in_room == null || ch.hunting == null) {
             return;
         }
@@ -820,7 +819,7 @@ class ActHera {
     }
 
 
-    void do_repair(CHAR_DATA ch, String argument) {
+    static void do_repair(CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         OBJ_DATA obj;
         int cost;
@@ -889,7 +888,7 @@ class ActHera {
         obj.condition = 100;
     }
 
-    void do_estimate(CHAR_DATA ch, String argument) {
+    static void do_estimate(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         CHAR_DATA mob;
         int cost;
@@ -940,7 +939,7 @@ class ActHera {
         do_say(mob, buf.toString());
     }
 
-    void do_restring(CHAR_DATA ch, String argument) {
+    static void do_restring(CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         OBJ_DATA obj;
         int cost = 2000;
@@ -1236,7 +1235,7 @@ class ActHera {
     }
 
 
-    void do_smithing(CHAR_DATA ch, String argument) {
+    static void do_smithing(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA hammer;
 
@@ -1517,7 +1516,7 @@ class ActHera {
     } /* func */
 
 
-    void do_auction(CHAR_DATA ch, String argument) {
+    static void do_auction(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int i;
         StringBuilder arg1 = new StringBuilder();

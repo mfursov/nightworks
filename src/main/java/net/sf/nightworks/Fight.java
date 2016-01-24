@@ -510,7 +510,7 @@ class Fight {
                     || victim.mount.fighting == ch) {
                 victim = victim.mount;
             } else {
-                do_dismount(victim.mount, "");
+                do_dismount(victim.mount);
             }
         }
 
@@ -759,7 +759,7 @@ class Fight {
 
             case (1):
                 if (IS_SET(ch.off_flags, OFF_BERSERK) && !IS_AFFECTED(ch, AFF_BERSERK)) {
-                    do_berserk(ch, "");
+                    do_berserk(ch);
                 }
                 break;
 
@@ -775,7 +775,7 @@ class Fight {
 
             case (3):
                 if (IS_SET(ch.off_flags, OFF_KICK)) {
-                    do_kick(ch, "");
+                    do_kick(ch);
                 }
                 break;
 
@@ -798,7 +798,7 @@ class Fight {
                 break;
             case (7):
                 if (IS_SET(ch.off_flags, OFF_CRUSH)) {
-                    do_crush(ch, "");
+                    do_crush(ch);
                 }
                 break;
         }
@@ -857,7 +857,7 @@ class Fight {
         if (!secondary && dt == null && wield == null && get_wield_char(ch, true) != null) {
             if (ch.fighting != victim) {
                 secondary = true;
-                wield = get_wield_char(ch, secondary);
+                wield = get_wield_char(ch, true);
             } else {
                 return;
             }
@@ -1077,7 +1077,6 @@ class Fight {
         if (skillLevel > 0) {
             diceroll = number_percent();
             if (diceroll <= get_skill(ch, gsn_enhanced_damage)) {
-                int div;
                 check_improve(ch, gsn_enhanced_damage, true, 6);
                 dam += dam * diceroll * skillLevel / 10000;
             }
@@ -1463,7 +1462,7 @@ class Fight {
                 || IS_SET(ch.affected_by, AFF_CAMOUFLAGE)
                 || IS_SET(ch.affected_by, AFF_IMP_INVIS)
                 || IS_AFFECTED(ch, AFF_EARTHFADE)) {
-            do_visible(ch, "");
+            do_visible(ch);
         }
 
         /*
@@ -1724,7 +1723,8 @@ class Fight {
                                 victim.position = POS_STANDING;
                                 String strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
                                 wiznet("$N is deleted due to 10 deaths limit of Samurai.", ch, null, 0, 0, 0);
-                                do_quit_count(victim, "");
+                                do_quit_count(victim);
+                                //noinspection ResultOfMethodCallIgnored
                                 new File(strsave).delete();
                                 return true;
                             }
@@ -1739,7 +1739,8 @@ class Fight {
                             victim.position = POS_STANDING;
                             String strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
                             wiznet("$N is deleted due to lack of CON.", ch, null, 0, 0, 0);
-                            do_quit_count(victim, "");
+                            do_quit_count(victim);
+                            //noinspection ResultOfMethodCallIgnored
                             new File(strsave).delete();
                             return true;
                         } else {
@@ -1804,9 +1805,9 @@ class Fight {
         if (!IS_NPC(victim) && victim.desc == null) {
             if (number_range(0, victim.wait) == 0) {
                 if (victim.level < 11) {
-                    do_recall(victim, "");
+                    do_recall(victim);
                 } else {
-                    do_flee(victim, "");
+                    do_flee(victim);
                 }
                 return true;
             }
@@ -1821,7 +1822,7 @@ class Fight {
                     || (IS_AFFECTED(victim, AFF_CHARM) && victim.master != null
                     && victim.master.in_room != victim.in_room))
                     || (IS_AFFECTED(victim, AFF_FEAR) && !IS_SET(victim.act, ACT_NOTRACK))) {
-                do_flee(victim, "");
+                do_flee(victim);
                 victim.last_fought = null;
             }
         }
@@ -1830,7 +1831,7 @@ class Fight {
                 && victim.hit > 0
                 && (victim.hit <= victim.wimpy || IS_AFFECTED(victim, AFF_FEAR))
                 && victim.wait < PULSE_VIOLENCE / 2) {
-            do_flee(victim, "");
+            do_flee(victim);
         }
 
         tail_chain();
@@ -1907,6 +1908,7 @@ class Fight {
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if ((RIDDEN(ch) == victim || MOUNTED(ch) == victim) && area) {
             return true;
         }
@@ -2412,14 +2414,9 @@ class Fight {
     }
 
 
-    static void death_cry(CHAR_DATA ch) {
-        death_cry_org(ch, -1);
-    }
-
-/*
- * Improved Death_cry contributed by Diavolo.
- */
-
+    /**
+     * Improved Death_cry contributed by Diavolo.
+     */
     static void death_cry_org(CHAR_DATA ch, int part) {
         ROOM_INDEX_DATA was_in_room;
         String msg;
@@ -3148,7 +3145,7 @@ class Fight {
     }
 
 
-    static void do_murde(CHAR_DATA ch, String argument) {
+    static void do_murde(CHAR_DATA ch) {
         send_to_char("If you want to MURDER, spell it out.\n", ch);
     }
 
@@ -3229,7 +3226,7 @@ class Fight {
     }
 
 
-    static void do_flee(CHAR_DATA ch, String argument) {
+    static void do_flee(CHAR_DATA ch) {
         ROOM_INDEX_DATA was_in;
         ROOM_INDEX_DATA now_in;
         int attempt;
@@ -3240,7 +3237,7 @@ class Fight {
         }
 
         if (MOUNTED(ch) != null) {
-            do_dismount(ch, "");
+            do_dismount(ch);
         }
 
         if (ch.fighting == null) {
@@ -3273,7 +3270,7 @@ class Fight {
                 continue;
             }
 
-            move_char(ch, door, false);
+            move_char(ch, door);
             if ((now_in = ch.in_room) == was_in) {
                 continue;
             }
@@ -3301,7 +3298,7 @@ class Fight {
     }
 
 
-    static void do_sla(CHAR_DATA ch, String argument) {
+    static void do_sla(CHAR_DATA ch) {
         send_to_char("If you want to SLAY, spell it out.\n", ch);
     }
 
@@ -3388,7 +3385,7 @@ class Fight {
     }
 
 
-    static void do_dishonor(CHAR_DATA ch, String argument) {
+    static void do_dishonor(CHAR_DATA ch) {
         ROOM_INDEX_DATA was_in;
         ROOM_INDEX_DATA now_in;
         CHAR_DATA gch;
@@ -3442,7 +3439,7 @@ class Fight {
                 continue;
             }
 
-            move_char(ch, door, false);
+            move_char(ch, door);
             if ((now_in = ch.in_room) == was_in) {
                 continue;
             }
@@ -3463,7 +3460,7 @@ class Fight {
 
             stop_fighting(ch, true);
             if (MOUNTED(ch) != null) {
-                do_dismount(ch, "");
+                do_dismount(ch);
             }
 
             return;

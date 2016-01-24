@@ -572,7 +572,6 @@ class Handler {
             return true;
         }
 
-
         if (!IS_NPC(ch)) {
             return false;
         }
@@ -598,6 +597,7 @@ class Handler {
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (IS_SET(ch.off_flags, ASSIST_RACE) && ch.race == victim.race) {
             return true;
         }
@@ -1004,7 +1004,9 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         }
     }
 
-/* checks mob format */
+    /**
+     * checks mob format
+     */
 
     static boolean is_old_mob(CHAR_DATA ch) {
         if (ch.pIndexData == null) {
@@ -1015,7 +1017,9 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         return true;
     }
 
-/* for returning skill information */
+    /**
+     * for returning skill information
+     */
 
     static int get_skill(CHAR_DATA ch, Skill sn) {
         int skill;
@@ -1455,8 +1459,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
                     ch.vuln_flags = SET_BIT(ch.vuln_flags, paf.bitvector);
                     break;
                 case TO_RACE:
-                    Race race = (Race) paf.objModifier;
-                    ch.race = race;
+                    ch.race = (Race) paf.objModifier;
                     ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
                     ch.affected_by = SET_BIT(ch.affected_by, ch.race.aff);
                     ch.imm_flags = REMOVE_BIT(ch.imm_flags, ORG_RACE(ch).imm);
@@ -1675,8 +1678,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
                         break;
                     case TO_RACE:
                         if (ch.race == ORG_RACE(ch)) {
-                            Race race = (Race) paf.objModifier;
-                            ch.race = race;
+                            ch.race = (Race) paf.objModifier;
                             ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
                             ch.affected_by = SET_BIT(ch.affected_by, ch.race.aff);
                             ch.imm_flags = REMOVE_BIT(ch.imm_flags, ORG_RACE(ch).imm);
@@ -1719,8 +1721,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
                             break;
                         case TO_RACE:
                             if (ch.race == ORG_RACE(ch)) {
-                                Race race = (Race) paf.objModifier;
-                                ch.race = race;
+                                ch.race = (Race) paf.objModifier;
                                 ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
                                 ch.affected_by = SET_BIT(ch.affected_by, ch.race.aff);
                                 ch.imm_flags = REMOVE_BIT(ch.imm_flags, ORG_RACE(ch).imm);
@@ -1762,8 +1763,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
                             break;
                         case TO_RACE:
                             if (ch.race == ORG_RACE(ch)) {
-                                Race race = (Race) paf.objModifier;
-                                ch.race = race;
+                                ch.race = (Race) paf.objModifier;
                                 ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
                                 ch.affected_by = SET_BIT(ch.affected_by, ch.race.aff);
                                 ch.imm_flags = REMOVE_BIT(ch.imm_flags, ORG_RACE(ch).imm);
@@ -2100,7 +2100,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
 
         if (ch.in_room.affected_by != 0) {
             if (IS_IMMORTAL(ch)) {
-                do_raffects(ch, "");
+                do_raffects(ch);
             } else {
                 raffect_to_char(ch.in_room, ch);
             }
@@ -2712,7 +2712,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         }
 
         if (ch.desc != null && ch.desc.original != null) {
-            do_return(ch, "");
+            do_return(ch);
             ch.desc = null;
         }
 
@@ -3179,6 +3179,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (pRoomIndex.sector_type == SECT_INSIDE
                 || pRoomIndex.sector_type == SECT_CITY) {
             return false;
@@ -3219,6 +3220,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (IS_SET(pRoomIndex.room_flags, ROOM_SOLITARY) && count >= 1) {
             return true;
         }
@@ -3240,6 +3242,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             return false;
         }
 
+        //noinspection SimplifiableIfStatement
         if (IS_SET(pRoomIndex.room_flags, ROOM_HEROES_ONLY)
                 && !IS_IMMORTAL(ch)) {
             return false;
@@ -3326,6 +3329,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             return false;
         }
 
+        //noinspection SimplifiableIfStatement
         if (IS_AFFECTED(victim, AFF_FADE)
                 && !IS_AFFECTED(ch, AFF_DETECT_FADE)
                 && victim.fighting == null) {
@@ -3385,6 +3389,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
 */
 
     static boolean can_drop_obj(CHAR_DATA ch, OBJ_DATA obj) {
+        //noinspection SimplifiableIfStatement
         if (!IS_SET(obj.extra_flags, ITEM_NODROP)) {
             return true;
         }

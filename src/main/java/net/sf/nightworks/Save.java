@@ -215,16 +215,14 @@ class Save {
 
         String fileName = nw_config.lib_player_dir + "/" + capitalize(ch.name);
         try {
-            FileWriter f = new FileWriter(fileName);
-            try {
+            try (FileWriter f = new FileWriter(fileName)) {
                 f.write(fp.toString());
-            } finally {
-                f.close();
             }
         } catch (IOException e) {
             bug("Save_char_obj: fopen");
             perror(fileName);
         }
+        //noinspection ResultOfMethodCallIgnored
         new File(nw_config.pl_temp_file).renameTo(new File(fileName));
     }
 

@@ -259,12 +259,16 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class DB {
-    /* macro for flag swapping */
+    /**
+     * macro for flag swapping
+     */
     static int GET_UNSET(int flag1, int flag2) {
         return (~(flag1) & ((flag1) | (flag2)));
     }
 
-    /* Magic number for memory allocation */
+    /**
+     * Magic number for memory allocation
+     */
     static final int MAGIC_NUM = 52571214;
 
     /*
@@ -509,7 +513,7 @@ class DB {
                 case 'B':
                     if (word.equals("BonusSkills")) {
                         String skills = fp.fread_string();
-                        List<Skill> skillsList = new ArrayList<Skill>();
+                        List<Skill> skillsList = new ArrayList<>();
                         while (skills.length() > 0) {
                             StringBuilder oneSkill = new StringBuilder();
                             skills = one_argument(skills, oneSkill);
@@ -2405,6 +2409,7 @@ class DB {
         if (pObjIndex == null) {
             bug("Create_object: null pObjIndex.");
             exit(1);
+            return null;
         }
 
         obj = new OBJ_DATA();
@@ -2738,7 +2743,7 @@ class DB {
     }
 
 
-    void do_areas(CHAR_DATA ch, String argument) {
+    static void do_areas(CHAR_DATA ch, String argument) {
         AREA_DATA pArea1;
         AREA_DATA pArea2;
         int iArea;
@@ -2776,7 +2781,7 @@ class DB {
         page_to_char(bufpage, ch);
     }
 
-    private String formatAreaDetails(CHAR_DATA ch, AREA_DATA pArea) {
+    private static String formatAreaDetails(CHAR_DATA ch, AREA_DATA pArea) {
         Formatter f = new Formatter();
         f.format("{W%2d %3d{x} {b%s {c%s{x", pArea.low_range, pArea.high_range, pArea.writer, pArea.credits);
         return f.toString();
@@ -2802,7 +2807,7 @@ class DB {
 
     }
 
-    void do_dump(CHAR_DATA ch, String argument) {
+    static void do_dump(CHAR_DATA ch, String argument) {
         /* open file */
         try {
             FileWriter fp = new FileWriter("mem.dmp", false);
@@ -3028,22 +3033,13 @@ class DB {
         if (IS_NPC(ch) || str == null) {
             return;
         }
-        try {
-            FileWriter fp = new FileWriter(file, true);
-            try {
-                Formatter f = new Formatter();
-                f.format("[%5d] %s: %s\n", (ch.in_room != null ? ch.in_room.vnum : 0), ch.name, str);
-                fp.write(f.toString());
-            } catch (IOException e) {
-                perror(file);
-                send_to_char("Could not open the file!\n", ch);
-            } finally {
-                fp.close();
-            }
+        try (FileWriter fp = new FileWriter(file, true)) {
+            Formatter f = new Formatter();
+            f.format("[%5d] %s: %s\n", (ch.in_room != null ? ch.in_room.vnum : 0), ch.name, str);
+            fp.write(f.toString());
         } catch (IOException e) {
             perror(file);
-            send_to_char("Could not close the file!\n", ch);
-
+            send_to_char("Could not open the file!\n", ch);
         }
     }
 
@@ -3126,11 +3122,12 @@ class DB {
 
     private static void load_limited_objects() {
         File dir = new File(nw_config.lib_player_dir);
-        if (!dir.exists() || !dir.isDirectory()) {
+        File[] files = dir.listFiles();
+        if (!dir.exists() || !dir.isDirectory() || files == null) {
             bug("Load_limited_objects: unable to open player directory:" + dir.getAbsolutePath(), 0);
             exit(1);
+            return;
         }
-        File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (file.getName().length() < 3 || file.isDirectory()) {

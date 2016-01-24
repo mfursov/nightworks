@@ -80,7 +80,7 @@ import static net.sf.nightworks.Handler.obj_to_obj;
 import static net.sf.nightworks.Handler.obj_to_room;
 import static net.sf.nightworks.Handler.skill_failure_check;
 import static net.sf.nightworks.Handler.unequip_char;
-import static net.sf.nightworks.Interp.mult_argument;
+import static net.sf.nightworks.Interp.multiply_argument;
 import static net.sf.nightworks.Interp.number_argument;
 import static net.sf.nightworks.Magic.check_dispel;
 import static net.sf.nightworks.Magic.obj_cast_spell;
@@ -346,6 +346,7 @@ class ActObj {
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (!IS_NPC(owner) && IS_SET(owner.act, PLR_CANLOOT)) {
             return true;
         }
@@ -1293,7 +1294,7 @@ class ActObj {
         }
 
         was_in_room = ch.in_room;
-        move_char(ch, direction, false);
+        move_char(ch, direction);
 
         if (was_in_room == ch.in_room) {
             send_to_char("You cannot drag that way.\n", ch);
@@ -2790,7 +2791,7 @@ class ActObj {
     }
 
 
-    static void do_brandish(CHAR_DATA ch, String argument) {
+    static void do_brandish(CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         OBJ_DATA staff;
@@ -3467,7 +3468,7 @@ class ActObj {
             }
 
             StringBuilder arg = new StringBuilder();
-            number = mult_argument(argument, arg);
+            number = multiply_argument(argument, arg);
             if (number < -1 || number > 100) {
                 act("$n tells you 'Get real!", keeper, null, ch, TO_VICT);
                 ch.reply = keeper;
@@ -4377,7 +4378,7 @@ class ActObj {
     }
 
 
-    static void do_balance(CHAR_DATA ch, String argument) {
+    static void do_balance(CHAR_DATA ch) {
         long bank_g;
         long bank_s;
 
@@ -4763,7 +4764,7 @@ class ActObj {
                     unequip_char(ch, w);
                     act("$n stops using $p.", ch, w, null, TO_ROOM);
                     act("You stop using $p.", ch, w, null, TO_CHAR);
-                    wear_multi(ch, obj, iWear, fReplace);
+                    wear_multi(ch, obj, iWear, true);
                     not_worn = false;
                     break;
                 }

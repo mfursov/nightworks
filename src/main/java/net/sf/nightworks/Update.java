@@ -750,7 +750,7 @@ public class Update {
                     send_to_char("You want to go your home!\n", ch);
                     act("$n desires for $s home!", ch, null, null, TO_ROOM);
                     if (ch.position >= POS_STANDING) {
-                        move_char(ch, number_door(), false);
+                        move_char(ch, number_door());
                     }
                     break;
             }
@@ -967,7 +967,7 @@ public class Update {
                     || !IS_SET(pexit.to_room.room_flags, ROOM_INDOORS))
                     && (!IS_SET(ch.act, ACT_INDOORS)
                     || IS_SET(pexit.to_room.room_flags, ROOM_INDOORS))) {
-                move_char(ch, door, false);
+                move_char(ch, door);
             }
         }
 
@@ -1229,7 +1229,7 @@ public class Update {
                 }
 
                 if (ch.cabal == CABAL_BATTLE && !is_affected(ch, gsn_spellbane)) {
-                    do_spellbane(ch, "");
+                    do_spellbane(ch);
                 }
             }
 
@@ -1242,7 +1242,7 @@ public class Update {
             if (IS_VAMPIRE(ch) &&
                     (weather_info.sunlight == SUN_LIGHT ||
                             weather_info.sunlight == SUN_RISE)) {
-                do_human(ch, "");
+                do_human(ch);
             }
 
             /* Reset sneak for vampire */
@@ -1574,7 +1574,7 @@ public class Update {
                     save_char_obj(ch);
                 }
                 if (ch == ch_quit || ch.timer > 20) {
-                    do_quit(ch, "");
+                    do_quit(ch);
                 }
             }
         }

@@ -908,7 +908,7 @@ class ActInfo {
         return true;
     }
 
-    static void do_clear(CHAR_DATA ch, String argument) {
+    static void do_clear(CHAR_DATA ch) {
         if (!IS_NPC(ch)) {
             send_to_char("\033[0;0H\033[2J", ch);
         }
@@ -957,7 +957,7 @@ class ActInfo {
 
 /* RT does socials */
 
-    static void do_socials(CHAR_DATA ch, String argument) {
+    static void do_socials(CHAR_DATA ch) {
         int col = 0;
         TextBuffer buf = new TextBuffer();
         for (social_type soc : social_table) {
@@ -975,37 +975,37 @@ class ActInfo {
 
 /* RT Commands to replace news, motd, imotd, etc from ROM */
 
-    static void do_motd(CHAR_DATA ch, String argument) {
+    static void do_motd(CHAR_DATA ch) {
         do_help(ch, "motd");
     }
 
-    static void do_imotd(CHAR_DATA ch, String argument) {
+    static void do_imotd(CHAR_DATA ch) {
         do_help(ch, "imotd");
     }
 
-    static void do_rules(CHAR_DATA ch, String argument) {
+    static void do_rules(CHAR_DATA ch) {
         do_help(ch, "rules");
     }
 
-    static void do_story(CHAR_DATA ch, String argument) {
+    static void do_story(CHAR_DATA ch) {
         do_help(ch, "story");
     }
 
-    static void do_wizlist(CHAR_DATA ch, String argument) {
+    static void do_wizlist(CHAR_DATA ch) {
         do_help(ch, "wizlist");
     }
 
 /* RT this following section holds all the auto commands from ROM, as well as
    replacements for config */
 
-    static void do_autolist(CHAR_DATA ch, String argument) {
+    static void do_autolist(CHAR_DATA ch) {
         /* lists most player flags */
         if (IS_NPC(ch)) {
             return;
         }
 
         if (IS_SET(ch.act, PLR_COLOR)) {
-            do_autolist_col(ch, argument);
+            do_autolist_col(ch);
             return;
         }
 
@@ -1102,7 +1102,7 @@ class ActInfo {
         }
     }
 
-    static void do_autolist_col(CHAR_DATA ch, String argument) {
+    static void do_autolist_col(CHAR_DATA ch) {
         /* lists most player flags */
         if (IS_NPC(ch)) {
             return;
@@ -1202,7 +1202,7 @@ class ActInfo {
         }
     }
 
-    static void do_autoassist(CHAR_DATA ch, String argument) {
+    static void do_autoassist(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1216,7 +1216,7 @@ class ActInfo {
         }
     }
 
-    static void do_autoexit(CHAR_DATA ch, String argument) {
+    static void do_autoexit(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1230,7 +1230,7 @@ class ActInfo {
         }
     }
 
-    static void do_autogold(CHAR_DATA ch, String argument) {
+    static void do_autogold(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1244,7 +1244,7 @@ class ActInfo {
         }
     }
 
-    static void do_autoloot(CHAR_DATA ch, String argument) {
+    static void do_autoloot(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1258,7 +1258,7 @@ class ActInfo {
         }
     }
 
-    static void do_autosac(CHAR_DATA ch, String argument) {
+    static void do_autosac(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1272,7 +1272,7 @@ class ActInfo {
         }
     }
 
-    static void do_autosplit(CHAR_DATA ch, String argument) {
+    static void do_autosplit(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1286,7 +1286,7 @@ class ActInfo {
         }
     }
 
-    static void do_color(CHAR_DATA ch, String argument) {
+    static void do_color(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1300,7 +1300,7 @@ class ActInfo {
         }
     }
 
-    static void do_brief(CHAR_DATA ch, String argument) {
+    static void do_brief(CHAR_DATA ch) {
         if (IS_SET(ch.comm, COMM_BRIEF)) {
             send_to_char("Full descriptions activated.\n", ch);
             ch.comm = REMOVE_BIT(ch.comm, COMM_BRIEF);
@@ -1310,7 +1310,7 @@ class ActInfo {
         }
     }
 
-    static void do_compact(CHAR_DATA ch, String argument) {
+    static void do_compact(CHAR_DATA ch) {
         if (IS_SET(ch.comm, COMM_COMPACT)) {
             send_to_char("Compact mode removed.\n", ch);
             ch.comm = REMOVE_BIT(ch.comm, COMM_COMPACT);
@@ -1320,7 +1320,7 @@ class ActInfo {
         }
     }
 
-    static void do_show(CHAR_DATA ch, String argument) {
+    static void do_show(CHAR_DATA ch) {
         if (IS_SET(ch.comm, COMM_SHOW_AFFECTS)) {
             send_to_char("Affects will no longer be shown in score.\n", ch);
             ch.comm = REMOVE_BIT(ch.comm, COMM_SHOW_AFFECTS);
@@ -1361,7 +1361,7 @@ class ActInfo {
         send_to_char(buf2, ch);
     }
 
-    static void do_combine(CHAR_DATA ch, String argument) {
+    static void do_combine(CHAR_DATA ch) {
         if (IS_SET(ch.comm, COMM_COMBINE)) {
             send_to_char("Long inventory selected.\n", ch);
             ch.comm = REMOVE_BIT(ch.comm, COMM_COMBINE);
@@ -1371,7 +1371,7 @@ class ActInfo {
         }
     }
 
-    static void do_noloot(CHAR_DATA ch, String argument) {
+    static void do_noloot(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1385,7 +1385,7 @@ class ActInfo {
         }
     }
 
-    static void do_nofollow(CHAR_DATA ch, String argument) {
+    static void do_nofollow(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1404,7 +1404,7 @@ class ActInfo {
         }
     }
 
-    static void do_nosummon(CHAR_DATA ch, String argument) {
+    static void do_nosummon(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             if (IS_SET(ch.imm_flags, IMM_SUMMON)) {
                 send_to_char("You are no longer immune to summoning.\n", ch);
@@ -1839,7 +1839,7 @@ class ActInfo {
         send_to_char(buf, ch);
     }
 
-    static void do_worth(CHAR_DATA ch, String argument) {
+    static void do_worth(CHAR_DATA ch) {
         int total_played;
         TextBuffer buf = new TextBuffer();
         if (IS_NPC(ch)) {
@@ -1902,7 +1902,7 @@ class ActInfo {
     static final String COLOR_EVENING = "{r";
     static final String COLOR_NIGHT = "{w";
 
-    static void do_time(CHAR_DATA ch, String argument) {
+    static void do_time(CHAR_DATA ch) {
         String suf;
         int day = time_info.day + 1;
         if (day > 4 && day < 20) {
@@ -1958,7 +1958,7 @@ class ActInfo {
             "lit by flashes of lightning"
     };
 
-    static void do_weather(CHAR_DATA ch, String argument) {
+    static void do_weather(CHAR_DATA ch) {
 
         if (!IS_OUTSIDE(ch)) {
             send_to_char("You can't see the weather indoors.\n", ch);
@@ -2160,7 +2160,7 @@ class ActInfo {
 */
 
 
-    static void do_count(CHAR_DATA ch, String argument) {
+    static void do_count(CHAR_DATA ch) {
         int count;
         DESCRIPTOR_DATA d;
 
@@ -2183,13 +2183,13 @@ class ActInfo {
         send_to_char(buf, ch);
     }
 
-    static void do_inventory(CHAR_DATA ch, String argument) {
+    static void do_inventory(CHAR_DATA ch) {
         send_to_char("You are carrying:\n", ch);
         show_list_to_char(ch.carrying, ch, true, true);
     }
 
 
-    static void do_equipment(CHAR_DATA ch, String argument) {
+    static void do_equipment(CHAR_DATA ch) {
         OBJ_DATA obj;
         int iWear;
         boolean found;
@@ -2310,7 +2310,7 @@ class ActInfo {
     }
 
 
-    static void do_credits(CHAR_DATA ch, String argument) {
+    static void do_credits(CHAR_DATA ch) {
         do_help(ch, "diku");
     }
 
@@ -2563,7 +2563,7 @@ class ActInfo {
     }
 
 
-    static void do_report(CHAR_DATA ch, String argument) {
+    static void do_report(CHAR_DATA ch) {
         TextBuffer buf = new TextBuffer();
         buf.sprintf("I have %d/%d hp %d/%d mana %d/%d mv",
                 ch.hit, ch.max_hit,
@@ -2798,7 +2798,7 @@ class ActInfo {
         if (dir.length() == 0)
 
         {
-            do_scan2(ch, "");
+            do_scan2(ch);
             return;
         }
 
@@ -3015,7 +3015,7 @@ class ActInfo {
         }
 
         if (ch.clazz == Clazz.VAMPIRE || ch.clazz == Clazz.NECROMANCER) {
-            send_to_char("Your hometown is permenantly Old Midgaard!\n", ch);
+            send_to_char("Your hometown is permanently Old Midgaard!\n", ch);
             return;
         }
 
@@ -3093,7 +3093,7 @@ class ActInfo {
     }
 
 
-    static void do_detect_hidden(CHAR_DATA ch, String argument) {
+    static void do_detect_hidden(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_detect_hidden, true, 0, null)) {
             return;
@@ -3122,7 +3122,7 @@ class ActInfo {
     }
 
 
-    static void do_bear_call(CHAR_DATA ch, String argument) {
+    static void do_bear_call(CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA bear;
         CHAR_DATA bear2;
@@ -3264,7 +3264,7 @@ class ActInfo {
     }
 
 
-    static void do_score(CHAR_DATA ch, String argument) {
+    static void do_score(CHAR_DATA ch) {
         TextBuffer buf = new TextBuffer();
         buf.sprintf("You are {Y%s{x%s, level {Y%d{x, {W%d{x years old (%d hours).\n",
                 ch.name, IS_NPC(ch) ? "" : ch.pcdata.title, ch.level, get_age(ch),
@@ -3562,7 +3562,7 @@ class ActInfo {
     }
 
 
-    static void do_affects(CHAR_DATA ch, String argument) {
+    static void do_affects(CHAR_DATA ch) {
         if (ch.affected != null) {
             send_to_char("You are affected by the following spells:\n", ch);
             TextBuffer buf = new TextBuffer();
@@ -3598,7 +3598,7 @@ class ActInfo {
     }
 
 
-    static void do_lion_call(CHAR_DATA ch, String argument) {
+    static void do_lion_call(CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA bear;
         CHAR_DATA bear2;
@@ -3727,7 +3727,7 @@ class ActInfo {
 
 /* room affects */
 
-    static void do_raffects(CHAR_DATA ch, String argument) {
+    static void do_raffects(CHAR_DATA ch) {
         if (ch.in_room.affected != null) {
             TextBuffer buf = new TextBuffer();
             send_to_char("The room is affected by the following spells:\n", ch);
@@ -4189,7 +4189,7 @@ class ActInfo {
     }
 
 
-    static void do_camp(CHAR_DATA ch, String argument) {
+    static void do_camp(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_camp, false, 0, null)) {
             return;
@@ -4429,7 +4429,7 @@ class ActInfo {
     }
 
 
-    static void do_nscore(CHAR_DATA ch, String argument) {
+    static void do_nscore(CHAR_DATA ch) {
         int ekle = 0;
         TextBuffer buf = new TextBuffer();
         String buf2 = "";
@@ -4595,7 +4595,7 @@ class ActInfo {
         buf.sprintf("  \\________________________________________________________________\\__/{x\n");
         send_to_char(buf, ch);
         if (ch.affected != null && IS_SET(ch.comm, COMM_SHOW_AFFECTS)) {
-            do_affects(ch, "");
+            do_affects(ch);
         }
     }
 
@@ -4730,7 +4730,7 @@ class ActInfo {
     }
 
 
-    static void do_make_bow(CHAR_DATA ch, String argument) {
+    static void do_make_bow(CHAR_DATA ch) {
         OBJ_DATA bow;
         int mana, wait;
 
@@ -4804,14 +4804,14 @@ class ActInfo {
         if (!str_prefix(arg, "arrow")) {
             do_make_arrow(ch, argument);
         } else if (!str_prefix(arg, "bow")) {
-            do_make_bow(ch, argument);
+            do_make_bow(ch);
         } else {
             do_make(ch, "");
         }
     }
 
 
-    static void do_nocancel(CHAR_DATA ch, String argument) {
+    static void do_nocancel(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }

@@ -152,12 +152,7 @@ class Note {
             Formatter fp = new Formatter(fw);
             try {
                 for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
-                    fp.format("Sender  %s~\n", pnote.sender);
-                    fp.format("Date    %s~\n", pnote.date);
-                    fp.format("Stamp   %d\n", pnote.date_stamp);
-                    fp.format("To      %s~\n", pnote.to_list);
-                    fp.format("Subject %s~\n", pnote.subject);
-                    fp.format("Text\n%s~\n", pnote.text);
+                    prepareNote(fp, pnote);
                 }
             } finally {
                 fw.close();
@@ -165,6 +160,15 @@ class Note {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void prepareNote(Formatter fp, NOTE_DATA note) {
+        fp.format("Sender  %s~\n", note.sender);
+        fp.format("Date    %s~\n", note.date);
+        fp.format("Stamp   %d\n", note.date_stamp);
+        fp.format("To      %s~\n", note.to_list);
+        fp.format("Subject %s~\n", note.subject);
+        fp.format("Text\n%s~\n", note.text);
     }
 
     static void load_notes() {
@@ -282,12 +286,7 @@ class Note {
             BufferedWriter bw = new BufferedWriter(new FileWriter(name, true));
             Formatter fp = new Formatter(bw);
             try {
-                fp.format("Sender  %s~\n", pnote.sender);
-                fp.format("Date    %s~\n", pnote.date);
-                fp.format("Stamp   %d\n", pnote.date_stamp);
-                fp.format("To      %s~\n", pnote.to_list);
-                fp.format("Subject %s~\n", pnote.subject);
-                fp.format("Text\n%s~\n", pnote.text);
+                prepareNote(fp, pnote);
             } finally {
                 bw.close();
             }
@@ -323,6 +322,7 @@ class Note {
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (is_name(ch.name, pnote.to_list)) {
             return true;
         }
@@ -451,6 +451,7 @@ class Note {
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (!str_cmp(ch.name, pnote.sender)) {
             return true;
         }

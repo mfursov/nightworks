@@ -8,8 +8,8 @@ import static net.sf.nightworks.Nightworks.MAX_STATS;
 
 class Race {
 
-    private static final HashMap<String, Race> racesMap = new HashMap<String, Race>();
-    private static final ArrayList<Race> races = new ArrayList<Race>();
+    private static final HashMap<String, Race> racesMap = new HashMap<>();
+    private static final ArrayList<Race> races = new ArrayList<>();
 
     // set of predefined races.
     // these races are the same as from configuration file
@@ -83,8 +83,7 @@ class Race {
     static Race lookupRaceByPrefix(String raceNamePrefix) {
         Race r = lookupRace(raceNamePrefix, false);
         if (r == null) {
-            for (int i = 0; i < races.size(); i++) {
-                Race race = races.get(i);
+            for (Race race : races) {
                 if (race.name.startsWith(raceNamePrefix)) {
                     r = race;
                     break;
@@ -122,7 +121,7 @@ class PCRace {
     Race race;
     String who_name;
     int points;       /* cost in exp of the race */
-    private Map<Clazz, RaceToClassModifier> rclass = new HashMap<Clazz, RaceToClassModifier>();/* race affect to class*/
+    private Map<Clazz, RaceToClassModifier> rclass = new HashMap<>();/* race affect to class*/
     Skill[] skills = new Skill[0];  /* bonus skills for the race */
     int[] stats = new int[MAX_STATS];   /* starting stats   */
     int[] max_stats = new int[MAX_STATS];  /* maximum stats    */

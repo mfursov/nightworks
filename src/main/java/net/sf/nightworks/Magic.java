@@ -4904,7 +4904,7 @@ class Magic {
         act("$n disappears.", victim, null, null, TO_ROOM);
         char_from_room(victim);
         char_to_room(victim, location);
-        do_visible(ch, "");
+        do_visible(ch);
         act("$n appears in the room.", victim, null, null, TO_ROOM);
         do_look(victim, "auto");
 

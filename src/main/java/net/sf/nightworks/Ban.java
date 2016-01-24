@@ -53,6 +53,7 @@ class Ban {
                     }
                 }
                 if (!found) {
+                    //noinspection ResultOfMethodCallIgnored
                     new File(nw_config.var_ban_file).delete();
                 }
 

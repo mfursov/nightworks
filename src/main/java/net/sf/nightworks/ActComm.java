@@ -32,7 +32,6 @@ import static net.sf.nightworks.Handler.is_affected;
 import static net.sf.nightworks.Handler.obj_from_char;
 import static net.sf.nightworks.Handler.obj_to_room;
 import static net.sf.nightworks.Handler.skill_failure_check;
-import static net.sf.nightworks.Interp.cmd_type;
 import static net.sf.nightworks.Interp.getCommandsTable;
 import static net.sf.nightworks.Interp.interpret;
 import static net.sf.nightworks.Lookup.lang_lookup;
@@ -126,7 +125,7 @@ import static net.sf.nightworks.util.TextUtils.str_prefix;
 class ActComm {
 /* RT code to delete yourself */
 
-    static void do_delet(CHAR_DATA ch, String argument) {
+    static void do_delet(CHAR_DATA ch) {
         send_to_char("You must type the full command to delete yourself.\n", ch);
     }
 
@@ -144,7 +143,8 @@ class ActComm {
             } else {
                 wiznet("$N turns $Mself into line noise.", ch, null, 0, 0, 0);
                 ch.last_fight_time = -1;
-                do_quit_count(ch, "");
+                do_quit_count(ch);
+                //noinspection ResultOfMethodCallIgnored
                 new File(nw_config.lib_player_dir + "/" + capitalize(ch.name)).delete();
                 return;
             }
@@ -165,7 +165,7 @@ class ActComm {
 
 /* RT code to display channel status */
 
-    static void do_channels(CHAR_DATA ch, String argument) {
+    static void do_channels(CHAR_DATA ch) {
 
         /* lists all channels and their status */
         send_to_char("   channel     status\n", ch);
@@ -245,7 +245,7 @@ class ActComm {
 
 /* RT deaf blocks out all shouts */
 
-    static void do_deaf(CHAR_DATA ch, String argument) {
+    static void do_deaf(CHAR_DATA ch) {
 
         if (IS_SET(ch.comm, COMM_DEAF)) {
             send_to_char("You can now hear tells again.\n", ch);
@@ -258,7 +258,7 @@ class ActComm {
 
 /* RT quiet blocks out all communication */
 
-    static void do_quiet(CHAR_DATA ch, String argument) {
+    static void do_quiet(CHAR_DATA ch) {
         if (IS_SET(ch.comm, COMM_QUIET)) {
             send_to_char("Quiet mode removed.\n", ch);
             ch.comm = REMOVE_BIT(ch.comm, COMM_QUIET);
@@ -268,7 +268,7 @@ class ActComm {
         }
     }
 
-    static void do_replay(CHAR_DATA ch, String argument) {
+    static void do_replay(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             send_to_char("You can't replay.\n", ch);
             return;
@@ -673,7 +673,7 @@ class ActComm {
 
     }
 
-    static void do_pose(CHAR_DATA ch, String argument) {
+    static void do_pose(CHAR_DATA ch) {
         if (IS_NPC(ch) || ch.clazz.poses.isEmpty()) {
             return;
         }
@@ -699,29 +699,29 @@ class ActComm {
         send_to_char("Typo logged.\n", ch);
     }
 
-    static void do_rent(CHAR_DATA ch, String argument) {
+    static void do_rent(CHAR_DATA ch) {
         send_to_char("There is no rent here.  Just save and quit.\n", ch);
     }
 
 
-    static void do_qui(CHAR_DATA ch, String argument) {
+    static void do_qui(CHAR_DATA ch) {
         send_to_char("If you want to QUIT, you have to spell it out.\n", ch);
     }
 
 
-    static void do_quit(CHAR_DATA ch, String argument) {
-        quit_org(ch, argument, false, false);
+    static void do_quit(CHAR_DATA ch) {
+        quit_org(ch, false, false);
     }
 
-    static void do_quit_count(CHAR_DATA ch, String argument) {
-        quit_org(ch, argument, true, false);
+    static void do_quit_count(CHAR_DATA ch) {
+        quit_org(ch, true, false);
     }
 
-    static void do_quit_remort(CHAR_DATA ch, String argument) {
-        quit_org(ch, argument, true, true);
+    static void do_quit_remort(CHAR_DATA ch) {
+        quit_org(ch, true, true);
     }
 
-    static boolean quit_org(CHAR_DATA ch, String argument, boolean Count, boolean Remort) {
+    static boolean quit_org(CHAR_DATA ch, boolean count, boolean remort) {
         DESCRIPTOR_DATA d, dr, d_next;
         CHAR_DATA vch, vch_next;
         OBJ_DATA obj, obj_next;
@@ -783,7 +783,7 @@ class ActComm {
             return false;
         }
 
-        if (!Remort) {
+        if (!remort) {
             send_to_char("Alas, all good things must come to an end.\n", ch);
             act("{g$n has left the game.{x", ch, null, null, TO_ROOM, POS_DEAD);
             log_string(ch.name + " has quit.");
@@ -798,7 +798,7 @@ class ActComm {
                     || obj.pIndexData.vnum == 97) {
                 if (obj.extra_descr == null) {
                     extract_obj(obj);
-                } else if (obj.extra_descr.description.indexOf(ch.name) != -1) {
+                } else if (obj.extra_descr.description.contains(ch.name)) {
                     extract_obj(obj);
                 }
             }
@@ -815,7 +815,7 @@ class ActComm {
                     || obj.pIndexData.vnum == 97) {
                 if (obj.extra_descr == null) {
                     extract_obj(obj);
-                } else if (obj.extra_descr.description.indexOf(ch.name) != -1) {
+                } else if (obj.extra_descr.description.contains(ch.name)) {
                     extract_obj(obj);
                 } else {
                     obj_from_char(obj);
@@ -862,13 +862,13 @@ class ActComm {
         save_char_obj(ch);
         id = ch.id;
         dr = d = ch.desc;
-        if (Count || get_total_played(ch) < nw_config.min_time_limit) {
+        if (count || get_total_played(ch) < nw_config.min_time_limit) {
             extract_char(ch, true);
         } else {
             extract_char_nocount(ch, true);
         }
 
-        if (d != null && !Remort) {
+        if (d != null && !remort) {
             close_socket(d);
         }
 
@@ -877,7 +877,7 @@ class ActComm {
             CHAR_DATA tch;
 
             d_next = d.next;
-            if (Remort && dr == d) {
+            if (remort && dr == d) {
                 continue;
             }
             tch = d.original != null ? d.original : d.character;
@@ -893,7 +893,7 @@ class ActComm {
     }
 
 
-    static void do_save(CHAR_DATA ch, String argument) {
+    static void do_save(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -1111,53 +1111,60 @@ class ActComm {
     }
 
     static boolean proper_order(CHAR_DATA ch, String argument) {
-        boolean found;
-        int trust, cmd_num;
-
         StringBuilder command = new StringBuilder();
         one_argument(argument, command);
-        found = false;
 
-        trust = get_trust(ch);
-        cmd_type[] cmd_table = getCommandsTable();
-        for (cmd_num = 0; cmd_table[cmd_num].name.length() != 0; cmd_num++) {
-            if (command.charAt(0) == cmd_table[cmd_num].name.charAt(0)
-                    && !str_prefix(command.toString(), cmd_table[cmd_num].name)
-                    && cmd_table[cmd_num].level <= trust) {
-                found = true;
+        int trust = get_trust(ch);
+        CmdType[] cmd_table = getCommandsTable();
+        CmdType cmd = null;
+        String commandStr = command.toString();
+        for (CmdType c : cmd_table) {
+            for (String name : c.names) {
+                if (commandStr.charAt(0) == name.charAt(0) && !str_prefix(commandStr, name) && c.level <= trust) {
+                    cmd = c;
+                    break;
+                }
+            }
+            if (cmd != null) {
                 break;
             }
         }
-        if (!found) {
+        if (cmd == null) {
             return true;
         }
-        String cmd_name = cmd_table[cmd_num].do_fun.getName();
-
         if (!IS_NPC(ch)) {
-            return !(cmd_name.equals("do_delete") || cmd_name.equals("do_remort") || cmd_name.equals("do_induct")
-                    || cmd_name.equals("do_quest") || cmd_name.equals("do_practice") || cmd_name.equals("do_train"));
+            return !(cmd == CmdType.do_delete || cmd == CmdType.do_remort || cmd == CmdType.do_induct
+                    || cmd == CmdType.do_quest || cmd == CmdType.do_practice || cmd == CmdType.do_train);
         }
 
-        if (((cmd_name.equals("do_bash")) || (cmd_name.equals("do_dirt")) || (cmd_name.equals("do_kick"))
-                || (cmd_name.equals("do_murder")) || (cmd_name.equals("do_trip")))
+        if (((cmd == CmdType.do_bash) || (cmd == CmdType.do_dirt) || (cmd == CmdType.do_kick)
+                || (cmd == CmdType.do_murder) || (cmd == CmdType.do_trip))
                 && ch.fighting == null) {
             return false;
         }
 
-        if ((cmd_name.equals("do_assassinate")) || (cmd_name.equals("do_ambush")) || (cmd_name.equals("do_blackjack"))
-                || (cmd_name.equals("do_cleave")) || (cmd_name.equals("do_kill")) || (cmd_name.equals("do_murder"))
-                || (cmd_name.equals("do_recall")) || (cmd_name.equals("do_strangle")) || (cmd_name.equals("do_vtouch"))) {
-            return false;
+        switch (cmd) {
+            case do_assassinate:
+            case do_ambush:
+            case do_blackjack:
+            case do_cleave:
+            case do_kill:
+            case do_murder:
+            case do_recall:
+            case do_strangle:
+            case do_vtouch:
+                return false;
+            case do_close:
+            case do_lock:
+            case do_open:
+            case do_unlock:
+                return true;
+            case do_backstab:
+            case do_hide:
+            case do_pick:
+            case do_sneak:
+                return IS_SET(ch.act, ACT_THIEF);
         }
-
-        if (cmd_name.equals("do_close") || cmd_name.equals("do_lock") || cmd_name.equals("do_open") || cmd_name.equals("do_unlock")) {
-            return true;
-        }
-
-        if ((cmd_name.equals("do_backstab")) || (cmd_name.equals("do_hide")) || (cmd_name.equals("do_pick")) || (cmd_name.equals("do_sneak"))) {
-            return IS_SET(ch.act, ACT_THIEF);
-        }
-
         return true;
     }
 
@@ -1658,7 +1665,7 @@ class ActComm {
         send_to_char(buf, ch);
     }
 
-    static void do_remor(CHAR_DATA ch, String argument) {
+    static void do_remor(CHAR_DATA ch) {
         send_to_char("If you want to REMORT, spell it out.\n", ch);
     }
 
@@ -1710,11 +1717,12 @@ class ActComm {
             silver = ch.silver;
             gold = ch.gold;
 
-            if (!quit_org(ch, argument, true, true)) {
+            if (!quit_org(ch, true, true)) {
                 return;
             }
 
             //TODO: link( remstr, mkstr );
+            //noinspection ResultOfMethodCallIgnored
             new File(remstr).delete();
 
             load_char_obj(d, name);
@@ -1779,6 +1787,7 @@ class ActComm {
     }
 
     static boolean is_at_cabal_area(CHAR_DATA ch) {
+        //noinspection SimplifiableIfStatement
         if (ch.in_room == null || IS_IMMORTAL(ch)) {
             return false;
         }

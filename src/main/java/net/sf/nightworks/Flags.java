@@ -203,7 +203,7 @@ class Flags {
         } else if (!str_prefix(arg3.toString(), "comm")) {
             victim.comm = (int) newFlag;
         } else {
-            assert (false);
+            assert false;
         }
     }
 }

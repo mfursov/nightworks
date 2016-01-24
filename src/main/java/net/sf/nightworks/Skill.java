@@ -3324,7 +3324,7 @@ enum Skill {
      * list of all skills. do not modify this list
      */
     static final Skill[] skills = Skill.values();
-    private static final Map<String, Skill> skillMap = new HashMap<String, Skill>();
+    private static final Map<String, Skill> skillMap = new HashMap<>();
 
     static {
         for (Skill skill : skills) {

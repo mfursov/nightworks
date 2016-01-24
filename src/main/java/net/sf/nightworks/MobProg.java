@@ -893,7 +893,7 @@ class MobProg {
                     } else {
                         do_say(ach, "I must go diana to help.");
                     }
-                    move_char(ach, door, false);
+                    move_char(ach, door);
                 }
             }
         }
@@ -933,7 +933,7 @@ class MobProg {
                     } else {
                         do_say(ach, "I must go the guard to help.");
                     }
-                    move_char(ach, door, false);
+                    move_char(ach, door);
                 }
             }
         }

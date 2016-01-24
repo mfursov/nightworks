@@ -240,7 +240,6 @@ class Comm {
         limit_time = boot_time = current_time = currentTimeSeconds();
 
         // Run the game.
-        Interp.initCommandsTable();
         try {
             init_server_socket(nw_config.port_num);
             try {
@@ -1682,7 +1681,7 @@ class Comm {
                     ch.pcdata.log_time[l] = 60;
                 }
 
-                do_outfit(ch, "");
+                do_outfit(ch);
             } else if (ch.in_room != null) {
                 if (cabal_area_check(ch)) {
                     int i = 1;
@@ -2143,11 +2142,11 @@ class Comm {
         AREA_DATA area;
         File file = new File("area_stat.txt");
         if (file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
         try {
-            FileWriter fp = new FileWriter(nw_config.var_astat_file, true);
-            try {
+            try (FileWriter fp = new FileWriter(nw_config.var_astat_file, true)) {
                 Formatter f = new Formatter(fp);
                 f.format("\nBooted %s Area popularity statistics (in String  ticks)\n", new Date(boot_time));
                 for (area = area_first; area != null; area = area.next) {
@@ -2157,8 +2156,6 @@ class Comm {
                         f.format("%-60s %d\n", area.name, area.count);
                     }
                 }
-            } finally {
-                fp.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

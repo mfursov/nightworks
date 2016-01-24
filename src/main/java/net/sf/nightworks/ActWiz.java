@@ -298,7 +298,7 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class ActWiz {
-    static void do_cabal_scan(CHAR_DATA ch, String argument) {
+    static void do_cabal_scan(CHAR_DATA ch) {
         int i;
         OBJ_DATA in_obj;
         int show;
@@ -343,11 +343,10 @@ class ActWiz {
         }
     }
 
-    static void do_objlist(CHAR_DATA ch, String argument) {
+    static void do_objlist(CHAR_DATA ch) {
         OBJ_DATA obj;
         try {
-            FileWriter fp = new FileWriter("objlist.txt");
-            try {
+            try (FileWriter fp = new FileWriter("objlist.txt")) {
                 Formatter ff = new Formatter(fp);
                 for (obj = object_list; obj != null; obj = obj.next) {
                     if (CAN_WEAR(obj, ITEM_WIELD) && (obj.level < 25 && obj.level > 15)) {
@@ -476,9 +475,6 @@ class ActWiz {
                                 break;
                         }
                         for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
-                            if (paf == null) {
-                                continue;
-                            }
                             ff.format("  Affects %s by %d.\n", affect_loc_name(paf.location), paf.modifier);
                             if (paf.bitvector != 0) {
                                 switch (paf.where) {
@@ -505,8 +501,6 @@ class ActWiz {
                         }
                     }
                 }
-            } finally {
-                fp.close();
             }
         } catch (IOException e) {
             send_to_char("File error.\n", ch);
@@ -739,7 +733,7 @@ class ActWiz {
 
 /* equips a character */
 
-    static void do_outfit(CHAR_DATA ch, String argument) {
+    static void do_outfit(CHAR_DATA ch) {
         OBJ_DATA obj;
         int vnum;
 
@@ -996,8 +990,7 @@ class ActWiz {
         send_to_char("OK.\n", ch);
         save_char_obj(victim);
         stop_fighting(victim, true);
-        do_quit(victim, "");
-
+        do_quit(victim);
     }
 
 
@@ -2364,17 +2357,17 @@ class ActWiz {
     }
 
 
-    static void do_reboo(CHAR_DATA ch, String argument) {
+    static void do_reboo(CHAR_DATA ch) {
         send_to_char("If you want to REBOOT, spell it out.\n", ch);
     }
 
 
-    static void do_shutdow(CHAR_DATA ch, String argument) {
+    static void do_shutdow(CHAR_DATA ch) {
         send_to_char("If you want to SHUTDOWN, spell it out.\n", ch);
     }
 
 
-    static void do_shutdown(CHAR_DATA ch, String argument) {
+    static void do_shutdown(CHAR_DATA ch) {
         TextBuffer buf = new TextBuffer();
         if (ch.invis_level < LEVEL_HERO) {
             buf.sprintf("Shutdown by %s.", ch.name);
@@ -2542,7 +2535,7 @@ class ActWiz {
     }
 
 
-    static void do_return(CHAR_DATA ch, String argument) {
+    static void do_return(CHAR_DATA ch) {
 
         if (ch.desc == null) {
             return;
@@ -3192,7 +3185,7 @@ class ActWiz {
     }
 
 
-    static void do_peace(CHAR_DATA ch, String argument) {
+    static void do_peace(CHAR_DATA ch) {
         CHAR_DATA rch;
 
         for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
@@ -3207,7 +3200,7 @@ class ActWiz {
         send_to_char("Ok.\n", ch);
     }
 
-    static void do_wizlock(CHAR_DATA ch, String argument) {
+    static void do_wizlock(CHAR_DATA ch) {
         wizlock = !wizlock;
 
         if (wizlock) {
@@ -3223,7 +3216,7 @@ class ActWiz {
 /* RT anti-newbie code */
 
 
-    static void do_newlock(CHAR_DATA ch, String argument) {
+    static void do_newlock(CHAR_DATA ch) {
         newlock = !newlock;
 
         if (newlock) {
@@ -3885,7 +3878,7 @@ class ActWiz {
     }
 
 
-    static void do_holylight(CHAR_DATA ch, String argument) {
+    static void do_holylight(CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -3902,7 +3895,7 @@ class ActWiz {
 
 /* prefix command: it will put the string typed on each line typed */
 
-    static void do_prefi(CHAR_DATA ch, String argument) {
+    static void do_prefi(CHAR_DATA ch) {
         send_to_char("You cannot abbreviate the prefix command.\n", ch);
     }
 
@@ -4530,8 +4523,7 @@ class ActWiz {
         for (Skill sn : Skill.skills) {
             if ((victim.cabal != 0) && (sn.cabal == victim.cabal)) {
                 victim.pcdata.learned[sn.ordinal()] = 70;
-            } else if (sn.cabal != CABAL_NONE &&
-                    victim.cabal != sn.cabal) {
+            } else if (sn.cabal != CABAL_NONE) {
                 victim.pcdata.learned[sn.ordinal()] = 0;
             }
         }
@@ -4647,7 +4639,7 @@ class ActWiz {
         victim.hit = victim.hit / 2;
     }
 
-    static void do_popularity(CHAR_DATA ch, String argument) {
+    static void do_popularity(CHAR_DATA ch) {
         AREA_DATA area;
         int i;
         TextBuffer buf = new TextBuffer();
@@ -4777,6 +4769,7 @@ class ActWiz {
 
         save_char_obj(victim);
 
+        //noinspection ResultOfMethodCallIgnored
         new File(strsave).delete();
         send_to_char("Character renamed.\n", ch);
         victim.position = POS_STANDING;
@@ -4850,7 +4843,7 @@ class ActWiz {
 
     }
 
-    static void do_affrooms(CHAR_DATA ch, String argument) {
+    static void do_affrooms(CHAR_DATA ch) {
         ROOM_INDEX_DATA room;
         ROOM_INDEX_DATA room_next;
         int count = 0;
@@ -5083,5 +5076,4 @@ class ActWiz {
 
         do_maximum(ch, "");
     }
-
 }

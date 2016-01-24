@@ -3942,7 +3942,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
                     continue;
                 }
 
-                move_char(victim, door, false);
+                move_char(victim, door);
                 if ((now_in = victim.in_room) == was_in) {
                     continue;
                 }

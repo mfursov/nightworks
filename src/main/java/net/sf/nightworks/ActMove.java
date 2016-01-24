@@ -284,7 +284,7 @@ class ActMove {
     static final int movement_loss[] = {1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6};
 
 
-    static void move_char(CHAR_DATA ch, int door, boolean follow) {
+    static void move_char(CHAR_DATA ch, int door) {
         CHAR_DATA fch;
         CHAR_DATA fch_next;
         CHAR_DATA mount;
@@ -295,7 +295,7 @@ class ActMove {
         OBJ_DATA obj;
 
         if (RIDDEN(ch) != null && !IS_NPC(ch.mount)) {
-            move_char(ch.mount, door, follow);
+            move_char(ch.mount, door);
             return;
         }
 
@@ -620,7 +620,7 @@ class ActMove {
                 }
 
                 act("You follow $N.", fch, null, ch, TO_CHAR);
-                move_char(fch, door, true);
+                move_char(fch, door);
             }
         }
 
@@ -637,37 +637,37 @@ class ActMove {
     }
 
 
-    static void do_north(CHAR_DATA ch, String argument) {
-        move_char(ch, DIR_NORTH, false);
+    static void do_north(CHAR_DATA ch) {
+        move_char(ch, DIR_NORTH);
     }
 
 
-    static void do_east(CHAR_DATA ch, String argument) {
-        move_char(ch, DIR_EAST, false);
+    static void do_east(CHAR_DATA ch) {
+        move_char(ch, DIR_EAST);
     }
 
 
-    static void do_south(CHAR_DATA ch, String argument) {
-        move_char(ch, DIR_SOUTH, false);
+    static void do_south(CHAR_DATA ch) {
+        move_char(ch, DIR_SOUTH);
     }
 
 
-    static void do_west(CHAR_DATA ch, String argument) {
-        move_char(ch, DIR_WEST, false);
+    static void do_west(CHAR_DATA ch) {
+        move_char(ch, DIR_WEST);
     }
 
 
-    static void do_up(CHAR_DATA ch, String argument) {
-        move_char(ch, DIR_UP, false);
+    static void do_up(CHAR_DATA ch) {
+        move_char(ch, DIR_UP);
     }
 
 
-    static void do_down(CHAR_DATA ch, String argument) {
-        move_char(ch, DIR_DOWN, false);
+    static void do_down(CHAR_DATA ch) {
+        move_char(ch, DIR_DOWN);
     }
 
     static void do_run(CHAR_DATA ch, String argument) {
-
+        //TODO:
         /*StringBuilder arg1 = new StringBuilder();
         StringBuilder arg2 = new StringBuilder();
         argument = one_argument( argument, arg1 );
@@ -759,7 +759,7 @@ class ActMove {
 
     static final String distance[] = {"right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."};
 
-    static void do_scan2(CHAR_DATA ch, String argument) {
+    static void do_scan2(CHAR_DATA ch) {
         act("$n looks all around.", ch, null, null, TO_ROOM);
         send_to_char("Looking around you see:\n", ch);
         scan_list(ch.in_room, ch, 0, -1);
@@ -1801,7 +1801,7 @@ class ActMove {
     }
 
 
-    static void do_sneak(CHAR_DATA ch, String argument) {
+    static void do_sneak(CHAR_DATA ch) {
 
         if (MOUNTED(ch) != null) {
             send_to_char("You can't sneak while mounted.\n", ch);
@@ -1839,7 +1839,7 @@ class ActMove {
     }
 
 
-    static void do_hide(CHAR_DATA ch, String argument) {
+    static void do_hide(CHAR_DATA ch) {
         int forest;
 
         if (MOUNTED(ch) != null) {
@@ -1874,7 +1874,7 @@ class ActMove {
 
     }
 
-    static void do_camouflage(CHAR_DATA ch, String argument) {
+    static void do_camouflage(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_camouflage, false, 0,
                 "You don't know how to camouflage yourself.\n")) {
@@ -1920,7 +1920,7 @@ class ActMove {
  * Contributed by Alander
  */
 
-    static void do_visible(CHAR_DATA ch, String argument) {
+    static void do_visible(CHAR_DATA ch) {
         if (IS_SET(ch.affected_by, AFF_HIDE)) {
             send_to_char("You step out of the shadows.\n", ch);
             ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_HIDE);
@@ -1967,7 +1967,7 @@ class ActMove {
         }
     }
 
-    static void do_recall(CHAR_DATA ch, String argument) {
+    static void do_recall(CHAR_DATA ch) {
         ROOM_INDEX_DATA location;
         int point;
         int lose, skill;
@@ -2260,7 +2260,7 @@ class ActMove {
                     if ((pexit = ch.in_room.exit[d]) != null && IS_SET(pexit.exit_info, EX_ISDOOR) && pexit.keyword != null) {
                         do_open(ch, door[d]);
                     }
-                    move_char(ch, rh.went, false);
+                    move_char(ch, rh.went);
                     return;
                 }
             }
@@ -2273,7 +2273,7 @@ class ActMove {
     }
 
 
-    static void do_vampire(CHAR_DATA ch, String argument) {
+    static void do_vampire(CHAR_DATA ch) {
         int level, duration;
 
         if (skill_failure_check(ch, gsn_vampire, false, 0,
@@ -2565,7 +2565,7 @@ class ActMove {
 
 
                 if (number_percent() < chance) {
-                    move_char(ch, door, false);
+                    move_char(ch, door);
                     ch.position = POS_RESTING;
                 }
                 WAIT_STATE(ch, gsn_bash_door.beats);
@@ -2615,7 +2615,7 @@ class ActMove {
         send_to_char(buf, ch);
     }
 
-    static void do_vanish(CHAR_DATA ch, String argument) {
+    static void do_vanish(CHAR_DATA ch) {
         int i;
 
         if (skill_failure_check(ch, gsn_vanish, false, 0, null)) {
@@ -2677,7 +2677,7 @@ class ActMove {
         stop_fighting(ch, true);
     }
 
-    static void do_detect_sneak(CHAR_DATA ch, String argument) {
+    static void do_detect_sneak(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_detect_sneak, false, 0, null)) {
             return;
@@ -2702,7 +2702,7 @@ class ActMove {
     }
 
 
-    static void do_fade(CHAR_DATA ch, String argument) {
+    static void do_fade(CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_fade, false, 0, null)) {
             return;
         }
@@ -2982,14 +2982,14 @@ class ActMove {
             buf.clear();
             buf.sprintf("{Y$n pushes $N to %s.{x", dir_name[door]);
             act(buf.toString(), ch, null, victim, TO_NOTVICT, POS_SLEEPING);
-            move_char(victim, door, false);
+            move_char(victim, door);
 
             check_improve(ch, gsn_push, true, 1);
         }
     }
 
 
-    static void do_crecall(CHAR_DATA ch, String argument) {
+    static void do_crecall(CHAR_DATA ch) {
         ROOM_INDEX_DATA location;
         int point = ROOM_VNUM_BATTLE;
 
@@ -3115,7 +3115,7 @@ class ActMove {
             }
 
             check_improve(ch, gsn_escape, true, 1);
-            move_char(ch, door, false);
+            move_char(ch, door);
             if ((now_in = ch.in_room) == was_in) {
                 send_to_char("You couldn't reach that direction, try another.\n", ch);
                 return;
@@ -3312,7 +3312,7 @@ class ActMove {
         ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_IMP_INVIS);
     }
 
-    static void do_dismount(CHAR_DATA ch, String argument) {
+    static void do_dismount(CHAR_DATA ch) {
 
         if (MOUNTED(ch) != null) {
             CHAR_DATA mount = MOUNTED(ch);
@@ -3596,7 +3596,7 @@ class ActMove {
         return buf.toString();
     }
 
-    static void do_human(CHAR_DATA ch, String argument) {
+    static void do_human(CHAR_DATA ch) {
         if (ch.clazz != Clazz.VAMPIRE) {
             send_to_char("Huh?\n", ch);
             return;

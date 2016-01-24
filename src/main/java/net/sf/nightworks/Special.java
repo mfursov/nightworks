@@ -857,7 +857,7 @@ class Special {
             case '1':
             case '2':
             case '3':
-                move_char(ch, spec_mayor_data.path.charAt(spec_mayor_data.pos) - '0', false);
+                move_char(ch, spec_mayor_data.path.charAt(spec_mayor_data.pos) - '0');
                 break;
 
             case 'W':
@@ -1271,7 +1271,7 @@ class Special {
                 return true;
 
             case 1:
-                do_flee(ch, "");
+                do_flee(ch);
                 return true;
 
             default:
@@ -1397,7 +1397,7 @@ class Special {
             case '1':
             case '2':
             case '3':
-                move_char(ch, spec_captain_data.path.charAt(spec_captain_data.pos) - '0', false);
+                move_char(ch, spec_captain_data.path.charAt(spec_captain_data.pos) - '0');
                 break;
 
             case 'W':
@@ -1523,7 +1523,7 @@ class Special {
             case '1':
             case '2':
             case '3':
-                move_char(ch, spec_headlamia_data.path.charAt(spec_headlamia_data.pos) - '0', false);
+                move_char(ch, spec_headlamia_data.path.charAt(spec_headlamia_data.pos) - '0');
                 spec_headlamia_data.pos++;
                 break;
 
@@ -1898,7 +1898,7 @@ class Special {
         ch.cabal = CABAL_BATTLE;
 
         if (!is_affected(ch, gsn_spellbane)) {
-            do_spellbane(ch, "");
+            do_spellbane(ch);
         }
 
         for (victim = ch.in_room.people; victim != null; victim = v_next) {
@@ -1921,11 +1921,11 @@ class Special {
         }
 
         if (!is_affected(ch, gsn_resistance)) {
-            do_resistance(ch, "");
+            do_resistance(ch);
         }
 
         if (ch.hit < (ch.max_hit / 3) && !IS_AFFECTED(ch, AFF_REGENERATION)) {
-            do_bandage(ch, "");
+            do_bandage(ch);
         }
 
         return true;
@@ -2101,7 +2101,7 @@ class Special {
     }
 
     /* the function table */
-    static final HashMap<String, SPEC_FUN> spec_table = new HashMap<String, SPEC_FUN>();
+    static final HashMap<String, SPEC_FUN> spec_table = new HashMap<>();
 
     static {
         SPEC_FUN_IMPL.init();

@@ -294,7 +294,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 */
     }
 
-    static void do_berserk(CHAR_DATA ch, String argument) {
+    static void do_berserk(CHAR_DATA ch) {
         int chance, hp_percent;
 
         if (skill_failure_check(ch, gsn_berserk, false, OFF_BERSERK, "You turn red in the face, but nothing happens.\n")) {
@@ -1072,7 +1072,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_kick(CHAR_DATA ch, String argument) {
+    static void do_kick(CHAR_DATA ch) {
         CHAR_DATA victim;
         int kick_dam;
         int chance;
@@ -1105,7 +1105,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_circle(CHAR_DATA ch, String argument) {
+    static void do_circle(CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA person;
         boolean second;
@@ -1302,7 +1302,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_endure(CHAR_DATA ch, String arg) {
+    static void do_endure(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_endure, false, 0, "You lack the concentration.\n")) {
             return;
@@ -1479,7 +1479,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_caltraps(CHAR_DATA ch, String argument) {
+    static void do_caltraps(CHAR_DATA ch) {
         CHAR_DATA victim = ch.fighting;
 
         if (skill_failure_check(ch, gsn_caltraps, false, 0, "Caltraps? Is that a dance step?\n")) {
@@ -1844,7 +1844,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_bloodthirst(CHAR_DATA ch, String argument) {
+    static void do_bloodthirst(CHAR_DATA ch) {
         int chance, hp_percent;
 
         if (skill_failure_check(ch, gsn_bloodthirst, true, 0, "You're not that thirsty.\n")) {
@@ -1909,7 +1909,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_spellbane(CHAR_DATA ch, String argument) {
+    static void do_spellbane(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_spellbane, true, 0, null)) {
             return;
@@ -1939,7 +1939,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_resistance(CHAR_DATA ch, String argument) {
+    static void do_resistance(CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_resistance, true, 0, null)) {
             return;
         }
@@ -2118,7 +2118,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_truesight(CHAR_DATA ch, String argument) {
+    static void do_truesight(CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_truesight, true, 0, null)) {
             return;
         }
@@ -2175,7 +2175,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_warcry(CHAR_DATA ch, String argument) {
+    static void do_warcry(CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_warcry, true, 0, null)) {
             return;
@@ -2459,7 +2459,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_tiger(CHAR_DATA ch, String argument) {
+    static void do_tiger(CHAR_DATA ch) {
         int chance, hp_percent;
 
         if (skill_failure_check(ch, gsn_tiger_power, false, 0, null)) {
@@ -2547,7 +2547,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_hara(CHAR_DATA ch, String argument) {
+    static void do_hara(CHAR_DATA ch) {
         int chance;
 
         if (skill_failure_check(ch, gsn_hara_kiri, false, 0, null)) {
@@ -2757,7 +2757,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         return dam;
     }
 
-    static void do_shield(CHAR_DATA ch, String argument) {
+    static void do_shield(CHAR_DATA ch) {
         CHAR_DATA victim;
         int chance, ch_weapon, vict_shield;
         OBJ_DATA shield, axe;
@@ -2833,7 +2833,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_weapon(CHAR_DATA ch, String argument) {
+    static void do_weapon(CHAR_DATA ch) {
         CHAR_DATA victim;
         OBJ_DATA wield, axe;
         int chance, ch_weapon, vict_weapon;
@@ -3056,7 +3056,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_concentrate(CHAR_DATA ch, String argument) {
+    static void do_concentrate(CHAR_DATA ch) {
         int chance;
 
         if (skill_failure_check(ch, gsn_concentrate, false, 0,
@@ -3120,7 +3120,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_bandage(CHAR_DATA ch, String argument) {
+    static void do_bandage(CHAR_DATA ch) {
         int heal;
 
         if (skill_failure_check(ch, gsn_bandage, false, 0, null)) {
@@ -3261,7 +3261,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_crush(CHAR_DATA ch, String argument) {
+    static void do_crush(CHAR_DATA ch) {
         CHAR_DATA victim;
         int chance, wait;
         int damage_crush;
@@ -3377,7 +3377,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_sense(CHAR_DATA ch, String argument) {
+    static void do_sense(CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_sense_life, true, 0, null)) {
             return;
         }
@@ -3420,7 +3420,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_poison_smoke(CHAR_DATA ch, String argument) {
+    static void do_poison_smoke(CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
 
         if (skill_failure_check(ch, gsn_poison_smoke, true, 0, null)) {
@@ -3472,7 +3472,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_blindness_dust(CHAR_DATA ch, String argument) {
+    static void do_blindness_dust(CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
 
         if (skill_failure_check(ch, gsn_blindness_dust, true, 0, null)) {

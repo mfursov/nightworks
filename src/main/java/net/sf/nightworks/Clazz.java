@@ -13,8 +13,8 @@ import static net.sf.nightworks.Nightworks.SEX_MALE;
 public class Clazz {
 
     private static int idGen;
-    private static final Map<String, Clazz> clazzByName = new HashMap<String, Clazz>();
-    private static final ArrayList<Clazz> classes = new ArrayList<Clazz>(10);
+    private static final Map<String, Clazz> clazzByName = new HashMap<>();
+    private static final ArrayList<Clazz> classes = new ArrayList<>(10);
 
     public static final Clazz
             MOB_CLASS = new Clazz("mob"),
@@ -30,7 +30,7 @@ public class Clazz {
     String who_name;    /* Three-letter name for 'who'  */
     int attr_prime;     /* Prime attribute      */
     int weapon;         /* First weapon         */
-    ArrayList<Integer> guildVnums = new ArrayList<Integer>();   /* Vnum of guild rooms      */
+    ArrayList<Integer> guildVnums = new ArrayList<>();   /* Vnum of guild rooms      */
     int skill_adept;        /* Maximum skill level      */
     int thac0_00;       /* Thac0 for level  0       */
     int thac0_32;       /* Thac0 for level 32       */
@@ -43,7 +43,7 @@ public class Clazz {
     int sex = SEX_FEMALE | SEX_MALE;
     int ethos = ETHOS_ANY;
     final int id;
-    final ArrayList<Pose> poses = new ArrayList<Pose>();
+    final ArrayList<Pose> poses = new ArrayList<>();
 
     String femaleTitles[] = new String[MAX_LEVEL + 1];
     String maleTitles[] = new String[MAX_LEVEL + 1];
@@ -93,8 +93,7 @@ public class Clazz {
     static Clazz lookupClassByPrefix(String classNamePrefix) {
         Clazz cl = lookupClass(classNamePrefix, false);
         if (cl == null) {
-            for (int i = 0; i < classes.size(); i++) {
-                Clazz clazz = classes.get(i);
+            for (Clazz clazz : classes) {
                 if (clazz.name.startsWith(classNamePrefix)) {
                     cl = clazz;
                     break;
