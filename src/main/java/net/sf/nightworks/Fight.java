@@ -1503,7 +1503,7 @@ class Fight {
         if (dt != null && dt.ordinal() < gsn_x_hit.ordinal()) {
             if (IS_AFFECTED(victim, AFF_ABSORB)
                     && dt.target == TAR_CHAR_OFFENSIVE
-                    && dt.is_spell
+                    && dt.isSpell()
                     && ch != victim
                     && (number_percent() < 2 * get_skill(victim, gsn_absorb) / 3)
                     /* update.c damages */
@@ -1522,7 +1522,7 @@ class Fight {
             }
             if (IS_AFFECTED(victim, AFF_SPELLBANE)
                     && dt.target != TAR_IGNORE
-                    && dt.is_spell
+                    && dt.isSpell()
                     && (number_percent() < 2 * get_skill(victim, gsn_spellbane) / 3)
                     /* update.c damages */
                     && dt != gsn_poison

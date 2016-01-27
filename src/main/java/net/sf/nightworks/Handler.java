@@ -1034,7 +1034,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             }
         } else /* mobiles */ {
 
-            if (sn.is_spell) {
+            if (sn.isSpell()) {
                 skill = 40 + 2 * ch.level;
             } else if (sn == gsn_sneak || sn == gsn_hide) {
                 skill = ch.level + 20;
@@ -1095,7 +1095,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         }
 
         if (ch.daze > 0) {
-            if (sn.is_spell) {
+            if (sn.isSpell()) {
                 skill /= 2;
             } else {
                 skill = 2 * skill / 3;
@@ -1113,7 +1113,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         skill = URANGE(0, skill, 100);
 
         if (skill != 0 && !IS_NPC(ch)) {
-            if (!sn.is_spell) {
+            if (!sn.isSpell()) {
                 skill += sn.mod[ch.clazz.id];
             }
         }

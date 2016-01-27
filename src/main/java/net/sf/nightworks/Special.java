@@ -536,7 +536,7 @@ class Special {
         switch (number_bits(4)) {
             case 0:
                 act("$n utters the word 'abrazak'.", ch, null, null, TO_ROOM);
-                spell_armor(lookupSkill("armor"), ch.level, ch, victim, TARGET_CHAR);
+                spell_armor(lookupSkill("armor"), ch.level, ch, victim);
                 return true;
 
             case 1:
@@ -546,20 +546,17 @@ class Special {
 
             case 2:
                 act("$n utters the words 'judicandus noselacri'.", ch, null, null, TO_ROOM);
-                spell_cure_blindness(lookupSkill("cure blindness"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                spell_cure_blindness(Skill.gsn_cure_blindness, ch.level, ch, victim);
                 return true;
 
             case 3:
                 act("$n utters the words 'judicandus dies'.", ch, null, null, TO_ROOM);
-                spell_cure_light(lookupSkill("cure light"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                spell_cure_light(Skill.gsn_cure_light, ch.level, ch, victim);
                 return true;
 
             case 4:
                 act("$n utters the words 'judicandus sausabru'.", ch, null, null, TO_ROOM);
-                spell_cure_poison(lookupSkill("cure poison"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                spell_cure_poison(Skill.gsn_cure_poison, ch.level, ch, victim);
                 return true;
 
             case 5:
@@ -569,8 +566,7 @@ class Special {
 
             case 6:
                 act("$n utters the words 'judicandus eugzagz'.", ch, null, null, TO_ROOM);
-                spell_cure_disease(lookupSkill("cure disease"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                spell_cure_disease(lookupSkill("cure disease"), ch.level, ch, victim);
         }
 
         return false;
@@ -1016,37 +1012,32 @@ class Special {
         switch (number_bits(4)) {
             case 0:
                 act("$n utters the word 'abracal'.", ch, null, null, TO_ROOM);
-                spell_armor(lookupSkill("armor"), ch.level, ch, victim, TARGET_CHAR);
+                spell_armor(Skill.gsn_armor, ch.level, ch, victim);
                 return true;
 
             case 1:
                 act("$n utters the word 'balc'.", ch, null, null, TO_ROOM);
-                spell_bless(lookupSkill("bless"), ch.level, ch, victim, TARGET_CHAR);
+                spell_bless(Skill.gsn_bless, ch.level, ch, victim, TARGET_CHAR);
                 return true;
 
             case 2:
                 act("$n utters the word 'judicandus noselacba'.", ch, null, null, TO_ROOM);
-                spell_cure_blindness(lookupSkill("cure blindness"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                spell_cure_blindness(Skill.gsn_cure_blindness, ch.level, ch, victim);
                 return true;
 
             case 3:
                 act("$n utters the word 'judicandus bacla'.", ch, null, null, TO_ROOM);
-                spell_cure_light(lookupSkill("cure light"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                spell_cure_light(lookupSkill("cure light"), ch.level, ch, victim);
                 return true;
 
             case 4:
-                act("$n utters the words 'judicandus sausabcla'.",
-                        ch, null, null, TO_ROOM);
-                spell_cure_poison(lookupSkill("cure poison"),
-                        ch.level, ch, victim, TARGET_CHAR);
+                act("$n utters the words 'judicandus sausabcla'.", ch, null, null, TO_ROOM);
+                spell_cure_poison(lookupSkill("cure poison"), ch.level, ch, victim);
                 return true;
 
             case 5:
                 act("$n utters the words 'candabala'.", ch, null, null, TO_ROOM);
-                spell_refresh(lookupSkill("refresh"), ch.level, ch, victim,
-                        TARGET_CHAR);
+                spell_refresh(lookupSkill("refresh"), ch.level, ch, victim, TARGET_CHAR);
                 return true;
 
         }

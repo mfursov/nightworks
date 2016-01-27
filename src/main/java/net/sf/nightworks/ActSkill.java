@@ -125,7 +125,7 @@ class ActSkill {
         Formatter f = new Formatter(buf);
         Skill[] skills = Skill.skills;
         for (Skill sn : skills) {
-            if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && sn.is_spell && RACE_OK(ch, sn) &&
+            if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && sn.isSpell() && RACE_OK(ch, sn) &&
                     (sn.cabal == ch.cabal || sn.cabal == CABAL_NONE)
                     ) {
                 buf.setLength(0);
@@ -184,7 +184,7 @@ class ActSkill {
         boolean found = false;
         Skill[] skills = Skill.skills;
         for (Skill sn : skills) {
-            if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && !sn.is_spell && RACE_OK(ch, sn) &&
+            if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && !sn.isSpell() && RACE_OK(ch, sn) &&
                     (sn.cabal == ch.cabal || sn.cabal == CABAL_NONE)) {
                 found = true;
                 int lev = sn.skill_level[ch.clazz.id];

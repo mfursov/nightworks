@@ -136,7 +136,7 @@ import static net.sf.nightworks.Skill.gsn_smithing;
 import static net.sf.nightworks.Skill.gsn_world_find;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.Tables.cabal_table;
-import static net.sf.nightworks.util.TextUtils.isdigit;
+import static net.sf.nightworks.util.TextUtils.isDigit;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.smash_tilde;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
@@ -1395,7 +1395,7 @@ class ActHera {
 
 
         int pos = 0;
-        while (pos < s.length() && isdigit(s.charAt(pos))) {/* as long as the current character is a digit */
+        while (pos < s.length() && isDigit(s.charAt(pos))) {/* as long as the current character is a digit */
             number = (number * 10) + atoi(s.substring(pos, pos + 1)); /* add to current number */
             pos++;                                /* advance */
         }
@@ -1420,7 +1420,7 @@ class ActHera {
                 return 0; /* not k nor m nor NUL - return 0! */
         }
 
-        while (pos < s.length() && isdigit(s.charAt(pos)) && multiplier > 1) /* if any digits follow k/m, add those too */ {
+        while (pos < s.length() && isDigit(s.charAt(pos)) && multiplier > 1) /* if any digits follow k/m, add those too */ {
             multiplier = multiplier / 10;  /* the further we get to right, the less are the digit 'worth' */
             number = number + atoi(s.substring(pos, pos + 1)) * multiplier;
             pos++;

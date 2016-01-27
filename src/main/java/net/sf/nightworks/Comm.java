@@ -191,7 +191,7 @@ import static net.sf.nightworks.Telnet.WONT;
 import static net.sf.nightworks.Update.update_handler;
 import static net.sf.nightworks.util.TextUtils.UPPER;
 import static net.sf.nightworks.util.TextUtils.capitalize;
-import static net.sf.nightworks.util.TextUtils.isspace;
+import static net.sf.nightworks.util.TextUtils.isSpace;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
@@ -1961,7 +1961,7 @@ class Comm {
             if (c == 0 || (show_lines > 0 && lines >= show_lines)) {
                 write_to_buffer(d, buffer);
                 int chk = d.showstr_point;
-                while (chk < d.showstr_head.length() && isspace(d.showstr_head.charAt(chk))) {
+                while (chk < d.showstr_head.length() && isSpace(d.showstr_head.charAt(chk))) {
                     chk++;
                 }
                 if (chk == d.showstr_head.length()) {

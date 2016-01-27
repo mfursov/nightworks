@@ -2812,9 +2812,7 @@ class ActObj {
             return;
         }
 
-        if ((sn = staff.value[3]) < 0
-                || sn >= MAX_SKILL
-                || !Skill.skills[sn].is_spell) {
+        if ((sn = staff.value[3]) < 0 || sn >= MAX_SKILL || !Skill.skills[sn].isSpell()) {
             bug("Do_brandish: bad sn %s.", sn);
             return;
         }

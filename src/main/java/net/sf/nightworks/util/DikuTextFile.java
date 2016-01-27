@@ -7,8 +7,8 @@ import java.util.Formatter;
 
 import static net.sf.nightworks.Tables.flag_type;
 import static net.sf.nightworks.util.TextUtils.is_number;
-import static net.sf.nightworks.util.TextUtils.isdigit;
-import static net.sf.nightworks.util.TextUtils.isspace;
+import static net.sf.nightworks.util.TextUtils.isDigit;
+import static net.sf.nightworks.util.TextUtils.isSpace;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 public class DikuTextFile {
@@ -51,21 +51,21 @@ public class DikuTextFile {
         int c;
         do {
             c = read();
-        } while (isspace(c));
+        } while (isSpace(c));
 
         if (c == '-') {
             negative = true;
             c = read();
         }
         number = 0;
-        if (!isdigit(c)) {
+        if (!isDigit(c)) {
             while (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
                 number += flag_convert((char) c);
                 c = read();
             }
         }
 
-        while (isdigit(c)) {
+        while (isDigit(c)) {
             number = number * 10 + c - '0';
             c = read();
         }
@@ -123,7 +123,7 @@ public class DikuTextFile {
         /* Skip blanks.* Read first char. */
         do {
             c = read();
-        } while (isspace(c));
+        } while (isSpace(c));
         do {
             /*
              * Back off the char type lookup,
@@ -171,7 +171,7 @@ public class DikuTextFile {
         /* Skip blanks.* Read first char. */
         do {
             c = read();
-        } while (isspace(c));
+        } while (isSpace(c));
         int pos = currentPos - 1;
         fread_to_eol();
         return new String(data, pos, currentPos - pos).trim();
@@ -198,7 +198,7 @@ public class DikuTextFile {
         char cEnd;
         do {
             cEnd = read();
-        } while (isspace(cEnd));
+        } while (isSpace(cEnd));
 
         if (cEnd != '\'' && cEnd != '"') {
             tmpBuf.append(cEnd);
@@ -207,9 +207,9 @@ public class DikuTextFile {
 
         while (tmpBuf.length() < MAX_WORD_LENGTH) {
             char c = read();
-            if (c == END_OF_STREAM_CHAR || (cEnd == ' ' ? isspace(c) : (c == cEnd))) {
+            if (c == END_OF_STREAM_CHAR || (cEnd == ' ' ? isSpace(c) : (c == cEnd))) {
 //                System.err.println("Word '"+word+"'");
-                if (isspace(c)) {
+                if (isSpace(c)) {
                     ungetc();
                 }
                 return tmpBuf.toString();
@@ -225,7 +225,7 @@ public class DikuTextFile {
     public char fread_letter() {
         while (!feof()) {
             char c = read();
-            if (!isspace(c)) {
+            if (!isSpace(c)) {
                 return c;
             }
         }
@@ -240,7 +240,7 @@ public class DikuTextFile {
         char c;
         do {
             c = read();
-        } while (isspace(c));
+        } while (isSpace(c));
 
         int number = 0;
         boolean sign = false;
@@ -251,11 +251,11 @@ public class DikuTextFile {
             c = read();
         }
 
-        if (!isdigit(c)) {
+        if (!isDigit(c)) {
             throw new RuntimeException("fread_number: bad format." + buildCurrentStateInfo());
 
         }
-        while (isdigit(c)) {
+        while (isDigit(c)) {
             number = number * 10 + c - '0';
             c = read();
         }

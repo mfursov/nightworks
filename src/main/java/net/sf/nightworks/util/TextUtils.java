@@ -7,11 +7,11 @@ public class TextUtils {
         spaces[' '] = spaces['\t'] = spaces['\n'] = spaces['\r'] = true; //spaces['\''] = spaces['"']
     }
 
-    public static boolean isspace(int c) {
+    public static boolean isSpace(int c) {
         return spaces[c];
     }
 
-    public static boolean isdigit(int c) {
+    public static boolean isDigit(int c) {
         return c >= '0' && c <= '9';
     }
 
@@ -92,7 +92,7 @@ public class TextUtils {
             i++;
         }
         for (; i < arg.length(); i++) {
-            if (!isdigit(arg.charAt(i))) {
+            if (!isDigit(arg.charAt(i))) {
                 return false;
             }
         }

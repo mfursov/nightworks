@@ -39,7 +39,7 @@ import static net.sf.nightworks.Nightworks.nw_config;
 import static net.sf.nightworks.Nightworks.perror;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.util.TextUtils.is_number;
-import static net.sf.nightworks.util.TextUtils.isspace;
+import static net.sf.nightworks.util.TextUtils.isSpace;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.smash_tilde;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
@@ -194,7 +194,7 @@ class Note {
                         break;
                     }
                     letter = fp.read();
-                } while (isspace(letter));
+                } while (isSpace(letter));
                 if (fp.feof()) {
                     return list;
                 }

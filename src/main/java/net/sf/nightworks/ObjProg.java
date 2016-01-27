@@ -525,7 +525,7 @@ class ObjProg {
             if (IS_AFFECTED(ch, AFF_POISON) && (dice(1, 5) == 1)) {
                 send_to_char("Your weapon glows blue.", ch);
                 act("$n's weapon glows blue.", ch, null, null, TO_ROOM);
-                spell_cure_poison(gsn_cure_poison, 30, ch, ch, TARGET_CHAR);
+                spell_cure_poison(gsn_cure_poison, 30, ch, ch);
                 return;
             }
             if (IS_AFFECTED(ch, AFF_CURSE) && (dice(1, 5) == 1)) {
@@ -573,7 +573,7 @@ class ObjProg {
             if (IS_AFFECTED(ch, AFF_POISON) && (dice(1, 5) == 1)) {
                 send_to_char("Your weapon glows blue.", ch);
                 act("$n's weapon glows blue.", ch, null, null, TO_ROOM);
-                spell_cure_poison(gsn_cure_poison, 30, ch, ch, TARGET_CHAR);
+                spell_cure_poison(gsn_cure_poison, 30, ch, ch);
                 return;
             }
             if (IS_AFFECTED(ch, AFF_CURSE) && (dice(1, 5) == 1)) {
@@ -753,10 +753,10 @@ class ObjProg {
                 case 3:
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     if (IS_AFFECTED(ch, AFF_PLAGUE)) {
-                        spell_cure_disease(Skill.gsn_cure_disease, 100, ch, ch, TARGET_CHAR);
+                        spell_cure_disease(Skill.gsn_cure_disease, 100, ch, ch);
                     }
                     if (IS_AFFECTED(ch, AFF_POISON)) {
-                        spell_cure_poison(gsn_cure_poison, 100, ch, ch, TARGET_CHAR);
+                        spell_cure_poison(gsn_cure_poison, 100, ch, ch);
                     }
                     break;
             }
@@ -772,7 +772,7 @@ class ObjProg {
                     break;
                 case 1:
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
-                    spell_bluefire(gsn_dispel_good, ch.level, ch, ch.fighting, TARGET_CHAR);
+                    spell_bluefire(gsn_dispel_good, ch.level, ch, ch.fighting);
                     break;
             }
         }
@@ -804,7 +804,7 @@ class ObjProg {
                 case 2:
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     do_yell(ch, "And justice for all!....");
-                    spell_scream(gsn_scream, ch.level, ch, ch.fighting, TARGET_CHAR);
+                    spell_scream(gsn_scream, ch.level, ch, ch.fighting);
                     break;
             }
         }
@@ -823,7 +823,7 @@ class ObjProg {
                     break;
                 case 2:
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
-                    spell_dispel_evil(gsn_dispel_evil, ch.level, ch, ch.fighting, TARGET_CHAR);
+                    spell_dispel_evil(gsn_dispel_evil, ch.level, ch, ch.fighting);
                     break;
             }
         }
@@ -1019,7 +1019,7 @@ class ObjProg {
                 case 2:
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     sn = lookupSkill("web");
-                    spell_web(sn, ch.level, ch, ch.fighting, TARGET_CHAR);
+                    spell_web(sn, ch.level, ch, ch.fighting);
                     break;
             }
         }
@@ -1121,9 +1121,9 @@ class ObjProg {
                 case 2:
                     act("{cThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     if (IS_EVIL(ch.fighting)) {
-                        spell_dispel_evil(gsn_dispel_evil, (int) (1.2 * ch.level), ch, ch.fighting, TARGET_CHAR);
+                        spell_dispel_evil(gsn_dispel_evil, (int) (1.2 * ch.level), ch, ch.fighting);
                     } else if (IS_GOOD(ch.fighting)) {
-                        spell_dispel_good(gsn_dispel_good, (int) (1.2 * ch.level), ch, ch.fighting, TARGET_CHAR);
+                        spell_dispel_good(gsn_dispel_good, (int) (1.2 * ch.level), ch, ch.fighting);
                     } else {
                         spell_lightning_bolt(Skill.gsn_lightning_bolt, (int) (1.2 * ch.level), ch, ch.fighting, TARGET_CHAR);
                     }

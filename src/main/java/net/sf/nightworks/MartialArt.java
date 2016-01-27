@@ -3513,7 +3513,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
                     }
                 }
 
-                spell_blindness(gsn_blindness, ch.level, ch, tmp_vict, TARGET_CHAR);
+                spell_blindness(gsn_blindness, ch.level, ch, tmp_vict);
                 if (tmp_vict != ch) {
                     multi_hit(tmp_vict, ch, null);
                 }

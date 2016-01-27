@@ -60,7 +60,7 @@ import static net.sf.nightworks.Nightworks.social_table;
 import static net.sf.nightworks.Nightworks.social_type;
 import static net.sf.nightworks.Skill.gsn_earthfade;
 import static net.sf.nightworks.Skill.gsn_imp_invis;
-import static net.sf.nightworks.util.TextUtils.isdigit;
+import static net.sf.nightworks.util.TextUtils.isDigit;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.smash_tilde;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
@@ -131,7 +131,7 @@ class Interp {
         StringBuilder command = new StringBuilder();
         int pos = 0;
         char c0 = argument.charAt(0);
-        if (!Character.isLetter(c0) && !isdigit(c0)) {
+        if (!Character.isLetter(c0) && !isDigit(c0)) {
             command.append(c0);
             pos++;
             argument = trimSpaces(argument, pos);
