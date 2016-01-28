@@ -527,8 +527,9 @@ class Magic {
         return false;
     }
 
-/* for finding mana costs -- temporary version */
-
+    /**
+     * for finding mana costs -- temporary version
+     */
     static int mana_cost(CHAR_DATA ch, int min_mana, int level) {
         if (ch.level + 2 == level) {
             return 1000;
@@ -536,11 +537,10 @@ class Magic {
         return UMAX(min_mana, (100 / (2 + ch.level - level)));
     }
 
-/*
- * for casting different rooms
- * returned value is the range
- */
-
+    /**
+     * for casting different rooms
+     * returned value is the range
+     */
     static int allowed_other(CHAR_DATA ch, Skill sn) {
         if (sn.minimum_position == POS_STANDING || sn.skill_level[ch.clazz.id] < 26
                 || sn == find_spell(ch, "chain lightning")) {
@@ -943,10 +943,7 @@ class Magic {
 
         if (cast_far == 1 && door[0] != -1) {
             path_to_track(ch, victim, door[0]);
-        } else if ((sn.target == TAR_CHAR_OFFENSIVE
-                || (sn.target == TAR_OBJ_CHAR_OFF && target == TARGET_CHAR))
-                && victim != ch
-                && victim.master != ch) {
+        } else if ((sn.target == TAR_CHAR_OFFENSIVE || (sn.target == TAR_OBJ_CHAR_OFF && target == TARGET_CHAR)) && victim != ch && victim.master != ch) {
             CHAR_DATA vch;
             CHAR_DATA vch_next;
 
@@ -1130,11 +1127,7 @@ class Magic {
         target_name = "";
         sn.spell_fun(level, ch, vo, target);
 
-
-        if ((sn.target == TAR_CHAR_OFFENSIVE
-                || (sn.target == TAR_OBJ_CHAR_OFF && target == TARGET_CHAR))
-                && victim != ch
-                && victim.master != ch) {
+        if ((sn.target == TAR_CHAR_OFFENSIVE || (sn.target == TAR_OBJ_CHAR_OFF && target == TARGET_CHAR)) && victim != ch && victim.master != ch) {
             CHAR_DATA vch;
             CHAR_DATA vch_next;
 
@@ -1146,7 +1139,6 @@ class Magic {
                 }
             }
         }
-
     }
 
 /*
@@ -1300,7 +1292,7 @@ class Magic {
     }
 
 
-    static void spell_call_lightning(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_call_lightning(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         int dam;
@@ -1359,7 +1351,7 @@ class Magic {
 
 /* RT calm spell stops all fighting in the room */
 
-    static void spell_calm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_calm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         int mlevel = 0;
         int count = 0;
@@ -1388,13 +1380,11 @@ class Magic {
 
         if (number_range(0, chance) >= mlevel)  /* hard to stop large fights */ {
             for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
-                if (IS_NPC(vch) && (IS_SET(vch.imm_flags, IMM_MAGIC) ||
-                        IS_SET(vch.act, ACT_UNDEAD))) {
+                if (IS_NPC(vch) && (IS_SET(vch.imm_flags, IMM_MAGIC) || IS_SET(vch.act, ACT_UNDEAD))) {
                     return;
                 }
 
-                if (IS_AFFECTED(vch, AFF_CALM) || IS_AFFECTED(vch, AFF_BERSERK)
-                        || is_affected(vch, lookupSkill("frenzy"))) {
+                if (IS_AFFECTED(vch, AFF_CALM) || IS_AFFECTED(vch, AFF_BERSERK) || is_affected(vch, Skill.gsn_frenzy)) {
                     return;
                 }
 
@@ -1424,7 +1414,7 @@ class Magic {
         }
     }
 
-    static void spell_cancellation(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cancellation(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         boolean found = false;
 
@@ -1447,194 +1437,194 @@ class Magic {
 
         /* begin running through the spells */
 
-        if (check_dispel(level, victim, lookupSkill("armor"))) {
+        if (check_dispel(level, victim, Skill.gsn_armor)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("enhanced armor"))) {
+        if (check_dispel(level, victim, Skill.gsn_enhanced_armor)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("bless"))) {
+        if (check_dispel(level, victim, Skill.gsn_bless)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("blindness"))) {
+        if (check_dispel(level, victim, Skill.gsn_blindness)) {
             found = true;
             act("$n is no longer blinded.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("calm"))) {
+        if (check_dispel(level, victim, Skill.gsn_calm)) {
             found = true;
             act("$n no longer looks so peaceful...", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("change sex"))) {
+        if (check_dispel(level, victim, Skill.lookupSkill("change sex"))) {
             found = true;
             act("$n looks more like $mself again.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("charm person"))) {
+        if (check_dispel(level, victim, Skill.gsn_charm_person)) {
             found = true;
             act("$n regains $s free will.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("chill touch"))) {
+        if (check_dispel(level, victim, Skill.gsn_chill_touch)) {
             found = true;
             act("$n looks warmer.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("curse"))) {
+        if (check_dispel(level, victim, Skill.gsn_curse)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect evil"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_evil)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect good"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_good)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect hidden"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_hidden)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect invis"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_invis)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect hidden"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_hidden)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect magic"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_magic)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("faerie fire"))) {
+        if (check_dispel(level, victim, Skill.gsn_faerie_fire)) {
             act("$n's outline fades.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("fly"))) {
+        if (check_dispel(level, victim, Skill.gsn_fly)) {
             act("$n falls to the ground!", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("frenzy"))) {
+        if (check_dispel(level, victim, Skill.gsn_frenzy)) {
             act("$n no longer looks so wild.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("giant strength"))) {
+        if (check_dispel(level, victim, Skill.gsn_giant_strength)) {
             act("$n no longer looks so mighty.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("haste"))) {
+        if (check_dispel(level, victim, Skill.gsn_haste)) {
             act("$n is no longer moving so quickly.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("infravision"))) {
+        if (check_dispel(level, victim, Skill.gsn_infravision)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("invis"))) {
+        if (check_dispel(level, victim, Skill.gsn_invis)) {
             act("$n fades into existance.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("mass invis"))) {
+        if (check_dispel(level, victim, Skill.gsn_mass_invis)) {
             act("$n fades into existance.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("pass door"))) {
+        if (check_dispel(level, victim, Skill.gsn_pass_door)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection evil"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_evil)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection good"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_good)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("sanctuary"))) {
+        if (check_dispel(level, victim, Skill.gsn_sanctuary)) {
             act("The white aura around $n's body vanishes.",
                     victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("shield"))) {
+        if (check_dispel(level, victim, Skill.gsn_shield)) {
             act("The shield protecting $n vanishes.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("sleep"))) {
+        if (check_dispel(level, victim, Skill.gsn_sleep)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("slow"))) {
+        if (check_dispel(level, victim, Skill.gsn_slow)) {
             act("$n is no longer moving so slowly.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("stone skin"))) {
+        if (check_dispel(level, victim, Skill.gsn_stone_skin)) {
             act("$n's skin regains its normal texture.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("weaken"))) {
+        if (check_dispel(level, victim, Skill.gsn_weaken)) {
             act("$n looks stronger.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("shielding"))) {
+        if (check_dispel(level, victim, Skill.gsn_shielding)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("web"))) {
+        if (check_dispel(level, victim, Skill.gsn_web)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("fear"))) {
+        if (check_dispel(level, victim, Skill.gsn_fear)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection heat"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_heat)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection cold"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_cold)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("magic resistance"))) {
+        if (check_dispel(level, victim, Skill.gsn_magic_resistance)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("hallucination"))) {
+        if (check_dispel(level, victim, Skill.gsn_hallucination)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("terangreal"))) {
+        if (check_dispel(level, victim, Skill.gsn_terangreal)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("power word stun"))) {
+        if (check_dispel(level, victim, Skill.gsn_power_stun)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("corruption"))) {
+        if (check_dispel(level, victim, Skill.gsn_corruption)) {
             act("$n looks healthier.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("web"))) {
+        if (check_dispel(level, victim, Skill.gsn_web)) {
             act("The webs around $n dissolve.", victim, null, null, TO_ROOM);
             found = true;
         }
@@ -1684,8 +1674,7 @@ class Magic {
             damage(ch, victim, dam, sn, DAM_LIGHTNING, true);
         }
 
-        if (!IS_NPC(ch) && victim != ch && ch.fighting != victim && victim.fighting != ch &&
-                (IS_SET(victim.affected_by, AFF_CHARM) || !IS_NPC(victim))) {
+        if (!IS_NPC(ch) && victim != ch && ch.fighting != victim && victim.fighting != ch && (IS_SET(victim.affected_by, AFF_CHARM) || !IS_NPC(victim))) {
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help someone is attacking me!");
             } else {
@@ -1771,7 +1760,7 @@ class Magic {
     }
 
 
-    static void spell_healing_light(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_healing_light(Skill sn, int level, CHAR_DATA ch) {
 
 
         if (is_affected_room(ch.in_room, sn)) {
@@ -1895,7 +1884,7 @@ class Magic {
     }
 
 
-    static void spell_continual_light(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_continual_light(CHAR_DATA ch) {
         OBJ_DATA light;
 
         if (target_name.length() != 0)  /* do a glow on some object */ {
@@ -1923,7 +1912,7 @@ class Magic {
     }
 
 
-    static void spell_control_weather(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_control_weather(int level, CHAR_DATA ch) {
         if (!str_cmp(target_name, "better")) {
             weather_info.change += dice(level / 3, 4);
         } else if (!str_cmp(target_name, "worse")) {
@@ -1937,7 +1926,7 @@ class Magic {
     }
 
 
-    static void spell_create_food(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_create_food(int level, CHAR_DATA ch) {
         OBJ_DATA mushroom;
 
         mushroom = create_object(get_obj_index(OBJ_VNUM_MUSHROOM), 0);
@@ -1948,7 +1937,7 @@ class Magic {
         act("$p suddenly appears.", ch, mushroom, null, TO_CHAR);
     }
 
-    static void spell_create_rose(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_create_rose(CHAR_DATA ch) {
         OBJ_DATA rose;
         rose = create_object(get_obj_index(OBJ_VNUM_ROSE), 0);
         act("$n has created a beautiful red rose.", ch, rose, null, TO_ROOM);
@@ -1956,7 +1945,7 @@ class Magic {
         obj_to_char(rose, ch);
     }
 
-    static void spell_create_spring(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_create_spring(int level, CHAR_DATA ch) {
         OBJ_DATA spring;
 
         spring = create_object(get_obj_index(OBJ_VNUM_SPRING), 0);
@@ -1967,7 +1956,7 @@ class Magic {
     }
 
 
-    static void spell_create_water(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_create_water(int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int water;
 
@@ -2000,7 +1989,7 @@ class Magic {
     }
 
 
-    static void spell_cure_blindness(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cure_blindness(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, gsn_blindness)) {
@@ -2021,7 +2010,7 @@ class Magic {
     }
 
 
-    static void spell_cure_critical(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cure_critical(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int heal;
 
@@ -2036,7 +2025,7 @@ class Magic {
 
 /* RT added to cure plague */
 
-    static void spell_cure_disease(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cure_disease(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, gsn_plague)) {
@@ -2057,7 +2046,7 @@ class Magic {
     }
 
 
-    static void spell_cure_light(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cure_light(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int heal;
 
@@ -2071,7 +2060,7 @@ class Magic {
     }
 
 
-    static void spell_cure_poison(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cure_poison(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, gsn_poison)) {
@@ -2091,7 +2080,7 @@ class Magic {
         }
     }
 
-    static void spell_cure_serious(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cure_serious(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int heal;
 
@@ -2124,7 +2113,7 @@ class Magic {
             }
 
             if (IS_OBJ_STAT(obj, ITEM_BLESS)) {
-                AFFECT_DATA paf = affect_find(obj.affected, lookupSkill("bless"));
+                AFFECT_DATA paf = affect_find(obj.affected, Skill.gsn_bless);
                 if (!saves_dispel(level, paf != null ? paf.level : obj.level, 0)) {
                     if (paf != null) {
                         affect_remove_obj(obj, paf);
@@ -2368,7 +2357,7 @@ class Magic {
     }
 
 
-    static void spell_detect_poison(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_detect_poison(CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
 
         if (obj.item_type == ITEM_DRINK_CON || obj.item_type == ITEM_FOOD) {
@@ -2445,7 +2434,7 @@ class Magic {
 
 /* modified for enhanced use */
 
-    static void spell_dispel_magic(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_dispel_magic(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         boolean found = false;
 
@@ -2457,24 +2446,24 @@ class Magic {
 
         /* begin running through the spells */
 
-        if (check_dispel(level, victim, lookupSkill("armor"))) {
+        if (check_dispel(level, victim, Skill.gsn_armor)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("enhanced armor"))) {
+        if (check_dispel(level, victim, Skill.gsn_enhanced_armor)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("bless"))) {
+        if (check_dispel(level, victim, Skill.gsn_bless)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("blindness"))) {
+        if (check_dispel(level, victim, Skill.gsn_blindness)) {
             found = true;
             act("$n is no longer blinded.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("calm"))) {
+        if (check_dispel(level, victim, Skill.gsn_calm)) {
             found = true;
             act("$n no longer looks so peaceful...", victim, null, null, TO_ROOM);
         }
@@ -2484,105 +2473,105 @@ class Magic {
             act("$n looks more like $mself again.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("charm person"))) {
+        if (check_dispel(level, victim, Skill.gsn_charm_person)) {
             found = true;
             act("$n regains $s free will.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("chill touch"))) {
+        if (check_dispel(level, victim, Skill.gsn_chill_touch)) {
             found = true;
             act("$n looks warmer.", victim, null, null, TO_ROOM);
         }
 
-        if (check_dispel(level, victim, lookupSkill("curse"))) {
+        if (check_dispel(level, victim, Skill.gsn_curse)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect evil"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_evil)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect good"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_good)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect hidden"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_hidden)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect invis"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_invis)) {
             found = true;
         }
 
 //TODO???            found = true;
 
-        if (check_dispel(level, victim, lookupSkill("detect hidden"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_hidden)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("detect magic"))) {
+        if (check_dispel(level, victim, Skill.gsn_detect_magic)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("faerie fire"))) {
+        if (check_dispel(level, victim, Skill.gsn_faerie_fire)) {
             act("$n's outline fades.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("fly"))) {
+        if (check_dispel(level, victim, Skill.gsn_fly)) {
             act("$n falls to the ground!", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("frenzy"))) {
+        if (check_dispel(level, victim, Skill.gsn_frenzy)) {
             act("$n no longer looks so wild.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("giant strength"))) {
+        if (check_dispel(level, victim, Skill.gsn_giant_strength)) {
             act("$n no longer looks so mighty.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("haste"))) {
+        if (check_dispel(level, victim, Skill.gsn_haste)) {
             act("$n is no longer moving so quickly.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("infravision"))) {
+        if (check_dispel(level, victim, Skill.gsn_infravision)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("invis"))) {
+        if (check_dispel(level, victim, Skill.gsn_invis)) {
             act("$n fades into existance.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("mass invis"))) {
+        if (check_dispel(level, victim, Skill.gsn_mass_invis)) {
             act("$n fades into existance.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("pass door"))) {
+        if (check_dispel(level, victim, Skill.gsn_pass_door)) {
             found = true;
         }
 
 
-        if (check_dispel(level, victim, lookupSkill("protection evil"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_evil)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection good"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_good)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("sanctuary"))) {
+        if (check_dispel(level, victim, Skill.gsn_sanctuary)) {
             act("The white aura around $n's body vanishes.", victim, null, null, TO_ROOM);
             found = true;
         }
 
         if (IS_AFFECTED(victim, AFF_SANCTUARY) && !saves_dispel(level, victim.level, -1)
-                && !is_affected(victim, lookupSkill("sanctuary"))
+                && !is_affected(victim, Skill.gsn_sanctuary)
                 && !(victim.spec_fun.getName().equals("spec_special_guard")
                 || victim.spec_fun.getName().equals("spec_stalker"))) {
             victim.affected_by = REMOVE_BIT(victim.affected_by, AFF_SANCTUARY);
@@ -2591,72 +2580,72 @@ class Magic {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("shield"))) {
+        if (check_dispel(level, victim, Skill.gsn_shield)) {
             act("The shield protecting $n vanishes.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("sleep"))) {
+        if (check_dispel(level, victim, Skill.gsn_sleep)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("slow"))) {
+        if (check_dispel(level, victim, Skill.gsn_slow)) {
             act("$n is no longer moving so slowly.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("stone skin"))) {
+        if (check_dispel(level, victim, Skill.gsn_stone_skin)) {
             act("$n's skin regains its normal texture.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("weaken"))) {
+        if (check_dispel(level, victim, Skill.gsn_weaken)) {
             act("$n looks stronger.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("shielding"))) {
+        if (check_dispel(level, victim, Skill.gsn_shielding)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("web"))) {
+        if (check_dispel(level, victim, Skill.gsn_web)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("fear"))) {
+        if (check_dispel(level, victim, Skill.gsn_fear)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection heat"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_heat)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("protection cold"))) {
+        if (check_dispel(level, victim, Skill.gsn_protection_cold)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("magic resistance"))) {
+        if (check_dispel(level, victim, Skill.gsn_magic_resistance)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("hallucination"))) {
+        if (check_dispel(level, victim, Skill.gsn_hallucination)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("terangreal"))) {
+        if (check_dispel(level, victim, Skill.gsn_terangreal)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("power word stun"))) {
+        if (check_dispel(level, victim, Skill.gsn_power_stun)) {
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("corruption"))) {
+        if (check_dispel(level, victim, Skill.gsn_corruption)) {
             act("$n looks healthier.", victim, null, null, TO_ROOM);
             found = true;
         }
 
-        if (check_dispel(level, victim, lookupSkill("web"))) {
+        if (check_dispel(level, victim, Skill.gsn_web)) {
             act("The webs around $n dissolve.", victim, null, null, TO_ROOM);
             found = true;
         }
@@ -2668,7 +2657,7 @@ class Magic {
         }
     }
 
-    static void spell_earthquake(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_earthquake(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         OBJ_DATA obj, obj_next, corpse;
@@ -2719,7 +2708,7 @@ class Magic {
 
     }
 
-    static void spell_enchant_armor(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_enchant_armor(Skill sn, int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
 
         int result, fail;
@@ -2871,7 +2860,7 @@ class Magic {
     }
 
 
-    static void spell_enchant_weapon(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_enchant_weapon(Skill sn, int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int result, fail;
         int hit_bonus, dam_bonus, added;
@@ -3062,7 +3051,7 @@ class Magic {
 * Caster gains HP.
 */
 
-    static void spell_energy_drain(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_energy_drain(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
 
@@ -3088,7 +3077,7 @@ class Magic {
 
     }
 
-    static void spell_hellfire(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_hellfire(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
 
@@ -3098,7 +3087,7 @@ class Magic {
 
     }
 
-    static void spell_iceball(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_iceball(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
         CHAR_DATA tmp_next;
         int dam;
@@ -3135,7 +3124,7 @@ class Magic {
         }
     }
 
-    static void spell_fireball(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_fireball(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
         CHAR_DATA tmp_next;
         int dam;
@@ -3173,7 +3162,7 @@ class Magic {
     }
 
 
-    static void spell_fireproof(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_fireproof(Skill sn, int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
 
         if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
@@ -3196,7 +3185,7 @@ class Magic {
     }
 
 
-    static void spell_flamestrike(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_flamestrike(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
 
@@ -3208,7 +3197,7 @@ class Magic {
     }
 
 
-    static void spell_faerie_fire(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_faerie_fire(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_FAERIE_FIRE)) {
@@ -3228,7 +3217,7 @@ class Magic {
     }
 
 
-    static void spell_faerie_fog(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_faerie_fog(int level, CHAR_DATA ch) {
         CHAR_DATA ich;
 
         act("$n conjures a cloud of purple smoke.", ch, null, null, TO_ROOM);
@@ -3263,7 +3252,7 @@ class Magic {
 
     }
 
-    static void spell_floating_disc(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_floating_disc(int level, CHAR_DATA ch) {
         OBJ_DATA disc, floating;
 
         floating = get_eq_char(ch, WEAR_FLOAT);
@@ -3284,7 +3273,7 @@ class Magic {
     }
 
 
-    static void spell_fly(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_fly(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_FLYING)) {
@@ -3310,7 +3299,7 @@ class Magic {
 
 /* RT clerical berserking spell */
 
-    static void spell_frenzy(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_frenzy(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || IS_AFFECTED(victim, AFF_BERSERK)) {
@@ -3322,7 +3311,7 @@ class Magic {
             return;
         }
 
-        if (is_affected(victim, lookupSkill("calm"))) {
+        if (is_affected(victim, Skill.gsn_calm)) {
             if (victim == ch) {
                 send_to_char("Why don't you just relax for a while?\n", ch);
             } else {
@@ -3361,7 +3350,7 @@ class Magic {
         act("$n gets a wild look in $s eyes!", victim, null, null, TO_ROOM);
     }
 
-    static void spell_gate(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_gate(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
         boolean gate_pet;
 
@@ -3406,7 +3395,7 @@ class Magic {
     }
 
 
-    static void spell_giant_strength(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_giant_strength(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
@@ -3431,7 +3420,7 @@ class Magic {
     }
 
 
-    static void spell_harm(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_harm(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
 
@@ -3445,7 +3434,7 @@ class Magic {
 
 /* RT haste spell */
 
-    static void spell_haste(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_haste(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || IS_AFFECTED(victim, AFF_HASTE)
@@ -3460,7 +3449,7 @@ class Magic {
         }
 
         if (IS_AFFECTED(victim, AFF_SLOW)) {
-            if (!check_dispel(level, victim, lookupSkill("slow"))) {
+            if (!check_dispel(level, victim, Skill.gsn_slow)) {
                 if (victim != ch) {
                     send_to_char("Spell failed.\n", ch);
                 }
@@ -3491,7 +3480,7 @@ class Magic {
     }
 
 
-    static void spell_heal(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_heal(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         victim.hit = UMIN(victim.hit + 100 + level / 10, victim.max_hit);
         update_pos(victim);
@@ -3501,7 +3490,7 @@ class Magic {
         }
     }
 
-    static void spell_heat_metal(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_heat_metal(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         OBJ_DATA obj_lose, obj_next;
         int dam = 0;
@@ -3613,15 +3602,15 @@ class Magic {
 
 /* RT really nasty high-level attack spell */
 
-    static void spell_holy_word(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_holy_word(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         int dam;
         Skill bless_num, curse_num, frenzy_num;
 
-        bless_num = lookupSkill("bless");
-        curse_num = lookupSkill("curse");
-        frenzy_num = lookupSkill("frenzy");
+        bless_num = Skill.gsn_bless;
+        curse_num = Skill.gsn_curse;
+        frenzy_num = Skill.gsn_frenzy;
 
         act("$n utters a word of divine power!", ch, null, null, TO_ROOM);
         send_to_char("You utter a word of divine power.\n", ch);
@@ -3633,7 +3622,7 @@ class Magic {
                     (IS_EVIL(ch) && IS_EVIL(vch)) ||
                     (IS_NEUTRAL(ch) && IS_NEUTRAL(vch))) {
                 send_to_char("You feel full more powerful.\n", vch);
-                spell_frenzy(frenzy_num, level, ch, vch, TARGET_CHAR);
+                spell_frenzy(frenzy_num, level, ch, vch);
                 spell_bless(bless_num, level, ch, vch, TARGET_CHAR);
             } else if ((IS_GOOD(ch) && IS_EVIL(vch)) ||
                     (IS_EVIL(ch) && IS_GOOD(vch))) {
@@ -3685,7 +3674,7 @@ class Magic {
         ch.hit /= (4 / 3);
     }
 
-    static void spell_identify(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_identify(CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         TextBuffer buf = new TextBuffer();
         buf.sprintf("Object '%s' is type %s, extra flags %s.\nWeight is %d, value is %d, level is %d.\n",
@@ -3906,7 +3895,7 @@ class Magic {
     }
 
 
-    static void spell_infravision(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_infravision(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_INFRARED)) {
@@ -3981,7 +3970,7 @@ class Magic {
     }
 
 
-    static void spell_know_alignment(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_know_alignment(CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         String msg;
 
@@ -4010,7 +3999,7 @@ class Magic {
     }
 
 
-    static void spell_lightning_bolt(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_lightning_bolt(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
 
@@ -4028,7 +4017,7 @@ class Magic {
     }
 
 
-    static void spell_locate_object(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_locate_object(int level, CHAR_DATA ch) {
         OBJ_DATA obj;
         OBJ_DATA in_obj;
         boolean found;
@@ -4089,7 +4078,7 @@ class Magic {
     };
 
 
-    static void spell_magic_missile(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_magic_missile(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
 
@@ -4150,24 +4139,18 @@ class Magic {
 
     }
 
-    static void spell_mass_healing(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_mass_healing(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
-        Skill heal_num, refresh_num;
-
-        heal_num = lookupSkill("heal");
-        refresh_num = lookupSkill("refresh");
-
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
-            if ((IS_NPC(ch) && IS_NPC(gch)) ||
-                    (!IS_NPC(ch) && !IS_NPC(gch))) {
-                spell_heal(heal_num, level, ch, gch, TARGET_CHAR);
-                spell_refresh(refresh_num, level, ch, gch, TARGET_CHAR);
+            if ((IS_NPC(ch) && IS_NPC(gch)) || (!IS_NPC(ch) && !IS_NPC(gch))) {
+                spell_heal(level, ch, gch);
+                spell_refresh(level, ch, gch);
             }
         }
     }
 
 
-    static void spell_mass_invis(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_mass_invis(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
@@ -4192,12 +4175,12 @@ class Magic {
     }
 
 
-    static void spell_null(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_null(CHAR_DATA ch) {
         send_to_char("That's not a spell!\n", ch);
     }
 
 
-    static void spell_pass_door(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_pass_door(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
 
@@ -4224,7 +4207,7 @@ class Magic {
 
 /* RT plague spell, very nasty */
 
-    static void spell_plague(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_plague(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (saves_spell(level, victim, DAM_DISEASE) ||
@@ -4326,7 +4309,7 @@ class Magic {
     }
 
 
-    static void spell_protection_evil(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_protection_evil(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECT_EVIL)
@@ -4353,7 +4336,7 @@ class Magic {
         }
     }
 
-    static void spell_protection_good(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_protection_good(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECT_GOOD)
@@ -4382,7 +4365,7 @@ class Magic {
     }
 
 
-    static void spell_ray_of_truth(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_ray_of_truth(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam, align;
 
@@ -4424,7 +4407,7 @@ class Magic {
     }
 
 
-    static void spell_recharge(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_recharge(int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int chance, percent;
 
@@ -4486,7 +4469,7 @@ class Magic {
         }
     }
 
-    static void spell_refresh(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_refresh(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         victim.move = UMIN(victim.move + level, victim.max_move);
         if (victim.max_move == victim.move) {
@@ -4499,7 +4482,7 @@ class Magic {
         }
     }
 
-    static void spell_remove_curse(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_remove_curse(int level, CHAR_DATA ch, Object vo, int target) {
         CHAR_DATA victim;
         OBJ_DATA obj;
         boolean found = false;
@@ -4627,7 +4610,7 @@ class Magic {
     }
 
 
-    static void spell_sleep(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_sleep(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_SLEEP)
@@ -4666,8 +4649,7 @@ class Magic {
             return;
         }
 
-        if (saves_spell(level, victim, DAM_OTHER)
-                || IS_SET(victim.imm_flags, IMM_MAGIC)) {
+        if (saves_spell(level, victim, DAM_OTHER) || IS_SET(victim.imm_flags, IMM_MAGIC)) {
             if (victim != ch) {
                 send_to_char("Nothing seemed to happen.\n", ch);
             }
@@ -4676,7 +4658,7 @@ class Magic {
         }
 
         if (IS_AFFECTED(victim, AFF_HASTE)) {
-            if (!check_dispel(level, victim, lookupSkill("haste"))) {
+            if (!check_dispel(level, victim, Skill.gsn_haste)) {
                 if (victim != ch) {
                     send_to_char("Spell failed.\n", ch);
                 }
@@ -4727,7 +4709,7 @@ class Magic {
     }
 
 
-    static void spell_summon(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
 
         if ((victim = get_char_world(ch, target_name)) == null
@@ -4770,7 +4752,7 @@ class Magic {
     }
 
 
-    static void spell_teleport(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_teleport(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         ROOM_INDEX_DATA pRoomIndex;
 
@@ -4802,7 +4784,7 @@ class Magic {
     }
 
 
-    static void spell_ventriloquate(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_ventriloquate(int level, CHAR_DATA ch) {
         CHAR_DATA vch;
 
         StringBuilder speaker = new StringBuilder();
@@ -4823,7 +4805,7 @@ class Magic {
     }
 
 
-    static void spell_weaken(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_weaken(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || saves_spell(level, victim, DAM_OTHER)) {
@@ -4844,7 +4826,7 @@ class Magic {
 
 /* RT recall spell is back */
 
-    static void spell_word_of_recall(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_word_of_recall(CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         ROOM_INDEX_DATA location;
         int to_room_vnum;
@@ -5036,7 +5018,7 @@ class Magic {
     }
 
 
-    static void spell_gas_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_gas_breath(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         int dam, hp_dam, dice_dam, hpch;
@@ -5115,10 +5097,9 @@ class Magic {
         }
     }
 
-/*
- * Spells for mega1.are from Glop/Erkenbrand.
- */
-
+    /**
+     * Spells for mega1.are from Glop/Erkenbrand.
+     */
     static void spell_general_purpose(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
@@ -5142,7 +5123,7 @@ class Magic {
     }
 
 
-    static void spell_find_object(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_find_object(int level, CHAR_DATA ch) {
         OBJ_DATA obj;
         OBJ_DATA in_obj;
         boolean found;
@@ -5172,12 +5153,9 @@ class Magic {
                 buf.sprintf("one is carried by %s\n", PERS(in_obj.carried_by, ch));
             } else {
                 if (IS_IMMORTAL(ch) && in_obj.in_room != null) {
-                    buf.sprintf("one is in %s [Room %d]\n",
-                            in_obj.in_room.name, in_obj.in_room.vnum);
+                    buf.sprintf("one is in %s [Room %d]\n", in_obj.in_room.name, in_obj.in_room.vnum);
                 } else {
-                    buf.sprintf("one is in %s\n",
-                            in_obj.in_room == null
-                                    ? "somewhere" : in_obj.in_room.name);
+                    buf.sprintf("one is in %s\n", in_obj.in_room == null ? "somewhere" : in_obj.in_room.name);
                 }
             }
 
@@ -5198,7 +5176,7 @@ class Magic {
 
     }
 
-    static void spell_lightning_shield(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_lightning_shield(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected_room(ch.in_room, sn)) {
             send_to_char("This room has already shielded.\n", ch);
@@ -5236,7 +5214,7 @@ class Magic {
         act("The room starts to be filled with $n's lightnings.", ch, null, null, TO_ROOM);
     }
 
-    static void spell_shocking_trap(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_shocking_trap(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected_room(ch.in_room, sn)) {
             send_to_char("This room has already trapped with shocks waves.\n", ch);
@@ -5479,7 +5457,7 @@ class Magic {
 
 /* travel via astral plains */
 
-    static void spell_astral_walk(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_astral_walk(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
         boolean gate_pet;
 
@@ -5527,7 +5505,7 @@ class Magic {
 
 /* vampire version astral walk */
 
-    static void spell_mist_walk(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_mist_walk(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
 
 
@@ -5565,7 +5543,7 @@ class Magic {
 
 /*  Cleric version of astra_walk  */
 
-    static void spell_solar_flight(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_solar_flight(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
 
 
@@ -5607,7 +5585,7 @@ class Magic {
 
 /* travel via astral plains */
 
-    static void spell_helical_flow(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_helical_flow(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
 
 
@@ -5677,7 +5655,7 @@ class Magic {
     }
 
 
-    static void spell_hurricane(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_hurricane(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         int dam, hp_dam, dice_dam, hpch;
@@ -5769,7 +5747,7 @@ class Magic {
     }
 
 
-    static void spell_take_revenge(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_take_revenge(CHAR_DATA ch) {
         OBJ_DATA obj;
         OBJ_DATA in_obj;
         ROOM_INDEX_DATA room = null;
@@ -5840,7 +5818,7 @@ class Magic {
         }
     }
 
-    static void spell_summon_earth_elm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon_earth_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
         int i = 0;
@@ -5925,7 +5903,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_COLD, true);
     }
 
-    static void spell_summon_air_elm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon_air_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
         int i = 0;
@@ -6000,7 +5978,7 @@ class Magic {
 
     }
 
-    static void spell_summon_water_elm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon_water_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
         int i = 0;
@@ -6074,7 +6052,7 @@ class Magic {
 
     }
 
-    static void spell_summon_fire_elm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon_fire_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
         int i = 0;
@@ -6149,7 +6127,7 @@ class Magic {
 
     }
 
-    static void spell_summon_light_elm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon_light_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
         int i = 0;
@@ -6225,7 +6203,7 @@ class Magic {
     }
 
 
-    static void spell_fire_and_ice(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_fire_and_ice(int level, CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
         CHAR_DATA tmp_next;
         int dam;
@@ -6256,9 +6234,7 @@ class Magic {
                 if (saves_spell(level, tmp_vict, DAM_FIRE)) {
                     dam /= 2;
                 }
-                if ((dam_sn = lookupSkill("fireball")) == null) {
-                    dam_sn = sn;
-                }
+                dam_sn = Skill.gsn_fireball;
                 damage(ch, tmp_vict, dam, dam_sn, DAM_FIRE, true);
                 tmp_vict.move -= UMIN(tmp_vict.move, movedam);
 
@@ -6267,9 +6243,7 @@ class Magic {
                     if (saves_spell(level, tmp_vict, DAM_COLD)) {
                         dam /= 2;
                     }
-                    if ((dam_sn = lookupSkill("iceball")) == null) {
-                        dam_sn = sn;
-                    }
+                    dam_sn = Skill.gsn_iceball;
                     damage(ch, tmp_vict, dam, dam_sn, DAM_COLD, true);
                 }
 
@@ -6322,7 +6296,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_DROWNING, true);
     }
 
-    static void spell_disenchant_armor(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_disenchant_armor(int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int result, fail;
 
@@ -6378,7 +6352,7 @@ class Magic {
         send_to_char("Nothing seemed to happen.\n", ch);
     }
 
-    static void spell_disenchant_weapon(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_disenchant_weapon(int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int result, fail;
 
@@ -6439,7 +6413,7 @@ class Magic {
         send_to_char("Nothing seemed to happen.\n", ch);
     }
 
-    static void spell_absorb(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_absorb(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn)) {
             send_to_char("You are already absorbing magic surrounding you.\n", ch);
@@ -6457,7 +6431,7 @@ class Magic {
         send_to_char("Your body is surrounded by an energy field.\n", ch);
     }
 
-    static void spell_transfer_object(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_transfer_object(CHAR_DATA ch) {
         send_to_char("Not implemented!\n", ch);
     }
 
@@ -6576,7 +6550,7 @@ class Magic {
         extract_obj(obj);
     }
 
-    static void spell_windwall(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_windwall(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         int dam, hp_dam, dice_dam, hpch;
@@ -6641,7 +6615,7 @@ class Magic {
         }
     }
 
-    static void spell_earthfade(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_earthfade(Skill sn, int level, CHAR_DATA ch) {
 
         if (IS_AFFECTED(ch, AFF_EARTHFADE)) {
             return;
@@ -6689,7 +6663,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_BASH, true);
     }
 
-    static void spell_drain(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_drain(Skill sn, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int drain;
 
@@ -6748,7 +6722,7 @@ class Magic {
 
     }
 
-    static void spell_soften(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_soften(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
@@ -6803,7 +6777,7 @@ class Magic {
         }
 
         if (IS_AFFECTED(victim, AFF_HASTE)) {
-            if (!check_dispel(level, victim, lookupSkill("haste"))) {
+            if (!check_dispel(level, victim, Skill.gsn_haste)) {
                 if (victim != ch) {
                     send_to_char("Spell failed.\n", ch);
                 }

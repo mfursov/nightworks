@@ -3260,7 +3260,7 @@ class ActInfo {
         }
 
         act("$n gives a wise look at $p.", rch, obj, 0, TO_ROOM);
-        spell_identify(Skill.gsn_identify, 0, ch, obj, 0);
+        spell_identify(ch, obj);
     }
 
 

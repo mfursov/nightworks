@@ -352,7 +352,6 @@ import static net.sf.nightworks.Skill.gsn_bless;
 import static net.sf.nightworks.Skill.gsn_blindness;
 import static net.sf.nightworks.Skill.gsn_charm_person;
 import static net.sf.nightworks.Skill.gsn_confuse;
-import static net.sf.nightworks.Skill.gsn_cure_poison;
 import static net.sf.nightworks.Skill.gsn_cursed_lands;
 import static net.sf.nightworks.Skill.gsn_deadly_venom;
 import static net.sf.nightworks.Skill.gsn_doppelganger;
@@ -405,7 +404,7 @@ class Magic2 {
         return null;
     }
 
-    static void spell_portal(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_portal(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
         OBJ_DATA portal, stone;
 
@@ -450,7 +449,7 @@ class Magic2 {
         act("$p rises up before you.", ch, portal, null, TO_CHAR);
     }
 
-    static void spell_nexus(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_nexus(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
         OBJ_DATA portal, stone;
         ROOM_INDEX_DATA to_room, from_room;
@@ -600,7 +599,7 @@ class Magic2 {
 
     }
 
-    static void spell_poison_smoke(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_poison_smoke(CHAR_DATA ch) {
 
         CHAR_DATA tmp_vict;
 
@@ -634,7 +633,7 @@ class Magic2 {
 
     }
 
-    static void spell_blindness_dust(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_blindness_dust(CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
 
         send_to_char("A cloud of dust fills in the room.\n", ch);
@@ -693,7 +692,7 @@ class Magic2 {
         send_to_char("Your skin becomes covered in bark.\n", victim);
     }
 
-    static void spell_bear_call(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_bear_call(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA bear;
         CHAR_DATA bear2;
@@ -762,7 +761,7 @@ class Magic2 {
 
     }
 
-    static void spell_ranger_staff(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_ranger_staff(Skill sn, int level, CHAR_DATA ch) {
         OBJ_DATA staff;
 
         staff = create_object(get_obj_index(OBJ_VNUM_RANGER_STAFF), level);
@@ -802,13 +801,12 @@ class Magic2 {
         obj_to_char(staff, ch);
     }
 
-    static void spell_vanish(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_vanish(CHAR_DATA ch, Object vo) {
         ROOM_INDEX_DATA pRoomIndex = null;
         CHAR_DATA victim = (CHAR_DATA) vo;
         int i;
 
-        if (victim.in_room == null
-                || IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL)) {
+        if (victim.in_room == null || IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL)) {
             send_to_char("You failed.\n", ch);
             return;
         }
@@ -847,7 +845,7 @@ class Magic2 {
         stop_fighting(victim, true);
     }
 
-    static void spell_transform(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_transform(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn) || ch.hit > ch.max_hit) {
             send_to_char("You are already overflowing with health.\n", ch);
@@ -870,7 +868,7 @@ class Magic2 {
         send_to_char("Your mind clouds as your health increases.\n", ch);
     }
 
-    static void spell_mana_transfer(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_mana_transfer(Skill sn, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (victim == ch) {
@@ -891,7 +889,7 @@ class Magic2 {
         }
     }
 
-    static void spell_mental_knife(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_mental_knife(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int dam;
 
@@ -927,7 +925,7 @@ class Magic2 {
         }
     }
 
-    static void spell_demon_summon(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_demon_summon(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA demon;
         int i;
@@ -1003,7 +1001,7 @@ class Magic2 {
 
     }
 
-    static void spell_scourge(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_scourge(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
         CHAR_DATA tmp_next;
         int dam;
@@ -1046,7 +1044,7 @@ class Magic2 {
                     }
 
                     if (number_percent() < level) {
-                        spell_weaken(gsn_weaken, level, ch, tmp_vict);
+                        spell_weaken(gsn_weaken, level, tmp_vict);
                     }
 
                     if (saves_spell(level, tmp_vict, DAM_FIRE)) {
@@ -1059,7 +1057,7 @@ class Magic2 {
         }
     }
 
-    static void spell_doppelganger(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_doppelganger(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if ((ch == victim) ||
@@ -1101,7 +1099,7 @@ class Magic2 {
 
     }
 
-    static void spell_manacles(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_manacles(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (!IS_SET(victim.act, PLR_WANTED)) {
@@ -1135,7 +1133,7 @@ class Magic2 {
         }
     }
 
-    static void spell_shield_ruler(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_shield_ruler(Skill sn, int level, CHAR_DATA ch) {
         int shield_vnum;
         OBJ_DATA shield;
 
@@ -1201,7 +1199,7 @@ class Magic2 {
         act("$n creates $p!", ch, shield, null, TO_ROOM);
     }
 
-    static void spell_guard_call(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_guard_call(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA guard;
         CHAR_DATA guard2;
@@ -1283,7 +1281,7 @@ class Magic2 {
 
     }
 
-    static void spell_nightwalker(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_nightwalker(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA walker;
         int i;
@@ -1355,7 +1353,7 @@ class Magic2 {
 
     }
 
-    static void spell_eyes(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_eyes(CHAR_DATA ch) {
         CHAR_DATA victim;
         ROOM_INDEX_DATA ori_room;
 
@@ -1414,7 +1412,7 @@ class Magic2 {
         }
     }
 
-    static void spell_nightfall(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_nightfall(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         OBJ_DATA light;
 
@@ -1462,7 +1460,7 @@ class Magic2 {
         affect_to_char(ch, af);
     }
 
-    static void spell_mirror(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_mirror(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int mirrors, new_mirrors;
         CHAR_DATA gch;
@@ -1497,8 +1495,7 @@ class Magic2 {
         af.location = 0;
         af.bitvector = 0;
 
-        for (tmp_vict = victim; is_affected(tmp_vict, gsn_doppelganger);
-             tmp_vict = tmp_vict.doppel) {
+        for (tmp_vict = victim; is_affected(tmp_vict, gsn_doppelganger); tmp_vict = tmp_vict.doppel) {
         }
 
         TextBuffer long_buf = new TextBuffer();
@@ -1639,7 +1636,7 @@ class Magic2 {
         do_murder(victim, ch.name);
     }
 
-    static void spell_terangreal(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_terangreal(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_NPC(victim)) {
@@ -1666,7 +1663,7 @@ class Magic2 {
 
     }
 
-    static void spell_kassandra(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_kassandra(Skill sn, int level, CHAR_DATA ch) {
 
 
         if (is_affected(ch, sn)) {
@@ -1691,7 +1688,7 @@ class Magic2 {
     }
 
 
-    static void spell_sebat(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_sebat(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn)) {
             send_to_char("The kassandra has been used for that too recently.\n"
@@ -1737,15 +1734,15 @@ class Magic2 {
 
     }
 
-    static void spell_amnesia(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        int i;
+    @SuppressWarnings("UnusedParameters")
+    static void spell_amnesia(CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_NPC(victim)) {
             return;
         }
 
-        for (i = 0; i < MAX_SKILL; i++) {
+        for (int i = 0; i < MAX_SKILL; i++) {
             victim.pcdata.learned[i] /= 2;
         }
 
@@ -1754,7 +1751,7 @@ class Magic2 {
     }
 
 
-    static void spell_chaos_blade(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_chaos_blade(Skill sn, int level, CHAR_DATA ch) {
         OBJ_DATA blade;
 
         blade = create_object(get_obj_index(OBJ_VNUM_CHAOS_BLADE), level);
@@ -1801,7 +1798,7 @@ class Magic2 {
         obj_to_char(blade, ch);
     }
 
-    static void spell_tattoo(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_tattoo(CHAR_DATA ch, Object vo) {
         OBJ_DATA tattoo;
         CHAR_DATA victim = (CHAR_DATA) vo;
         int i;
@@ -1837,7 +1834,7 @@ class Magic2 {
         send_to_char("You don't have a religious tattoo.\n", ch);
     }
 
-    static void spell_remove_tattoo(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_remove_tattoo(CHAR_DATA ch, Object vo) {
         OBJ_DATA tattoo;
         CHAR_DATA victim = (CHAR_DATA) vo;
 
@@ -1903,22 +1900,18 @@ class Magic2 {
         }
     }
 
-    static void spell_old_randomizer(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_old_randomizer(Skill sn, int level, CHAR_DATA ch) {
         ROOM_INDEX_DATA pRoomIndex;
         EXIT_DATA pexit;
         int d0;
         int d1;
 
         if (is_affected(ch, sn)) {
-            send_to_char
-                    ("Your power of randomness has been exhausted for now.\n",
-                            ch);
+            send_to_char("Your power of randomness has been exhausted for now.\n", ch);
             return;
         }
         if (IS_SET(ch.in_room.room_flags, ROOM_LAW)) {
-            send_to_char(
-                    "This room is far too orderly for your powers to work on it.\n",
-                    ch);
+            send_to_char("This room is far too orderly for your powers to work on it.\n", ch);
             return;
         }
         AFFECT_DATA af = new AFFECT_DATA();
@@ -1932,8 +1925,7 @@ class Magic2 {
         pRoomIndex = get_room_index(ch.in_room.vnum);
 
         if (number_bits(1) == 0) {
-            send_to_char("Despite your efforts, the universe resisted chaos.\n",
-                    ch);
+            send_to_char("Despite your efforts, the universe resisted chaos.\n", ch);
             if (ch.trust >= 56) {
                 af.duration = 1;
             } else {
@@ -1965,7 +1957,7 @@ class Magic2 {
 
     }
 
-    static void spell_stalker(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_stalker(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA stalker;
         int i;
@@ -2041,7 +2033,7 @@ class Magic2 {
     }
 
 
-    static void spell_tesseract(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_tesseract(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA wch;
         CHAR_DATA wch_next;
@@ -2119,7 +2111,7 @@ class Magic2 {
         }
     }
 
-    static void spell_brew(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_brew(int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         OBJ_DATA potion;
         OBJ_DATA vial;
@@ -2168,53 +2160,53 @@ class Magic2 {
 
         if (obj.item_type == ITEM_TRASH) {
             if (number_percent() < 20) {
-                spell = lookupSkill("fireball");
+                spell = Skill.gsn_fireball;
             } else if (number_percent() < 40) {
-                spell = lookupSkill("cure poison");
+                spell = Skill.gsn_cure_poison;
             } else if (number_percent() < 60) {
-                spell = lookupSkill("cure blind");
+                spell = Skill.gsn_cure_blindness;
             } else if (number_percent() < 80) {
-                spell = lookupSkill("cure disease");
+                spell = Skill.gsn_cure_disease;
             } else {
-                spell = lookupSkill("word of recall");
+                spell = Skill.gsn_word_of_recall;
             }
         } else if (obj.item_type == ITEM_TREASURE) {
             switch (number_bits(3)) {
                 case 0:
-                    spell = lookupSkill("cure critical");
+                    spell = Skill.gsn_cure_critical;
                     break;
                 case 1:
-                    spell = lookupSkill("haste");
+                    spell = Skill.gsn_haste;
                     break;
                 case 2:
-                    spell = lookupSkill("frenzy");
+                    spell = Skill.gsn_frenzy;
                     break;
                 case 3:
-                    spell = lookupSkill("create spring");
+                    spell = Skill.gsn_create_spring;
                     break;
                 case 4:
-                    spell = lookupSkill("holy word");
+                    spell = Skill.gsn_holy_word;
                     break;
                 case 5:
-                    spell = lookupSkill("invis");
+                    spell = Skill.gsn_invis;
                     break;
                 case 6:
-                    spell = lookupSkill("cure light");
+                    spell = Skill.gsn_cure_light;
                     break;
                 case 7:
-                    spell = lookupSkill("cure serious");
+                    spell = Skill.gsn_cure_serious;
                     break;
 
             }
         } else {
             if (number_percent() < 20) {
-                spell = lookupSkill("detect magic");
+                spell = Skill.gsn_detect_magic;
             } else if (number_percent() < 40) {
-                spell = lookupSkill("detect invis");
+                spell = Skill.gsn_detect_invis;
             } else if (number_percent() < 65) {
-                spell = lookupSkill("pass door");
+                spell = Skill.gsn_pass_door;
             } else {
-                spell = lookupSkill("acute vision");
+                spell = Skill.gsn_acute_vision;
             }
         }
         if (spell == null) {
@@ -2310,8 +2302,7 @@ class Magic2 {
         for (badge = ch.carrying; badge != null;
              badge = obj_next) {
             obj_next = badge.next_content;
-            if (badge.pIndexData.vnum == OBJ_VNUM_DEPUTY_BADGE
-                    || badge.pIndexData.vnum == OBJ_VNUM_RULER_BADGE) {
+            if (badge.pIndexData.vnum == OBJ_VNUM_DEPUTY_BADGE || badge.pIndexData.vnum == OBJ_VNUM_RULER_BADGE) {
                 act("Your $p vanishes.", ch, badge, null, TO_CHAR);
                 obj_from_char(badge);
                 extract_obj(badge);
@@ -2360,7 +2351,7 @@ class Magic2 {
 
     }
 
-    static void spell_remove_badge(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_remove_badge(CHAR_DATA ch, Object vo) {
         OBJ_DATA badge;
         CHAR_DATA victim = (CHAR_DATA) vo;
         OBJ_DATA obj_next;
@@ -2379,7 +2370,7 @@ class Magic2 {
         }
     }
 
-    static void spell_dragon_strength(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_dragon_strength(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn)) {
             send_to_char("You are already full of the strength of the dragon.\n",
@@ -2431,7 +2422,7 @@ class Magic2 {
         }
     }
 
-    static void spell_golden_aura(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_golden_aura(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
 
         for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
@@ -2476,7 +2467,7 @@ class Magic2 {
         }
     }
 
-    static void spell_dragonplate(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_dragonplate(Skill sn, int level, CHAR_DATA ch) {
         int plate_vnum;
         OBJ_DATA plate;
 
@@ -2507,7 +2498,7 @@ class Magic2 {
         act("$n creates $p!", ch, plate, null, TO_ROOM);
     }
 
-    static void spell_squire(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_squire(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA squire;
         int i;
@@ -2584,7 +2575,7 @@ class Magic2 {
     }
 
 
-    static void spell_dragonsword(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_dragonsword(Skill sn, int level, CHAR_DATA ch) {
         int sword_vnum;
         OBJ_DATA sword;
         StringBuilder argb = new StringBuilder();
@@ -2641,7 +2632,7 @@ class Magic2 {
         act("$n creates $p!", ch, sword, null, TO_ROOM);
     }
 
-    static void spell_entangle(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_entangle(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (ch.in_room.sector_type == SECT_INSIDE ||
@@ -2660,10 +2651,8 @@ class Magic2 {
         //todo: ch->level -> dam?
         damage(ch, victim, ch.level, gsn_entangle, DAM_PIERCE, true);
 
-        act("The thorny plants spring up around $n, entangling $s legs!", victim,
-                null, null, TO_ROOM);
-        act("The thorny plants spring up around you, entangling your legs!", victim,
-                null, null, TO_CHAR);
+        act("The thorny plants spring up around $n, entangling $s legs!", victim, null, null, TO_ROOM);
+        act("The thorny plants spring up around you, entangling your legs!", victim, null, null, TO_CHAR);
 
         victim.move -= dice(level, 6);
         victim.move = UMAX(0, victim.move);
@@ -2682,8 +2671,7 @@ class Magic2 {
         }
     }
 
-    static void spell_holy_armor(Skill sn, int level, CHAR_DATA ch, Object vo) {
-
+    static void spell_holy_armor(Skill sn, int level, CHAR_DATA ch) {
         if (is_affected(ch, sn)) {
             send_to_char("You are already protected from harm.", ch);
             return;
@@ -2702,7 +2690,7 @@ class Magic2 {
 
     }
 
-    static void spell_love_potion(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_love_potion(Skill sn, int level, CHAR_DATA ch) {
         AFFECT_DATA af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
@@ -2779,7 +2767,7 @@ class Magic2 {
                 victim);
     }
 
-    static void spell_disperse(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_disperse(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         ROOM_INDEX_DATA pRoomIndex;
@@ -2854,7 +2842,7 @@ class Magic2 {
         af.bitvector = 0;
         affect_to_char(victim, af);
 
-        spell_remove_curse(lookupSkill("remove curse"), level, ch, victim, TARGET_CHAR);
+        spell_remove_curse(level, ch, victim, TARGET_CHAR);
         spell_bless(lookupSkill("bless"), level, ch, victim, TARGET_CHAR);
 
         send_to_char("Your honor protects you.\n", victim);
@@ -3032,7 +3020,7 @@ class Magic2 {
         }
     }
 
-    static void spell_sand_storm(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_sand_storm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch, vch_next;
         int dam, hp_dam, dice_dam;
         int hpch;
@@ -3077,7 +3065,7 @@ class Magic2 {
         }
     }
 
-    static void spell_scream(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_scream(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch, vch_next;
         int dam, hp_dam, dice_dam;
         int hpch;
@@ -3129,7 +3117,7 @@ class Magic2 {
     }
 
 
-    static void spell_vampire(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_vampire(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn)) {
             send_to_char("You can't be much more vampire!\n", ch);
@@ -3417,11 +3405,11 @@ class Magic2 {
     }
 
 
-    static void spell_group_defense(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_group_defense(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill shield_sn = lookupSkill("shield");
-        Skill armor_sn = lookupSkill("armor");
+        Skill shield_sn = Skill.gsn_shield;
+        Skill armor_sn = Skill.gsn_armor;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if (!is_same_group(gch, ch)) {
@@ -3481,10 +3469,10 @@ class Magic2 {
     }
 
 
-    static void spell_inspire(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_inspire(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill bless_sn = lookupSkill("bless");
+        Skill bless_sn = Skill.gsn_bless;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if (!is_same_group(gch, ch)) {
@@ -3522,10 +3510,10 @@ class Magic2 {
     }
 
 
-    static void spell_mass_sanctuary(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_mass_sanctuary(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill sanc_sn = lookupSkill("sanctuary");
+        Skill sanc_sn = Skill.gsn_sanctuary;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if (!is_same_group(gch, ch)) {
@@ -3557,7 +3545,7 @@ class Magic2 {
         }
     }
 
-    static void spell_mend(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_mend(CHAR_DATA ch, Object vo) {
         OBJ_DATA obj = (OBJ_DATA) vo;
         int result, skill;
 
@@ -3633,7 +3621,7 @@ class Magic2 {
     }
 
 
-    static void spell_link(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_link(CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int random, tmpmana;
 
@@ -3669,7 +3657,7 @@ class Magic2 {
         raw_kill(victim);
     }
 
-    static void spell_eyed_sword(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_eyed_sword(CHAR_DATA ch) {
         OBJ_DATA eyed;
         int i;
 /*
@@ -3716,7 +3704,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("Don't forget that you won't be able to create this weapon anymore.\n", ch);
     }
 
-    static void spell_lion_help(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_lion_help(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA lion;
         CHAR_DATA victim;
         int i;
@@ -3812,7 +3800,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_magic_jar(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_magic_jar(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         OBJ_DATA vial;
         OBJ_DATA fire;
@@ -3961,7 +3949,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_turn(Skill sn, int level, CHAR_DATA ch, Object vo, int target) {
+    static void spell_turn(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
 
@@ -4000,7 +3988,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_fear(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_fear(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if ((victim.clazz == Clazz.SAMURAI) && (victim.level >= 10)) {
@@ -4025,7 +4013,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         act("$n looks with afraid eyes.", victim, null, null, TO_ROOM);
     }
 
-    static void spell_protection_heat(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_protection_heat(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, gsn_protection_heat)) {
@@ -4070,7 +4058,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_protection_cold(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_protection_cold(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, gsn_protection_cold)) {
@@ -4114,7 +4102,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_fire_shield(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_fire_shield(CHAR_DATA ch) {
         OBJ_DATA fire;
         int i;
 
@@ -4166,7 +4154,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("You create the fire shield.\n", ch);
     }
 
-    static void spell_witch_curse(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_witch_curse(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, gsn_witch_curse)) {
@@ -4198,7 +4186,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     private static final int rev_dir[] = {2, 3, 0, 1, 5, 4};
 
-    static void spell_knock(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_knock(Skill sn, CHAR_DATA ch) {
         int chance;
         int door;
 
@@ -4277,7 +4265,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_magic_resistance(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_magic_resistance(Skill sn, int level, CHAR_DATA ch) {
 
         if (!is_affected(ch, sn)) {
             send_to_char("You are now resistive to magic.\n", ch);
@@ -4296,11 +4284,11 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_hallucination(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_hallucination(CHAR_DATA ch) {
         send_to_char("That spell is under construction.\n", ch);
     }
 
-    static void spell_wolf(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_wolf(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA demon;
         int i;
@@ -4403,7 +4391,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_mind_light(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_mind_light(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected_room(ch.in_room, sn)) {
             send_to_char("This room has already had booster of mana.\n", ch);
@@ -4459,7 +4447,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_power_stun(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_power_stun(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
 
@@ -4481,7 +4469,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_improved_invis(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_improved_invis(Skill sn, int level, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_IMP_INVIS)) {
@@ -4545,7 +4533,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         damage(ch, victim, dam, sn, DAM_BASH, true);
     }
 
-    static void spell_randomizer(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_randomizer(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn)) {
             send_to_char
@@ -4649,7 +4637,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_resilience(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_resilience(Skill sn, int level, CHAR_DATA ch) {
 
         if (!is_affected(ch, sn)) {
             send_to_char("You are now resistive to draining attacks.\n", ch);
@@ -4668,7 +4656,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_super_heal(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_super_heal(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int bonus = 170 + level + dice(1, 20);
 
@@ -4680,7 +4668,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_master_heal(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_master_heal(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int bonus = 300 + level + dice(1, 40);
 
@@ -4692,40 +4680,40 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_group_heal(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_group_heal(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill heal_num = lookupSkill("master healing");
-        Skill refresh_num = lookupSkill("refresh");
+        Skill heal_num = Skill.gsn_mass_healing;
+        Skill refresh_num = Skill.gsn_refresh;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if ((IS_NPC(ch) && IS_NPC(gch)) ||
                     (!IS_NPC(ch) && !IS_NPC(gch))) {
-                spell_heal(heal_num, level, ch, gch, TARGET_CHAR);
-                spell_refresh(refresh_num, level, ch, gch, TARGET_CHAR);
+                spell_heal(level, ch, gch);
+                spell_refresh(level, ch, gch);
             }
         }
     }
 
 
-    static void spell_restoring_light(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_restoring_light(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
         int mana_add;
 
         if (IS_AFFECTED(victim, AFF_BLIND)) {
-            Skill nsn = lookupSkill("cure blindness");
-            spell_cure_blindness(nsn, level, ch, victim);
+            Skill nsn = Skill.gsn_cure_blindness;
+            spell_cure_blindness(level, ch, victim);
         }
         if (IS_AFFECTED(victim, AFF_CURSE)) {
-            Skill nsn = lookupSkill("remove curse");
-            spell_remove_curse(nsn, level, ch, victim, TARGET_CHAR);
+            Skill nsn = Skill.gsn_remove_curse;
+            spell_remove_curse(level, ch, victim, TARGET_CHAR);
         }
         if (IS_AFFECTED(victim, AFF_POISON)) {
-            spell_cure_poison(gsn_cure_poison, level, ch, victim);
+            spell_cure_poison(level, ch, victim);
         }
         if (IS_AFFECTED(victim, AFF_PLAGUE)) {
-            Skill nsn = lookupSkill("cure disease");
-            spell_cure_disease(nsn, level, ch, victim);
+            Skill nsn = Skill.gsn_cure_disease;
+            spell_cure_disease(level, ch, victim);
         }
 
         if (victim.hit != victim.max_hit) {
@@ -4741,7 +4729,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_lesser_golem(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_lesser_golem(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA golem;
         int i = 0;
@@ -4817,7 +4805,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_stone_golem(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_stone_golem(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA golem;
         int i = 0;
@@ -4893,7 +4881,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_iron_golem(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_iron_golem(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA golem;
         int i;
@@ -4966,7 +4954,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_adamantite_golem(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_adamantite_golem(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA golem;
 
@@ -5038,7 +5026,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_sanctify_lands(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_sanctify_lands(CHAR_DATA ch) {
         if (number_bits(1) == 0) {
             send_to_char("You failed.\n", ch);
             return;
@@ -5072,7 +5060,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_deadly_venom(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_deadly_venom(Skill sn, int level, CHAR_DATA ch) {
 
         if (IS_SET(ch.in_room.room_flags, ROOM_LAW)) {
             send_to_char("This room is protected by gods.\n", ch);
@@ -5098,7 +5086,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_cursed_lands(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_cursed_lands(Skill sn, int level, CHAR_DATA ch) {
 
         if (IS_SET(ch.in_room.room_flags, ROOM_LAW)) {
             send_to_char("This room is protected by gods.\n", ch);
@@ -5124,7 +5112,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_lethargic_mist(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_lethargic_mist(Skill sn, int level, CHAR_DATA ch) {
 
         if (IS_SET(ch.in_room.room_flags, ROOM_LAW)) {
             send_to_char("This room is protected by gods.\n", ch);
@@ -5150,7 +5138,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_black_death(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_black_death(Skill sn, int level, CHAR_DATA ch) {
 
         if (IS_SET(ch.in_room.room_flags, ROOM_LAW)) {
             send_to_char("This room is protected by gods.\n", ch);
@@ -5176,7 +5164,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_mysterious_dream(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_mysterious_dream(Skill sn, int level, CHAR_DATA ch) {
 
         if (IS_SET(ch.in_room.room_flags, ROOM_LAW)) {
             send_to_char("This room is protected by gods.\n", ch);
@@ -5202,7 +5190,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_polymorph(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_polymorph(Skill sn, int level, CHAR_DATA ch) {
         if (is_affected(ch, sn)) {
             send_to_char("You are already polymorphed.\n", ch);
             return;
@@ -5235,7 +5223,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_plant_form(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_plant_form(int level, CHAR_DATA ch) {
 
         if (ch.in_room == null
                 || IS_SET(ch.in_room.room_flags, ROOM_PRIVATE)
@@ -5333,7 +5321,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_protection_negative(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_protection_negative(Skill sn, int level, CHAR_DATA ch) {
 
         if (!is_affected(ch, sn)) {
             send_to_char("You are now immune to negative attacks.\n", ch);
@@ -5353,7 +5341,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_ruler_aura(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_ruler_aura(Skill sn, int level, CHAR_DATA ch) {
 
         if (!is_affected(ch, sn)) {
             send_to_char("You now feel more self confident in rulership.\n", ch);
@@ -5373,7 +5361,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_evil_spirit(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_evil_spirit(Skill sn, int level, CHAR_DATA ch) {
         AREA_DATA pArea = ch.in_room.area;
         ROOM_INDEX_DATA room;
         int i;
@@ -5515,7 +5503,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_summon_shadow(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_summon_shadow(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA shadow;
         int i;
@@ -5582,7 +5570,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_farsight(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_farsight(CHAR_DATA ch) {
         ROOM_INDEX_DATA room, oldr;
 
         if ((room = check_place(ch, target_name)) == null) {
@@ -5608,7 +5596,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_remove_fear(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_remove_fear(int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (check_dispel(level, victim, gsn_fear)) {
@@ -5691,7 +5679,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        if (is_affected(victim, lookupSkill("calm"))) {
+        if (is_affected(victim, Skill.gsn_calm)) {
             if (victim == ch) {
                 send_to_char("Why don't you just relax for a while?\n", ch);
             } else {
@@ -5760,7 +5748,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         damage(ch, victim, dam, sn, DAM_BASH, true);
     }
 
-    static void spell_wolf_spirit(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_wolf_spirit(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn)) {
             send_to_char("The blood in your vains flowing as fast as it can!\n", ch);
@@ -5833,7 +5821,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         damage(ch, victim, dam, sn, DAM_MENTAL, true);
     }
 
-    static void spell_guard_dogs(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_guard_dogs(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA dog;
         CHAR_DATA dog2;
@@ -5906,7 +5894,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_eyes_of_tiger(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_eyes_of_tiger(CHAR_DATA ch) {
         CHAR_DATA victim;
         ROOM_INDEX_DATA ori_room;
 
@@ -5938,7 +5926,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_lion_shield(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_lion_shield(Skill sn, int level, CHAR_DATA ch) {
         OBJ_DATA shield;
 
         shield = create_object(get_obj_index(OBJ_VNUM_LION_SHIELD), level);
@@ -5994,7 +5982,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         act("$n creates $p!", ch, shield, null, TO_ROOM);
     }
 
-    static void spell_evolve_lion(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_evolve_lion(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected(ch, sn) || ch.hit > ch.max_hit) {
             send_to_char("You are already as lion as you can get.\n", ch);
@@ -6044,7 +6032,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         act("The skin of $n turns to grey!", ch, null, null, TO_ROOM);
     }
 
-    static void spell_prevent(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_prevent(Skill sn, int level, CHAR_DATA ch) {
 
         if (is_affected_room(ch.in_room, sn)) {
             send_to_char("This room has already prevented from revenges!\n", ch);
@@ -6112,8 +6100,8 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
 
         if (number_percent() < (0.7 * get_skill(ch, sn))) {
-            spell_blindness(lookupSkill("blindness"), (level - 10), ch, victim);
-            spell_slow(lookupSkill("slow"), (level - 10), ch, victim);
+            spell_blindness(Skill.gsn_blindness, (level - 10), ch, victim);
+            spell_slow(Skill.gsn_slow, (level - 10), ch, victim);
         }
 
         damage(ch, victim, dam, sn, DAM_LIGHT, true);
@@ -6284,7 +6272,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("But it ain't dead!!\n", ch);
     }
 
-    static void spell_soul_bind(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_soul_bind(CHAR_DATA ch, Object vo) {
         CHAR_DATA victim = (CHAR_DATA) vo;
 
         if (ch.pet != null) {

@@ -225,7 +225,6 @@ import static net.sf.nightworks.Nightworks.SET_BIT;
 import static net.sf.nightworks.Nightworks.SHOP_DATA;
 import static net.sf.nightworks.Nightworks.SIZE_LARGE;
 import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.TARGET_OBJ;
 import static net.sf.nightworks.Nightworks.TAR_CHAR_DEFENSIVE;
 import static net.sf.nightworks.Nightworks.TAR_CHAR_OFFENSIVE;
 import static net.sf.nightworks.Nightworks.TAR_CHAR_SELF;
@@ -4605,7 +4604,7 @@ class ActObj {
             return;
         }
         ch.mana -= 100;
-        spell_enchant_weapon(gsn_enchant_weapon, ch.level, ch, obj, TARGET_OBJ);
+        spell_enchant_weapon(gsn_enchant_weapon, ch.level, ch, obj);
         check_improve(ch, gsn_enchant_sword, true, 2);
         WAIT_STATE(ch, gsn_enchant_sword.beats);
     }

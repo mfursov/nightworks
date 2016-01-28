@@ -185,7 +185,7 @@ class Healer {
                 && !IS_AFFECTED(ch, AFF_POISON) && !IS_AFFECTED(ch, AFF_CURSE)) {
             do_say(mob, "You don't need my help, my dear. But in case!");
             sn = lookupSkill("remove curse");
-            spell_remove_curse(sn, mob.level, mob, ch, TARGET_CHAR);
+            spell_remove_curse(mob.level, mob, ch, TARGET_CHAR);
             return;
         }
 
@@ -200,20 +200,20 @@ class Healer {
 
         if (IS_AFFECTED(ch, AFF_BLIND)) {
             sn = lookupSkill("cure blindness");
-            spell_cure_blindness(sn, mob.level, mob, ch);
+            spell_cure_blindness(mob.level, mob, ch);
         }
 
         if (IS_AFFECTED(ch, AFF_PLAGUE)) {
             sn = lookupSkill("cure disease");
-            spell_cure_disease(sn, mob.level, mob, ch);
+            spell_cure_disease(mob.level, mob, ch);
         }
         if (IS_AFFECTED(ch, AFF_POISON)) {
             sn = lookupSkill("cure poison");
-            spell_cure_poison(sn, mob.level, mob, ch);
+            spell_cure_poison(mob.level, mob, ch);
         }
         if (IS_AFFECTED(ch, AFF_CURSE)) {
             sn = lookupSkill("remove curse");
-            spell_remove_curse(sn, mob.level, mob, ch, TARGET_CHAR);
+            spell_remove_curse(mob.level, mob, ch, TARGET_CHAR);
         }
     }
 

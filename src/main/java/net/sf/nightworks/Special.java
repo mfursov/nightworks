@@ -546,27 +546,27 @@ class Special {
 
             case 2:
                 act("$n utters the words 'judicandus noselacri'.", ch, null, null, TO_ROOM);
-                spell_cure_blindness(Skill.gsn_cure_blindness, ch.level, ch, victim);
+                spell_cure_blindness(ch.level, ch, victim);
                 return true;
 
             case 3:
                 act("$n utters the words 'judicandus dies'.", ch, null, null, TO_ROOM);
-                spell_cure_light(Skill.gsn_cure_light, ch.level, ch, victim);
+                spell_cure_light(ch.level, ch, victim);
                 return true;
 
             case 4:
                 act("$n utters the words 'judicandus sausabru'.", ch, null, null, TO_ROOM);
-                spell_cure_poison(Skill.gsn_cure_poison, ch.level, ch, victim);
+                spell_cure_poison(ch.level, ch, victim);
                 return true;
 
             case 5:
                 act("$n utters the word 'candusima'.", ch, null, null, TO_ROOM);
-                spell_refresh(lookupSkill("refresh"), ch.level, ch, victim, TARGET_CHAR);
+                spell_refresh(ch.level, ch, victim);
                 return true;
 
             case 6:
                 act("$n utters the words 'judicandus eugzagz'.", ch, null, null, TO_ROOM);
-                spell_cure_disease(lookupSkill("cure disease"), ch.level, ch, victim);
+                spell_cure_disease(ch.level, ch, victim);
         }
 
         return false;
@@ -1022,22 +1022,22 @@ class Special {
 
             case 2:
                 act("$n utters the word 'judicandus noselacba'.", ch, null, null, TO_ROOM);
-                spell_cure_blindness(Skill.gsn_cure_blindness, ch.level, ch, victim);
+                spell_cure_blindness(ch.level, ch, victim);
                 return true;
 
             case 3:
                 act("$n utters the word 'judicandus bacla'.", ch, null, null, TO_ROOM);
-                spell_cure_light(lookupSkill("cure light"), ch.level, ch, victim);
+                spell_cure_light(ch.level, ch, victim);
                 return true;
 
             case 4:
                 act("$n utters the words 'judicandus sausabcla'.", ch, null, null, TO_ROOM);
-                spell_cure_poison(lookupSkill("cure poison"), ch.level, ch, victim);
+                spell_cure_poison(ch.level, ch, victim);
                 return true;
 
             case 5:
                 act("$n utters the words 'candabala'.", ch, null, null, TO_ROOM);
-                spell_refresh(lookupSkill("refresh"), ch.level, ch, victim, TARGET_CHAR);
+                spell_refresh(ch.level, ch, victim);
                 return true;
 
         }

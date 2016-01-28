@@ -229,8 +229,9 @@ class ActHera {
             }
 
             TextBuffer buf = new TextBuffer();
-            if (MOUNTED(ch) != null) {
-                buf.sprintf("$n steps into $p, riding on %s.", MOUNTED(ch).short_descr);
+            mount = MOUNTED(ch);
+            if (mount != null) {
+                buf.sprintf("$n steps into $p, riding on %s.", mount.short_descr);
             } else {
                 buf.sprintf("$n steps into $p.");
             }
@@ -243,7 +244,6 @@ class ActHera {
                         ch, portal, null, TO_CHAR);
             }
 
-            mount = MOUNTED(ch);
             char_from_room(ch);
             char_to_room(ch, location);
 
@@ -1547,7 +1547,7 @@ class ActHera {
                     sprintf(buf, "No bets on this item have been received.\n");
                 }
                 send_to_char("{g" + buf + "{x", ch);
-                spell_identify(Skill.gsn_identify, 0, ch, auction.item, 0);
+                spell_identify(ch, auction.item);
                 return;
             } else {
 

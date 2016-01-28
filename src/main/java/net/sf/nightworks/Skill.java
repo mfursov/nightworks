@@ -2996,9 +2996,44 @@ enum Skill {
         this(name, (SpellFun) null, target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
+    Skill(String name, SpellFun123 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+        this(name, (sn, level, ch, vo, target1) -> {
+                    spellFun.do_spell(sn, level, ch);
+                },
+                target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
+    }
+
+    Skill(String name, SpellFun134 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+        this(name, (sn, level, ch, vo, target1) -> {
+                    spellFun.do_spell(sn, ch, vo);
+                },
+                target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
+    }
+
     Skill(String name, SpellFun1234 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
         this(name, (sn, level, ch, vo, target1) -> {
                     spellFun.do_spell(sn, level, ch, vo);
+                },
+                target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
+    }
+
+    Skill(String name, SpellFun13 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+        this(name, (sn, level, ch, vo, target1) -> {
+                    spellFun.do_spell(sn, ch);
+                },
+                target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
+    }
+
+    Skill(String name, SpellFun23 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+        this(name, (sn, level, ch, vo, target1) -> {
+                    spellFun.do_spell(level, ch);
+                },
+                target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
+    }
+
+    Skill(String name, SpellFun34 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+        this(name, (sn, level, ch, vo, target1) -> {
+                    spellFun.do_spell(ch, vo);
                 },
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
@@ -3010,12 +3045,21 @@ enum Skill {
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
-    Skill(String name, SpellFun2 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+    Skill(String name, SpellFun2345 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
         this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(level);
+                    spellFun.do_spell(level, ch, vo, target1);
                 },
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
+
+
+    Skill(String name, SpellFun3 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
+        this(name, (sn, level, ch, vo, target1) -> {
+                    spellFun.do_spell(ch);
+                },
+                target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
+    }
+
 
     public boolean isSpell() {
         return spellFun != null;
@@ -3090,15 +3134,40 @@ enum Skill {
         void do_spell(Skill sn, int level, CHAR_DATA ch, Object vo, int target);
     }
 
+    private interface SpellFun123 {
+        void do_spell(Skill sn, int level, CHAR_DATA ch);
+    }
+
     private interface SpellFun1234 {
         void do_spell(Skill sn, int level, CHAR_DATA ch, Object vo);
+    }
+
+    interface SpellFun13 {
+        void do_spell(Skill sn, CHAR_DATA ch);
+    }
+
+    interface SpellFun134 {
+        void do_spell(Skill sn, CHAR_DATA ch, Object vo);
+    }
+
+    private interface SpellFun23 {
+        void do_spell(int level, CHAR_DATA ch);
     }
 
     private interface SpellFun234 {
         void do_spell(int level, CHAR_DATA ch, Object vo);
     }
 
-    private interface SpellFun2 {
-        void do_spell(int level);
+    private interface SpellFun2345 {
+        void do_spell(int level, CHAR_DATA ch, Object vo, int target);
     }
+
+    private interface SpellFun3 {
+        void do_spell(CHAR_DATA ch);
+    }
+
+    private interface SpellFun34 {
+        void do_spell(CHAR_DATA ch, Object vo);
+    }
+
 }
