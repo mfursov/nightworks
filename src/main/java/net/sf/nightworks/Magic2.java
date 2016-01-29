@@ -392,9 +392,7 @@ class Magic2 {
             if (--range < 1) {
                 return null;
             }
-            if ((pExit = dest_room.exit[door]) == null
-                    || (dest_room = pExit.to_room) == null
-                    || IS_SET(pExit.exit_info, EX_CLOSED)) {
+            if ((pExit = dest_room.exit[door]) == null || (dest_room = pExit.to_room) == null || IS_SET(pExit.exit_info, EX_CLOSED)) {
                 break;
             }
             if (number < 1) {
@@ -623,14 +621,12 @@ class Magic2 {
                 }
 
                 spell_poison(gsn_poison, ch.level, ch, tmp_vict, TARGET_CHAR);
-/*        poison_effect(ch.in_room,level,level,TARGET_CHAR);  */
+                /*  poison_effect(ch.in_room,level,level,TARGET_CHAR);  */
                 if (tmp_vict != ch) {
                     multi_hit(tmp_vict, ch, null);
                 }
-
             }
         }
-
     }
 
     static void spell_blindness_dust(CHAR_DATA ch) {
@@ -814,10 +810,7 @@ class Magic2 {
         for (i = 0; i < 65535; i++) {
             pRoomIndex = get_room_index(number_range(0, 65535));
             if (pRoomIndex != null) {
-                if (can_see_room(victim, pRoomIndex) && !room_is_private(pRoomIndex)
-                        && victim.in_room.area == pRoomIndex.area)
-
-                {
+                if (can_see_room(victim, pRoomIndex) && !room_is_private(pRoomIndex) && victim.in_room.area == pRoomIndex.area) {
                     break;
                 }
             }
@@ -957,8 +950,7 @@ class Magic2 {
             demon.perm_stat[i] = ch.perm_stat[i];
         }
 
-        demon.max_hit = IS_NPC(ch) ? URANGE(ch.max_hit, ch.max_hit, 30000)
-                : URANGE(ch.pcdata.perm_hit, ch.hit, 30000);
+        demon.max_hit = IS_NPC(ch) ? URANGE(ch.max_hit, ch.max_hit, 30000) : URANGE(ch.pcdata.perm_hit, ch.hit, 30000);
         demon.hit = demon.max_hit;
         demon.max_mana = IS_NPC(ch) ? ch.max_mana : ch.pcdata.perm_mana;
         demon.mana = demon.max_mana;

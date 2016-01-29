@@ -303,7 +303,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
         chance = get_skill(ch, gsn_berserk);
 
-        if (IS_AFFECTED(ch, AFF_BERSERK) || is_affected(ch, gsn_berserk) || is_affected(ch, lookupSkill("frenzy"))) {
+        if (IS_AFFECTED(ch, AFF_BERSERK) || is_affected(ch, gsn_berserk) || is_affected(ch, Skill.gsn_frenzy)) {
             send_to_char("You get a little madder.\n", ch);
             return;
         }
@@ -2474,7 +2474,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         act("$n calls the power of 10 tigers!.", ch, null, null, TO_ROOM);
 
         if (IS_AFFECTED(ch, AFF_BERSERK) || is_affected(ch, gsn_berserk) ||
-                is_affected(ch, gsn_tiger_power) || is_affected(ch, lookupSkill("frenzy"))) {
+                is_affected(ch, gsn_tiger_power) || is_affected(ch, Skill.gsn_frenzy)) {
             send_to_char("You get a little madder.\n", ch);
             return;
         }

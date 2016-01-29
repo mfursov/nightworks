@@ -34,6 +34,7 @@ import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class Healer {
+    @SuppressWarnings("SpellCheckingInspection")
     static void do_heal(CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         int cost;
@@ -86,35 +87,35 @@ class Healer {
         int expl = 0;
         String arg = argb.toString();
         if (!str_prefix(arg, "light")) {
-            sn = lookupSkill("cure light");
+            sn = Skill.gsn_cure_light;
             words = "judicandus dies";
             cost = 1000;
         } else if (!str_prefix(arg, "serious")) {
-            sn = lookupSkill("cure serious");
+            sn = Skill.gsn_cure_serious;
             words = "judicandus gzfuajg";
             cost = 1600;
         } else if (!str_prefix(arg, "critical")) {
-            sn = lookupSkill("cure critical");
+            sn = Skill.gsn_cure_critical;
             words = "judicandus qfuhuqar";
             cost = 2500;
         } else if (!str_prefix(arg, "heal")) {
-            sn = lookupSkill("heal");
+            sn = Skill.gsn_heal;
             words = "pzar";
             cost = 5000;
         } else if (!str_prefix(arg, "blindness")) {
-            sn = lookupSkill("cure blindness");
+            sn = Skill.gsn_cure_blindness;
             words = "judicandus noselacri";
             cost = 2000;
         } else if (!str_prefix(arg, "disease")) {
-            sn = lookupSkill("cure disease");
+            sn = Skill.gsn_cure_disease;
             words = "judicandus eugzagz";
             cost = 1500;
         } else if (!str_prefix(arg, "poison")) {
-            sn = lookupSkill("cure poison");
+            sn = Skill.gsn_cure_poison;
             words = "judicandus sausabru";
             cost = 2500;
         } else if (!str_prefix(arg, "uncurse") || !str_prefix(arg, "curse")) {
-            sn = lookupSkill("remove curse");
+            sn = Skill.gsn_remove_curse;
             words = "candussido judifgz";
             cost = 5000;
         } else if (!str_prefix(arg, "mana")) {
@@ -122,11 +123,11 @@ class Healer {
             words = "candamira";
             cost = 1000;
         } else if (!str_prefix(arg, "refresh") || !str_prefix(arg, "moves")) {
-            sn = lookupSkill("refresh");
+            sn = Skill.gsn_refresh;
             words = "candusima";
             cost = 500;
         } else if (!str_prefix(arg, "master")) {
-            sn = lookupSkill("master healing");
+            sn = Skill.gsn_master_healing;
             words = "candastra nikazubra";
             cost = 20000;
         } else if (!str_prefix(arg, "energize")) {
@@ -134,8 +135,7 @@ class Healer {
             words = "energizer";
             cost = 20000;
         } else {
-            act("Healer does not offer that spell.  Type 'heal' for a list.",
-                    ch, null, mob, TO_CHAR);
+            act("Healer does not offer that spell.  Type 'heal' for a list.", ch, null, mob, TO_CHAR);
             return;
         }
 
@@ -184,7 +184,7 @@ class Healer {
         if (!IS_AFFECTED(ch, AFF_BLIND) && !IS_AFFECTED(ch, AFF_PLAGUE)
                 && !IS_AFFECTED(ch, AFF_POISON) && !IS_AFFECTED(ch, AFF_CURSE)) {
             do_say(mob, "You don't need my help, my dear. But in case!");
-            sn = lookupSkill("remove curse");
+            sn = Skill.gsn_remove_curse;
             spell_remove_curse(mob.level, mob, ch, TARGET_CHAR);
             return;
         }
@@ -199,20 +199,20 @@ class Healer {
         WAIT_STATE(ch, PULSE_VIOLENCE);
 
         if (IS_AFFECTED(ch, AFF_BLIND)) {
-            sn = lookupSkill("cure blindness");
+            sn = Skill.gsn_cure_blindness;
             spell_cure_blindness(mob.level, mob, ch);
         }
 
         if (IS_AFFECTED(ch, AFF_PLAGUE)) {
-            sn = lookupSkill("cure disease");
+            sn = Skill.gsn_cure_disease;
             spell_cure_disease(mob.level, mob, ch);
         }
         if (IS_AFFECTED(ch, AFF_POISON)) {
-            sn = lookupSkill("cure poison");
+            sn = Skill.gsn_cure_poison;
             spell_cure_poison(mob.level, mob, ch);
         }
         if (IS_AFFECTED(ch, AFF_CURSE)) {
-            sn = lookupSkill("remove curse");
+            sn = Skill.gsn_remove_curse;
             spell_remove_curse(mob.level, mob, ch, TARGET_CHAR);
         }
     }

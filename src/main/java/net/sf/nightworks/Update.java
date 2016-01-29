@@ -792,11 +792,7 @@ public class Update {
             if (IS_AFFECTED(ch, AFF_CORRUPTION) && ch.in_room != null) {
                 ch.hit -= ch.level / 10;
                 if (ch.hit < 1) {
-                    Skill sn = lookupSkill("corruption");
-
-                    if (sn == null) {
-                        sn = gsn_witch_curse;
-                    }
+                    Skill sn = Skill.gsn_corruption;
                     ch.hit = 1;
                     damage(ch, ch, 16, sn, DAM_NONE, false);
                     continue;
@@ -808,11 +804,7 @@ public class Update {
             if (IS_AFFECTED(ch, AFF_SUFFOCATE) && ch.in_room != null) {
                 ch.hit -= ch.level / 5;
                 if (ch.hit < 1) {
-                    Skill sn = lookupSkill("suffocate");
-
-                    if (sn == null) {
-                        sn = gsn_witch_curse;
-                    }
+                    Skill sn = Skill.gsn_suffocate;
                     ch.hit = 1;
                     damage(ch, ch, 16, sn, DAM_NONE, false);
                     continue;

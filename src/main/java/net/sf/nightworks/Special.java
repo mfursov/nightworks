@@ -496,16 +496,10 @@ class Special {
     }
 
     static boolean spec_breath_gas(CHAR_DATA ch) {
-        Skill sn;
-
         if (ch.position != POS_FIGHTING) {
             return false;
         }
-
-        if ((sn = lookupSkill("gas breath")) == null) {
-            return false;
-        }
-        sn.spell_fun(ch.level, ch, null, TARGET_CHAR);
+        Skill.gsn_gas_breath.spell_fun(ch.level, ch, null, TARGET_CHAR);
         return true;
     }
 
@@ -536,12 +530,12 @@ class Special {
         switch (number_bits(4)) {
             case 0:
                 act("$n utters the word 'abrazak'.", ch, null, null, TO_ROOM);
-                spell_armor(lookupSkill("armor"), ch.level, ch, victim);
+                spell_armor(Skill.gsn_armor, ch.level, ch, victim);
                 return true;
 
             case 1:
                 act("$n utters the word 'fido'.", ch, null, null, TO_ROOM);
-                spell_bless(lookupSkill("bless"), ch.level, ch, victim, TARGET_CHAR);
+                spell_bless(Skill.gsn_bless, ch.level, ch, victim, TARGET_CHAR);
                 return true;
 
             case 2:

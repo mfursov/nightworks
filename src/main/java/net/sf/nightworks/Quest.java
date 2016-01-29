@@ -334,7 +334,7 @@ class Quest {
                 }
                 if (ch.pcdata.questpoints >= 50) {
                     ch.pcdata.questpoints -= 50;
-                    sn = lookupSkill("vampire");
+                    sn = Skill.gsn_vampire;
                     ch.pcdata.learned[sn.ordinal()] = 100;
                     act("$N gives secret of undead to $n.", ch, null, questman, TO_ROOM);
                     act("$N gives you SECRET of undead.", ch, null, questman, TO_CHAR);

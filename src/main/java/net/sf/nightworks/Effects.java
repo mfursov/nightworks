@@ -62,7 +62,6 @@ import static net.sf.nightworks.Nightworks.URANGE;
 import static net.sf.nightworks.Nightworks.WEAR_NONE;
 import static net.sf.nightworks.Skill.gsn_poison;
 import static net.sf.nightworks.Skill.gsn_scream;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Update.gain_condition;
 
 class Effects {
@@ -240,7 +239,7 @@ class Effects {
                 act("$n turns blue and shivers.", victim, null, null, TO_ROOM);
                 act("A chill sinks deep into your bones.", victim, null, null, TO_CHAR);
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("chill touch");
+                af.type = Skill.gsn_chill_touch;
                 af.level = level;
                 af.duration = 6;
                 af.location = APPLY_STR;
@@ -344,7 +343,7 @@ class Effects {
                         victim, null, null, TO_CHAR);
 
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("fire breath");
+                af.type = Skill.gsn_fire_breath;
                 af.level = level;
                 af.duration = number_range(0, level / 10);
                 af.location = APPLY_HITROLL;
@@ -659,7 +658,7 @@ class Effects {
                         victim, null, null, TO_CHAR);
 
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("sand storm");
+                af.type = Skill.gsn_sand_storm;
                 af.level = level;
                 af.duration = number_range(0, level / 10);
                 af.location = APPLY_HITROLL;

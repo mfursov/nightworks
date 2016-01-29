@@ -731,8 +731,7 @@ class ObjProg {
                 case 2:
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     do_yell(ch, "Ever dance with good....");
-                    Skill sn = lookupSkill("holy word");
-                    spell_holy_word(sn, ch.level, ch);
+                    spell_holy_word(Skill.gsn_holy_word, ch.level, ch);
                     break;
             }
         }
@@ -880,8 +879,6 @@ class ObjProg {
     }
 
     static void fight_prog_tattoo_phobos(OBJ_DATA obj, CHAR_DATA ch) {
-        Skill sn;
-
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
                 case 0:
@@ -889,11 +886,8 @@ class ObjProg {
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
                     break;
                 case 1:
-                    if ((sn = lookupSkill("colour spray")) == null) {
-                        break;
-                    }
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
-                    obj_cast_spell(sn, ch.level, ch, ch.fighting, obj);
+                    obj_cast_spell(Skill.gsn_colour_spray, ch.level, ch, ch.fighting, obj);
                     break;
             }
         }
@@ -928,7 +922,7 @@ class ObjProg {
                 switch (number_bits(4)) {
                     case 0:
                         if (IS_AFFECTED(ch, AFF_BERSERK) || is_affected(ch, gsn_berserk)
-                                || is_affected(ch, lookupSkill("frenzy"))) {
+                                || is_affected(ch, Skill.gsn_frenzy)) {
                             send_to_char("You get a little madder.\n", ch);
                             return;
                         }
@@ -1016,7 +1010,7 @@ class ObjProg {
                     break;
                 case 2:
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
-                    sn = lookupSkill("web");
+                    sn = Skill.gsn_web;
                     spell_web(sn, ch.level, ch, ch.fighting);
                     break;
             }
@@ -1030,14 +1024,14 @@ class ObjProg {
             switch (number_bits(5)) {
                 case 0:
                 case 1:
-                    if ((sn = lookupSkill("heal")) == null) {
+                    if ((sn = Skill.gsn_heal) == null) {
                         break;
                     }
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(sn, ch.level, ch, ch, obj);
                     break;
                 case 2:
-                    if ((sn = lookupSkill("mass healing")) == null) {
+                    if ((sn = Skill.gsn_mass_healing) == null) {
                         break;
                     }
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);

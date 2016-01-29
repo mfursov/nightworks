@@ -277,7 +277,6 @@ import static net.sf.nightworks.Skill.gsn_curse;
 import static net.sf.nightworks.Skill.gsn_plague;
 import static net.sf.nightworks.Skill.gsn_poison;
 import static net.sf.nightworks.Skill.gsn_sleep;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.Special.spec_name;
 import static net.sf.nightworks.Tables.cabal_table;
@@ -3247,7 +3246,7 @@ class ActWiz {
                 send_to_char(buf, ch);
             }
         } else {
-            Skill sn = lookupSkill(arg.toString());
+            Skill sn = Skill.lookupSkill(arg.toString());
             if (sn == null) {
                 send_to_char("No such skill or spell.\n", ch);
                 return;
@@ -3332,7 +3331,7 @@ class ActWiz {
 
         fAll = !str_cmp(arg2.toString(), "all");
         Skill sn = null;
-        if (!fAll && (sn = lookupSkill(arg2.toString())) == null) {
+        if (!fAll && (sn = Skill.lookupSkill(arg2.toString())) == null) {
             send_to_char("No such skill or spell.\n", ch);
             return;
         }

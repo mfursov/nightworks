@@ -38,7 +38,6 @@ import static net.sf.nightworks.Nightworks.UMIN;
 import static net.sf.nightworks.Nightworks.URANGE;
 import static net.sf.nightworks.Skill.find_spell;
 import static net.sf.nightworks.Skill.gsn_vampire;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Tables.prac_table;
 import static net.sf.nightworks.Update.gain_exp;
 import static net.sf.nightworks.util.TextUtils.one_argument;
@@ -440,7 +439,7 @@ class ActSkill {
             return;
         }
         Skill sn;
-        if ((sn = lookupSkill(arg.toString())) == null) {
+        if ((sn = Skill.lookupSkill(arg.toString())) == null) {
             send_to_char("That is not a spell or skill.\n", ch);
             return;
         }

@@ -232,7 +232,6 @@ import static net.sf.nightworks.Recycle.get_mob_id;
 import static net.sf.nightworks.Recycle.new_char;
 import static net.sf.nightworks.Save.wear_convert;
 import static net.sf.nightworks.Skill.gsn_track;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Skill.skill_num_lookup;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.Tables.act_flags;
@@ -2154,7 +2153,7 @@ class DB {
             /* let's get some spell action */
             if (IS_AFFECTED(mob, AFF_SANCTUARY)) {
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("sanctuary");
+                af.type = Skill.gsn_sanctuary;
                 af.level = mob.level;
                 af.duration = -1;
                 af.location = APPLY_NONE;
@@ -2165,7 +2164,7 @@ class DB {
 
             if (IS_AFFECTED(mob, AFF_HASTE)) {
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("haste");
+                af.type = Skill.gsn_haste;
                 af.level = mob.level;
                 af.duration = -1;
                 af.location = APPLY_DEX;
@@ -2176,7 +2175,7 @@ class DB {
 
             if (IS_AFFECTED(mob, AFF_PROTECT_EVIL)) {
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("protection evil");
+                af.type = Skill.gsn_protection_evil;
                 af.level = mob.level;
                 af.duration = -1;
                 af.location = APPLY_SAVES;
@@ -2187,7 +2186,7 @@ class DB {
 
             if (IS_AFFECTED(mob, AFF_PROTECT_GOOD)) {
                 af.where = TO_AFFECTS;
-                af.type = lookupSkill("protection good");
+                af.type = Skill.gsn_protection_good;
                 af.level = mob.level;
                 af.duration = -1;
                 af.location = APPLY_SAVES;

@@ -4769,13 +4769,8 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         AFFECT_DATA paf;
 
         if (IS_ROOM_AFFECTED(room, AFF_ROOM_L_SHIELD)) {
-            Skill sn;
+            Skill sn = Skill.gsn_lightning_shield;
             CHAR_DATA vch;
-
-            if ((sn = lookupSkill("lightning shield")) == null) {
-                bug("Bad sn for lightning shield");
-                return;
-            }
 
             for (vch = room.people; vch != null; vch = vch.next_in_room) {
                 if (is_room_owner(vch, room)) {
@@ -4812,13 +4807,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         }
 
         if (IS_ROOM_AFFECTED(room, AFF_ROOM_SHOCKING)) {
-            Skill sn;
-
-            if ((sn = lookupSkill("shocking trap")) == null) {
-                bug("Bad sn for shocking shield");
-                return;
-            }
-
+            Skill sn = Skill.gsn_shocking_trap;
             send_to_char("The shocking waves of room shocks you.\n", ch);
 
             if ((paf = affect_find(room.affected, sn)) == null) {
@@ -4862,15 +4851,9 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
 
     static void raffect_back_char(ROOM_INDEX_DATA room, CHAR_DATA ch) {
         if (IS_ROOM_AFFECTED(room, AFF_ROOM_L_SHIELD)) {
-            Skill sn;
-
-            if ((sn = lookupSkill("lightning shield")) == null) {
-                bug("Bad sn for lightning shield", 0);
-                return;
-            }
             if (is_room_owner(ch, room)) {
                 room.owner = "";
-                affect_strip_room(room, sn);
+                affect_strip_room(room, Skill.gsn_lightning_shield);
             }
         }
     }
