@@ -2835,7 +2835,7 @@ class Magic2 {
         affect_to_char(victim, af);
 
         spell_remove_curse(level, ch, victim, TARGET_CHAR);
-        spell_bless(lookupSkill("bless"), level, ch, victim, TARGET_CHAR);
+        spell_bless(Skill.gsn_bless, level, ch, victim, TARGET_CHAR);
 
         send_to_char("Your honor protects you.\n", victim);
         act("$n's Honor protects $m.", victim, null, null, TO_ROOM);

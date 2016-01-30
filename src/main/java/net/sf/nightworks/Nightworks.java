@@ -634,9 +634,9 @@ final class Nightworks {
         }
     }
 
-/*
-* Data structure for notes.
-*/
+    /**
+     * Data structure for notes.
+     */
 
     static final int NOTE_NOTE = 0;
     static final int NOTE_IDEA = 1;
@@ -657,10 +657,9 @@ final class Nightworks {
         int date_stamp;
     }
 
-/*
-* An affect.
-*/
-
+    /**
+     * An affect.
+     */
     static final class AFFECT_DATA {
         AFFECT_DATA next;
         boolean valid;
@@ -2554,9 +2553,9 @@ final class Nightworks {
         return (get_curr_stat(ch, STAT_INT) / 6) + ch.level / 45;
     }
 
-/*
- * Structure for a social in the socials table.
- */
+    /**
+     * Structure for a social in the socials table.
+     */
 
     static final class social_type {
         String name;

@@ -3083,7 +3083,6 @@ enum Skill {
     /*
     * Lookup a skill by name.
     */
-    @Deprecated
     static Skill lookupSkill(String name) {
         if (name.length() == 0) {
             return null;
@@ -3169,5 +3168,4 @@ enum Skill {
     private interface SpellFun34 {
         void do_spell(CHAR_DATA ch, Object vo);
     }
-
 }

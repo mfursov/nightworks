@@ -6,10 +6,6 @@ import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.DB.dice;
 import static net.sf.nightworks.Handler.deduct_cost;
 import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Magic.spell_cure_blindness;
-import static net.sf.nightworks.Magic.spell_cure_disease;
-import static net.sf.nightworks.Magic.spell_cure_poison;
-import static net.sf.nightworks.Magic.spell_remove_curse;
 import static net.sf.nightworks.Nightworks.ACT_IS_HEALER;
 import static net.sf.nightworks.Nightworks.AFF_BLIND;
 import static net.sf.nightworks.Nightworks.AFF_CURSE;
@@ -28,7 +24,6 @@ import static net.sf.nightworks.Nightworks.TO_ROOM;
 import static net.sf.nightworks.Nightworks.TO_VICT;
 import static net.sf.nightworks.Nightworks.UMIN;
 import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
@@ -180,12 +175,9 @@ class Healer {
             do_say(mob, "I won't help you.");
             return;
         }
-        Skill sn;
-        if (!IS_AFFECTED(ch, AFF_BLIND) && !IS_AFFECTED(ch, AFF_PLAGUE)
-                && !IS_AFFECTED(ch, AFF_POISON) && !IS_AFFECTED(ch, AFF_CURSE)) {
+        if (!IS_AFFECTED(ch, AFF_BLIND) && !IS_AFFECTED(ch, AFF_PLAGUE) && !IS_AFFECTED(ch, AFF_POISON) && !IS_AFFECTED(ch, AFF_CURSE)) {
             do_say(mob, "You don't need my help, my dear. But in case!");
-            sn = Skill.gsn_remove_curse;
-            spell_remove_curse(mob.level, mob, ch, TARGET_CHAR);
+            Skill.gsn_remove_curse.spell_fun(mob.level, mob, ch, TARGET_CHAR);
             return;
         }
 
@@ -199,21 +191,19 @@ class Healer {
         WAIT_STATE(ch, PULSE_VIOLENCE);
 
         if (IS_AFFECTED(ch, AFF_BLIND)) {
-            sn = Skill.gsn_cure_blindness;
-            spell_cure_blindness(mob.level, mob, ch);
+            Skill.gsn_cure_blindness.spell_fun(mob.level, mob, ch, TARGET_CHAR);
         }
 
         if (IS_AFFECTED(ch, AFF_PLAGUE)) {
-            sn = Skill.gsn_cure_disease;
-            spell_cure_disease(mob.level, mob, ch);
+            Skill.gsn_cure_disease.spell_fun(mob.level, mob, ch, TARGET_CHAR);
         }
+
         if (IS_AFFECTED(ch, AFF_POISON)) {
-            sn = Skill.gsn_cure_poison;
-            spell_cure_poison(mob.level, mob, ch);
+            Skill.gsn_cure_poison.spell_fun(mob.level, mob, ch, TARGET_CHAR);
         }
+
         if (IS_AFFECTED(ch, AFF_CURSE)) {
-            sn = Skill.gsn_remove_curse;
-            spell_remove_curse(mob.level, mob, ch, TARGET_CHAR);
+            Skill.gsn_remove_curse.spell_fun(mob.level, mob, ch, TARGET_CHAR);
         }
     }
 
