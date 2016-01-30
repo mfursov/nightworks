@@ -1,6 +1,7 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.TextBuffer;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -2474,6 +2475,7 @@ final class Nightworks {
         return IS_SET(room.affected_by, sn);
     }
 
+    @Nullable
     static CHAR_DATA MOUNTED(CHAR_DATA ch) {
         return !IS_NPC(ch) && ch.mount != null && ch.riding ? ch.mount : null;
     }

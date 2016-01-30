@@ -287,10 +287,7 @@ class ActMove {
     static void move_char(CHAR_DATA ch, int door) {
         CHAR_DATA fch;
         CHAR_DATA fch_next;
-        CHAR_DATA mount;
         ROOM_INDEX_DATA in_room;
-        ROOM_INDEX_DATA to_room;
-        EXIT_DATA pexit;
         boolean room_has_pc;
         OBJ_DATA obj;
 
@@ -299,7 +296,8 @@ class ActMove {
             return;
         }
 
-        if (IS_AFFECTED(ch, AFF_WEB) || (MOUNTED(ch) != null && IS_AFFECTED(ch.mount, AFF_WEB))) {
+        CHAR_DATA mount = MOUNTED(ch);
+        if (IS_AFFECTED(ch, AFF_WEB) || (mount != null && IS_AFFECTED(ch.mount, AFF_WEB))) {
             WAIT_STATE(ch, PULSE_VIOLENCE);
             if (number_percent() < str_app[IS_NPC(ch) ? 20 : get_curr_stat(ch, STAT_STR)].tohit * 5) {
                 affect_strip(ch, gsn_web);
@@ -318,8 +316,7 @@ class ActMove {
             return;
         }
 
-        if ((IS_AFFECTED(ch, AFF_HIDE) && !IS_AFFECTED(ch, AFF_SNEAK))
-                || (IS_AFFECTED(ch, AFF_FADE) && !IS_AFFECTED(ch, AFF_SNEAK))) {
+        if ((IS_AFFECTED(ch, AFF_HIDE) && !IS_AFFECTED(ch, AFF_SNEAK)) || (IS_AFFECTED(ch, AFF_FADE) && !IS_AFFECTED(ch, AFF_SNEAK))) {
             ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_HIDE);
             ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_FADE);
             send_to_char("You step out of shadows.\n", ch);
@@ -344,44 +341,38 @@ class ActMove {
         }
 
         in_room = ch.in_room;
-        if ((pexit = in_room.exit[door]) == null
-                || (to_room = pexit.to_room) == null
-                || !can_see_room(ch, pexit.to_room)) {
+        EXIT_DATA exit = in_room.exit[door];
+        ROOM_INDEX_DATA to_room = exit == null ? null : exit.to_room;
+        if (to_room == null || !can_see_room(ch, exit.to_room)) {
             send_to_char("Alas, you cannot go that way.\n", ch);
             return;
         }
 
         if (IS_ROOM_AFFECTED(in_room, AFF_ROOM_RANDOMIZER)) {
-            int d0;
-            int i;
-
-            for (i = 0; i < 1000; i++) {
-                d0 = number_range(0, 5);
-                if ((pexit = in_room.exit[d0]) == null
-                        || (to_room = pexit.to_room) == null
-                        || !can_see_room(ch, pexit.to_room)) {
+            for (int i = 0; i < 1000; i++) {
+                int d0 = number_range(0, 5);
+                EXIT_DATA newExit = in_room.exit[d0];
+                if (newExit == null || newExit.to_room == null || !can_see_room(ch, newExit.to_room)) {
                     continue;
                 }
+                exit = newExit;
+                to_room = exit.to_room;
                 door = d0;
                 break;
             }
         }
 
-        if (IS_SET(pexit.exit_info, EX_CLOSED)
-                && (!IS_AFFECTED(ch, AFF_PASS_DOOR) || IS_SET(pexit.exit_info, EX_NOPASS))
-                && !IS_TRUSTED(ch, ANGEL)) {
-            if (IS_AFFECTED(ch, AFF_PASS_DOOR) && IS_SET(pexit.exit_info, EX_NOPASS)) {
-                act("You failed to pass through the $d.", ch, null, pexit.keyword, TO_CHAR);
-                act("$n tries to pass through the $d, but $e fails", ch, null, pexit.keyword, TO_ROOM);
+        if (IS_SET(exit.exit_info, EX_CLOSED) && (!IS_AFFECTED(ch, AFF_PASS_DOOR) || IS_SET(exit.exit_info, EX_NOPASS)) && !IS_TRUSTED(ch, ANGEL)) {
+            if (IS_AFFECTED(ch, AFF_PASS_DOOR) && IS_SET(exit.exit_info, EX_NOPASS)) {
+                act("You failed to pass through the $d.", ch, null, exit.keyword, TO_CHAR);
+                act("$n tries to pass through the $d, but $e fails", ch, null, exit.keyword, TO_ROOM);
             } else {
-                act("The $d is closed.", ch, null, pexit.keyword, TO_CHAR);
+                act("The $d is closed.", ch, null, exit.keyword, TO_CHAR);
             }
             return;
         }
 
-        if (IS_AFFECTED(ch, AFF_CHARM)
-                && ch.master != null
-                && in_room == ch.master.in_room) {
+        if (IS_AFFECTED(ch, AFF_CHARM) && ch.master != null && in_room == ch.master.in_room) {
             send_to_char("What?  And leave your beloved master?\n", ch);
             return;
         }
@@ -392,12 +383,12 @@ class ActMove {
             return;
         }
 
-        if (MOUNTED(ch) != null) {
-            if (MOUNTED(ch).position < POS_FIGHTING) {
+        if (mount != null) {
+            if (mount.position < POS_FIGHTING) {
                 send_to_char("Your mount must be standing.\n", ch);
                 return;
             }
-            if (!mount_success(ch, MOUNTED(ch), false)) {
+            if (!mount_success(ch, mount, false)) {
                 send_to_char("Your mount subbornly refuses to go that way.\n", ch);
                 return;
             }
@@ -405,7 +396,6 @@ class ActMove {
 
         if (!IS_NPC(ch)) {
             int move;
-
 
             for (Clazz c : Clazz.getClasses()) {
                 for (int gvnum : c.guildVnums) {
@@ -423,8 +413,8 @@ class ActMove {
             }
 
             if (in_room.sector_type == SECT_AIR || to_room.sector_type == SECT_AIR) {
-                if (MOUNTED(ch) != null) {
-                    if (!IS_AFFECTED(MOUNTED(ch), AFF_FLYING)) {
+                if (mount != null) {
+                    if (!IS_AFFECTED(mount, AFF_FLYING)) {
                         send_to_char("Your mount can't fly.\n", ch);
                         return;
                     }
@@ -434,23 +424,16 @@ class ActMove {
                 }
             }
 
-            if ((in_room.sector_type == SECT_WATER_NOSWIM
-                    || to_room.sector_type == SECT_WATER_NOSWIM)
-                    && (MOUNTED(ch) != null && !IS_AFFECTED(MOUNTED(ch), AFF_FLYING))) {
+            if ((in_room.sector_type == SECT_WATER_NOSWIM || to_room.sector_type == SECT_WATER_NOSWIM) && (mount != null && !IS_AFFECTED(mount, AFF_FLYING))) {
                 send_to_char("You can't take your mount there.\n", ch);
                 return;
             }
 
-            if ((in_room.sector_type == SECT_WATER_NOSWIM
-                    || to_room.sector_type == SECT_WATER_NOSWIM)
-                    && (MOUNTED(ch) == null && !IS_AFFECTED(ch, AFF_FLYING))) {
-
+            if ((in_room.sector_type == SECT_WATER_NOSWIM || to_room.sector_type == SECT_WATER_NOSWIM) && (mount == null && !IS_AFFECTED(ch, AFF_FLYING))) {
                 /*
                 * Look for a boat.
                 */
-
                 boolean found = IS_IMMORTAL(ch);
-
                 for (obj = ch.carrying; obj != null; obj = obj.next_content) {
                     if (obj.item_type == ITEM_BOAT) {
                         found = true;
@@ -463,10 +446,7 @@ class ActMove {
                 }
             }
 
-            move = movement_loss[UMIN(SECT_MAX - 1, in_room.sector_type)]
-                    + movement_loss[UMIN(SECT_MAX - 1, to_room.sector_type)]
-            ;
-
+            move = movement_loss[UMIN(SECT_MAX - 1, in_room.sector_type)] + movement_loss[UMIN(SECT_MAX - 1, to_room.sector_type)];
             move /= 2;  /* i.e. the average */
 
             /* conditional effects */
@@ -478,18 +458,18 @@ class ActMove {
                 move *= 2;
             }
 
-            if (MOUNTED(ch) == null && ch.move < move) {
+            if (mount == null && ch.move < move) {
                 send_to_char("You are too exhausted.\n", ch);
                 return;
             }
 
-            if (MOUNTED(ch) == null && (ch.in_room.sector_type == SECT_DESERT || IS_WATER(ch.in_room))) {
+            if (mount == null && (ch.in_room.sector_type == SECT_DESERT || IS_WATER(ch.in_room))) {
                 WAIT_STATE(ch, 2);
             } else {
                 WAIT_STATE(ch, 1);
             }
 
-            if (MOUNTED(ch) == null) {
+            if (mount == null) {
                 ch.move -= move;
             }
         }
@@ -499,15 +479,15 @@ class ActMove {
             if (!IS_NPC(ch) && ch.in_room.sector_type != SECT_INSIDE &&
                     ch.in_room.sector_type != SECT_CITY &&
                     number_percent() < get_skill(ch, gsn_quiet_movement)) {
-                if (MOUNTED(ch) != null) {
-                    buf.format("$n leaves, riding on %s.", MOUNTED(ch).short_descr);
+                if (mount != null) {
+                    buf.format("$n leaves, riding on %s.", mount.short_descr);
                 } else {
                     buf.format("$n leaves.");
                 }
                 check_improve(ch, gsn_quiet_movement, true, 1);
             } else {
-                if (MOUNTED(ch) != null) {
-                    buf.format("$n leaves $T, riding on %s.", MOUNTED(ch).short_descr);
+                if (mount != null) {
+                    buf.format("$n leaves $T, riding on %s.", mount.short_descr);
                 } else {
                     buf.format("$n leaves $T.");
                 }
@@ -515,24 +495,22 @@ class ActMove {
             act(buf.toString(), ch, null, dir_name[door], TO_ROOM);
         }
 
-        if (IS_AFFECTED(ch, AFF_CAMOUFLAGE) && to_room.sector_type != SECT_FIELD
-                && to_room.sector_type != SECT_FOREST &&
-                to_room.sector_type != SECT_MOUNTAIN &&
-                to_room.sector_type != SECT_HILLS) {
+        if (IS_AFFECTED(ch, AFF_CAMOUFLAGE)
+                && to_room.sector_type != SECT_FIELD
+                && to_room.sector_type != SECT_FOREST
+                && to_room.sector_type != SECT_MOUNTAIN
+                && to_room.sector_type != SECT_HILLS) {
             ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_CAMOUFLAGE);
             send_to_char("You step out from your cover.\n", ch);
             act("$n steps out from $m's cover.", ch, null, null, TO_ROOM);
         }
 
-        if ((IS_AFFECTED(ch, AFF_HIDE))
-                && (to_room.sector_type == SECT_FOREST
-                || to_room.sector_type == SECT_FIELD)) {
+        if ((IS_AFFECTED(ch, AFF_HIDE)) && (to_room.sector_type == SECT_FOREST || to_room.sector_type == SECT_FIELD)) {
             ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_HIDE);
             send_to_char("You step out of shadows.\n", ch);
             act("$n steps out of shadows.", ch, null, null, TO_ROOM);
         }
 
-        mount = MOUNTED(ch);
         char_from_room(ch);
         char_to_room(ch, to_room);
 
@@ -3313,10 +3291,8 @@ class ActMove {
     }
 
     static void do_dismount(CHAR_DATA ch) {
-
-        if (MOUNTED(ch) != null) {
-            CHAR_DATA mount = MOUNTED(ch);
-
+        CHAR_DATA mount = MOUNTED(ch);
+        if (mount != null) {
             act("You dismount from $N.", ch, null, mount, TO_CHAR);
             act("$n dismounts from $N.", ch, null, mount, TO_NOTVICT);
             act("$n dismounts from you.", ch, null, mount, TO_VICT);
