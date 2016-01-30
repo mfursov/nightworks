@@ -262,7 +262,6 @@ import static net.sf.nightworks.Skill.gsn_trance;
 import static net.sf.nightworks.Skill.gsn_vampiric_touch;
 import static net.sf.nightworks.Skill.gsn_witch_curse;
 import static net.sf.nightworks.Skill.gsn_x_hunger;
-import static net.sf.nightworks.Skill.lookupSkill;
 
 public class Update {
 /* used for saving */
@@ -970,16 +969,16 @@ public class Update {
         int i;
         cl = 0;
         for (i = 1; i < 5; i++) {
-            if (lookupSkill("cure critical").ordinal() == potion.value[i]) {
+            if (Skill.gsn_cure_critical.ordinal() == potion.value[i]) {
                 cl += 3;
             }
-            if (lookupSkill("cure light").ordinal() == potion.value[i]) {
+            if (Skill.gsn_cure_light.ordinal() == potion.value[i]) {
                 cl += 1;
             }
-            if (lookupSkill("cure serious").ordinal() == potion.value[i]) {
+            if (Skill.gsn_cure_serious.ordinal() == potion.value[i]) {
                 cl += 2;
             }
-            if (lookupSkill("heal").ordinal() == potion.value[i]) {
+            if (Skill.gsn_heal.ordinal() == potion.value[i]) {
                 cl += 4;
             }
         }
@@ -987,33 +986,30 @@ public class Update {
     }
 
     static int potion_arm_level(OBJ_DATA potion) {
-        int al;
-        int i;
-        al = 0;
-        for (i = 1; i < 5; i++) {
-            if (lookupSkill("armor").ordinal() == potion.value[i]) {
+        int al = 0;
+        for (int i = 1; i < 5; i++) {
+            if (Skill.gsn_armor.ordinal() == potion.value[i]) {
                 al += 1;
             }
-            if (lookupSkill("shield").ordinal() == potion.value[i]) {
+            if (Skill.gsn_shield.ordinal() == potion.value[i]) {
                 al += 1;
             }
-            if (lookupSkill("stone skin").ordinal() == potion.value[i]) {
+            if (Skill.gsn_stone_skin.ordinal() == potion.value[i]) {
                 al += 2;
             }
-            if (lookupSkill("sanctuary").ordinal() == potion.value[i]) {
+            if (Skill.gsn_sanctuary.ordinal() == potion.value[i]) {
                 al += 4;
             }
-            if (lookupSkill("protection").ordinal() == potion.value[i]) {
+            /*TODO: if (Skill.gsn_protection.ordinal() == potion.value[i]) {
                 al += 3;
-            }
+            }*/
         }
-        return (al);
+        return al;
     }
 
     static boolean potion_cure_blind(OBJ_DATA potion) {
-        int i;
-        for (i = 0; i < 5; i++) {
-            if (lookupSkill("cure blindness").ordinal() == potion.value[i]) {
+        for (int i = 0; i < 5; i++) {
+            if (Skill.gsn_cure_blindness.ordinal() == potion.value[i]) {
                 return true;
             }
         }
@@ -1021,9 +1017,8 @@ public class Update {
     }
 
     static boolean potion_cure_poison(OBJ_DATA potion) {
-        int i;
-        for (i = 0; i < 5; i++) {
-            if (lookupSkill("cure poison").ordinal() == potion.value[i]) {
+        for (int i = 0; i < 5; i++) {
+            if (Skill.gsn_cure_poison.ordinal() == potion.value[i]) {
                 return true;
             }
         }
@@ -1031,9 +1026,8 @@ public class Update {
     }
 
     static boolean potion_cure_disease(OBJ_DATA potion) {
-        int i;
-        for (i = 0; i < 5; i++) {
-            if (lookupSkill("cure disease").ordinal() == potion.value[i]) {
+        for (int i = 0; i < 5; i++) {
+            if (Skill.gsn_cure_disease.ordinal() == potion.value[i]) {
                 return true;
             }
         }
