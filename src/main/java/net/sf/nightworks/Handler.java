@@ -557,7 +557,6 @@ import static net.sf.nightworks.Skill.gsn_third_attack;
 import static net.sf.nightworks.Skill.gsn_trip;
 import static net.sf.nightworks.Skill.gsn_whip;
 import static net.sf.nightworks.Skill.gsn_x_hunger;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.util.TextUtils.is_number;
 import static net.sf.nightworks.util.TextUtils.one_argument;
@@ -610,12 +609,11 @@ class Handler {
 
     }
 
-/*
- * Room record:
- * For less than 5 people in room create a new record.
- * Else use the oldest one.
- */
-
+    /**
+     * Room record:
+     * For less than 5 people in room create a new record.
+     * Else use the oldest one.
+     */
     static void room_record(String name, ROOM_INDEX_DATA room, int door) {
         ROOM_HISTORY_DATA rh;
         int i = 0;
@@ -753,12 +751,12 @@ class Handler {
         return "exotic";
     }
 
-/*
- * Check the material
- */
 
+    /**
+     * Check the material
+     */
     static boolean check_material(OBJ_DATA obj, String material) {
-        return obj.material.indexOf(material) != -1;
+        return obj.material.contains(material);
 
     }
 
@@ -822,9 +820,7 @@ class Handler {
     }
 
     static int floating_time(OBJ_DATA obj) {
-        int ftime;
-
-        ftime = 0;
+        int ftime = 0;
         switch (obj.item_type) {
             default:
                 break;
@@ -888,16 +884,15 @@ class Handler {
         return -1;
     }
 
-/* for immunity, vulnerabiltiy, and resistant
-the 'globals' (magic and weapons) may be overriden
-three other cases -- wood, silver, and iron -- are checked in fight.c */
-
+    /**
+     * for immunity, vulnerabiltiy, and resistant
+     * the 'globals' (magic and weapons) may be overriden
+     * three other cases -- wood, silver, and iron -- are checked in fight.c
+     */
     static int check_immune(CHAR_DATA ch, int dam_type) {
-        int immune, def;
-        int bit;
 
-        immune = -1;
-        def = IS_NORMAL;
+        int immune = -1;
+        int def = IS_NORMAL;
 
         if (dam_type == DAM_NONE) {
             return immune;
@@ -922,6 +917,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         }
 
         /* set bits to check -- VULN etc. must ALL be the same or this will fail */
+        int bit;
         switch (dam_type) {
             case (DAM_BASH):
                 bit = IMM_BASH;
@@ -1095,7 +1091,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         }
 
         if (ch.daze > 0) {
-            if (sn.isSpell()) {
+            if (sn != null && sn.isSpell()) {
                 skill /= 2;
             } else {
                 skill = 2 * skill / 3;
@@ -1113,7 +1109,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         skill = URANGE(0, skill, 100);
 
         if (skill != 0 && !IS_NPC(ch)) {
-            if (!sn.isSpell()) {
+            if (sn != null && !sn.isSpell()) {
                 skill += sn.mod[ch.clazz.id];
             }
         }
@@ -1362,11 +1358,10 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
         return str_app[get_curr_stat(ch, STAT_STR)].carry * 10 + ch.level * 25;
     }
 
-/*
-* See if a string is one of the names of an object.
-*/
-
-    static boolean is_name(String str, String namelist) {
+    /**
+     * See if a string is one of the names of an object.
+     */
+    static boolean is_name(String str, String nameList) {
         String wholeString = str;
         StringBuilder part = new StringBuilder();
         /* we need ALL parts of wholeString to match part of namelist */
@@ -1381,7 +1376,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             /* check to see if this is part of namelist */
             String subStr = part.toString();
 
-            String list = namelist;
+            String list = nameList;
             for (; ; )  /* start parsing namelist */ {
                 part.setLength(0);
                 list = one_argument(list, part);
@@ -2058,7 +2053,7 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             ++ch.in_room.light;
         }
 
-        while (IS_AFFECTED(ch, AFF_PLAGUE)) {
+        if (IS_AFFECTED(ch, AFF_PLAGUE)) {
             AFFECT_DATA af;
             CHAR_DATA vch;
 
@@ -2070,32 +2065,28 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
 
             if (af == null) {
                 ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_PLAGUE);
-                break;
-            }
+            } else {
+                if (af.level != 1) {
+                    AFFECT_DATA plague = new AFFECT_DATA();
+                    plague.where = TO_AFFECTS;
+                    plague.type = gsn_plague;
+                    plague.level = (af.level - 1);
+                    plague.duration = number_range(1, 2 * plague.level);
+                    plague.location = APPLY_STR;
+                    plague.modifier = -5;
+                    plague.bitvector = AFF_PLAGUE;
 
-            if (af.level == 1) {
-                break;
-            }
-
-            AFFECT_DATA plague = new AFFECT_DATA();
-            plague.where = TO_AFFECTS;
-            plague.type = gsn_plague;
-            plague.level = (af.level - 1);
-            plague.duration = number_range(1, 2 * plague.level);
-            plague.location = APPLY_STR;
-            plague.modifier = -5;
-            plague.bitvector = AFF_PLAGUE;
-
-            for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
-                if (!saves_spell(plague.level - 2, vch, DAM_DISEASE)
-                        && !IS_IMMORTAL(vch) &&
-                        !IS_AFFECTED(vch, AFF_PLAGUE) && number_bits(6) == 0) {
-                    send_to_char("You feel hot and feverish.\n", vch);
-                    act("$n shivers and looks very ill.", vch, null, null, TO_ROOM);
-                    affect_join(vch, plague);
+                    for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
+                        if (!saves_spell(plague.level - 2, vch, DAM_DISEASE)
+                                && !IS_IMMORTAL(vch) &&
+                                !IS_AFFECTED(vch, AFF_PLAGUE) && number_bits(6) == 0) {
+                            send_to_char("You feel hot and feverish.\n", vch);
+                            act("$n shivers and looks very ill.", vch, null, null, TO_ROOM);
+                            affect_join(vch, plague);
+                        }
+                    }
                 }
             }
-            break;
         }
 
         if (ch.in_room.affected_by != 0) {
@@ -3161,12 +3152,12 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
         if (pRoomIndex.sector_type == SECT_INSIDE || pRoomIndex.sector_type == SECT_CITY) {
             return false;
         }
 
-        return weather_info.sunlight == SUN_SET
-                || weather_info.sunlight == SUN_DARK;
+        return weather_info.sunlight == SUN_SET || weather_info.sunlight == SUN_DARK;
 
     }
 
@@ -3185,18 +3176,14 @@ three other cases -- wood, silver, and iron -- are checked in fight.c */
             return false;
         }
 
-        return weather_info.sunlight == SUN_SET
-                || weather_info.sunlight == SUN_DARK;
+        return weather_info.sunlight == SUN_SET || weather_info.sunlight == SUN_DARK;
 
     }
 
 
     static boolean is_room_owner(CHAR_DATA ch, ROOM_INDEX_DATA room) {
-        if (room.owner == null || room.owner.length() != 0) {
-            return false;
-        }
+        return room.owner != null && !room.owner.isEmpty() && is_name(ch.name, room.owner);
 
-        return is_name(ch.name, room.owner);
     }
 
 /*

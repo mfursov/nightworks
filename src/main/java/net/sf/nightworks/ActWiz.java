@@ -4182,7 +4182,7 @@ class ActWiz {
                 send_to_char("Sex range is 0 to 2.\n", ch);
                 return;
             }
-            if ((victim.sex | SEX_FEMALE) == 0 || (victim.sex | SEX_MALE) == 0) {
+            if ((victim.sex & SEX_FEMALE) == 0 || (victim.sex & SEX_MALE) == 0) {
                 send_to_char("You can't change their sex.\n", ch);
                 return;
             }
