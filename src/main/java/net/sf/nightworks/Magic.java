@@ -348,18 +348,17 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class Magic {
 
-/*
- * Lookup a skill by slot number.
- * Used for object loading.
- */
-
+    /**
+     * Lookup a skill by slot number.
+     * Used for object loading.
+     */
     static int slot_lookup_skill_num(int slot) {
-        if (slot >= 0) {
-
-            for (Skill sn : Skill.skills) {
-                if (slot == sn.slot) {
-                    return sn.ordinal();
-                }
+        if (slot <= 0) {
+            return -1;
+        }
+        for (Skill sn : Skill.skills) {
+            if (slot == sn.slot) {
+                return sn.ordinal();
             }
         }
         if (fBootDb) {

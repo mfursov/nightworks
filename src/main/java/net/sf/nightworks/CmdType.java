@@ -24,7 +24,7 @@ public enum CmdType {
     do_south("south", ActMove::do_south, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
     do_west("west", ActMove::do_west, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
     do_up("up", ActMove::do_up, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
-    do_down("down", ActMove::do_up, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
+    do_down("down", ActMove::do_down, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
     do_run("run", ActMove::do_run, POS_STANDING, Interp.ML, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
 
     /*
