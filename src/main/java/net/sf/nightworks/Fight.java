@@ -979,11 +979,11 @@ class Fight {
             victim_ac += 6;
         }
 
-        /*
-        * The moment of excitement!
-        */
-        while ((diceroll = number_bits(5)) >= 20) {
-        }
+        // The moment of excitement!
+        do {
+            diceroll = number_bits(5);
+        } while (diceroll >= 20);
+
 
         if (diceroll == 0 || (diceroll != 19 && diceroll < thac0 - victim_ac)) {
             // Miss
@@ -1904,7 +1904,7 @@ class Fight {
             return true;
         }
 
-        if (ch == victim && area && ch.in_room.sector_type == SECT_INSIDE) {
+        if (ch == victim && ch.in_room.sector_type == SECT_INSIDE) {
             return true;
         }
 
@@ -2907,9 +2907,7 @@ class Fight {
 
 
     static void dam_message(CHAR_DATA ch, CHAR_DATA victim, int dam, Skill dt, boolean immune, int dam_type) {
-        char punct;
         String vp, vs;
-
         if (dam == 0) {
             vs = "miss";
             vp = "misses";
@@ -2993,6 +2991,7 @@ class Fight {
             vp = "{r=<*) (*>= ! POWER HITS ! =<*) (*>={*{x";
         }
 
+        char punct;
         if (victim.level < 20) {
             punct = (dam <= 24) ? '.' : '!';
         } else if (victim.level < 50) {
@@ -3031,10 +3030,10 @@ class Fight {
             String attack;
             if (dt != null && dt.ordinal() < gsn_x_hit.ordinal()) {
                 attack = dt.noun_damage;
-            } else if (dt.ordinal() >= gsn_x_hit.ordinal() && dt.ordinal() <= gsn_x_hit.ordinal() + MAX_DAMAGE_MESSAGE) {
+            } else if (dt != null && dt.ordinal() >= gsn_x_hit.ordinal() && dt.ordinal() <= gsn_x_hit.ordinal() + MAX_DAMAGE_MESSAGE) {
                 attack = attack_table[dt.ordinal() - gsn_x_hit.ordinal()].noun;
             } else {
-                bug("Dam_message: bad dt %d.", dt.ordinal());
+                bug("Dam_message: bad dt %d.", dt);
                 attack = attack_table[0].name;
             }
 
