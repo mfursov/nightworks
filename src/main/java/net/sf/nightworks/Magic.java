@@ -1,6 +1,7 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.TextBuffer;
+import org.jetbrains.annotations.NotNull;
 
 import static net.sf.nightworks.ActComm.add_follower;
 import static net.sf.nightworks.ActComm.cabal_area_check;
@@ -415,15 +416,10 @@ class Magic {
             new syl_type("", "")
     };
 
-    static void say_spell(CHAR_DATA ch, Skill sn) {
-        CHAR_DATA rch;
-        int iSyl;
-        int length = 0;
-        int skill;
-
+    static void say_spell(@NotNull CHAR_DATA ch, @NotNull Skill sn) {
         TextBuffer buf = new TextBuffer();
-        for (int pos = 0; pos < sn.name.length(); pos += length) {
-            for (iSyl = 0; iSyl < syl_table.length; iSyl++) {
+        for (int pos = 0, length = 0; pos < sn.name.length(); pos += length) {
+            for (int iSyl = 0; iSyl < syl_table.length; iSyl++) {
                 String prefix = syl_table[iSyl]._old;
                 int len = prefix.length();
                 if (sn.name.regionMatches(pos, prefix, 0, len)) {
@@ -439,9 +435,9 @@ class Magic {
         buf.sprintf("$n utters the words, '%s'.", buf);
         buf.sprintf("$n utters the words, '%s'.", sn.name);
 
-        for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
+        for (CHAR_DATA rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
             if (rch != ch) {
-                skill = (get_skill(rch, gsn_spell_craft) * 9) / 10;
+                int skill = (get_skill(rch, gsn_spell_craft) * 9) / 10;
                 if (skill < number_percent()) {
                     act(buf2, ch, null, rch, TO_VICT);
                     check_improve(rch, gsn_spell_craft, true, 5);
@@ -453,16 +449,12 @@ class Magic {
         }
     }
 
-/*
- * Compute a saving throw.
- * Negative apply's make saving throw better.
- */
-
+    /**
+     * Compute a saving throw.
+     * Negative apply's make saving throw better.
+     */
     static boolean saves_spell(int level, CHAR_DATA victim, int dam_type) {
-        int save;
-
-        save = 40 + (victim.level - level) * 4 - (victim.saving_throw * 90) / UMAX(45, victim.level);
-
+        int save = 40 + (victim.level - level) * 4 - (victim.saving_throw * 90) / UMAX(45, victim.level);
         if (IS_AFFECTED(victim, AFF_BERSERK)) {
             save += victim.level / 5;
         }
@@ -485,11 +477,8 @@ class Magic {
         return number_percent() < save;
     }
 
-/* RT configuration smashed */
-
+    /* RT configuration smashed */
     static boolean saves_dispel(int dis_level, int spell_level, int duration) {
-        int save;
-
         /* impossible to dispel permanent effects */
         if (duration == -2) {
             return true;
@@ -498,7 +487,7 @@ class Magic {
             spell_level += 5;
         }
 
-        save = 50 + (spell_level - dis_level) * 5;
+        int save = 50 + (spell_level - dis_level) * 5;
         save = URANGE(5, save, 95);
         return number_percent() < save;
     }
@@ -670,8 +659,7 @@ class Magic {
                         }
 
                         if (victim.in_room != ch.in_room
-                                && ((IS_NPC(victim) && IS_SET(victim.act, ACT_NOTRACK))
-                                || is_at_cabal_area(ch) || is_at_cabal_area(victim))) {
+                                && ((IS_NPC(victim) && IS_SET(victim.act, ACT_NOTRACK)) || is_at_cabal_area(ch) || is_at_cabal_area(victim))) {
                             act("You can't cast this spell to $N at this distance.",
                                     ch, null, victim, TO_CHAR);
                             return;
@@ -4029,27 +4017,14 @@ class Magic {
         TextBuffer buf = new TextBuffer();
 
         for (obj = object_list; obj != null; obj = obj.next) {
-            if (!can_see_obj(ch, obj) || !is_name(target_name, obj.name)
-                    || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level
-                    || ch.level < obj.level) {
+            if (!can_see_obj(ch, obj) || !is_name(target_name, obj.name) || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level || ch.level < obj.level) {
                 continue;
             }
 
             found = true;
             number++;
 
-            for (in_obj = obj; in_obj.in_obj != null; in_obj = in_obj.in_obj) {
-            }
-
-            if (in_obj.carried_by != null && can_see(ch, in_obj.carried_by)) {
-                buf.sprintf("one is carried by %s\n", PERS(in_obj.carried_by, ch));
-            } else {
-                if (IS_IMMORTAL(ch) && in_obj.in_room != null) {
-                    buf.sprintf("one is in %s [Room %d]\n", in_obj.in_room.name, in_obj.in_room.vnum);
-                } else {
-                    buf.sprintf("one is in %s\n", in_obj.in_room == null ? "somewhere" : in_obj.in_room.name);
-                }
-            }
+            prepareCarriedByText(ch, obj, buf);
 
             buf.upfirst();
 
@@ -4065,6 +4040,22 @@ class Magic {
         }
 
 
+    }
+
+    private static void prepareCarriedByText(CHAR_DATA ch, OBJ_DATA obj, TextBuffer buf) {
+        OBJ_DATA in_obj;
+        for (in_obj = obj; in_obj.in_obj != null; in_obj = in_obj.in_obj) {
+        }
+
+        if (in_obj.carried_by != null && can_see(ch, in_obj.carried_by)) {
+            buf.sprintf("one is carried by %s\n", PERS(in_obj.carried_by, ch));
+        } else {
+            if (IS_IMMORTAL(ch) && in_obj.in_room != null) {
+                buf.sprintf("one is in %s [Room %d]\n", in_obj.in_room.name, in_obj.in_room.vnum);
+            } else {
+                buf.sprintf("one is in %s\n", in_obj.in_room == null ? "somewhere" : in_obj.in_room.name);
+            }
+        }
     }
 
     private static final int dam_each_mm[] = {
@@ -5136,29 +5127,16 @@ class Magic {
         StringBuilder buffer = new StringBuilder();
 
         for (obj = object_list; obj != null; obj = obj.next) {
-            if (!can_see_obj(ch, obj) || !is_name(target_name, obj.name)
-                    || number_percent() > 2 * level
-                    || ch.level < obj.level) {
+            if (!can_see_obj(ch, obj) || !is_name(target_name, obj.name) || number_percent() > 2 * level || ch.level < obj.level) {
                 continue;
             }
 
             found = true;
             number++;
 
-            for (in_obj = obj; in_obj.in_obj != null; in_obj = in_obj.in_obj) {
-            }
-
-            if (in_obj.carried_by != null && can_see(ch, in_obj.carried_by)) {
-                buf.sprintf("one is carried by %s\n", PERS(in_obj.carried_by, ch));
-            } else {
-                if (IS_IMMORTAL(ch) && in_obj.in_room != null) {
-                    buf.sprintf("one is in %s [Room %d]\n", in_obj.in_room.name, in_obj.in_room.vnum);
-                } else {
-                    buf.sprintf("one is in %s\n", in_obj.in_room == null ? "somewhere" : in_obj.in_room.name);
-                }
-            }
-
+            prepareCarriedByText(ch, obj, buf);
             buf.upfirst();
+
             buffer.append(buf);
 
             if (number >= max_found) {

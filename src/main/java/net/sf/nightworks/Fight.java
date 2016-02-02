@@ -1,6 +1,7 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.TextBuffer;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -326,7 +327,6 @@ import static net.sf.nightworks.Skill.gsn_vampiric_bite;
 import static net.sf.nightworks.Skill.gsn_witch_curse;
 import static net.sf.nightworks.Skill.gsn_x_hit;
 import static net.sf.nightworks.Skill.gsn_x_hunger;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Update.gain_condition;
 import static net.sf.nightworks.Update.gain_exp;
 import static net.sf.nightworks.util.TextUtils.capitalize;
@@ -1091,7 +1091,6 @@ class Fight {
 
                 if ((katana = get_wield_char(ch, false)) != null) {
                     AFFECT_DATA paf;
-
                     if (IS_WEAPON_STAT(katana, WEAPON_KATANA) && katana.extra_descr.description.contains(ch.name)) {
                         katana.cost++;
                         if (katana.cost > 249) {
@@ -3198,8 +3197,7 @@ class Fight {
                 buf.sprintf("Help! I am being attacked by %s!", ch.short_descr);
             } else {
                 buf.sprintf("Help!  I am being attacked by %s!",
-                        (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ?
-                                ch.doppel.name : ch.name);
+                        (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
             }
             do_yell(victim, buf);
         }
@@ -3469,8 +3467,8 @@ class Fight {
     }
 
 
-    static boolean mob_cast_cleric(CHAR_DATA ch, CHAR_DATA victim) {
-        String spell;
+    static boolean mob_cast_cleric(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
+        Skill sn;
 
         for (; ; ) {
             int min_level;
@@ -3478,54 +3476,54 @@ class Fight {
             switch (number_bits(4)) {
                 case 0:
                     min_level = 0;
-                    spell = "blindness";
+                    sn = Skill.gsn_blindness;
                     break;
                 case 1:
                     min_level = 3;
-                    spell = "cause serious";
+                    sn = Skill.gsn_cure_serious;
                     break;
                 case 2:
                     min_level = 7;
-                    spell = "earthquake";
+                    sn = Skill.gsn_earthquake;
                     break;
                 case 3:
                     min_level = 9;
-                    spell = "cause critical";
+                    sn = Skill.gsn_cause_critical;
                     break;
                 case 4:
                     min_level = 10;
-                    spell = "dispel evil";
+                    sn = Skill.gsn_dispel_evil;
                     break;
                 case 5:
                     min_level = 12;
-                    spell = "curse";
+                    sn = Skill.gsn_curse;
                     break;
                 case 6:
                     min_level = 14;
-                    spell = "cause critical";
+                    sn = Skill.gsn_cause_critical;
                     break;
                 case 7:
                     min_level = 18;
-                    spell = "flamestrike";
+                    sn = Skill.gsn_flamestrike;
                     break;
                 case 8:
                 case 9:
                 case 10:
                     min_level = 20;
-                    spell = "harm";
+                    sn = Skill.gsn_harm;
                     break;
                 case 11:
                     min_level = 25;
-                    spell = "plague";
+                    sn = Skill.gsn_plague;
                     break;
                 case 12:
                 case 13:
                     min_level = 45;
-                    spell = "severity force";
+                    sn = Skill.gsn_severity_force;
                     break;
                 default:
                     min_level = 26;
-                    spell = "dispel magic";
+                    sn = Skill.gsn_dispel_magic;
                     break;
             }
 
@@ -3534,7 +3532,6 @@ class Fight {
             }
         }
 
-        Skill sn = lookupSkill(spell);
         if (sn == null) {
             return false;
         }
@@ -3543,8 +3540,8 @@ class Fight {
         return true;
     }
 
-    static boolean mob_cast_mage(CHAR_DATA ch, CHAR_DATA victim) {
-        String spell;
+    static boolean mob_cast_mage(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
+        Skill sn;
 
         for (; ; ) {
             int min_level;
@@ -3552,51 +3549,51 @@ class Fight {
             switch (number_bits(4)) {
                 case 0:
                     min_level = 0;
-                    spell = "blindness";
+                    sn = Skill.gsn_blindness;
                     break;
                 case 1:
                     min_level = 3;
-                    spell = "chill touch";
+                    sn = Skill.gsn_chill_touch;
                     break;
                 case 2:
                     min_level = 7;
-                    spell = "weaken";
+                    sn = Skill.gsn_weaken;
                     break;
                 case 3:
                     min_level = 9;
-                    spell = "teleport";
+                    sn = Skill.gsn_teleport;
                     break;
                 case 4:
                     min_level = 14;
-                    spell = "colour spray";
+                    sn = Skill.gsn_colour_spray;
                     break;
                 case 5:
                     min_level = 19;
-                    spell = "caustic font";
+                    sn = Skill.gsn_caustic_font;
                     break;
                 case 6:
                     min_level = 25;
-                    spell = "energy drain";
+                    sn = Skill.gsn_energy_drain;
                     break;
                 case 7:
                 case 8:
                 case 9:
                     min_level = 35;
-                    spell = "caustic font";
+                    sn = Skill.gsn_caustic_font;
                     break;
                 case 10:
                     min_level = 40;
-                    spell = "plague";
+                    sn = Skill.gsn_plague;
                     break;
                 case 11:
                 case 12:
                 case 13:
                     min_level = 40;
-                    spell = "acid arrow";
+                    sn = Skill.gsn_acid_arrow;
                     break;
                 default:
                     min_level = 55;
-                    spell = "acid blast";
+                    sn = Skill.gsn_acid_blast;
                     break;
             }
 
@@ -3605,7 +3602,6 @@ class Fight {
             }
         }
 
-        Skill sn = lookupSkill(spell);
         if (sn == null) {
             return false;
         }
