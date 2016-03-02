@@ -3532,9 +3532,6 @@ class Fight {
             }
         }
 
-        if (sn == null) {
-            return false;
-        }
         say_spell(ch, sn);
         sn.spell_fun(ch.level, ch, victim, TARGET_CHAR);
         return true;
@@ -3600,10 +3597,6 @@ class Fight {
             if (ch.level >= min_level) {
                 break;
             }
-        }
-
-        if (sn == null) {
-            return false;
         }
 
         say_spell(ch, sn);

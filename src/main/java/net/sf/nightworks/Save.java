@@ -18,7 +18,6 @@ import static net.sf.nightworks.DB.get_mob_index;
 import static net.sf.nightworks.DB.get_obj_index;
 import static net.sf.nightworks.DB.get_room_index;
 import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.Handler.check_time_sync;
 import static net.sf.nightworks.Handler.extract_obj;
 import static net.sf.nightworks.Handler.extract_obj_nocount;
 import static net.sf.nightworks.Handler.get_played_day;
@@ -188,12 +187,9 @@ class Save {
         if (IS_IMMORTAL(ch) || ch.level >= LEVEL_IMMORTAL) {
             String strsave = nw_config.lib_god_dir + "/" + capitalize(ch.name);
             try {
-                FileWriter f = new FileWriter(strsave);
-                Formatter fp = new Formatter(f);
-                try {
+                try (FileWriter f = new FileWriter(strsave)) {
+                    Formatter fp = new Formatter(f);
                     fp.format("Lev %2d Trust %2d  %s%s\n", ch.level, get_trust(ch), ch.name, ch.pcdata.title);
-                } finally {
-                    f.close();
                 }
             } catch (IOException e) {
                 bug("Save_char_obj: fopen");
@@ -233,8 +229,7 @@ class Save {
 
     static void fwrite_char(CHAR_DATA ch, TextBuffer fp) {
         AFFECT_DATA paf;
-        int pos, l, today, d_time;
-        boolean fMidNight;
+        int pos;
 
         fp.sprintf(false, "#%s\n", IS_NPC(ch) ? "MOB" : "PLAYER");
 
@@ -257,7 +252,7 @@ class Save {
         if (ch.description.length() != 0) {
             fp.sprintf(false, "Desc %s~\n", ch.description);
         }
-        if (ch.prompt != null || !str_cmp(ch.prompt, "<%hhp %mm %vmv> ")) {
+        if (ch.prompt != null) {
             fp.sprintf(false, "Prom %s~\n", ch.prompt);
         }
         fp.sprintf(false, "Race %s~\n", ORG_RACE(ch).name);
@@ -449,15 +444,13 @@ class Save {
         fp.sprintf(false, "Antkilled %d\n", ch.pcdata.anti_killed);
 
         /* character log info */
-        fMidNight = check_time_sync();
         fp.sprintf(false, "PlayLog 1\n");    /* 1 stands for version */
-        for (l = 0; l < nw_config.max_time_log; l++) {
-            today = get_played_day(l);
-            d_time = get_played_time(ch, l);
+        for (int l = 0; l < nw_config.max_time_log; l++) {
+            int today = get_played_day(l);
+            int d_time = get_played_time(ch, l);
 
             if (d_time != 0) {
-                fp.sprintf(false, "%d %d\n",
-                        (fMidNight) ? (today - 1) : today, d_time);
+                fp.sprintf(false, "%d %d\n", today, d_time);
             }
         }
         fp.sprintf(false, "-1\n");
@@ -943,9 +936,7 @@ class Save {
                     }
 
                     if (!str_cmp(word, "ACs")) {
-                        int i;
-
-                        for (i = 0; i < 4; i++) {
+                        for (int i = 0; i < 4; i++) {
                             ch.armor[i] = fp.fread_number();
                         }
                         fp.fMatch = true;
@@ -953,7 +944,6 @@ class Save {
                     }
 
                     if (!str_cmp(word, "AffD")) {
-
                         AFFECT_DATA paf = new AFFECT_DATA();
                         Skill sn = lookupSkill(fp.fread_word());
                         if (sn == null) {
@@ -1351,9 +1341,7 @@ class Save {
                     pet.alignment = fp.NKEY("Alig", word, pet.alignment);
 
                     if (!str_cmp(word, "ACs")) {
-                        int i;
-
-                        for (i = 0; i < 4; i++) {
+                        for (int i = 0; i < 4; i++) {
                             pet.armor[i] = fp.fread_number();
                         }
                         fp.fMatch = true;
@@ -1362,7 +1350,6 @@ class Save {
 
                     if (!str_cmp(word, "AffD")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
-
                         Skill sn = lookupSkill(fp.fread_word());
                         if (sn == null) {
                             bug("Fread_char: unknown skill.");

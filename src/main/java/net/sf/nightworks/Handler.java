@@ -976,9 +976,10 @@ class Handler {
 
         if (IS_SET(ch.imm_flags, bit)) {
             immune = IS_IMMUNE;
-        } else if (IS_SET(ch.res_flags, bit) && immune != IS_IMMUNE) {
+        } else if (IS_SET(ch.res_flags, bit)) {
             immune = IS_RESISTANT;
-        } else if (IS_SET(ch.vuln_flags, bit)) {
+        }
+        if (IS_SET(ch.vuln_flags, bit)) {
             if (immune == IS_IMMUNE) {
                 immune = IS_RESISTANT;
             } else if (immune == IS_RESISTANT) {
@@ -988,16 +989,11 @@ class Handler {
             }
         }
 
-        if (!IS_NPC(ch) && get_curr_stat(ch, STAT_CHA) < 18
-                && dam_type == DAM_CHARM) {
+        if (!IS_NPC(ch) && get_curr_stat(ch, STAT_CHA) < 18 && dam_type == DAM_CHARM) {
             immune = IS_VULNERABLE;
         }
 
-        if (immune == -1) {
-            return def;
-        } else {
-            return immune;
-        }
+        return immune == -1 ? def : immune;
     }
 
     /**
@@ -5391,22 +5387,6 @@ class Handler {
         }
 
         return sum;
-    }
-
-    static boolean check_time_sync() {
-        /*TODO: struct tm *am_time;
-        int now_day, lim_day;
-
-        am_time = localtime( &current_time );
-        now_day = am_time.tm_mday;
-        am_time = localtime( &limit_time );
-        lim_day = am_time.tm_mday;
-
-        if ( now_day == lim_day )
-          return false;
-        else
-          return true;*/
-        return false;
     }
 
 }

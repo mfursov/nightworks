@@ -161,7 +161,7 @@ class MobProg {
         return MobProg.class.getDeclaredMethod(name, params);
     }
 
-    private static MPROG_FUN_BRIBE create_bribe_prog(final String name) throws NoSuchMethodException {
+    private static MPROG_FUN_BRIBE create_bribe_prog(String name) throws NoSuchMethodException {
         return new MPROG_FUN_BRIBE() {
             final Method m = resolveMethod(name, CHAR_DATA.class, CHAR_DATA.class, Integer.class);
 
