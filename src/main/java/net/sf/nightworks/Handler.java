@@ -5389,4 +5389,20 @@ class Handler {
         return sum;
     }
 
+    static boolean check_time_sync() {
+        /*TODO: struct tm *am_time;
+        int now_day, lim_day;
+
+        am_time = localtime( &current_time );
+        now_day = am_time.tm_mday;
+        am_time = localtime( &limit_time );
+        lim_day = am_time.tm_mday;
+
+        if ( now_day == lim_day )
+          return false;
+        else
+          return true;*/
+        return false;
+    }
+
 }
