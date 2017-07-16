@@ -3121,6 +3121,9 @@ class DB {
 
     private static void load_limited_objects() {
         File dir = new File(nw_config.lib_player_dir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
         File[] files = dir.listFiles();
         if (!dir.exists() || !dir.isDirectory() || files == null) {
             bug("Load_limited_objects: unable to open player directory:" + dir.getAbsolutePath(), 0);
