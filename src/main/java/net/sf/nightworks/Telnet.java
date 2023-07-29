@@ -25,7 +25,7 @@ class Telnet {
 
     static final byte SYNCH = (byte) 242;     /* for telfunc calls */
 
-    static final String telcmds[] = {"SE", "NOP", "DMARK", "BRK", "IP", "AO", "AYT", "EC",
+    static final String[] telcmds = {"SE", "NOP", "DMARK", "BRK", "IP", "AO", "AYT", "EC",
             "EL", "GA", "SB", "WILL", "WONT", "DO", "DONT", "IAC"};
 
     /* telnet options */
@@ -58,7 +58,7 @@ class Telnet {
     static final byte TELOPT_EXOPL = (byte) 255;/* extended-options-list */
 
     static final byte NTELOPTS = (1 + TELOPT_EOR);
-    static final String telopts[] = {
+    static final String[] telopts = {
             "BINARY", "ECHO", "RCP", "SUPPRESS GO AHEAD", "NAME",
             "STATUS", "TIMING MARK", "RCTE", "NAOL", "NAOP",
             "NAOCRD", "NAOHTS", "NAOHTD", "NAOFFD", "NAOVTS",

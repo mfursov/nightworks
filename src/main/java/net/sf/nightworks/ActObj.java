@@ -498,7 +498,7 @@ class ActObj {
         arg2 = arg2b.toString();
 
         /* Get type. */
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             send_to_char("Get what?\n", ch);
             return;
         }
@@ -530,26 +530,14 @@ class ActObj {
                 obj_next = obj.next_content;
 
                 switch (obj.pIndexData.vnum) {
-                    case OBJ_VNUM_SILVER_ONE:
-                        silver += 1;
-                        break;
-
-                    case OBJ_VNUM_GOLD_ONE:
-                        gold += 1;
-                        break;
-
-                    case OBJ_VNUM_SILVER_SOME:
-                        silver += obj.value[0];
-                        break;
-
-                    case OBJ_VNUM_GOLD_SOME:
-                        gold += obj.value[1];
-                        break;
-
-                    case OBJ_VNUM_COINS:
+                    case OBJ_VNUM_SILVER_ONE -> silver += 1;
+                    case OBJ_VNUM_GOLD_ONE -> gold += 1;
+                    case OBJ_VNUM_SILVER_SOME -> silver += obj.value[0];
+                    case OBJ_VNUM_GOLD_SOME -> gold += obj.value[1];
+                    case OBJ_VNUM_COINS -> {
                         silver += obj.value[0];
                         gold += obj.value[1];
-                        break;
+                    }
                 }
             }
 
@@ -571,21 +559,19 @@ class ActObj {
                 obj_next = obj.next_content;
 
                 switch (obj.pIndexData.vnum) {
-                    case OBJ_VNUM_SILVER_ONE:
+                    case OBJ_VNUM_SILVER_ONE -> {
                         if (silver != 0) {
                             silver -= 1;
                             extract_obj(obj);
                         }
-                        break;
-
-                    case OBJ_VNUM_GOLD_ONE:
+                    }
+                    case OBJ_VNUM_GOLD_ONE -> {
                         if (gold != 0) {
                             gold -= 1;
                             extract_obj(obj);
                         }
-                        break;
-
-                    case OBJ_VNUM_SILVER_SOME:
+                    }
+                    case OBJ_VNUM_SILVER_SOME -> {
                         if (silver != 0) {
                             if (silver >= obj.value[0]) {
                                 silver -= obj.value[0];
@@ -595,9 +581,8 @@ class ActObj {
                                 silver = 0;
                             }
                         }
-                        break;
-
-                    case OBJ_VNUM_GOLD_SOME:
+                    }
+                    case OBJ_VNUM_GOLD_SOME -> {
                         if (gold != 0) {
                             if (gold >= obj.value[1]) {
                                 gold -= obj.value[1];
@@ -607,9 +592,8 @@ class ActObj {
                                 gold = 0;
                             }
                         }
-                        break;
-
-                    case OBJ_VNUM_COINS:
+                    }
+                    case OBJ_VNUM_COINS -> {
                         if (silver != 0) {
                             if (silver >= obj.value[0]) {
                                 silver -= obj.value[0];
@@ -636,7 +620,7 @@ class ActObj {
                                 gold = 0;
                             }
                         }
-                        break;
+                    }
                 }
                 if (silver == 0 && gold == 0) {
                     break;
@@ -682,7 +666,7 @@ class ActObj {
             return;
         }
 
-        if (arg2.length() == 0) {
+        if (arg2.isEmpty()) {
             if (str_cmp(arg1, "all") && str_prefix("all.", arg1)) {
                 /* 'get obj' */
                 obj = get_obj_list(ch, arg1, ch.in_room.contents);
@@ -724,15 +708,13 @@ class ActObj {
             }
 
             switch (container.item_type) {
-                default:
+                default -> {
                     send_to_char("That's not a container.\n", ch);
                     return;
-
-                case ITEM_CONTAINER:
-                case ITEM_CORPSE_NPC:
-                    break;
-
-                case ITEM_CORPSE_PC: {
+                }
+                case ITEM_CONTAINER, ITEM_CORPSE_NPC -> {
+                }
+                case ITEM_CORPSE_PC -> {
 
                     if (!can_loot(ch, container)) {
                         send_to_char("You can't do that.\n", ch);
@@ -803,7 +785,7 @@ class ActObj {
             one_argument(argument, arg2b);
         }
 
-        if (arg1b.length() == 0 || arg2b.length() == 0) {
+        if (arg1b.isEmpty() || arg2b.isEmpty()) {
             send_to_char("Put what in what?\n", ch);
             return;
         }
@@ -992,7 +974,7 @@ class ActObj {
         StringBuilder argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Drop what?\n", ch);
             return;
         }
@@ -1035,31 +1017,27 @@ class ActObj {
                 obj_next = obj.next_content;
 
                 switch (obj.pIndexData.vnum) {
-                    case OBJ_VNUM_SILVER_ONE:
+                    case OBJ_VNUM_SILVER_ONE -> {
                         silver += 1;
                         extract_obj(obj);
-                        break;
-
-                    case OBJ_VNUM_GOLD_ONE:
+                    }
+                    case OBJ_VNUM_GOLD_ONE -> {
                         gold += 1;
                         extract_obj(obj);
-                        break;
-
-                    case OBJ_VNUM_SILVER_SOME:
+                    }
+                    case OBJ_VNUM_SILVER_SOME -> {
                         silver += obj.value[0];
                         extract_obj(obj);
-                        break;
-
-                    case OBJ_VNUM_GOLD_SOME:
+                    }
+                    case OBJ_VNUM_GOLD_SOME -> {
                         gold += obj.value[1];
                         extract_obj(obj);
-                        break;
-
-                    case OBJ_VNUM_COINS:
+                    }
+                    case OBJ_VNUM_COINS -> {
                         silver += obj.value[0];
                         gold += obj.value[1];
                         extract_obj(obj);
-                        break;
+                    }
                 }
             }
 
@@ -1208,7 +1186,7 @@ class ActObj {
         one_argument(argument, arg2b);
 
         /* Get type. */
-        if (arg1b.length() == 0 || arg2b.length() == 0) {
+        if (arg1b.isEmpty() || arg2b.isEmpty()) {
             send_to_char("Drag what to which direction?\n", ch);
             return;
         }
@@ -1320,7 +1298,7 @@ class ActObj {
         argument = one_argument(argument, arg1b);
         argument = one_argument(argument, arg2b);
 
-        if (arg1b.length() == 0 || arg2b.length() == 0) {
+        if (arg1b.isEmpty() || arg2b.isEmpty()) {
             send_to_char("Give what to whom?\n", ch);
             return;
         }
@@ -1344,7 +1322,7 @@ class ActObj {
             silver = str_cmp(arg2, "gold");
 
             one_argument(argument, arg2b);
-            if (arg2b.length() == 0) {
+            if (arg2b.isEmpty()) {
                 send_to_char("Give what to whom?\n", ch);
                 return;
             }
@@ -1529,7 +1507,7 @@ class ActObj {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Bury whose corpse?\n", ch);
             return;
         }
@@ -1551,17 +1529,18 @@ class ActObj {
         }
 
         switch (ch.in_room.sector_type) {
-            case SECT_CITY:
-            case SECT_INSIDE:
+            case SECT_CITY, SECT_INSIDE -> {
                 send_to_char("The floor is too hard to dig through.\n", ch);
                 return;
-            case SECT_WATER_SWIM:
-            case SECT_WATER_NOSWIM:
+            }
+            case SECT_WATER_SWIM, SECT_WATER_NOSWIM -> {
                 send_to_char("You cannot bury something here.\n", ch);
                 return;
-            case SECT_AIR:
+            }
+            case SECT_AIR -> {
                 send_to_char("What?  In the air?!\n", ch);
                 return;
+            }
         }
 
         move = (obj.weight * 5) / get_curr_stat(ch, STAT_STR);
@@ -1582,13 +1561,13 @@ class ActObj {
 
         TextBuffer buf = new TextBuffer();
         bufp = obj.short_descr;
-        while (bufp.length() != 0) {
+        while (!bufp.isEmpty()) {
             bufp = one_argument(bufp, arg);
             String argstr = arg.toString();
             if (!(!str_cmp(argstr, "The") || !str_cmp(argstr, "undead")
                     || !str_cmp(argstr, "body") || !str_cmp(argstr, "corpse")
                     || !str_cmp(argstr, "of"))) {
-                if (buf.length() == 0) {
+                if (buf.isEmpty()) {
                     buf.append(arg);
                 } else {
                     buf.append(" ");
@@ -1597,7 +1576,7 @@ class ActObj {
             }
         }
         arg.setLength(0);
-        arg.append(buf.toString());
+        arg.append(buf);
 
         stone = create_object(get_obj_index(OBJ_VNUM_GRAVE_STONE), ch.level);
 
@@ -1626,7 +1605,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Dig which grave?\n", ch);
             return;
         }
@@ -1682,7 +1661,7 @@ class ActObj {
         int percent, skill;
 
         /* find out what */
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Envenom what item?\n", ch);
             return;
         }
@@ -1786,7 +1765,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Fill what?\n", ch);
             return;
         }
@@ -1843,7 +1822,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0 || argument.length() == 0) {
+        if (arg.isEmpty() || argument.isEmpty()) {
             send_to_char("Pour what into what?\n", ch);
             return;
         }
@@ -1965,7 +1944,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             for (obj = ch.in_room.contents; obj != null; obj = obj.next_content) {
                 if (obj.item_type == ITEM_FOUNTAIN) {
                     break;
@@ -1989,32 +1968,29 @@ class ActObj {
         }
 
         switch (obj.item_type) {
-            default:
+            default -> {
                 send_to_char("You can't drink from that.\n", ch);
                 return;
-
-            case ITEM_FOUNTAIN:
+            }
+            case ITEM_FOUNTAIN -> {
                 if ((liquid = obj.value[2]) < 0) {
                     bug("Do_drink: bad liquid number %d.", liquid);
                     liquid = obj.value[2] = 0;
                 }
                 amount = liq_table[liquid].liq_affect[4] * 3;
-                break;
-
-            case ITEM_DRINK_CON:
+            }
+            case ITEM_DRINK_CON -> {
                 if (obj.value[1] <= 0) {
                     send_to_char("It is already empty.\n", ch);
                     return;
                 }
-
                 if ((liquid = obj.value[2]) < 0) {
                     bug("Do_drink: bad liquid number %d.", liquid);
                     liquid = obj.value[2] = 0;
                 }
-
                 amount = liq_table[liquid].liq_affect[4];
                 amount = UMIN(amount, obj.value[1]);
-                break;
+            }
         }
         if (!IS_NPC(ch) && !IS_IMMORTAL(ch)
                 && ch.pcdata.condition[COND_FULL] > 80) {
@@ -2076,7 +2052,7 @@ class ActObj {
 
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Eat what?\n", ch);
             return;
         }
@@ -2105,8 +2081,7 @@ class ActObj {
         }
 
         switch (obj.item_type) {
-
-            case ITEM_FOOD:
+            case ITEM_FOOD -> {
                 if (!IS_NPC(ch)) {
                     int condition;
 
@@ -2119,7 +2094,6 @@ class ActObj {
                         send_to_char("You are full.\n", ch);
                     }
                 }
-
                 if (obj.value[3] != 0) {
                     /* The food was poisoned! */
 
@@ -2136,13 +2110,12 @@ class ActObj {
                     af.bitvector = AFF_POISON;
                     affect_join(ch, af);
                 }
-                break;
-
-            case ITEM_PILL:
+            }
+            case ITEM_PILL -> {
                 obj_cast_spell(Skill.skills[obj.value[1]], obj.value[0], ch, ch, null);
                 obj_cast_spell(Skill.skills[obj.value[2]], obj.value[0], ch, ch, null);
                 obj_cast_spell(Skill.skills[obj.value[3]], obj.value[0], ch, ch, null);
-                break;
+            }
         }
 
         extract_obj(obj);
@@ -2458,7 +2431,7 @@ class ActObj {
 
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Wear, wield, or hold what?\n", ch);
             return;
         }
@@ -2489,7 +2462,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Remove what?\n", ch);
             return;
         }
@@ -2532,7 +2505,7 @@ class ActObj {
         one_argument(argument, argb);
         String arg = argb.toString();
 
-        if (arg.length() == 0 || !str_cmp(arg, ch.name)) {
+        if (arg.isEmpty() || !str_cmp(arg, ch.name)) {
             act("$n offers $mself to gods, who graciously declines.",
                     ch, null, null, TO_ROOM);
             send_to_char(
@@ -2637,26 +2610,26 @@ class ActObj {
             buf2.append("on it, ");
 
             switch (ch.in_room.sector_type) {
-                case SECT_FIELD:
+                case SECT_FIELD -> {
                     buf.append("scatter on the dirt.");
                     buf2.append("scatter on the dirt.");
-                    break;
-                case SECT_FOREST:
+                }
+                case SECT_FOREST -> {
                     buf.append("scatter on the dirt.");
                     buf2.append("scatter on the dirt.");
-                    break;
-                case SECT_WATER_SWIM:
+                }
+                case SECT_WATER_SWIM -> {
                     buf.append("scatter over the water.");
                     buf2.append("scatter over the water.");
-                    break;
-                case SECT_WATER_NOSWIM:
+                }
+                case SECT_WATER_NOSWIM -> {
                     buf.append("scatter over the water.");
                     buf2.append("scatter over the water.");
-                    break;
-                default:
+                }
+                default -> {
                     buf.append("scatter around.");
                     buf2.append("scatter around.");
-                    break;
+                }
             }
             if (fScatter) {
                 act(buf.toString(), ch, null, null, TO_CHAR);
@@ -2679,7 +2652,7 @@ class ActObj {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Quaff what?\n", ch);
             return;
         }
@@ -2757,7 +2730,7 @@ class ActObj {
         }
 
         obj = null;
-        if (arg2.length() == 0) {
+        if (arg2.isEmpty()) {
             victim = ch;
         } else {
             if ((victim = get_char_room(ch, arg2.toString())) == null
@@ -2832,33 +2805,30 @@ class ActObj {
                     vch_next = vch.next_in_room;
 
                     switch (skill.target) {
-                        default:
+                        default -> {
                             bug("Do_brandish: bad target for sn %d.", sn);
                             return;
-
-                        case TAR_IGNORE:
+                        }
+                        case TAR_IGNORE -> {
                             if (vch != ch) {
                                 continue;
                             }
-                            break;
-
-                        case TAR_CHAR_OFFENSIVE:
-                            if (IS_NPC(ch) ? IS_NPC(vch) : !IS_NPC(vch)) {
+                        }
+                        case TAR_CHAR_OFFENSIVE -> {
+                            if (IS_NPC(ch) == IS_NPC(vch)) {
                                 continue;
                             }
-                            break;
-
-                        case TAR_CHAR_DEFENSIVE:
-                            if (IS_NPC(ch) ? !IS_NPC(vch) : IS_NPC(vch)) {
+                        }
+                        case TAR_CHAR_DEFENSIVE -> {
+                            if (IS_NPC(ch) != IS_NPC(vch)) {
                                 continue;
                             }
-                            break;
-
-                        case TAR_CHAR_SELF:
+                        }
+                        case TAR_CHAR_SELF -> {
                             if (vch != ch) {
                                 continue;
                             }
-                            break;
+                        }
                     }
 
                     obj_cast_spell(Skill.skills[staff.value[3]], staff.value[0], ch, vch, null);
@@ -2888,7 +2858,7 @@ class ActObj {
 
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0 && ch.fighting == null) {
+        if (arg.isEmpty() && ch.fighting == null) {
             send_to_char("Zap whom or what?\n", ch);
             return;
         }
@@ -2904,7 +2874,7 @@ class ActObj {
         }
 
         obj = null;
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             if (ch.fighting != null) {
                 victim = ch.fighting;
             } else {
@@ -2964,7 +2934,7 @@ class ActObj {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.length() == 0) {
             send_to_char("Steal what from whom?\n", ch);
             return;
         }
@@ -3063,19 +3033,11 @@ class ActObj {
 
             TextBuffer buf = new TextBuffer();
             switch (number_range(0, 3)) {
-                case 0:
-                    buf.sprintf("%s is a lousy thief!", tmp_ch.name);
-                    break;
-                case 1:
-                    buf.sprintf("%s couldn't rob %s way out of a paper bag!",
-                            tmp_ch.name, (tmp_ch.sex == 2) ? "her" : "his");
-                    break;
-                case 2:
-                    buf.sprintf("%s tried to rob me!", tmp_ch.name);
-                    break;
-                case 3:
-                    buf.sprintf("Keep your hands out of there, %s!", tmp_ch.name);
-                    break;
+                case 0 -> buf.sprintf("%s is a lousy thief!", tmp_ch.name);
+                case 1 -> buf.sprintf("%s couldn't rob %s way out of a paper bag!",
+                        tmp_ch.name, (tmp_ch.sex == 2) ? "her" : "his");
+                case 2 -> buf.sprintf("%s tried to rob me!", tmp_ch.name);
+                case 3 -> buf.sprintf("Keep your hands out of there, %s!", tmp_ch.name);
             }
             if (IS_AWAKE(victim)) {
                 do_yell(victim, buf.toString());
@@ -3335,7 +3297,7 @@ class ActObj {
     static void do_buy(CHAR_DATA ch, String argument) {
         int cost, roll;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Buy what?\n", ch);
             return;
         }
@@ -3441,7 +3403,7 @@ class ActObj {
             pet.comm = COMM_NOTELL | COMM_NOSHOUT | COMM_NOCHANNELS;
 
             one_argument(argument, arg);
-            if (arg.length() != 0) {
+            if (!arg.isEmpty()) {
                 pet.name = pet.name + " " + arg;
             }
 
@@ -3653,7 +3615,7 @@ class ActObj {
                 if (obj.wear_loc == WEAR_NONE
                         && can_see_obj(ch, obj)
                         && (cost = get_cost(keeper, obj, true)) > 0
-                        && (arg.length() == 0
+                        && (arg.isEmpty()
                         || is_name(arg.toString(), obj.name))) {
                     if (!found) {
                         found = true;
@@ -3696,7 +3658,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Sell what?\n", ch);
             return;
         }
@@ -3790,7 +3752,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Value what?\n", ch);
             return;
         }
@@ -3841,7 +3803,7 @@ class ActObj {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Usage: wanted <player> <Y|N>\n", ch);
             return;
         }
@@ -3866,8 +3828,7 @@ class ActObj {
         }
 
         switch (arg2.charAt(0)) {
-            case 'Y':
-            case 'y':
+            case 'Y', 'y' -> {
                 if (IS_SET(victim.act, PLR_WANTED)) {
                     act("$n is already wanted.", ch, null, null, TO_CHAR);
                 } else {
@@ -3876,9 +3837,8 @@ class ActObj {
                     send_to_char("You are now WANTED!!!\n", victim);
                     send_to_char("Ok.\n", ch);
                 }
-                break;
-            case 'N':
-            case 'n':
+            }
+            case 'N', 'n' -> {
                 if (!IS_SET(victim.act, PLR_WANTED)) {
                     act("$N is not wanted.", ch, null, victim, TO_CHAR);
                 } else {
@@ -3887,10 +3847,8 @@ class ActObj {
                     send_to_char("You are no longer wanted.\n", victim);
                     send_to_char("Ok.\n", ch);
                 }
-                break;
-            default:
-                send_to_char("Usage: wanted <player> <Y|N>\n", ch);
-                break;
+            }
+            default -> send_to_char("Usage: wanted <player> <Y|N>\n", ch);
         }
     }
 
@@ -3909,7 +3867,7 @@ class ActObj {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             victim = ch;
         } else if ((victim = get_char_room(ch, arg.toString())) == null) {
             send_to_char("They're not here.\n", ch);
@@ -4071,9 +4029,7 @@ class ActObj {
         value3 = obj.value[3];
 
         switch (obj.item_type) {
-            case ITEM_SCROLL:
-            case ITEM_POTION:
-            case ITEM_PILL:
+            case ITEM_SCROLL, ITEM_POTION, ITEM_PILL -> {
                 if (get_skill(ch, gsn_lore) < 85) {
                     value0 = number_range(1, 60);
                     if (chance > 40) {
@@ -4096,33 +4052,26 @@ class ActObj {
                         }
                     }
                 }
-
                 buf.sprintf("Level %d spells of:", value0);
                 send_to_char(buf, ch);
-
                 if (value1 >= 0 && value1 < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[value1].name, ch);
                     send_to_char("'", ch);
                 }
-
                 if (value2 >= 0 && value2 < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[value2].name, ch);
                     send_to_char("'", ch);
                 }
-
                 if (value3 >= 0 && value3 < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[value3].name, ch);
                     send_to_char("'", ch);
                 }
-
                 send_to_char(".\n", ch);
-                break;
-
-            case ITEM_WAND:
-            case ITEM_STAFF:
+            }
+            case ITEM_WAND, ITEM_STAFF -> {
                 if (get_skill(ch, gsn_lore) < 85) {
                     value0 = number_range(1, 60);
                     if (chance > 40) {
@@ -4145,20 +4094,16 @@ class ActObj {
                         }
                     }
                 }
-
                 buf.sprintf("Has %d(%d) charges of level %d", value1, value2, value0);
                 send_to_char(buf, ch);
-
                 if (value3 >= 0 && value3 < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[value3].name, ch);
                     send_to_char("'", ch);
                 }
-
                 send_to_char(".\n", ch);
-                break;
-
-            case ITEM_WEAPON:
+            }
+            case ITEM_WEAPON -> {
                 send_to_char("Weapon type is ", ch);
                 if (get_skill(ch, gsn_lore) < 85) {
                     value0 = number_range(0, 8);
@@ -4176,7 +4121,6 @@ class ActObj {
                         }
                     }
                 }
-
                 switch (value0) {
                     case (WEAPON_EXOTIC):
                         send_to_char("exotic.\n", ch);
@@ -4228,9 +4172,8 @@ class ActObj {
                             (value1 + value2) / 2);
                 }
                 send_to_char(buf, ch);
-                break;
-
-            case ITEM_ARMOR:
+            }
+            case ITEM_ARMOR -> {
                 if (get_skill(ch, gsn_lore) < 85) {
                     if (chance > 25) {
                         value2 = number_range(0, 2 * obj.value[2]);
@@ -4258,11 +4201,10 @@ class ActObj {
                         }
                     }
                 }
-
                 buf.sprintf("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n",
                         value0, value1, value2, value3);
                 send_to_char(buf, ch);
-                break;
+            }
         }
 
         if (get_skill(ch, gsn_lore) < 87) {
@@ -4303,7 +4245,7 @@ class ActObj {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Butcher what?\n", ch);
             return;
         }
@@ -4431,13 +4373,13 @@ class ActObj {
 
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Withdraw how much?\n", ch);
             return;
         }
 
         amount_s = Math.abs(atoi(arg.toString()));
-        if (!str_cmp(argument, "silver") || argument.length() == 0) {
+        if (!str_cmp(argument, "silver") || argument.isEmpty()) {
             amount_g = 0;
         } else if (!str_cmp(argument, "gold")) {
             amount_g = amount_s;
@@ -4504,12 +4446,12 @@ class ActObj {
 
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Deposit how much?\n", ch);
             return;
         }
         amount_s = Math.abs(atoi(arg.toString()));
-        if (!str_cmp(argument, "silver") || argument.length() == 0) {
+        if (!str_cmp(argument, "silver") || argument.isEmpty()) {
             amount_g = 0;
         } else if (!str_cmp(argument, "gold")) {
             amount_g = amount_s;
@@ -4559,7 +4501,7 @@ class ActObj {
             return;
         }
 
-        if (argument.length() == 0) /* empty */ {
+        if (argument.isEmpty()) /* empty */ {
             send_to_char("Wear which weapon to enchant?\n", ch);
             return;
         }
@@ -4728,26 +4670,26 @@ class ActObj {
     static void wear_multi(CHAR_DATA ch, OBJ_DATA obj, int iWear, boolean fReplace) {
         if (count_worn(ch, iWear) < max_can_wear(ch, iWear)) {
             switch (iWear) {
-                case WEAR_FINGER:
+                case WEAR_FINGER -> {
                     act("$n wears $p on one of $s finger.", ch, obj, null, TO_ROOM);
                     act("You wear $p on one of your finger.", ch, obj, null, TO_CHAR);
-                    break;
-                case WEAR_NECK:
+                }
+                case WEAR_NECK -> {
                     act("$n wears $p around $s neck.", ch, obj, null, TO_ROOM);
                     act("You wear $p around your neck.", ch, obj, null, TO_CHAR);
-                    break;
-                case WEAR_WRIST:
+                }
+                case WEAR_WRIST -> {
                     act("$n wears $p around one of $s wrist.", ch, obj, null, TO_ROOM);
                     act("You wear $p around one of your wrist.", ch, obj, null, TO_CHAR);
-                    break;
-                case WEAR_TATTOO:
+                }
+                case WEAR_TATTOO -> {
                     act("$n now uses $p as tattoo of $s religion.", ch, obj, null, TO_ROOM);
                     act("You now use $p as the tattoo of your religion.", ch, obj, null, TO_CHAR);
-                    break;
-                default:
+                }
+                default -> {
                     act("$n wears $p around somewhere.", ch, obj, null, TO_ROOM);
                     act("You wear $p around somewhere.", ch, obj, null, TO_CHAR);
-                    break;
+                }
             }
             equip_char(ch, obj, iWear);
         } else if (fReplace) {

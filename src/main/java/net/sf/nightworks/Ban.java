@@ -122,7 +122,7 @@ class Ban {
         StringBuilder arg1 = new StringBuilder();
         argument = one_argument(argument, arg1);
 
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             if (ban_list == null) {
                 send_to_char("No sites banned at this time.\n", ch);
                 return;
@@ -152,7 +152,7 @@ class Ban {
 
         /* find out what type of ban */
         String arg2Str = arg2.toString();
-        if (arg2.length() == 0 || !str_prefix(arg2Str, "all")) {
+        if (arg2.isEmpty() || !str_prefix(arg2Str, "all")) {
             type = BAN_ALL;
         } else if (!str_prefix(arg2Str, "newbies")) {
             type = BAN_NEWBIES;
@@ -172,7 +172,7 @@ class Ban {
             name = name.substring(0, name.length() - 1);
         }
 
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             send_to_char("You have to ban SOMETHING.\n", ch);
             return;
         }
@@ -230,7 +230,7 @@ class Ban {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Remove which site from the ban list?\n", ch);
             return;
         }

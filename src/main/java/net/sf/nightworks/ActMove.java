@@ -277,11 +277,11 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class ActMove {
 
-    static final String dir_name[] = {"north", "east", "south", "west", "up", "down"};
+    static final String[] dir_name = {"north", "east", "south", "west", "up", "down"};
 
-    static final int rev_dir[] = {2, 3, 0, 1, 5, 4};
+    static final int[] rev_dir = {2, 3, 0, 1, 5, 4};
 
-    static final int movement_loss[] = {1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6};
+    static final int[] movement_loss = {1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6};
 
 
     static void move_char(CHAR_DATA ch, int door) {
@@ -735,7 +735,7 @@ class ActMove {
 
 /* scan.c */
 
-    static final String distance[] = {"right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."};
+    static final String[] distance = {"right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."};
 
     static void do_scan2(CHAR_DATA ch) {
         act("$n looks all around.", ch, null, null, TO_ROOM);
@@ -786,7 +786,7 @@ class ActMove {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Open what?\n", ch);
             return;
         }
@@ -880,7 +880,7 @@ class ActMove {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Close what?\n", ch);
             return;
         }
@@ -998,7 +998,7 @@ class ActMove {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Lock what?\n", ch);
             return;
         }
@@ -1113,7 +1113,7 @@ class ActMove {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Unlock what?\n", ch);
             return;
         }
@@ -1231,7 +1231,7 @@ class ActMove {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Pick what?\n", ch);
             return;
         }
@@ -1359,7 +1359,7 @@ class ActMove {
     static void do_stand(CHAR_DATA ch, String argument) {
         OBJ_DATA obj = null;
 
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             if (ch.position == POS_FIGHTING) {
                 send_to_char("Maybe you should finish fighting first?\n", ch);
                 return;
@@ -1382,12 +1382,11 @@ class ActMove {
             }
         }
         switch (ch.position) {
-            case POS_SLEEPING:
+            case POS_SLEEPING -> {
                 if (IS_AFFECTED(ch, AFF_SLEEP)) {
                     send_to_char("You can't wake up!\n", ch);
                     return;
                 }
-
                 if (obj == null) {
                     send_to_char("You wake and stand up.\n", ch);
                     act("$n wakes and stands up.", ch, null, null, TO_ROOM);
@@ -1402,18 +1401,14 @@ class ActMove {
                     act("You wake and stand in $p.", ch, obj, null, TO_CHAR, POS_DEAD);
                     act("$n wakes and stands in $p.", ch, obj, null, TO_ROOM);
                 }
-
                 if (IS_HARA_KIRI(ch)) {
                     send_to_char("You feel your blood heats your body.\n", ch);
                     ch.act = REMOVE_BIT(ch.act, PLR_HARA_KIRI);
                 }
-
                 ch.position = POS_STANDING;
                 do_look(ch, "auto");
-                break;
-
-            case POS_RESTING:
-            case POS_SITTING:
+            }
+            case POS_RESTING, POS_SITTING -> {
                 if (obj == null) {
                     send_to_char("You stand up.\n", ch);
                     act("$n stands up.", ch, null, null, TO_ROOM);
@@ -1429,15 +1424,9 @@ class ActMove {
                     act("$n stands on $p.", ch, obj, null, TO_ROOM);
                 }
                 ch.position = POS_STANDING;
-                break;
-
-            case POS_STANDING:
-                send_to_char("You are already standing.\n", ch);
-                break;
-
-            case POS_FIGHTING:
-                send_to_char("You are already fighting!\n", ch);
-                break;
+            }
+            case POS_STANDING -> send_to_char("You are already standing.\n", ch);
+            case POS_FIGHTING -> send_to_char("You are already fighting!\n", ch);
         }
 
     }
@@ -1467,7 +1456,7 @@ class ActMove {
         }
 
         /* okay, now that we know we can rest, find an object to rest on */
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             obj = get_obj_list(ch, argument, ch.in_room.contents);
             if (obj == null) {
                 send_to_char("You don't see that here.\n", ch);
@@ -1495,7 +1484,7 @@ class ActMove {
         }
 
         switch (ch.position) {
-            case POS_SLEEPING:
+            case POS_SLEEPING -> {
                 if (obj == null) {
                     send_to_char("You wake up and start resting.\n", ch);
                     act("$n wakes up and starts resting.", ch, null, null, TO_ROOM);
@@ -1513,13 +1502,9 @@ class ActMove {
                     act("$n wakes up and rests in $p.", ch, obj, null, TO_ROOM);
                 }
                 ch.position = POS_RESTING;
-                break;
-
-            case POS_RESTING:
-                send_to_char("You are already resting.\n", ch);
-                break;
-
-            case POS_STANDING:
+            }
+            case POS_RESTING -> send_to_char("You are already resting.\n", ch);
+            case POS_STANDING -> {
                 if (obj == null) {
                     send_to_char("You rest.\n", ch);
                     act("$n sits down and rests.", ch, null, null, TO_ROOM);
@@ -1534,9 +1519,8 @@ class ActMove {
                     act("$n rests in $p.", ch, obj, null, TO_ROOM);
                 }
                 ch.position = POS_RESTING;
-                break;
-
-            case POS_SITTING:
+            }
+            case POS_SITTING -> {
                 if (obj == null) {
                     send_to_char("You rest.\n", ch);
                     act("$n rests.", ch, null, null, TO_ROOM);
@@ -1551,13 +1535,11 @@ class ActMove {
                     act("$n rests in $p.", ch, obj, null, TO_ROOM);
                 }
                 ch.position = POS_RESTING;
-
                 if (IS_HARA_KIRI(ch)) {
                     send_to_char("You feel your blood heats your body.\n", ch);
                     ch.act = REMOVE_BIT(ch.act, PLR_HARA_KIRI);
                 }
-
-                break;
+            }
         }
 
 
@@ -1586,7 +1568,7 @@ class ActMove {
         }
 
         /* okay, now that we know we can sit, find an object to sit on */
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             obj = get_obj_list(ch, argument, ch.in_room.contents);
             if (obj == null) {
                 if (IS_AFFECTED(ch, AFF_SLEEP)) {
@@ -1617,7 +1599,7 @@ class ActMove {
             ch.on = obj;
         }
         switch (ch.position) {
-            case POS_SLEEPING:
+            case POS_SLEEPING -> {
                 if (obj == null) {
                     send_to_char("You wake and sit up.\n", ch);
                     act("$n wakes and sits up.", ch, null, null, TO_ROOM);
@@ -1631,10 +1613,9 @@ class ActMove {
                     act("You wake and sit in $p.", ch, obj, null, TO_CHAR, POS_DEAD);
                     act("$n wakes and sits in $p.", ch, obj, null, TO_ROOM);
                 }
-
                 ch.position = POS_SITTING;
-                break;
-            case POS_RESTING:
+            }
+            case POS_RESTING -> {
                 if (obj == null) {
                     send_to_char("You stop resting.\n", ch);
                 } else if (IS_SET(obj.value[2], SIT_AT)) {
@@ -1645,11 +1626,9 @@ class ActMove {
                     act("$n sits on $p.", ch, obj, null, TO_ROOM);
                 }
                 ch.position = POS_SITTING;
-                break;
-            case POS_SITTING:
-                send_to_char("You are already sitting down.\n", ch);
-                break;
-            case POS_STANDING:
+            }
+            case POS_SITTING -> send_to_char("You are already sitting down.\n", ch);
+            case POS_STANDING -> {
                 if (obj == null) {
                     send_to_char("You sit down.\n", ch);
                     act("$n sits down on the ground.", ch, null, null, TO_ROOM);
@@ -1664,7 +1643,7 @@ class ActMove {
                     act("$n sits down in $p.", ch, obj, null, TO_ROOM);
                 }
                 ch.position = POS_SITTING;
-                break;
+            }
         }
         if (IS_HARA_KIRI(ch)) {
             send_to_char("You feel your blood heats your body.\n", ch);
@@ -1686,19 +1665,14 @@ class ActMove {
         }
 
         switch (ch.position) {
-            case POS_SLEEPING:
-                send_to_char("You are already sleeping.\n", ch);
-                break;
-
-            case POS_RESTING:
-            case POS_SITTING:
-            case POS_STANDING:
-                if (argument.length() == 0 && ch.on == null) {
+            case POS_SLEEPING -> send_to_char("You are already sleeping.\n", ch);
+            case POS_RESTING, POS_SITTING, POS_STANDING -> {
+                if (argument.isEmpty() && ch.on == null) {
                     send_to_char("You go to sleep.\n", ch);
                     act("$n goes to sleep.", ch, null, null, TO_ROOM);
                     ch.position = POS_SLEEPING;
                 } else  /* find an object and sleep on it */ {
-                    if (argument.length() == 0) {
+                    if (argument.isEmpty()) {
                         obj = ch.on;
                     } else {
                         obj = get_obj_list(ch, argument, ch.in_room.contents);
@@ -1734,11 +1708,8 @@ class ActMove {
                     }
                     ch.position = POS_SLEEPING;
                 }
-                break;
-
-            case POS_FIGHTING:
-                send_to_char("You are already fighting!\n", ch);
-                break;
+            }
+            case POS_FIGHTING -> send_to_char("You are already fighting!\n", ch);
         }
 
     }
@@ -1749,7 +1720,7 @@ class ActMove {
 
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             do_stand(ch, argument);
             return;
         }
@@ -2014,7 +1985,7 @@ class ActMove {
             }
 
             lose = 25;
-            gain_exp(ch, 0 - lose);
+            gain_exp(ch, -lose);
             check_improve(ch, gsn_recall, true, 4);
             TextBuffer buf = new TextBuffer();
             buf.sprintf("You recall from combat!  You lose %d exps.\n", lose);
@@ -2064,7 +2035,7 @@ class ActMove {
         }
 
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             TextBuffer buf = new TextBuffer();
 
             buf.sprintf("You have %d training sessions.\n", ch.train);
@@ -2205,7 +2176,7 @@ class ActMove {
     }
 
 
-    static String door[] = {"north", "east", "south", "west", "up", "down", "that way"};
+    static String[] door = {"north", "east", "south", "west", "up", "down", "that way"};
 
     static void do_track(CHAR_DATA ch, String argument) {
         ROOM_HISTORY_DATA rh;
@@ -2364,7 +2335,7 @@ class ActMove {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Bite whom?\n", ch);
             return;
         }
@@ -2449,7 +2420,7 @@ class ActMove {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Bash which door or direction.\n", ch);
             return;
         }
@@ -2569,7 +2540,7 @@ class ActMove {
         if (skill_failure_check(ch, gsn_blink, false, 0, null)) {
             return;
         }
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             TextBuffer buf = new TextBuffer();
             buf.sprintf("Your current blink status : %s.\n", IS_BLINK_ON(ch) ? "ON" : "OFF");
             send_to_char(buf, ch);
@@ -2852,7 +2823,7 @@ class ActMove {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Push whom to what diretion?\n", ch);
             return;
         }
@@ -3060,7 +3031,7 @@ class ActMove {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Escape to what diretion?\n", ch);
             return;
         }
@@ -3222,7 +3193,7 @@ class ActMove {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Mount what?\n", ch);
             return;
         }
@@ -3462,7 +3433,7 @@ class ActMove {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Shoot what diretion and whom?\n", ch);
             return;
         }
@@ -3604,7 +3575,7 @@ class ActMove {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Throw spear what diretion and whom?\n", ch);
             return;
         }

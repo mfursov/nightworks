@@ -71,7 +71,7 @@ class ActSkill {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             do_say(trainer, "You may convert 10 practices into 1 train.");
             do_say(trainer, "You may revert 1 train into 10 practices.");
             do_say(trainer, "Simply type 'gain convert' or 'gain revert'.");
@@ -118,7 +118,7 @@ class ActSkill {
         }
 
         StringBuilder[] spell_list = new StringBuilder[LEVEL_HERO];
-        char spell_columns[] = new char[LEVEL_HERO];
+        char[] spell_columns = new char[LEVEL_HERO];
         boolean found = false;
         StringBuilder buf = new StringBuilder();
         Formatter f = new Formatter(buf);
@@ -141,8 +141,8 @@ class ActSkill {
                     sb = new StringBuilder();
                     spell_list[lev] = sb;
                 }
-                if (sb.length() == 0) {
-                    sb.append(new Formatter().format("\nLevel %2d: %s", lev, buf).toString());
+                if (sb.isEmpty()) {
+                    sb.append(new Formatter().format("\nLevel %2d: %s", lev, buf));
                 } else /* append */ {
                     if (++spell_columns[lev] % 2 == 0) {
                         sb.append("\n          ");
@@ -177,7 +177,7 @@ class ActSkill {
         }
 
         StringBuilder[] skill_list = new StringBuilder[LEVEL_HERO];
-        char skill_columns[] = new char[LEVEL_HERO];
+        char[] skill_columns = new char[LEVEL_HERO];
         StringBuilder buf = new StringBuilder();
         Formatter f = new Formatter(buf);
         boolean found = false;
@@ -198,8 +198,8 @@ class ActSkill {
                     sb = new StringBuilder();
                     skill_list[lev] = sb;
                 }
-                if (sb.length() == 0) {
-                    sb.append(new Formatter().format("\nLevel %2d: %s", lev, buf).toString());
+                if (sb.isEmpty()) {
+                    sb.append(new Formatter().format("\nLevel %2d: %s", lev, buf));
                 } else /* append */ {
                     if (++skill_columns[lev] % 2 == 0) {
                         sb.append("\n          ");
@@ -324,7 +324,7 @@ class ActSkill {
         }
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("syntax: slist <class name>.\n", ch);
             return;
         }
@@ -334,7 +334,7 @@ class ActSkill {
             return;
         }
         StringBuilder[] skill_list = new StringBuilder[LEVEL_HERO];
-        char skill_columns[] = new char[LEVEL_HERO];
+        char[] skill_columns = new char[LEVEL_HERO];
         StringBuilder buf = new StringBuilder();
         Formatter f = new Formatter(buf);
         boolean found = false;
@@ -351,8 +351,8 @@ class ActSkill {
                     skill_list[lev] = sb;
                 }
 
-                if (sb.length() == 0) {
-                    sb.append(new Formatter().format("\nLevel %2d: %s", lev, buf).toString());
+                if (sb.isEmpty()) {
+                    sb.append(new Formatter().format("\nLevel %2d: %s", lev, buf));
                 } else /* append */ {
                     if (++skill_columns[lev] % 2 == 0) {
                         sb.append("\n          ");
@@ -401,7 +401,7 @@ class ActSkill {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Syntax : glist <group>\n", ch);
             return;
         }
@@ -420,7 +420,7 @@ class ActSkill {
                     (group != sn.group) || !CABAL_OK(ch, sn)) {
                 continue;
             }
-            if (buf.length() != 0) {
+            if (!buf.isEmpty()) {
                 f.format("%-18s%-18s\n", buf, sn.name);
                 send_to_char(buf, ch);
                 buf.setLength(0);
@@ -434,7 +434,7 @@ class ActSkill {
     static void do_slook(CHAR_DATA ch, String argument) {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Syntax : slook <skill or spell name>.\n", ch);
             return;
         }
@@ -462,7 +462,7 @@ class ActSkill {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Syntax: learn <skill | spell> <player>.\n", ch);
             return;
         }

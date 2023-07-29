@@ -299,15 +299,15 @@ class DB {
     /*
     * Locals.
     */
-    static MOB_INDEX_DATA mob_index_hash[] = new MOB_INDEX_DATA[MAX_KEY_HASH];
-    static OBJ_INDEX_DATA obj_index_hash[] = new OBJ_INDEX_DATA[MAX_KEY_HASH];
-    static ROOM_INDEX_DATA room_index_hash[] = new ROOM_INDEX_DATA[MAX_KEY_HASH];
+    static MOB_INDEX_DATA[] mob_index_hash = new MOB_INDEX_DATA[MAX_KEY_HASH];
+    static OBJ_INDEX_DATA[] obj_index_hash = new OBJ_INDEX_DATA[MAX_KEY_HASH];
+    static ROOM_INDEX_DATA[] room_index_hash = new ROOM_INDEX_DATA[MAX_KEY_HASH];
 
     private static AREA_DATA area_last;
 
     static final TIME_INFO_DATA time_info = new TIME_INFO_DATA();
     static final WEATHER_DATA weather_info = new WEATHER_DATA();
-    static final KILL_DATA kill_table[] = new KILL_DATA[MAX_LEVEL];
+    static final KILL_DATA[] kill_table = new KILL_DATA[MAX_LEVEL];
 
     static {
         for (int i = 0; i < kill_table.length; i++) {
@@ -419,22 +419,26 @@ class DB {
             }
             currentFile = new DikuTextFile(nw_config.lib_races_dir + "/" + raceFile);
             Race race = null;
+            label:
             while (!currentFile.feof()) {
                 String word = currentFile.fread_word();
-                if (word.equals("#RACE")) {
-                    if (race != null) {
-                        throw new RuntimeException("2 #RACE tokens in race file!");
-                    }
-                    race = read_race(currentFile);
-                } else if (word.equals("#PCRACE")) {
-                    if (race == null) {
-                        throw new RuntimeException("Error: #PCRACE before #RACE");
-                    }
-                    race.pcRace = read_pcrace(currentFile);
-                } else if (word.equals("#$")) {
-                    break;
-                } else {
-                    throw new RuntimeException("Unknown token in race file:" + word);
+                switch (word) {
+                    case "#RACE":
+                        if (race != null) {
+                            throw new RuntimeException("2 #RACE tokens in race file!");
+                        }
+                        race = read_race(currentFile);
+                        break;
+                    case "#PCRACE":
+                        if (race == null) {
+                            throw new RuntimeException("Error: #PCRACE before #RACE");
+                        }
+                        race.pcRace = read_pcrace(currentFile);
+                        break;
+                    case "#$":
+                        break label;
+                    default:
+                        throw new RuntimeException("Unknown token in race file:" + word);
                 }
             }
         }
@@ -513,7 +517,7 @@ class DB {
                     if (word.equals("BonusSkills")) {
                         String skills = fp.fread_string();
                         List<Skill> skillsList = new ArrayList<>();
-                        while (skills.length() > 0) {
+                        while (!skills.isEmpty()) {
                             StringBuilder oneSkill = new StringBuilder();
                             skills = one_argument(skills, oneSkill);
                             Skill skill = Skill.lookupSkill(oneSkill.toString());
@@ -602,23 +606,27 @@ class DB {
             }
             currentFile = new DikuTextFile(nw_config.lib_classes_dir + "/" + classFile);
             Clazz clazz = null;
+            label:
             while (!currentFile.feof()) {
                 String word = currentFile.fread_word();
-                if (word.equals("#CLASS")) {
-                    if (clazz != null) {
-                        throw new RuntimeException("2 #CLASS tokens in clazz file!");
-                    }
-                    clazz = read_class(currentFile);
-                } else if (word.equals("#POSE")) {
-                    if (clazz == null) {
-                        throw new RuntimeException("Error: #POSE before #CLASS");
-                    }
-                    Pose pose = read_class_pose(currentFile);
-                    clazz.poses.add(pose);
-                } else if (word.equals("#$")) {
-                    break;
-                } else {
-                    throw new RuntimeException("Unknown token in clazz file:" + word);
+                switch (word) {
+                    case "#CLASS":
+                        if (clazz != null) {
+                            throw new RuntimeException("2 #CLASS tokens in clazz file!");
+                        }
+                        clazz = read_class(currentFile);
+                        break;
+                    case "#POSE":
+                        if (clazz == null) {
+                            throw new RuntimeException("Error: #POSE before #CLASS");
+                        }
+                        Pose pose = read_class_pose(currentFile);
+                        clazz.poses.add(pose);
+                        break;
+                    case "#$":
+                        break label;
+                    default:
+                        throw new RuntimeException("Unknown token in clazz file:" + word);
                 }
             }
         }
@@ -633,11 +641,11 @@ class DB {
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
-                case 'A':
+                case 'A' -> {
                     clazz.points = fp.NKEY("AddExp", word, clazz.points);
                     clazz.align = fp.FLAG32_SKEY("Align", word, clazz.align, align_flags);
-                    break;
-                case 'E':
+                }
+                case 'E' -> {
                     if (!str_cmp(word, "End")) {
                         if (clazz == null) {
                             throw new RuntimeException("Class is null at 'End'");
@@ -646,21 +654,17 @@ class DB {
                         return clazz;
                     }
                     clazz.ethos = fp.FLAG32_WKEY("Ethos", word, clazz.ethos, ethos_table);
-                    break;
-                case 'G':
+                }
+                case 'G' -> {
                     if (!str_cmp(word, "GuildRoom")) {
                         int vnum = fp.fread_number();
                         clazz.guildVnums.add(vnum);
                         fp.fMatch = true;
                     }
-                    break;
-                case 'H':
-                    clazz.hp_rate = fp.NKEY("HPRate", word, clazz.hp_rate);
-                    break;
-                case 'M':
-                    clazz.mana_rate = fp.NKEY("ManaRate", word, clazz.mana_rate);
-                    break;
-                case 'N':
+                }
+                case 'H' -> clazz.hp_rate = fp.NKEY("HPRate", word, clazz.hp_rate);
+                case 'M' -> clazz.mana_rate = fp.NKEY("ManaRate", word, clazz.mana_rate);
+                case 'N' -> {
                     if (!str_cmp(word, "Name")) {
                         fp.fMatch = true;
                         String name = fp.fread_string();
@@ -669,11 +673,9 @@ class DB {
                             clazz = new Clazz(name);
                         }
                     }
-                    break;
-                case 'P':
-                    clazz.attr_prime = fp.FLAG32_WKEY("PrimeStat", word, clazz.attr_prime, stat_names);
-                    break;
-                case 'S':
+                }
+                case 'P' -> clazz.attr_prime = fp.FLAG32_WKEY("PrimeStat", word, clazz.attr_prime, stat_names);
+                case 'S' -> {
                     if (!str_cmp(word, "Skill")) {
                         Skill skill = Skill.lookupSkill(fp.fread_word(), true);
                         int level = fp.fread_number();
@@ -695,8 +697,8 @@ class DB {
                         }
                         fp.fMatch = true;
                     }
-                    break;
-                case 'T':
+                }
+                case 'T' -> {
                     clazz.thac0_00 = fp.NKEY("Thac0_00", word, clazz.thac0_00);
                     clazz.thac0_32 = fp.NKEY("Thac0_32", word, clazz.thac0_32);
                     if (!str_cmp(word, "Title")) {
@@ -720,7 +722,7 @@ class DB {
                         }
                         fp.fMatch = true;
                     }
-                    break;
+                }
             }
 
             if (!fp.fMatch) {
@@ -916,7 +918,7 @@ class DB {
                 break;
             }
             pHelp.text = fp.fread_string();
-            if (pHelp.text.length() > 0 && pHelp.text.charAt(0) == '.') {
+            if (!pHelp.text.isEmpty() && pHelp.text.charAt(0) == '.') {
                 pHelp.text = pHelp.text.substring(1);
             }
             if (!str_cmp(pHelp.keyword, "greeting")) {
@@ -1066,7 +1068,7 @@ class DB {
      * converts first letter to uppercase, does not affect other letters (capitalize() method does)
      */
     static String upfirst(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
@@ -2748,7 +2750,7 @@ class DB {
         int iArea;
         int iAreaHalf;
 
-        if (argument != null && argument.length() > 0) {
+        if (argument != null && !argument.isEmpty()) {
             send_to_char("No argument is used with this command.\n", ch);
             return;
         }
@@ -3065,7 +3067,7 @@ class DB {
 */
 
     static void log_string(CharSequence str) {
-        System.err.println(new Date().toString() + "::" + str);
+        System.err.println(new Date() + "::" + str);
     }
 
 /*
@@ -3260,7 +3262,7 @@ class DB {
             social_type social = new social_type();
             for (; ; ) {
                 String word = fp.fread_word();
-                if (word.length() == 0) {
+                if (word.isEmpty()) {
                     break;
                 }
                 if (word.charAt(0) == '#') {

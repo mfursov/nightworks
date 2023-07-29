@@ -227,33 +227,16 @@ class Special {
         }
 
         /* say something, then raise hell */
-        switch (number_range(0, 6)) {
-            default:
-                message = null;
-                break;
-            case 0:
-                message = "$n yells 'I've been looking for you, punk!'";
-                break;
-            case 1:
-                message = "With a scream of rage, $n attacks $N.";
-                break;
-            case 2:
-                message =
-                        "$n says 'What's slimy Ogre trash like you doing around here?'";
-                break;
-            case 3:
-                message = "$n cracks his knuckles and says 'Do ya feel lucky?'";
-                break;
-            case 4:
-                message = "$n says 'There's no cops to save you this time!'";
-                break;
-            case 5:
-                message = "$n says 'Time to join your brother, spud.'";
-                break;
-            case 6:
-                message = "$n says 'Let's rock.'";
-                break;
-        }
+        message = switch (number_range(0, 6)) {
+            default -> null;
+            case 0 -> "$n yells 'I've been looking for you, punk!'";
+            case 1 -> "With a scream of rage, $n attacks $N.";
+            case 2 -> "$n says 'What's slimy Ogre trash like you doing around here?'";
+            case 3 -> "$n cracks his knuckles and says 'Do ya feel lucky?'";
+            case 4 -> "$n says 'There's no cops to save you this time!'";
+            case 5 -> "$n says 'Time to join your brother, spud.'";
+            case 6 -> "$n says 'Let's rock.'";
+        };
 
         if (message != null) {
             act(message, ch, null, victim, TO_ALL);
@@ -298,33 +281,16 @@ class Special {
         }
 
         /* say something, then raise hell */
-        switch (number_range(0, 6)) {
-            default:
-                message = null;
-                break;
-            case 0:
-                message = "$n yells 'I've been looking for you, punk!'";
-                break;
-            case 1:
-                message = "With a scream of rage, $n attacks $N.'";
-                break;
-            case 2:
-                message =
-                        "$n says 'What's Troll filth like you doing around here?'";
-                break;
-            case 3:
-                message = "$n cracks his knuckles and says 'Do ya feel lucky?'";
-                break;
-            case 4:
-                message = "$n says 'There's no cops to save you this time!'";
-                break;
-            case 5:
-                message = "$n says 'Time to join your brother, spud.'";
-                break;
-            case 6:
-                message = "$n says 'Let's rock.'";
-                break;
-        }
+        message = switch (number_range(0, 6)) {
+            default -> null;
+            case 0 -> "$n yells 'I've been looking for you, punk!'";
+            case 1 -> "With a scream of rage, $n attacks $N.'";
+            case 2 -> "$n says 'What's Troll filth like you doing around here?'";
+            case 3 -> "$n cracks his knuckles and says 'Do ya feel lucky?'";
+            case 4 -> "$n says 'There's no cops to save you this time!'";
+            case 5 -> "$n says 'Time to join your brother, spud.'";
+            case 6 -> "$n says 'Let's rock.'";
+        };
 
         if (message != null) {
             act(message, ch, null, victim, TO_ALL);
@@ -382,35 +348,16 @@ class Special {
         }
     }
 */
-        switch (number_range(0, 6)) {
-            default:
-                message = null;
-                break;
-            case 0:
-                message = "$n yells 'All roit! All roit! break it up!'";
-                break;
-            case 1:
-                message =
-                        "$n says 'Society's to blame, but what's a bloke to do?'";
-                break;
-            case 2:
-                message =
-                        "$n mumbles 'bloody kids will be the death of us all.'";
-                break;
-            case 3:
-                message = "$n shouts 'Stop that! Stop that!' and attacks.";
-                break;
-            case 4:
-                message = "$n pulls out his billy and goes to work.";
-                break;
-            case 5:
-                message =
-                        "$n sighs in resignation and proceeds to break up the fight.";
-                break;
-            case 6:
-                message = "$n says 'Settle down, you hooligans!'";
-                break;
-        }
+        message = switch (number_range(0, 6)) {
+            default -> null;
+            case 0 -> "$n yells 'All roit! All roit! break it up!'";
+            case 1 -> "$n says 'Society's to blame, but what's a bloke to do?'";
+            case 2 -> "$n mumbles 'bloody kids will be the death of us all.'";
+            case 3 -> "$n shouts 'Stop that! Stop that!' and attacks.";
+            case 4 -> "$n pulls out his billy and goes to work.";
+            case 5 -> "$n sighs in resignation and proceeds to break up the fight.";
+            case 6 -> "$n says 'Settle down, you hooligans!'";
+        };
 
         if (message != null) {
             act(message, ch, null, null, TO_ALL);
@@ -464,23 +411,15 @@ class Special {
             return false;
         }
 
-        switch (number_bits(3)) {
-            case 0:
-                return spec_breath_fire(ch);
-            case 1:
-            case 2:
-                return spec_breath_lightning(ch);
-            case 3:
-                return spec_breath_gas(ch);
-            case 4:
-                return spec_breath_acid(ch);
-            case 5:
-            case 6:
-            case 7:
-                return spec_breath_frost(ch);
-        }
+        return switch (number_bits(3)) {
+            case 0 -> spec_breath_fire(ch);
+            case 1, 2 -> spec_breath_lightning(ch);
+            case 3 -> spec_breath_gas(ch);
+            case 4 -> spec_breath_acid(ch);
+            case 5, 6, 7 -> spec_breath_frost(ch);
+            default -> false;
+        };
 
-        return false;
     }
 
     static boolean spec_breath_acid(CHAR_DATA ch) {
@@ -528,39 +467,40 @@ class Special {
         }
 
         switch (number_bits(4)) {
-            case 0:
+            case 0 -> {
                 act("$n utters the word 'abrazak'.", ch, null, null, TO_ROOM);
                 spell_armor(Skill.gsn_armor, ch.level, ch, victim);
                 return true;
-
-            case 1:
+            }
+            case 1 -> {
                 act("$n utters the word 'fido'.", ch, null, null, TO_ROOM);
                 spell_bless(Skill.gsn_bless, ch.level, ch, victim, TARGET_CHAR);
                 return true;
-
-            case 2:
+            }
+            case 2 -> {
                 act("$n utters the words 'judicandus noselacri'.", ch, null, null, TO_ROOM);
                 spell_cure_blindness(ch.level, ch, victim);
                 return true;
-
-            case 3:
+            }
+            case 3 -> {
                 act("$n utters the words 'judicandus dies'.", ch, null, null, TO_ROOM);
                 spell_cure_light(ch.level, ch, victim);
                 return true;
-
-            case 4:
+            }
+            case 4 -> {
                 act("$n utters the words 'judicandus sausabru'.", ch, null, null, TO_ROOM);
                 spell_cure_poison(ch.level, ch, victim);
                 return true;
-
-            case 5:
+            }
+            case 5 -> {
                 act("$n utters the word 'candusima'.", ch, null, null, TO_ROOM);
                 spell_refresh(ch.level, ch, victim);
                 return true;
-
-            case 6:
+            }
+            case 6 -> {
                 act("$n utters the words 'judicandus eugzagz'.", ch, null, null, TO_ROOM);
                 spell_cure_disease(ch.level, ch, victim);
+            }
         }
 
         return false;
@@ -667,48 +607,48 @@ class Special {
         for (; ; ) {
             int min_level;
 
-            switch (number_bits(4)) {
-                case 0:
+            spell = switch (number_bits(4)) {
+                case 0 -> {
                     min_level = 0;
-                    spell = "curse";
-                    break;
-                case 1:
+                    yield "curse";
+                }
+                case 1 -> {
                     min_level = 3;
-                    spell = "weaken";
-                    break;
-                case 2:
+                    yield "weaken";
+                }
+                case 2 -> {
                     min_level = 6;
-                    spell = "chill touch";
-                    break;
-                case 3:
+                    yield "chill touch";
+                }
+                case 3 -> {
                     min_level = 9;
-                    spell = "blindness";
-                    break;
-                case 4:
+                    yield "blindness";
+                }
+                case 4 -> {
                     min_level = 12;
-                    spell = "poison";
-                    break;
-                case 5:
+                    yield "poison";
+                }
+                case 5 -> {
                     min_level = 15;
-                    spell = "energy drain";
-                    break;
-                case 6:
+                    yield "energy drain";
+                }
+                case 6 -> {
                     min_level = 18;
-                    spell = "harm";
-                    break;
-                case 7:
+                    yield "harm";
+                }
+                case 7 -> {
                     min_level = 21;
-                    spell = "teleport";
-                    break;
-                case 8:
+                    yield "teleport";
+                }
+                case 8 -> {
                     min_level = 20;
-                    spell = "plague";
-                    break;
-                default:
+                    yield "plague";
+                }
+                default -> {
                     min_level = 18;
-                    spell = "harm";
-                    break;
-            }
+                    yield "harm";
+                }
+            };
 
             if (ch.level >= min_level) {
                 break;
@@ -843,48 +783,22 @@ class Special {
         }
 
         switch (spec_mayor_data.path.charAt(spec_mayor_data.pos)) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-                move_char(ch, spec_mayor_data.path.charAt(spec_mayor_data.pos) - '0');
-                break;
-
-            case 'W':
+            case '0', '1', '2', '3' -> move_char(ch, spec_mayor_data.path.charAt(spec_mayor_data.pos) - '0');
+            case 'W' -> {
                 ch.position = POS_STANDING;
                 act("$n awakens and groans loudly.", ch, null, null, TO_ROOM);
-                break;
-
-            case 'S':
+            }
+            case 'S' -> {
                 ch.position = POS_SLEEPING;
                 act("$n lies down and falls asleep.", ch, null, null, TO_ROOM);
-                break;
-
-            case 'a':
-                do_say(ch, "Hello Honey!");
-                break;
-
-            case 'b':
-                do_say(ch, "What a view!  I must do something about that dump!");
-                break;
-
-            case 'c':
-                do_say(ch, "Vandals  Youngsters have no respect for anything!");
-                break;
-
-            case 'd':
-                do_say(ch, "Good day, citizens!");
-                break;
-
-            case 'e':
-                do_say(ch, "I hereby declare the city of Midgaard open!");
-                break;
-
-            case 'E':
-                do_say(ch, "I hereby declare the city of Midgaard closed!");
-                break;
-
-            case 'O':
+            }
+            case 'a' -> do_say(ch, "Hello Honey!");
+            case 'b' -> do_say(ch, "What a view!  I must do something about that dump!");
+            case 'c' -> do_say(ch, "Vandals  Youngsters have no respect for anything!");
+            case 'd' -> do_say(ch, "Good day, citizens!");
+            case 'e' -> do_say(ch, "I hereby declare the city of Midgaard open!");
+            case 'E' -> do_say(ch, "I hereby declare the city of Midgaard closed!");
+            case 'O' -> {
                 do_unlock(ch, "gate");
                 do_open(ch, "gate");
                 interpret(ch, "emote unlocks the gate key from the gate.", false);
@@ -897,9 +811,8 @@ class Special {
                     key.wear_flags = SET_BIT(key.wear_flags, ITEM_TAKE);
                 }
                 do_get(ch, "gatekey");
-                break;
-
-            case 'C':
+            }
+            case 'C' -> {
                 do_close(ch, "gate");
                 do_lock(ch, "gate");
                 do_drop(ch, "key");
@@ -912,11 +825,8 @@ class Special {
                 if (key != null) {
                     key.wear_flags = REMOVE_BIT(key.wear_flags, ITEM_TAKE);
                 }
-                break;
-
-            case '.':
-                spec_mayor_data.move = false;
-                break;
+            }
+            case '.' -> spec_mayor_data.move = false;
         }
 
         spec_mayor_data.pos++;
@@ -1004,36 +914,36 @@ class Special {
 
 
         switch (number_bits(4)) {
-            case 0:
+            case 0 -> {
                 act("$n utters the word 'abracal'.", ch, null, null, TO_ROOM);
                 spell_armor(Skill.gsn_armor, ch.level, ch, victim);
                 return true;
-
-            case 1:
+            }
+            case 1 -> {
                 act("$n utters the word 'balc'.", ch, null, null, TO_ROOM);
                 spell_bless(Skill.gsn_bless, ch.level, ch, victim, TARGET_CHAR);
                 return true;
-
-            case 2:
+            }
+            case 2 -> {
                 act("$n utters the word 'judicandus noselacba'.", ch, null, null, TO_ROOM);
                 spell_cure_blindness(ch.level, ch, victim);
                 return true;
-
-            case 3:
+            }
+            case 3 -> {
                 act("$n utters the word 'judicandus bacla'.", ch, null, null, TO_ROOM);
                 spell_cure_light(ch.level, ch, victim);
                 return true;
-
-            case 4:
+            }
+            case 4 -> {
                 act("$n utters the words 'judicandus sausabcla'.", ch, null, null, TO_ROOM);
                 spell_cure_poison(ch.level, ch, victim);
                 return true;
-
-            case 5:
+            }
+            case 5 -> {
                 act("$n utters the words 'candabala'.", ch, null, null, TO_ROOM);
                 spell_refresh(ch.level, ch, victim);
                 return true;
-
+            }
         }
 
         return false;
@@ -1243,7 +1153,7 @@ class Special {
         }
 
         switch (number_bits(2)) {
-            case 0:
+            case 0 -> {
                 act("$n rips apart your coin purse, spilling your gold!",
                         ch, null, victim, TO_VICT);
                 act("You slash apart $N's coin purse and gather his gold.",
@@ -1254,13 +1164,14 @@ class Special {
                 victim.gold -= gold;
                 ch.gold += gold;
                 return true;
-
-            case 1:
+            }
+            case 1 -> {
                 do_flee(ch);
                 return true;
-
-            default:
+            }
+            default -> {
                 return false;
+            }
         }
     }
 
@@ -1307,26 +1218,15 @@ class Special {
 
         String buf;
         switch (rnd_say) {
-            case 5:
-                buf = "Death to is the true end...";
-                break;
-            case 6:
-                buf = "Time to die....";
-                break;
-            case 7:
-                buf = "Cabrone....";
-                break;
-            case 8:
-                buf = "Welcome to your fate....";
-                break;
-            case 9:
-                buf = "A sacrifice to immortals.. ";
-                break;
-            case 10:
-                buf = "Ever dance with the devil....";
-                break;
-            default:
+            case 5 -> buf = "Death to is the true end...";
+            case 6 -> buf = "Time to die....";
+            case 7 -> buf = "Cabrone....";
+            case 8 -> buf = "Welcome to your fate....";
+            case 9 -> buf = "A sacrifice to immortals.. ";
+            case 10 -> buf = "Ever dance with the devil....";
+            default -> {
                 return false;
+            }
         }
         do_say(ch, buf);
         multi_hit(ch, victim, gsn_assassinate);
@@ -1378,93 +1278,44 @@ class Special {
         }
 
         switch (spec_captain_data.path.charAt(spec_captain_data.pos)) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-                move_char(ch, spec_captain_data.path.charAt(spec_captain_data.pos) - '0');
-                break;
-
-            case 'W':
+            case '0', '1', '2', '3' -> move_char(ch, spec_captain_data.path.charAt(spec_captain_data.pos) - '0');
+            case 'W' -> {
                 ch.position = POS_STANDING;
                 act("{W$n awakens suddenly and yawns.{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'S':
+            }
+            case 'S' -> {
                 ch.position = POS_SLEEPING;
                 act("{W$n lies down and falls asleep.{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'a':
-                act("{Y$n says 'Greetings! Good Hunting to you!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'b':
-                act("{Y$n says 'Keep the streets clean please. Keep Solace tidy.'{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'c':
+            }
+            case 'a' -> act("{Y$n says 'Greetings! Good Hunting to you!'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'b' ->
+                    act("{Y$n says 'Keep the streets clean please. Keep Solace tidy.'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'c' -> {
                 act("{Y$n says 'I must do something about all these doors.{x", ch, null, null, TO_ROOM, POS_RESTING);
                 act("{Y$n says, 'I will never get out of here.'{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'd':
-                act("{Y$n says 'Salutations Citizens of Solace!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'y':
-                act("{Y$n says 'I hereby declare the city of Solace open!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'E':
-                act("{Y$n says 'I hereby declare the city of Solace closed!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-                break;
-
-            case 'O':
+            }
+            case 'd' -> act("{Y$n says 'Salutations Citizens of Solace!'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'y' ->
+                    act("{Y$n says 'I hereby declare the city of Solace open!'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'E' ->
+                    act("{Y$n says 'I hereby declare the city of Solace closed!'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'O' -> {
                 do_unlock(ch, "gate");
                 do_open(ch, "gate");
-                break;
-
-            case 'C':
+            }
+            case 'C' -> {
                 do_close(ch, "gate");
                 do_lock(ch, "gate");
-                break;
-
-            case 'n':
-                do_open(ch, "north");
-                break;
-
-            case 'o':
-                do_close(ch, "south");
-                break;
-
-            case 's':
-                do_open(ch, "south");
-                break;
-
-            case 't':
-                do_close(ch, "north");
-                break;
-
-            case 'e':
-                do_open(ch, "east");
-                break;
-
-            case 'f':
-                do_close(ch, "west");
-                break;
-
-            case 'w':
-                do_open(ch, "west");
-                break;
-
-            case 'x':
-                do_close(ch, "east");
-                break;
-
-            case '.':
-                spec_captain_data.move = false;
-                break;
+            }
+            case 'n' -> do_open(ch, "north");
+            case 'o' -> do_close(ch, "south");
+            case 's' -> do_open(ch, "south");
+            case 't' -> do_close(ch, "north");
+            case 'e' -> do_open(ch, "east");
+            case 'f' -> do_close(ch, "west");
+            case 'w' -> do_open(ch, "west");
+            case 'x' -> do_close(ch, "east");
+            case '.' -> spec_captain_data.move = false;
         }
 
         spec_captain_data.pos++;
@@ -1504,15 +1355,11 @@ class Special {
         }
 
         switch (spec_headlamia_data.path.charAt(spec_headlamia_data.pos)) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
+            case '0', '1', '2', '3' -> {
                 move_char(ch, spec_headlamia_data.path.charAt(spec_headlamia_data.pos) - '0');
                 spec_headlamia_data.pos++;
-                break;
-
-            case 'T':
+            }
+            case 'T' -> {
                 spec_headlamia_data.pos++;
                 for (vch = char_list; vch != null; vch = vch_next) {
                     vch_next = vch.next;
@@ -1528,13 +1375,12 @@ class Special {
                         }
                     }
                 }
-                break;
-
-            case '.':
+            }
+            case '.' -> {
                 spec_headlamia_data.move = false;
                 spec_headlamia_data.count = 0;
                 spec_headlamia_data.pos = 0;
-                break;
+            }
         }
 
         return false;
@@ -1563,38 +1409,18 @@ class Special {
             return false;
         }
 
-        switch (dice(1, 16)) {
-            case 0:
-                spell = "fear";
-                break;
-            case 1:
-                spell = "fear";
-                break;
-            case 2:
-                spell = "slow";
-                break;
-            case 3:
-                spell = "cause serious";
-                break;
-            case 4:
-                spell = "cause critical";
-                break;
-            case 5:
-                spell = "harm";
-                break;
-            case 6:
-                spell = "harm";
-                break;
-            case 7:
-                spell = "dispel magic";
-                break;
-            case 8:
-                spell = "dispel magic";
-                break;
-            default:
-                spell = "";
-                break;
-        }
+        spell = switch (dice(1, 16)) {
+            case 0 -> "fear";
+            case 1 -> "fear";
+            case 2 -> "slow";
+            case 3 -> "cause serious";
+            case 4 -> "cause critical";
+            case 5 -> "harm";
+            case 6 -> "harm";
+            case 7 -> "dispel magic";
+            case 8 -> "dispel magic";
+            default -> "";
+        };
 
         if ((sn = lookupSkill(spell)) == null) {
             return false;
@@ -1625,30 +1451,13 @@ class Special {
             return false;
         }
 
-        switch (dice(1, 16)) {
-            case 0:
-            case 1:
-                spell = "dispel magic";
-                break;
-            case 2:
-            case 3:
-                spell = "acid arrow";
-                break;
-            case 4:
-            case 5:
-                spell = "caustic font";
-                break;
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                spell = "acid blast";
-                break;
-            default:
-                spell = "";
-                break;
-        }
+        spell = switch (dice(1, 16)) {
+            case 0, 1 -> "dispel magic";
+            case 2, 3 -> "acid arrow";
+            case 4, 5 -> "caustic font";
+            case 6, 7, 8, 9, 10 -> "acid blast";
+            default -> "";
+        };
 
         if ((sn = lookupSkill(spell)) == null) {
             return false;
@@ -1682,45 +1491,21 @@ class Special {
         }
 
         switch (dice(1, 16)) {
-            case 0:
-            case 1:
-                spell = "blindness";
-                break;
-            case 2:
-            case 3:
-                spell = "dispel magic";
-                break;
-            case 4:
-            case 5:
-                spell = "weaken";
-                break;
-            case 6:
-            case 7:
-                spell = "energy drain";
-                break;
-            case 8:
-            case 9:
-                spell = "plague";
-                break;
-            case 10:
-            case 11:
-                spell = "acid arrow";
-                break;
-            case 12:
-            case 13:
-            case 14:
-                spell = "acid blast";
-                break;
-            case 15:
+            case 0, 1 -> spell = "blindness";
+            case 2, 3 -> spell = "dispel magic";
+            case 4, 5 -> spell = "weaken";
+            case 6, 7 -> spell = "energy drain";
+            case 8, 9 -> spell = "plague";
+            case 10, 11 -> spell = "acid arrow";
+            case 12, 13, 14 -> spell = "acid blast";
+            case 15 -> {
                 if (ch.hit < (ch.max_hit / 3)) {
                     spell = "shadow cloak";
                 } else {
                     spell = "";
                 }
-                break;
-            default:
-                spell = "";
-                break;
+            }
+            default -> spell = "";
         }
 
         if ((sn = lookupSkill(spell)) == null) {
@@ -1755,36 +1540,19 @@ class Special {
         }
 
         switch (dice(1, 16)) {
-            case 0:
-            case 1:
-                spell = "dispel magic";
-                break;
-            case 2:
-            case 3:
-                spell = "acid arrow";
-                break;
-            case 4:
-            case 5:
-                spell = "caustic font";
-                break;
-            case 6:
-            case 7:
-            case 8:
-                spell = "acid blast";
-                break;
-            case 9:
-                spell = "disgrace";
-                break;
-            case 10:
+            case 0, 1 -> spell = "dispel magic";
+            case 2, 3 -> spell = "acid arrow";
+            case 4, 5 -> spell = "caustic font";
+            case 6, 7, 8 -> spell = "acid blast";
+            case 9 -> spell = "disgrace";
+            case 10 -> {
                 if (ch.hit < (ch.max_hit / 3)) {
                     spell = "garble";
                 } else {
                     spell = "";
                 }
-                break;
-            default:
-                spell = "";
-                break;
+            }
+            default -> spell = "";
         }
 
         if ((sn = lookupSkill(spell)) == null) {
@@ -1818,51 +1586,21 @@ class Special {
             return false;
         }
 
-        switch (dice(1, 16)) {
-            case 0:
-                spell = "blindness";
-                break;
-            case 1:
-                spell = "dispel magic";
-                break;
-            case 2:
-                spell = "weaken";
-                break;
-            case 3:
-                spell = "blindness";
-                break;
-            case 4:
-                spell = "acid arrow";
-                break;
-            case 5:
-                spell = "caustic font";
-                break;
-            case 6:
-                spell = "energy drain";
-                break;
-            case 7:
-            case 8:
-            case 9:
-                spell = "acid blast";
-                break;
-            case 10:
-                spell = "plague";
-                break;
-            case 11:
-                spell = "acid blast";
-                break;
-            case 12:
-            case 13:
-                spell = "lightning breath";
-                break;
-            case 14:
-            case 15:
-                spell = "mental knife";
-                break;
-            default:
-                spell = "";
-                break;
-        }
+        spell = switch (dice(1, 16)) {
+            case 0 -> "blindness";
+            case 1 -> "dispel magic";
+            case 2 -> "weaken";
+            case 3 -> "blindness";
+            case 4 -> "acid arrow";
+            case 5 -> "caustic font";
+            case 6 -> "energy drain";
+            case 7, 8, 9 -> "acid blast";
+            case 10 -> "plague";
+            case 11 -> "acid blast";
+            case 12, 13 -> "lightning breath";
+            case 14, 15 -> "mental knife";
+            default -> "";
+        };
 
         if ((sn = lookupSkill(spell)) == null) {
             return false;
@@ -1939,30 +1677,13 @@ class Special {
             return false;
         }
 
-        switch (dice(1, 16)) {
-            case 0:
-            case 1:
-                spell = "dispel magic";
-                break;
-            case 2:
-            case 3:
-                spell = "acid arrow";
-                break;
-            case 4:
-            case 5:
-                spell = "caustic font";
-                break;
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                spell = "acid blast";
-                break;
-            default:
-                spell = "";
-                break;
-        }
+        spell = switch (dice(1, 16)) {
+            case 0, 1 -> "dispel magic";
+            case 2, 3 -> "acid arrow";
+            case 4, 5 -> "caustic font";
+            case 6, 7, 8, 9, 10 -> "acid blast";
+            default -> "";
+        };
 
         if ((sn = lookupSkill(spell)) == null) {
             return false;
@@ -2000,28 +1721,13 @@ class Special {
             return true;
         }
 
-        switch (dice(1, 16)) {
-            case 0:
-            case 1:
-                spell = "dispel magic";
-                break;
-            case 2:
-            case 3:
-                spell = "acid blast";
-                break;
-            case 4:
-            case 5:
-                spell = "caustic font";
-                break;
-            case 6:
-            case 7:
-            case 8:
-                spell = "acid arrow";
-                break;
-            default:
-                spell = "";
-                break;
-        }
+        spell = switch (dice(1, 16)) {
+            case 0, 1 -> "dispel magic";
+            case 2, 3 -> "acid blast";
+            case 4, 5 -> "caustic font";
+            case 6, 7, 8 -> "acid arrow";
+            default -> "";
+        };
 
         if ((sn = lookupSkill(spell)) == null) {
             return false;
@@ -2049,29 +1755,13 @@ class Special {
             }
         }
 
-        switch (dice(1, 16)) {
-            case 0:
-            case 1:
-                spell = "dispel magic";
-                break;
-            case 2:
-            case 3:
-                spell = "acid arrow";
-                break;
-            case 4:
-            case 5:
-                spell = "caustic font";
-                break;
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-                spell = "acid blast";
-                break;
-            default:
-                spell = "";
-                break;
-        }
+        spell = switch (dice(1, 16)) {
+            case 0, 1 -> "dispel magic";
+            case 2, 3 -> "acid arrow";
+            case 4, 5 -> "caustic font";
+            case 6, 7, 8, 9 -> "acid blast";
+            default -> "";
+        };
 
         if (victim == null) {
             return false;

@@ -1,7 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
-import org.jetbrains.annotations.NotNull;
 
 import static net.sf.nightworks.ActComm.add_follower;
 import static net.sf.nightworks.ActComm.cabal_area_check;
@@ -416,14 +416,14 @@ class Magic {
             new syl_type("", "")
     };
 
-    static void say_spell(@NotNull CHAR_DATA ch, @NotNull Skill sn) {
+    static void say_spell(CHAR_DATA ch, Skill sn) {
         TextBuffer buf = new TextBuffer();
         for (int pos = 0, length = 0; pos < sn.name.length(); pos += length) {
-            for (int iSyl = 0; iSyl < syl_table.length; iSyl++) {
-                String prefix = syl_table[iSyl]._old;
+            for (syl_type sylType : syl_table) {
+                String prefix = sylType._old;
                 int len = prefix.length();
                 if (sn.name.regionMatches(pos, prefix, 0, len)) {
-                    buf.append(syl_table[iSyl]._new);
+                    buf.append(sylType._new);
                     length = len;
                     break;
                 }
@@ -460,14 +460,11 @@ class Magic {
         }
 
         switch (check_immune(victim, dam_type)) {
-            case IS_IMMUNE:
+            case IS_IMMUNE -> {
                 return true;
-            case IS_RESISTANT:
-                save += victim.level / 5;
-                break;
-            case IS_VULNERABLE:
-                save -= victim.level / 5;
-                break;
+            }
+            case IS_RESISTANT -> save += victim.level / 5;
+            case IS_VULNERABLE -> save -= victim.level / 5;
         }
 
         if (!IS_NPC(victim) && victim.clazz.fMana) {
@@ -542,7 +539,7 @@ class Magic {
      * The kludgy global is for spells who want more stuff from command line.
      */
     static String target_name;
-    static int door[] = new int[]{0};
+    static int[] door = new int[]{0};
 
     static void do_cast(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
@@ -575,7 +572,7 @@ class Magic {
         String target_name = one_argument(argument, arg1);
         one_argument(target_name, arg2);
 
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             send_to_char("Cast which what where?\n", ch);
             return;
         }
@@ -631,11 +628,11 @@ class Magic {
         target = TARGET_NONE;
 
         switch (sn.target) {
-            default:
+            default -> {
                 bug("Do_cast: bad target for sn %d.", sn.ordinal());
                 return;
-
-            case TAR_IGNORE:
+            }
+            case TAR_IGNORE -> {
                 if (is_affected(ch, gsn_spellbane)) {
                     WAIT_STATE(ch, sn.beats);
                     act("Your spellbane deflects the spell!", ch, null, null, TO_CHAR);
@@ -644,10 +641,9 @@ class Magic {
                     damage(ch, ch, 3 * ch.level, gsn_spellbane, DAM_NEGATIVE, true);
                     return;
                 }
-                break;
-
-            case TAR_CHAR_OFFENSIVE:
-                if (arg2.length() == 0) {
+            }
+            case TAR_CHAR_OFFENSIVE -> {
+                if (arg2.isEmpty()) {
                     if ((victim = ch.fighting) == null) {
                         send_to_char("Cast the spell on whom?\n", ch);
                         return;
@@ -671,7 +667,6 @@ class Magic {
                         return;
                     }
                 }
-
                 if (!IS_NPC(ch) && is_safe(ch, victim)) {
                     return;
                 }
@@ -726,10 +721,9 @@ class Magic {
                     victim.mana += mana;
                     return;
                 }
-                break;
-
-            case TAR_CHAR_DEFENSIVE:
-                if (arg2.length() == 0) {
+            }
+            case TAR_CHAR_DEFENSIVE -> {
+                if (arg2.isEmpty()) {
                     victim = ch;
                 } else {
                     if ((victim = get_char_room(ch, target_name)) == null) {
@@ -737,7 +731,6 @@ class Magic {
                         return;
                     }
                 }
-
                 vo = victim;
                 target = TARGET_CHAR;
                 if (is_affected(victim, gsn_spellbane)) {
@@ -765,17 +758,14 @@ class Magic {
                     victim.mana += mana;
                     return;
                 }
-                break;
-
-            case TAR_CHAR_SELF:
-                if (arg2.length() != 0 && !is_name(target_name, ch.name)) {
+            }
+            case TAR_CHAR_SELF -> {
+                if (!arg2.isEmpty() && !is_name(target_name, ch.name)) {
                     send_to_char("You cannot cast this spell on another.\n", ch);
                     return;
                 }
-
                 vo = ch;
                 target = TARGET_CHAR;
-
                 if (is_affected(ch, gsn_spellbane)) {
                     WAIT_STATE(ch, sn.beats);
                     act("Your spellbane deflects the spell!", ch, null, null, TO_CHAR);
@@ -784,20 +774,16 @@ class Magic {
                     damage(ch, ch, 3 * ch.level, gsn_spellbane, DAM_NEGATIVE, true);
                     return;
                 }
-
-                break;
-
-            case TAR_OBJ_INV:
-                if (arg2.length() == 0) {
+            }
+            case TAR_OBJ_INV -> {
+                if (arg2.isEmpty()) {
                     send_to_char("What should the spell be cast upon?\n", ch);
                     return;
                 }
-
                 if ((obj = get_obj_carry(ch, target_name)) == null) {
                     send_to_char("You are not carrying that.\n", ch);
                     return;
                 }
-
                 vo = obj;
                 target = TARGET_OBJ;
                 if (is_affected(ch, gsn_spellbane)) {
@@ -808,10 +794,9 @@ class Magic {
                     damage(ch, ch, 3 * ch.level, gsn_spellbane, DAM_NEGATIVE, true);
                     return;
                 }
-                break;
-
-            case TAR_OBJ_CHAR_OFF:
-                if (arg2.length() == 0) {
+            }
+            case TAR_OBJ_CHAR_OFF -> {
+                if (arg2.isEmpty()) {
                     if ((victim = ch.fighting) == null) {
                         send_to_char("Cast the spell on whom or what?\n", ch);
                         return;
@@ -821,7 +806,6 @@ class Magic {
                 } else if ((victim = get_char_room(ch, target_name)) != null) {
                     target = TARGET_CHAR;
                 }
-
                 if (target == TARGET_CHAR) /* check the sanity of the attack */ {
                     if (is_safe_spell(ch, victim, false) && victim != ch) {
                         send_to_char("Your spell didn't work.\n", ch);
@@ -846,10 +830,9 @@ class Magic {
                     send_to_char("You don't see that here.\n", ch);
                     return;
                 }
-                break;
-
-            case TAR_OBJ_CHAR_DEF:
-                if (arg2.length() == 0) {
+            }
+            case TAR_OBJ_CHAR_DEF -> {
+                if (arg2.isEmpty()) {
                     vo = ch;
                     target = TARGET_CHAR;
                 } else if ((victim = get_char_room(ch, target_name)) != null) {
@@ -862,7 +845,7 @@ class Magic {
                     send_to_char("You don't see that here.\n", ch);
                     return;
                 }
-                break;
+            }
         }
 
         if (!IS_NPC(ch) && ch.mana < mana) {
@@ -979,15 +962,12 @@ class Magic {
         }
 
         switch (sn.target) {
-            default:
+            default -> {
                 bug("Obj_cast_spell: bad target for sn %d.", sn.ordinal());
                 return;
-
-            case TAR_IGNORE:
-                vo = null;
-                break;
-
-            case TAR_CHAR_OFFENSIVE:
+            }
+            case TAR_IGNORE -> vo = null;
+            case TAR_CHAR_OFFENSIVE -> {
                 if (victim == null) {
                     victim = ch.fighting;
                 }
@@ -1017,7 +997,6 @@ class Magic {
                     }
                     return;
                 }
-
                 if (ch != victim && IS_AFFECTED(victim, AFF_ABSORB) &&
                         (number_percent() < 2 * get_skill(victim, gsn_absorb) / 3)
                         && sn != Skill.gsn_mental_knife && sn != Skill.gsn_lightning_breath) {
@@ -1028,10 +1007,8 @@ class Magic {
                     victim.mana += sn.min_mana;
                     return;
                 }
-                break;
-
-            case TAR_CHAR_DEFENSIVE:
-            case TAR_CHAR_SELF:
+            }
+            case TAR_CHAR_DEFENSIVE, TAR_CHAR_SELF -> {
                 if (victim == null) {
                     victim = ch;
                 }
@@ -1052,9 +1029,8 @@ class Magic {
                     }
                     return;
                 }
-                break;
-
-            case TAR_OBJ_INV:
+            }
+            case TAR_OBJ_INV -> {
                 if (obj == null) {
                     send_to_char("You can't do that.\n", ch);
                     return;
@@ -1068,10 +1044,8 @@ class Magic {
                     damage(ch, ch, 3 * ch.level, gsn_spellbane, DAM_NEGATIVE, true);
                     return;
                 }
-
-                break;
-
-            case TAR_OBJ_CHAR_OFF:
+            }
+            case TAR_OBJ_CHAR_OFF -> {
                 if (victim == null && obj == null) {
                     if (ch.fighting != null) {
                         victim = ch.fighting;
@@ -1093,10 +1067,8 @@ class Magic {
                         target = TARGET_OBJ;
                     }
                 }
-                break;
-
-
-            case TAR_OBJ_CHAR_DEF:
+            }
+            case TAR_OBJ_CHAR_DEF -> {
                 if (victim == null && obj == null) {
                     vo = ch;
                     target = TARGET_CHAR;
@@ -1107,8 +1079,7 @@ class Magic {
                     vo = obj;
                     target = TARGET_OBJ;
                 }
-
-                break;
+            }
         }
 
         target_name = "";
@@ -1236,7 +1207,7 @@ class Magic {
         affect_to_char(victim, af);
 
         af.location = APPLY_SAVING_SPELL;
-        af.modifier = 0 - level / 8;
+        af.modifier = -level / 8;
         affect_to_char(victim, af);
         send_to_char("You feel righteous.\n", victim);
         if (ch != victim) {
@@ -1871,10 +1842,10 @@ class Magic {
     }
 
 
-    static void spell_continual_light(CHAR_DATA ch) {
+    static void spell_continual_light(@NotNull CHAR_DATA ch) {
         OBJ_DATA light;
 
-        if (target_name.length() != 0)  /* do a glow on some object */ {
+        if (!target_name.isEmpty())  /* do a glow on some object */ {
             light = get_obj_carry(ch, target_name);
 
             if (light == null) {
@@ -2120,7 +2091,7 @@ class Magic {
             af.level = level;
             af.duration = (8 + level / 5);
             af.location = APPLY_SAVES;
-            af.modifier = +1;
+            af.modifier = 1;
             af.bitvector = ITEM_EVIL;
             affect_to_obj(obj, af);
 
@@ -3051,7 +3022,7 @@ class Magic {
         if (victim.level <= 2) {
             dam = ch.hit + 1;
         } else {
-            gain_exp(victim, 0 - number_range(level / 5, 3 * level / 5));
+            gain_exp(victim, -number_range(level / 5, 3 * level / 5));
             victim.mana /= 2;
             victim.move /= 2;
             dam = dice(1, level);
@@ -3492,7 +3463,7 @@ class Magic {
                         && is_metal(obj_lose)
                         && !IS_OBJ_STAT(obj_lose, ITEM_BURN_PROOF)) {
                     switch (obj_lose.item_type) {
-                        case ITEM_ARMOR:
+                        case ITEM_ARMOR -> {
                             if (obj_lose.wear_loc != -1) /* remove the item */ {
                                 if (can_drop_obj(victim, obj_lose)
                                         && (obj_lose.weight / 10) <
@@ -3530,8 +3501,8 @@ class Magic {
                                     fail = false;
                                 }
                             }
-                            break;
-                        case ITEM_WEAPON:
+                        }
+                        case ITEM_WEAPON -> {
                             if (obj_lose.wear_loc != -1) /* try to drop it */ {
                                 if (IS_WEAPON_STAT(obj_lose, WEAPON_FLAMING)) {
                                     continue;
@@ -3571,7 +3542,7 @@ class Magic {
                                     fail = false;
                                 }
                             }
-                            break;
+                        }
                     }
                 }
             }
@@ -3682,59 +3653,46 @@ class Magic {
         }
 
         switch (obj.item_type) {
-            case ITEM_SCROLL:
-            case ITEM_POTION:
-            case ITEM_PILL:
+            case ITEM_SCROLL, ITEM_POTION, ITEM_PILL -> {
                 buf.sprintf("Level %d spells of:", obj.value[0]);
                 send_to_char(buf, ch);
-
                 if (obj.value[1] >= 0 && obj.value[1] < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[obj.value[1]].name, ch);
                     send_to_char("'", ch);
                 }
-
                 if (obj.value[2] >= 0 && obj.value[2] < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[obj.value[2]].name, ch);
                     send_to_char("'", ch);
                 }
-
                 if (obj.value[3] >= 0 && obj.value[3] < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[obj.value[3]].name, ch);
                     send_to_char("'", ch);
                 }
-
                 if (obj.value[4] >= 0 && obj.value[4] < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[obj.value[4]].name, ch);
                     send_to_char("'", ch);
                 }
-
                 send_to_char(".\n", ch);
-                break;
-
-            case ITEM_WAND:
-            case ITEM_STAFF:
+            }
+            case ITEM_WAND, ITEM_STAFF -> {
                 buf.sprintf("Has %d charges of level %d", obj.value[2], obj.value[0]);
                 send_to_char(buf, ch);
-
                 if (obj.value[3] >= 0 && obj.value[3] < MAX_SKILL) {
                     send_to_char(" '", ch);
                     send_to_char(Skill.skills[obj.value[3]].name, ch);
                     send_to_char("'", ch);
                 }
-
                 send_to_char(".\n", ch);
-                break;
-
-            case ITEM_DRINK_CON:
+            }
+            case ITEM_DRINK_CON -> {
                 buf.sprintf("It holds %s-colored %s.\n", liq_table[obj.value[2]].liq_color, liq_table[obj.value[2]].liq_name);
                 send_to_char(buf, ch);
-                break;
-
-            case ITEM_CONTAINER:
+            }
+            case ITEM_CONTAINER -> {
                 buf.sprintf("Capacity: %d#  Maximum weight: %d#  flags: %s\n",
                         obj.value[0], obj.value[3], cont_bit_name(obj.value[1]));
                 send_to_char(buf, ch);
@@ -3743,50 +3701,23 @@ class Magic {
                             obj.value[4]);
                     send_to_char(buf, ch);
                 }
-                break;
-
-            case ITEM_WEAPON:
+            }
+            case ITEM_WEAPON -> {
                 send_to_char("Weapon type is ", ch);
                 switch (obj.value[0]) {
-                    case (WEAPON_EXOTIC):
-                        send_to_char("exotic.\n", ch);
-                        break;
-                    case (WEAPON_SWORD):
-                        send_to_char("sword.\n", ch);
-                        break;
-                    case (WEAPON_DAGGER):
-                        send_to_char("dagger.\n", ch);
-                        break;
-                    case (WEAPON_SPEAR):
-                        send_to_char("spear/staff.\n", ch);
-                        break;
-                    case (WEAPON_MACE):
-                        send_to_char("mace/club.\n", ch);
-                        break;
-                    case (WEAPON_AXE):
-                        send_to_char("axe.\n", ch);
-                        break;
-                    case (WEAPON_FLAIL):
-                        send_to_char("flail.\n", ch);
-                        break;
-                    case (WEAPON_WHIP):
-                        send_to_char("whip.\n", ch);
-                        break;
-                    case (WEAPON_POLEARM):
-                        send_to_char("polearm.\n", ch);
-                        break;
-                    case (WEAPON_BOW):
-                        send_to_char("bow.\n", ch);
-                        break;
-                    case (WEAPON_ARROW):
-                        send_to_char("arrow.\n", ch);
-                        break;
-                    case (WEAPON_LANCE):
-                        send_to_char("lance.\n", ch);
-                        break;
-                    default:
-                        send_to_char("unknown.\n", ch);
-                        break;
+                    case (WEAPON_EXOTIC) -> send_to_char("exotic.\n", ch);
+                    case (WEAPON_SWORD) -> send_to_char("sword.\n", ch);
+                    case (WEAPON_DAGGER) -> send_to_char("dagger.\n", ch);
+                    case (WEAPON_SPEAR) -> send_to_char("spear/staff.\n", ch);
+                    case (WEAPON_MACE) -> send_to_char("mace/club.\n", ch);
+                    case (WEAPON_AXE) -> send_to_char("axe.\n", ch);
+                    case (WEAPON_FLAIL) -> send_to_char("flail.\n", ch);
+                    case (WEAPON_WHIP) -> send_to_char("whip.\n", ch);
+                    case (WEAPON_POLEARM) -> send_to_char("polearm.\n", ch);
+                    case (WEAPON_BOW) -> send_to_char("bow.\n", ch);
+                    case (WEAPON_ARROW) -> send_to_char("arrow.\n", ch);
+                    case (WEAPON_LANCE) -> send_to_char("lance.\n", ch);
+                    default -> send_to_char("unknown.\n", ch);
                 }
                 if (obj.pIndexData.new_format) {
                     buf.sprintf("Damage is %dd%d (average %d).\n", obj.value[1], obj.value[2], (1 + obj.value[2]) * obj.value[1] / 2);
@@ -3798,13 +3729,12 @@ class Magic {
                     buf.sprintf("Weapons flags: %s\n", weapon_bit_name(obj.value[4]));
                     send_to_char(buf, ch);
                 }
-                break;
-
-            case ITEM_ARMOR:
+            }
+            case ITEM_ARMOR -> {
                 buf.sprintf("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n",
                         obj.value[0], obj.value[1], obj.value[2], obj.value[3]);
                 send_to_char(buf, ch);
-                break;
+            }
         }
 
         if (!obj.enchanted) {
@@ -3814,24 +3744,12 @@ class Magic {
                     send_to_char(buf, ch);
                     if (paf.bitvector != 0) {
                         switch (paf.where) {
-                            case TO_AFFECTS:
-                                buf.sprintf("Adds %s affect.\n", affect_bit_name(paf.bitvector));
-                                break;
-                            case TO_OBJECT:
-                                buf.sprintf("Adds %s object flag.\n", extra_bit_name(paf.bitvector));
-                                break;
-                            case TO_IMMUNE:
-                                buf.sprintf("Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
-                                break;
-                            case TO_RESIST:
-                                buf.sprintf("Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
-                                break;
-                            case TO_VULN:
-                                buf.sprintf("Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
-                                break;
-                            default:
-                                buf.sprintf("Unknown bit %d: %d\n", paf.where, paf.bitvector);
-                                break;
+                            case TO_AFFECTS -> buf.sprintf("Adds %s affect.\n", affect_bit_name(paf.bitvector));
+                            case TO_OBJECT -> buf.sprintf("Adds %s object flag.\n", extra_bit_name(paf.bitvector));
+                            case TO_IMMUNE -> buf.sprintf("Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
+                            case TO_RESIST -> buf.sprintf("Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
+                            case TO_VULN -> buf.sprintf("Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
+                            default -> buf.sprintf("Unknown bit %d: %d\n", paf.where, paf.bitvector);
                         }
                         send_to_char(buf, ch);
                     }
@@ -3852,27 +3770,13 @@ class Magic {
 
                 if (paf.bitvector != 0) {
                     switch (paf.where) {
-                        case TO_AFFECTS:
-                            buf.sprintf("Adds %s affect.\n", affect_bit_name(paf.bitvector));
-                            break;
-                        case TO_OBJECT:
-                            buf.sprintf("Adds %s object flag.\n", extra_bit_name(paf.bitvector));
-                            break;
-                        case TO_WEAPON:
-                            buf.sprintf("Adds %s weapon flags.\n", weapon_bit_name(paf.bitvector));
-                            break;
-                        case TO_IMMUNE:
-                            buf.sprintf("Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
-                            break;
-                        case TO_RESIST:
-                            buf.sprintf("Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
-                            break;
-                        case TO_VULN:
-                            buf.sprintf("Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
-                            break;
-                        default:
-                            buf.sprintf("Unknown bit %d: %d\n", paf.where, paf.bitvector);
-                            break;
+                        case TO_AFFECTS -> buf.sprintf("Adds %s affect.\n", affect_bit_name(paf.bitvector));
+                        case TO_OBJECT -> buf.sprintf("Adds %s object flag.\n", extra_bit_name(paf.bitvector));
+                        case TO_WEAPON -> buf.sprintf("Adds %s weapon flags.\n", weapon_bit_name(paf.bitvector));
+                        case TO_IMMUNE -> buf.sprintf("Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
+                        case TO_RESIST -> buf.sprintf("Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
+                        case TO_VULN -> buf.sprintf("Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
+                        default -> buf.sprintf("Unknown bit %d: %d\n", paf.where, paf.bitvector);
                     }
                     send_to_char(buf, ch);
                 }
@@ -4058,7 +3962,7 @@ class Magic {
         }
     }
 
-    private static final int dam_each_mm[] = {
+    private static final int[] dam_each_mm = {
             0,
             3, 3, 4, 4, 5, 6, 6, 6, 6, 6,
             7, 7, 7, 7, 7, 8, 8, 8, 8, 8,
@@ -4570,7 +4474,7 @@ class Magic {
     }
 
 
-    private static int dam_each_sg[] =
+    private static int[] dam_each_sg =
             {
                     6,
                     8, 10, 12, 14, 16, 18, 20, 25, 29, 33,
@@ -4859,7 +4763,7 @@ class Magic {
 
         if (victim.fighting != null) {
             if (victim == ch) {
-                gain_exp(victim, 0 - (victim.level + 25));
+                gain_exp(victim, -(victim.level + 25));
             }
             stop_fighting(victim, true);
         }

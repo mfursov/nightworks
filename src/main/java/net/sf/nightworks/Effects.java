@@ -118,28 +118,20 @@ class Effects {
 
             String msg;
             switch (obj.item_type) {
-                default:
+                default -> {
                     return;
-                case ITEM_CONTAINER:
-                case ITEM_CORPSE_PC:
-                case ITEM_CORPSE_NPC:
-                    msg = "$p fumes and dissolves.";
-                    break;
-                case ITEM_ARMOR:
-                    msg = "$p is pitted and etched.";
-                    break;
-                case ITEM_CLOTHING:
-                    msg = "$p is corroded into scrap.";
-                    break;
-                case ITEM_STAFF:
-                case ITEM_WAND:
+                }
+                case ITEM_CONTAINER, ITEM_CORPSE_PC, ITEM_CORPSE_NPC -> msg = "$p fumes and dissolves.";
+                case ITEM_ARMOR -> msg = "$p is pitted and etched.";
+                case ITEM_CLOTHING -> msg = "$p is corroded into scrap.";
+                case ITEM_STAFF, ITEM_WAND -> {
                     chance -= 10;
                     msg = "$p corrodes and breaks.";
-                    break;
-                case ITEM_SCROLL:
+                }
+                case ITEM_SCROLL -> {
                     chance += 10;
                     msg = "$p is burned into waste.";
-                    break;
+                }
             }
 
             chance = URANGE(5, chance, 95);
@@ -289,16 +281,17 @@ class Effects {
 
             String msg;
             switch (obj.item_type) {
-                default:
+                default -> {
                     return;
-                case ITEM_POTION:
+                }
+                case ITEM_POTION -> {
                     msg = "$p freezes and shatters!";
                     chance += 25;
-                    break;
-                case ITEM_DRINK_CON:
+                }
+                case ITEM_DRINK_CON -> {
                     msg = "$p freezes and shatters!";
                     chance += 5;
-                    break;
+                }
             }
 
             chance = URANGE(5, chance, 95);
@@ -399,32 +392,25 @@ class Effects {
                 msg = "$p melts and evaporates!";
             } else {
                 switch (obj.item_type) {
-                    default:
+                    default -> {
                         return;
-                    case ITEM_CONTAINER:
-                        msg = "$p ignites and burns!";
-                        break;
-                    case ITEM_POTION:
+                    }
+                    case ITEM_CONTAINER -> msg = "$p ignites and burns!";
+                    case ITEM_POTION -> {
                         chance += 25;
                         msg = "$p bubbles and boils!";
-                        break;
-                    case ITEM_SCROLL:
+                    }
+                    case ITEM_SCROLL -> {
                         chance += 50;
                         msg = "$p crackles and burns!";
-                        break;
-                    case ITEM_STAFF:
+                    }
+                    case ITEM_STAFF -> {
                         chance += 10;
                         msg = "$p smokes and chars!";
-                        break;
-                    case ITEM_WAND:
-                        msg = "$p sparks and sputters!";
-                        break;
-                    case ITEM_FOOD:
-                        msg = "$p blackens and crisps!";
-                        break;
-                    case ITEM_PILL:
-                        msg = "$p melts and drips!";
-                        break;
+                    }
+                    case ITEM_WAND -> msg = "$p sparks and sputters!";
+                    case ITEM_FOOD -> msg = "$p blackens and crisps!";
+                    case ITEM_PILL -> msg = "$p melts and drips!";
                 }
             }
 
@@ -526,15 +512,16 @@ class Effects {
             chance -= obj.level * 2;
 
             switch (obj.item_type) {
-                default:
+                default -> {
                     return;
-                case ITEM_FOOD:
-                    break;
-                case ITEM_DRINK_CON:
+                }
+                case ITEM_FOOD -> {
+                }
+                case ITEM_DRINK_CON -> {
                     if (obj.value[0] == obj.value[1]) {
                         return;
                     }
-                    break;
+                }
             }
 
             chance = URANGE(5, chance, 95);
@@ -606,16 +593,17 @@ class Effects {
 
             String msg;
             switch (obj.item_type) {
-                default:
+                default -> {
                     return;
-                case ITEM_WAND:
-                case ITEM_STAFF:
+                }
+                case ITEM_WAND, ITEM_STAFF -> {
                     chance += 10;
                     msg = "$p overloads and explodes!";
-                    break;
-                case ITEM_JEWELRY:
+                }
+                case ITEM_JEWELRY -> {
                     chance -= 10;
                     msg = "$p is fused into a worthless lump.";
+                }
             }
 
             chance = URANGE(5, chance, 95);
@@ -705,33 +693,30 @@ class Effects {
 
             String msg;
             switch (obj.item_type) {
-                default:
+                default -> {
                     return;
-                case ITEM_CONTAINER:
-                case ITEM_CORPSE_PC:
-                case ITEM_CORPSE_NPC:
+                }
+                case ITEM_CONTAINER, ITEM_CORPSE_PC, ITEM_CORPSE_NPC -> {
                     chance += 50;
                     msg = "$p is filled with sand and evaporates.";
-                    break;
-                case ITEM_ARMOR:
+                }
+                case ITEM_ARMOR -> {
                     chance -= 10;
                     msg = "$p is etched by sand";
-                    break;
-                case ITEM_CLOTHING:
-                    msg = "$p is corroded by sands.";
-                    break;
-                case ITEM_WAND:
+                }
+                case ITEM_CLOTHING -> msg = "$p is corroded by sands.";
+                case ITEM_WAND -> {
                     chance = 50;
                     msg = "$p mixes with crashing sands.";
-                    break;
-                case ITEM_SCROLL:
+                }
+                case ITEM_SCROLL -> {
                     chance += 20;
                     msg = "$p is surrouned by sand.";
-                    break;
-                case ITEM_POTION:
+                }
+                case ITEM_POTION -> {
                     chance += 10;
                     msg = "$p is broken into peace by crashing sands.";
-                    break;
+                }
             }
 
             chance = URANGE(5, chance, 95);
@@ -892,23 +877,22 @@ class Effects {
                 msg = "$p breaks into tiny small peaces";
             } else {
                 switch (obj.item_type) {
-                    default:
+                    default -> {
                         return;
-                    case ITEM_POTION:
+                    }
+                    case ITEM_POTION -> {
                         chance += 25;
                         msg = "Vial of $p breaks and liquid spoils!";
-                        break;
-                    case ITEM_SCROLL:
+                    }
+                    case ITEM_SCROLL -> {
                         chance += 50;
                         msg = "$p breaks into tiny peaces!";
-                        break;
-                    case ITEM_DRINK_CON:
+                    }
+                    case ITEM_DRINK_CON -> {
                         msg = "$p breaks and liquid spoils!";
                         chance += 5;
-                        break;
-                    case ITEM_PILL:
-                        msg = "$p breaks into peaces!";
-                        break;
+                    }
+                    case ITEM_PILL -> msg = "$p breaks into peaces!";
                 }
             }
 

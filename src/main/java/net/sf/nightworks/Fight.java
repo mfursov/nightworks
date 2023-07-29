@@ -1,7 +1,6 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.TextBuffer;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -751,56 +750,49 @@ class Fight {
         number = number_range(0, 7);
 
         switch (number) {
-            case (0):
+            case (0) -> {
                 if (IS_SET(ch.off_flags, OFF_BASH)) {
                     do_bash(ch, "");
                 }
-                break;
-
-            case (1):
+            }
+            case (1) -> {
                 if (IS_SET(ch.off_flags, OFF_BERSERK) && !IS_AFFECTED(ch, AFF_BERSERK)) {
                     do_berserk(ch);
                 }
-                break;
-
-
-            case (2):
+            }
+            case (2) -> {
                 if (IS_SET(ch.off_flags, OFF_DISARM)
                         || (get_weapon_sn(ch, false) != gsn_hand_to_hand
                         && (IS_SET(ch.act, ACT_WARRIOR)
                         || IS_SET(ch.act, ACT_THIEF)))) {
                     do_disarm(ch, "");
                 }
-                break;
-
-            case (3):
+            }
+            case (3) -> {
                 if (IS_SET(ch.off_flags, OFF_KICK)) {
                     do_kick(ch);
                 }
-                break;
-
-            case (4):
+            }
+            case (4) -> {
                 if (IS_SET(ch.off_flags, OFF_KICK_DIRT)) {
                     do_dirt(ch, "");
                 }
-                break;
-
-            case (5):
+            }
+            case (5) -> {
                 if (IS_SET(ch.off_flags, OFF_TAIL)) {
                     do_tail(ch, "");
                 }
-                break;
-
-            case (6):
+            }
+            case (6) -> {
                 if (IS_SET(ch.off_flags, OFF_TRIP)) {
                     do_trip(ch, "");
                 }
-                break;
-            case (7):
+            }
+            case (7) -> {
                 if (IS_SET(ch.off_flags, OFF_CRUSH)) {
                     do_crush(ch);
                 }
-                break;
+            }
         }
     }
 
@@ -939,20 +931,12 @@ class Fight {
             thac0 -= 10 * (100 - get_skill(ch, gsn_vampiric_bite));
         }
 
-        switch (dam_type) {
-            case (DAM_PIERCE):
-                victim_ac = GET_AC(victim, AC_PIERCE) / 10;
-                break;
-            case (DAM_BASH):
-                victim_ac = GET_AC(victim, AC_BASH) / 10;
-                break;
-            case (DAM_SLASH):
-                victim_ac = GET_AC(victim, AC_SLASH) / 10;
-                break;
-            default:
-                victim_ac = GET_AC(victim, AC_EXOTIC) / 10;
-                break;
-        }
+        victim_ac = switch (dam_type) {
+            case (DAM_PIERCE) -> GET_AC(victim, AC_PIERCE) / 10;
+            case (DAM_BASH) -> GET_AC(victim, AC_BASH) / 10;
+            case (DAM_SLASH) -> GET_AC(victim, AC_SLASH) / 10;
+            default -> GET_AC(victim, AC_EXOTIC) / 10;
+        };
 
         if (victim_ac < -15) {
             victim_ac = (victim_ac + 15) / 5 - 15;
@@ -1573,16 +1557,12 @@ class Fight {
         }
 
         switch (check_immune(victim, dam_type)) {
-            case (IS_IMMUNE):
+            case (IS_IMMUNE) -> {
                 immune = true;
                 dam = 0;
-                break;
-            case (IS_RESISTANT):
-                dam -= dam / 3;
-                break;
-            case (IS_VULNERABLE):
-                dam += dam / 2;
-                break;
+            }
+            case (IS_RESISTANT) -> dam -= dam / 3;
+            case (IS_VULNERABLE) -> dam += dam / 2;
         }
 
         if (dt == gsn_x_hit && ch != victim) {
@@ -1624,7 +1604,7 @@ class Fight {
         update_pos(victim);
 
         switch (victim.position) {
-            case POS_MORTAL:
+            case POS_MORTAL -> {
                 if (dam_type == DAM_HUNGER || dam_type == DAM_THIRST) {
                     break;
                 }
@@ -1633,9 +1613,8 @@ class Fight {
                 send_to_char(
                         "You are mortally wounded, and will die soon, if not aided.\n",
                         victim);
-                break;
-
-            case POS_INCAP:
+            }
+            case POS_INCAP -> {
                 if (dam_type == DAM_HUNGER || dam_type == DAM_THIRST) {
                     break;
                 }
@@ -1644,9 +1623,8 @@ class Fight {
                 send_to_char(
                         "You are incapacitated and will slowly die, if not aided.\n",
                         victim);
-                break;
-
-            case POS_STUNNED:
+            }
+            case POS_STUNNED -> {
                 if (dam_type == DAM_HUNGER || dam_type == DAM_THIRST) {
                     break;
                 }
@@ -1654,14 +1632,12 @@ class Fight {
                         victim, null, null, TO_ROOM);
                 send_to_char("You are stunned, but will probably recover.\n",
                         victim);
-                break;
-
-            case POS_DEAD:
+            }
+            case POS_DEAD -> {
                 act("$n is DEAD!!", victim, 0, 0, TO_ROOM);
                 send_to_char("You have been KILLED!!\r\n\n", victim);
-                break;
-
-            default:
+            }
+            default -> {
                 if (dam_type == DAM_HUNGER || dam_type == DAM_THIRST) {
                     break;
                 }
@@ -1671,7 +1647,7 @@ class Fight {
                 if (victim.hit < victim.max_hit / 4) {
                     send_to_char("You sure are BLEEDING!\n", victim);
                 }
-                break;
+            }
         }
 
         /*
@@ -2732,53 +2708,23 @@ class Fight {
 
         level_range = victim.level - gch.level;
 
-        switch (level_range) {
-            default:
-                base_exp = 0;
-                break;
-            case -9:
-                base_exp = 1;
-                break;
-            case -8:
-                base_exp = 2;
-                break;
-            case -7:
-                base_exp = 5;
-                break;
-            case -6:
-                base_exp = 9;
-                break;
-            case -5:
-                base_exp = 11;
-                break;
-            case -4:
-                base_exp = 22;
-                break;
-            case -3:
-                base_exp = 33;
-                break;
-            case -2:
-                base_exp = 43;
-                break;
-            case -1:
-                base_exp = 60;
-                break;
-            case 0:
-                base_exp = 74;
-                break;
-            case 1:
-                base_exp = 84;
-                break;
-            case 2:
-                base_exp = 99;
-                break;
-            case 3:
-                base_exp = 121;
-                break;
-            case 4:
-                base_exp = 143;
-                break;
-        }
+        base_exp = switch (level_range) {
+            default -> 0;
+            case -9 -> 1;
+            case -8 -> 2;
+            case -7 -> 5;
+            case -6 -> 9;
+            case -5 -> 11;
+            case -4 -> 22;
+            case -3 -> 33;
+            case -2 -> 43;
+            case -1 -> 60;
+            case 0 -> 74;
+            case 1 -> 84;
+            case 2 -> 99;
+            case 3 -> 121;
+            case 4 -> 143;
+        };
 
         if (level_range > 4) {
             base_exp = 140 + 20 * (level_range - 4);
@@ -3076,7 +3022,7 @@ class Fight {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Kill whom?\n", ch);
             return;
         }
@@ -3155,7 +3101,7 @@ class Fight {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Murder whom?\n", ch);
             return;
         }
@@ -3304,7 +3250,7 @@ class Fight {
         CHAR_DATA victim;
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Slay whom?\n", ch);
             return;
         }
@@ -3467,65 +3413,62 @@ class Fight {
     }
 
 
-    static boolean mob_cast_cleric(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean mob_cast_cleric(CHAR_DATA ch, CHAR_DATA victim) {
         Skill sn;
 
         for (; ; ) {
             int min_level;
 
-            switch (number_bits(4)) {
-                case 0:
+            sn = switch (number_bits(4)) {
+                case 0 -> {
                     min_level = 0;
-                    sn = Skill.gsn_blindness;
-                    break;
-                case 1:
+                    yield Skill.gsn_blindness;
+                }
+                case 1 -> {
                     min_level = 3;
-                    sn = Skill.gsn_cure_serious;
-                    break;
-                case 2:
+                    yield Skill.gsn_cure_serious;
+                }
+                case 2 -> {
                     min_level = 7;
-                    sn = Skill.gsn_earthquake;
-                    break;
-                case 3:
+                    yield Skill.gsn_earthquake;
+                }
+                case 3 -> {
                     min_level = 9;
-                    sn = Skill.gsn_cause_critical;
-                    break;
-                case 4:
+                    yield Skill.gsn_cause_critical;
+                }
+                case 4 -> {
                     min_level = 10;
-                    sn = Skill.gsn_dispel_evil;
-                    break;
-                case 5:
+                    yield Skill.gsn_dispel_evil;
+                }
+                case 5 -> {
                     min_level = 12;
-                    sn = Skill.gsn_curse;
-                    break;
-                case 6:
+                    yield Skill.gsn_curse;
+                }
+                case 6 -> {
                     min_level = 14;
-                    sn = Skill.gsn_cause_critical;
-                    break;
-                case 7:
+                    yield Skill.gsn_cause_critical;
+                }
+                case 7 -> {
                     min_level = 18;
-                    sn = Skill.gsn_flamestrike;
-                    break;
-                case 8:
-                case 9:
-                case 10:
+                    yield Skill.gsn_flamestrike;
+                }
+                case 8, 9, 10 -> {
                     min_level = 20;
-                    sn = Skill.gsn_harm;
-                    break;
-                case 11:
+                    yield Skill.gsn_harm;
+                }
+                case 11 -> {
                     min_level = 25;
-                    sn = Skill.gsn_plague;
-                    break;
-                case 12:
-                case 13:
+                    yield Skill.gsn_plague;
+                }
+                case 12, 13 -> {
                     min_level = 45;
-                    sn = Skill.gsn_severity_force;
-                    break;
-                default:
+                    yield Skill.gsn_severity_force;
+                }
+                default -> {
                     min_level = 26;
-                    sn = Skill.gsn_dispel_magic;
-                    break;
-            }
+                    yield Skill.gsn_dispel_magic;
+                }
+            };
 
             if (ch.level >= min_level) {
                 break;
@@ -3537,62 +3480,58 @@ class Fight {
         return true;
     }
 
-    static boolean mob_cast_mage(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean mob_cast_mage(CHAR_DATA ch, CHAR_DATA victim) {
         Skill sn;
 
         for (; ; ) {
             int min_level;
 
-            switch (number_bits(4)) {
-                case 0:
+            sn = switch (number_bits(4)) {
+                case 0 -> {
                     min_level = 0;
-                    sn = Skill.gsn_blindness;
-                    break;
-                case 1:
+                    yield Skill.gsn_blindness;
+                }
+                case 1 -> {
                     min_level = 3;
-                    sn = Skill.gsn_chill_touch;
-                    break;
-                case 2:
+                    yield Skill.gsn_chill_touch;
+                }
+                case 2 -> {
                     min_level = 7;
-                    sn = Skill.gsn_weaken;
-                    break;
-                case 3:
+                    yield Skill.gsn_weaken;
+                }
+                case 3 -> {
                     min_level = 9;
-                    sn = Skill.gsn_teleport;
-                    break;
-                case 4:
+                    yield Skill.gsn_teleport;
+                }
+                case 4 -> {
                     min_level = 14;
-                    sn = Skill.gsn_colour_spray;
-                    break;
-                case 5:
+                    yield Skill.gsn_colour_spray;
+                }
+                case 5 -> {
                     min_level = 19;
-                    sn = Skill.gsn_caustic_font;
-                    break;
-                case 6:
+                    yield Skill.gsn_caustic_font;
+                }
+                case 6 -> {
                     min_level = 25;
-                    sn = Skill.gsn_energy_drain;
-                    break;
-                case 7:
-                case 8:
-                case 9:
+                    yield Skill.gsn_energy_drain;
+                }
+                case 7, 8, 9 -> {
                     min_level = 35;
-                    sn = Skill.gsn_caustic_font;
-                    break;
-                case 10:
+                    yield Skill.gsn_caustic_font;
+                }
+                case 10 -> {
                     min_level = 40;
-                    sn = Skill.gsn_plague;
-                    break;
-                case 11:
-                case 12:
-                case 13:
+                    yield Skill.gsn_plague;
+                }
+                case 11, 12, 13 -> {
                     min_level = 40;
-                    sn = Skill.gsn_acid_arrow;
-                    break;
-                default:
+                    yield Skill.gsn_acid_arrow;
+                }
+                default -> {
                     min_level = 55;
-                    sn = Skill.gsn_acid_blast;
-                    break;
-            }
+                    yield Skill.gsn_acid_blast;
+                }
+            };
 
             if (ch.level >= min_level) {
                 break;

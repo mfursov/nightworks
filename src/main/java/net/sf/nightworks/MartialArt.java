@@ -4,222 +4,20 @@ import net.sf.nightworks.util.TextBuffer;
 
 import static net.sf.nightworks.ActComm.do_yell;
 import static net.sf.nightworks.ActComm.is_same_group;
-import static net.sf.nightworks.ActMove.do_bash_door;
-import static net.sf.nightworks.ActMove.do_sit;
-import static net.sf.nightworks.ActMove.do_sleep;
-import static net.sf.nightworks.ActMove.do_throw_spear;
-import static net.sf.nightworks.ActMove.get_weapon_char;
+import static net.sf.nightworks.ActMove.*;
 import static net.sf.nightworks.ActObj.get_obj;
 import static net.sf.nightworks.ActSkill.check_improve;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Const.attack_table;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_fuzzy;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
+import static net.sf.nightworks.DB.*;
 import static net.sf.nightworks.Effects.fire_effect;
-import static net.sf.nightworks.Fight.damage;
-import static net.sf.nightworks.Fight.is_safe;
-import static net.sf.nightworks.Fight.is_safe_spell;
-import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Fight.one_hit;
-import static net.sf.nightworks.Fight.set_fighting;
-import static net.sf.nightworks.Fight.stop_fighting;
-import static net.sf.nightworks.Fight.update_pos;
-import static net.sf.nightworks.Handler.affect_join;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.affect_to_obj;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.can_see_obj;
-import static net.sf.nightworks.Handler.check_material;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_char_room;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_hold_char;
-import static net.sf.nightworks.Handler.get_obj_carry;
-import static net.sf.nightworks.Handler.get_shield_char;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_weapon_skill;
-import static net.sf.nightworks.Handler.get_weapon_sn;
-import static net.sf.nightworks.Handler.get_wield_char;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.skill_failure_check;
-import static net.sf.nightworks.Handler.skill_failure_nomessage;
+import static net.sf.nightworks.Fight.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Magic.spell_blindness;
 import static net.sf.nightworks.Magic.spell_poison;
-import static net.sf.nightworks.Nightworks.ACT_AGGRESSIVE;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_ACUTE_VISION;
-import static net.sf.nightworks.Nightworks.AFF_BERSERK;
-import static net.sf.nightworks.Nightworks.AFF_BLIND;
-import static net.sf.nightworks.Nightworks.AFF_BLOODTHIRST;
-import static net.sf.nightworks.Nightworks.AFF_CALM;
-import static net.sf.nightworks.Nightworks.AFF_CAMOUFLAGE;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_HIDDEN;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_LIFE;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_MAGIC;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_LION;
-import static net.sf.nightworks.Nightworks.AFF_PROTECTOR;
-import static net.sf.nightworks.Nightworks.AFF_REGENERATION;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SPELLBANE;
-import static net.sf.nightworks.Nightworks.AFF_WEAK_STUN;
-import static net.sf.nightworks.Nightworks.APPLY_AC;
-import static net.sf.nightworks.Nightworks.APPLY_DAMROLL;
-import static net.sf.nightworks.Nightworks.APPLY_DEX;
-import static net.sf.nightworks.Nightworks.APPLY_HITROLL;
-import static net.sf.nightworks.Nightworks.APPLY_INT;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_SAVING_SPELL;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COND_HUNGER;
-import static net.sf.nightworks.Nightworks.COND_THIRST;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.DAM_FIRE;
-import static net.sf.nightworks.Nightworks.DAM_NONE;
-import static net.sf.nightworks.Nightworks.DAM_PIERCE;
-import static net.sf.nightworks.Nightworks.EXTRA_DESCR_DATA;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OBJ_STAT;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.ITEM_INVENTORY;
-import static net.sf.nightworks.Nightworks.ITEM_NODROP;
-import static net.sf.nightworks.Nightworks.ITEM_NOREMOVE;
-import static net.sf.nightworks.Nightworks.MAX_LEVEL;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_BATTLE_PONCHO;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_BRAINS;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CHUNK_IRON;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GUTS;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_KATANA_SWORD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SEVERED_HEAD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SLICED_ARM;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SLICED_LEG;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_TORN_HEART;
-import static net.sf.nightworks.Nightworks.OFF_BASH;
-import static net.sf.nightworks.Nightworks.OFF_BERSERK;
-import static net.sf.nightworks.Nightworks.OFF_CRUSH;
-import static net.sf.nightworks.Nightworks.OFF_DISARM;
-import static net.sf.nightworks.Nightworks.OFF_FAST;
-import static net.sf.nightworks.Nightworks.OFF_KICK;
-import static net.sf.nightworks.Nightworks.OFF_KICK_DIRT;
-import static net.sf.nightworks.Nightworks.OFF_TAIL;
-import static net.sf.nightworks.Nightworks.OFF_TRIP;
-import static net.sf.nightworks.Nightworks.PLR_HARA_KIRI;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STUNNED;
-import static net.sf.nightworks.Nightworks.PULSE_TICK;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.SECT_AIR;
-import static net.sf.nightworks.Nightworks.SECT_CITY;
-import static net.sf.nightworks.Nightworks.SECT_DESERT;
-import static net.sf.nightworks.Nightworks.SECT_FIELD;
-import static net.sf.nightworks.Nightworks.SECT_FOREST;
-import static net.sf.nightworks.Nightworks.SECT_HILLS;
-import static net.sf.nightworks.Nightworks.SECT_INSIDE;
-import static net.sf.nightworks.Nightworks.SECT_MOUNTAIN;
-import static net.sf.nightworks.Nightworks.SECT_WATER_NOSWIM;
-import static net.sf.nightworks.Nightworks.SECT_WATER_SWIM;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.TARGET_CHAR;
-import static net.sf.nightworks.Nightworks.TARGET_ROOM;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_OBJECT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_AXE;
-import static net.sf.nightworks.Nightworks.WEAPON_SWORD;
-import static net.sf.nightworks.Nightworks.WEAPON_WHIP;
-import static net.sf.nightworks.Nightworks.WEAR_FEET;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Skill.gsn_ambush;
-import static net.sf.nightworks.Skill.gsn_assassinate;
-import static net.sf.nightworks.Skill.gsn_backstab;
-import static net.sf.nightworks.Skill.gsn_bandage;
-import static net.sf.nightworks.Skill.gsn_bash;
-import static net.sf.nightworks.Skill.gsn_berserk;
-import static net.sf.nightworks.Skill.gsn_blackjack;
-import static net.sf.nightworks.Skill.gsn_bless;
-import static net.sf.nightworks.Skill.gsn_blindness;
-import static net.sf.nightworks.Skill.gsn_blindness_dust;
-import static net.sf.nightworks.Skill.gsn_bloodthirst;
-import static net.sf.nightworks.Skill.gsn_caltraps;
-import static net.sf.nightworks.Skill.gsn_circle;
-import static net.sf.nightworks.Skill.gsn_claw;
-import static net.sf.nightworks.Skill.gsn_cleave;
-import static net.sf.nightworks.Skill.gsn_concentrate;
-import static net.sf.nightworks.Skill.gsn_critical;
-import static net.sf.nightworks.Skill.gsn_crush;
-import static net.sf.nightworks.Skill.gsn_dirt;
-import static net.sf.nightworks.Skill.gsn_disarm;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_dual_backstab;
-import static net.sf.nightworks.Skill.gsn_endure;
-import static net.sf.nightworks.Skill.gsn_explode;
-import static net.sf.nightworks.Skill.gsn_grip;
-import static net.sf.nightworks.Skill.gsn_ground_strike;
-import static net.sf.nightworks.Skill.gsn_guard;
-import static net.sf.nightworks.Skill.gsn_hand_to_hand;
-import static net.sf.nightworks.Skill.gsn_hara_kiri;
-import static net.sf.nightworks.Skill.gsn_headguard;
-import static net.sf.nightworks.Skill.gsn_katana;
-import static net.sf.nightworks.Skill.gsn_kick;
-import static net.sf.nightworks.Skill.gsn_lash;
-import static net.sf.nightworks.Skill.gsn_neckguard;
-import static net.sf.nightworks.Skill.gsn_nerve;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_poison_smoke;
-import static net.sf.nightworks.Skill.gsn_protective_shield;
-import static net.sf.nightworks.Skill.gsn_rescue;
-import static net.sf.nightworks.Skill.gsn_resistance;
-import static net.sf.nightworks.Skill.gsn_sense_life;
-import static net.sf.nightworks.Skill.gsn_shield_block;
-import static net.sf.nightworks.Skill.gsn_shield_cleave;
-import static net.sf.nightworks.Skill.gsn_spellbane;
-import static net.sf.nightworks.Skill.gsn_strangle;
-import static net.sf.nightworks.Skill.gsn_tail;
-import static net.sf.nightworks.Skill.gsn_tame;
-import static net.sf.nightworks.Skill.gsn_target;
-import static net.sf.nightworks.Skill.gsn_throw;
-import static net.sf.nightworks.Skill.gsn_tiger_power;
-import static net.sf.nightworks.Skill.gsn_trip;
-import static net.sf.nightworks.Skill.gsn_trophy;
-import static net.sf.nightworks.Skill.gsn_truesight;
-import static net.sf.nightworks.Skill.gsn_warcry;
-import static net.sf.nightworks.Skill.gsn_weapon_cleave;
-import static net.sf.nightworks.Skill.lookupSkill;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
@@ -381,7 +179,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         argument = one_argument(argument, argb);
 
         String arg = argb.toString();
-        if (arg.length() != 0 && !str_cmp(arg, "door")) {
+        if (!arg.isEmpty() && !str_cmp(arg, "door")) {
             do_bash_door(ch, argument);
             return;
         }
@@ -392,7 +190,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
         chance = get_skill(ch, gsn_bash);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
                 send_to_char("But you aren't fighting anyone!\n", ch);
@@ -477,20 +275,13 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
             wait = 3;
 
-            switch (number_bits(2)) {
-                case 0:
-                    wait = 1;
-                    break;
-                case 1:
-                    wait = 2;
-                    break;
-                case 2:
-                    wait = 4;
-                    break;
-                case 3:
-                    wait = 3;
-                    break;
-            }
+            wait = switch (number_bits(2)) {
+                case 0 -> 1;
+                case 1 -> 2;
+                case 2 -> 4;
+                case 3 -> 3;
+                default -> wait;
+            };
 
             WAIT_STATE(victim, wait * PULSE_VIOLENCE);
             WAIT_STATE(ch, gsn_bash.beats);
@@ -538,7 +329,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
         chance = get_skill(ch, gsn_dirt);
         String arg = argb.toString();
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
                 send_to_char("But you aren't in combat!\n", ch);
@@ -602,34 +393,18 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         /* terrain */
 
         switch (ch.in_room.sector_type) {
-            case (SECT_INSIDE):
-                chance -= 20;
-                break;
-            case (SECT_CITY):
-                chance -= 10;
-                break;
-            case (SECT_FIELD):
-                chance += 5;
-                break;
-            case (SECT_FOREST):
-                break;
-            case (SECT_HILLS):
-                break;
-            case (SECT_MOUNTAIN):
-                chance -= 10;
-                break;
-            case (SECT_WATER_SWIM):
-                chance = 0;
-                break;
-            case (SECT_WATER_NOSWIM):
-                chance = 0;
-                break;
-            case (SECT_AIR):
-                chance = 0;
-                break;
-            case (SECT_DESERT):
-                chance += 10;
-                break;
+            case (SECT_INSIDE) -> chance -= 20;
+            case (SECT_CITY) -> chance -= 10;
+            case (SECT_FIELD) -> chance += 5;
+            case (SECT_FOREST) -> {
+            }
+            case (SECT_HILLS) -> {
+            }
+            case (SECT_MOUNTAIN) -> chance -= 10;
+            case (SECT_WATER_SWIM) -> chance = 0;
+            case (SECT_WATER_NOSWIM) -> chance = 0;
+            case (SECT_AIR) -> chance = 0;
+            case (SECT_DESERT) -> chance += 10;
         }
 
         if (chance == 0) {
@@ -689,7 +464,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
         chance = get_skill(ch, gsn_dirt);
         String arg = argb.toString();
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
                 send_to_char("But you aren't fighting anyone!\n", ch);
@@ -799,7 +574,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Backstab whom?\n", ch);
             return;
         }
@@ -885,7 +660,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Cleave whom?\n", ch);
             return;
         }
@@ -951,7 +726,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Ambush whom?\n", ch);
             return;
         }
@@ -1007,7 +782,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         CHAR_DATA fch;
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Rescue whom?\n", ch);
             return;
         }
@@ -1187,7 +962,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (!IS_NPC(ch) && arg.length() != 0) {
+        if (!IS_NPC(ch) && !arg.isEmpty()) {
             disarm_second = is_name(arg.toString(), "second");
         }
 
@@ -1341,7 +1116,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("You are beyond taming.\n", ch);
             act("$n tries to tame $mself but fails miserably.", ch, null, null, TO_ROOM);
             return;
@@ -1401,7 +1176,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Assassinate whom?\n", ch);
             return;
         }
@@ -2006,7 +1781,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Make a trophy of what?\n", ch);
             return;
         }
@@ -2042,7 +1817,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (part.from.length() == 0) {
+        if (part.from.isEmpty()) {
             send_to_char("Invalid body part.\n", ch);
             return;
         }
@@ -2212,7 +1987,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         affect_to_char(ch, af);
 
         af.location = APPLY_SAVING_SPELL;
-        af.modifier = 0 - ch.level / 8;
+        af.modifier = -ch.level / 8;
         affect_to_char(ch, af);
         send_to_char("You feel righteous as you yell out your warcry.\n", ch);
     }
@@ -2226,7 +2001,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Guard whom?\n", ch);
             return;
         }
@@ -2342,7 +2117,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         if (victim == null) {
             StringBuilder arg = new StringBuilder();
             one_argument(argument, arg);
-            if (arg.length() == 0) {
+            if (arg.isEmpty()) {
                 send_to_char("You play with the exploding material.\n", ch);
                 return;
             }
@@ -2421,7 +2196,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Change target to whom?\n", ch);
             return;
         }
@@ -2927,7 +2702,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
                 send_to_char("But you aren't fighting anyone!\n", ch);
@@ -3009,20 +2784,13 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
             wait = 3;
 
-            switch (number_bits(2)) {
-                case 0:
-                    wait = 1;
-                    break;
-                case 1:
-                    wait = 2;
-                    break;
-                case 2:
-                    wait = 4;
-                    break;
-                case 3:
-                    wait = 3;
-                    break;
-            }
+            wait = switch (number_bits(2)) {
+                case 0 -> 1;
+                case 1 -> 2;
+                case 2 -> 4;
+                case 3 -> 3;
+                default -> wait;
+            };
 
             WAIT_STATE(victim, wait * PULSE_VIOLENCE);
             WAIT_STATE(ch, gsn_tail.beats);
@@ -3186,7 +2954,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Make a katana from what?\n", ch);
             return;
         }
@@ -3338,20 +3106,13 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
             wait = 3;
 
-            switch (number_bits(2)) {
-                case 0:
-                    wait = 1;
-                    break;
-                case 1:
-                    wait = 2;
-                    break;
-                case 2:
-                    wait = 4;
-                    break;
-                case 3:
-                    wait = 3;
-                    break;
-            }
+            wait = switch (number_bits(2)) {
+                case 0 -> 1;
+                case 1 -> 2;
+                case 2 -> 4;
+                case 3 -> 3;
+                default -> wait;
+            };
 
             WAIT_STATE(victim, wait * PULSE_VIOLENCE);
             WAIT_STATE(ch, gsn_crush.beats);
@@ -3537,7 +3298,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         one_argument(argument, arg);
         chance = get_skill(ch, gsn_lash);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
                 send_to_char("But you aren't fighting anyone!\n", ch);
@@ -3645,7 +3406,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
                 send_to_char("But you aren't fighting anyone!\n", ch);

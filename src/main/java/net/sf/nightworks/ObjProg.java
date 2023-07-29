@@ -182,7 +182,6 @@ import static net.sf.nightworks.Skill.gsn_shield;
 import static net.sf.nightworks.Skill.gsn_slow;
 import static net.sf.nightworks.Skill.gsn_weaken;
 import static net.sf.nightworks.Skill.gsn_x_hit;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
@@ -371,39 +370,33 @@ class ObjProg {
 
     private static OPROG_FUN_SPEECH create_speech_prog(String name) throws NoSuchMethodException {
         final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class, String.class);
-        return new OPROG_FUN_SPEECH() {
-            public void run(OBJ_DATA obj, CHAR_DATA ch, String speech) {
-                try {
-                    m.invoke(null, obj, ch);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        return (obj, ch, speech) -> {
+            try {
+                m.invoke(null, obj, ch);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
     }
 
     private static OPROG_FUN_AREA create_area_prog(String name) throws NoSuchMethodException {
         final Method m = resolveMethod(name, OBJ_DATA.class);
-        return new OPROG_FUN_AREA() {
-            public void run(OBJ_DATA obj) {
-                try {
-                    m.invoke(null, obj);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        return obj -> {
+            try {
+                m.invoke(null, obj);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
     }
 
     private static OPROG_FUN_WEAR create_wear_prog(String name) throws NoSuchMethodException {
         final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
-        return new OPROG_FUN_WEAR() {
-            public void run(OBJ_DATA obj, CHAR_DATA ch) {
-                try {
-                    m.invoke(null, obj, ch);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        return (obj, ch) -> {
+            try {
+                m.invoke(null, obj, ch);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
     }
@@ -481,7 +474,7 @@ class ObjProg {
     boolean sac_prog_excalibur(OBJ_DATA obj, CHAR_DATA ch) {
         act("The gods are infuriated!", ch, null, null, TO_CHAR);
         act("The gods are infuriated!", ch, null, null, TO_ROOM);
-        damage(ch, ch, (ch.hit - 1) > 1000 ? 1000 : (ch.hit - 1), gsn_x_hit, DAM_HOLY, true);
+        damage(ch, ch, Math.min((ch.hit - 1), 1000), gsn_x_hit, DAM_HOLY, true);
         ch.gold = 0;
         return true;
     }
@@ -541,12 +534,8 @@ class ObjProg {
         obj_to_room(obj, ch.in_room);
 
         switch (dice(1, 10)) {
-            case 1:
-                spell_curse(gsn_curse, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
-                break;
-            case 2:
-                spell_poison(gsn_poison, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
-                break;
+            case 1 -> spell_curse(gsn_curse, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
+            case 2 -> spell_poison(gsn_poison, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
         }
 
     }
@@ -589,12 +578,8 @@ class ObjProg {
         obj_to_room(obj, ch.in_room);
 
         switch (dice(1, 10)) {
-            case 1:
-                spell_curse(gsn_curse, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
-                break;
-            case 2:
-                spell_poison(gsn_poison, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
-                break;
+            case 1 -> spell_curse(gsn_curse, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
+            case 2 -> spell_poison(gsn_poison, ch.level < 10 ? 1 : ch.level - 9, ch, ch, TARGET_CHAR);
         }
 
     }

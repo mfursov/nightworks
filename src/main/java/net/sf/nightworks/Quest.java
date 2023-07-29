@@ -6,84 +6,10 @@ import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Const.hometown_table;
 import static net.sf.nightworks.Const.religion_table;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_mob_index;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.mob_index_hash;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.Handler.affect_to_obj;
-import static net.sf.nightworks.Handler.equip_char;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_max_train2;
-import static net.sf.nightworks.Handler.get_obj_list;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Nightworks.ACT_IS_HEALER;
-import static net.sf.nightworks.Nightworks.ACT_NOTRACK;
-import static net.sf.nightworks.Nightworks.ACT_PRACTICE;
-import static net.sf.nightworks.Nightworks.ACT_TRAIN;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.AREA_HOMETOWN;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.EXTRA_DESCR_DATA;
-import static net.sf.nightworks.Nightworks.IMM_SUMMON;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.MAX_KEY_HASH;
-import static net.sf.nightworks.Nightworks.MOB_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.PLR_QUESTOR;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.QUEST_BACKPACK;
-import static net.sf.nightworks.Nightworks.QUEST_BACKPACK2;
-import static net.sf.nightworks.Nightworks.QUEST_BACKPACK3;
-import static net.sf.nightworks.Nightworks.QUEST_DECANTER;
-import static net.sf.nightworks.Nightworks.QUEST_DECANTER2;
-import static net.sf.nightworks.Nightworks.QUEST_DECANTER3;
-import static net.sf.nightworks.Nightworks.QUEST_GIRTH;
-import static net.sf.nightworks.Nightworks.QUEST_GIRTH2;
-import static net.sf.nightworks.Nightworks.QUEST_GIRTH3;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM1;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM2;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM3;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM4;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM5;
-import static net.sf.nightworks.Nightworks.QUEST_PRACTICE;
-import static net.sf.nightworks.Nightworks.QUEST_RING;
-import static net.sf.nightworks.Nightworks.QUEST_RING2;
-import static net.sf.nightworks.Nightworks.QUEST_RING3;
-import static net.sf.nightworks.Nightworks.QUEST_WEAPON;
-import static net.sf.nightworks.Nightworks.QUEST_WEAPON2;
-import static net.sf.nightworks.Nightworks.QUEST_WEAPON3;
-import static net.sf.nightworks.Nightworks.RELIGION_NONE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.TO_ALL;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.TO_WEAPON;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.WEAPON_KATANA;
-import static net.sf.nightworks.Nightworks.WEAPON_SHARP;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.object_list;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Handler.*;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Skill.gsn_reserved;
-import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
@@ -232,7 +158,7 @@ class Quest {
             send_to_char(buf, ch);
             return;
         } else if (!str_prefix(arg1Str, "buy")) {
-            if (arg2.length() == 0) {
+            if (arg2.isEmpty()) {
                 send_to_char("To buy an item, type 'QUEST BUY <item>'.\n", ch);
                 return;
             } else if (is_name(arg2.toString(), "backpack")) {
@@ -652,7 +578,7 @@ class Quest {
             }
             return;
         } else if (!str_prefix(arg1Str, "trouble")) {
-            if (arg2.length() == 0) {
+            if (arg2.isEmpty()) {
                 send_to_char("To correct a quest award's trouble, type: quest trouble <award>'.\n", ch);
                 return;
             }
@@ -770,7 +696,7 @@ class Quest {
             act("$N gives $p to $n.", ch, obj, questman, TO_ROOM);
             act("$N gives you $p.", ch, obj, questman, TO_CHAR);
             obj_to_char(obj, ch);
-            do_tell_quest(ch, questman, "This is the " + trouble_n + "" + ((trouble_n == 1) ? "st" : (trouble_n == 2) ? "nd" : "rd") + " time that i am giving that award back.");
+            do_tell_quest(ch, questman, "This is the " + trouble_n + ((trouble_n == 1) ? "st" : (trouble_n == 2) ? "nd" : "rd") + " time that i am giving that award back.");
             if (trouble_n == 3) {
                 do_tell_quest(ch, questman, "And I won't give you that again, with trouble option.\n");
             }
@@ -791,7 +717,7 @@ class Quest {
         int found;
 
         //room	=	new ROOM_INDEX_DATA();
-        int mob_buf[] = new int[300];
+        int[] mob_buf = new int[300];
 
         mob_count = 0;
         for (i = 0; i < MAX_KEY_HASH; i++) {
@@ -851,22 +777,10 @@ class Quest {
             }
 
             switch (number_range(0, 3)) {
-                case 0:
-                    objvnum = QUEST_OBJQUEST1;
-                    break;
-
-                case 1:
-                    objvnum = QUEST_OBJQUEST2;
-                    break;
-
-                case 2:
-                    objvnum = QUEST_OBJQUEST3;
-                    break;
-
-                case 3:
-                    objvnum = QUEST_OBJQUEST4;
-                    break;
-
+                case 0 -> objvnum = QUEST_OBJQUEST1;
+                case 1 -> objvnum = QUEST_OBJQUEST2;
+                case 2 -> objvnum = QUEST_OBJQUEST3;
+                case 3 -> objvnum = QUEST_OBJQUEST4;
             }
 
 

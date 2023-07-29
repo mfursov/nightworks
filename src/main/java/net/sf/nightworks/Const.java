@@ -131,7 +131,7 @@ import static net.sf.nightworks.Nightworks.wiznet_type;
  */
 class Const {
     /* language staff */
-    static final translation_type translation_table[] =
+    static final translation_type[] translation_table =
             {
                     new translation_type('a', 'e'),
                     new translation_type('A', 'E'),
@@ -188,7 +188,7 @@ class Const {
                     new translation_type('\0', '\0')
             };
 
-    static final language_type language_table[] =
+    static final language_type[] language_table =
             {
                     new language_type("common", LANG_COMMON),
                     new language_type("human", LANG_HUMAN),
@@ -201,7 +201,7 @@ class Const {
             };
 
     /* item type list */
-    static final item_type item_table[] =
+    static final item_type[] item_table =
             {
                     new item_type(ITEM_LIGHT, "light"),
                     new item_type(ITEM_SCROLL, "scroll"),
@@ -252,7 +252,7 @@ class Const {
     }
 
     /* weapon selection table */
-    static final weapon_type weapon_table[] = {
+    static final weapon_type[] weapon_table = {
             new weapon_type("sword", OBJ_VNUM_SCHOOL_SWORD, WEAPON_SWORD, Skill.gsn_sword),
             new weapon_type("mace", OBJ_VNUM_SCHOOL_MACE, WEAPON_MACE, Skill.gsn_mace),
             new weapon_type("dagger", OBJ_VNUM_SCHOOL_DAGGER, WEAPON_DAGGER, Skill.gsn_dagger),
@@ -268,7 +268,7 @@ class Const {
     };
 
     /* wiznet table and prototype for future flag setting */
-    static final wiznet_type wiznet_table[] = {
+    static final wiznet_type[] wiznet_table = {
             new wiznet_type("on", WIZ_ON, IM),
             new wiznet_type("prefix", WIZ_PREFIX, IM),
             new wiznet_type("ticks", WIZ_TICKS, IM),
@@ -295,7 +295,7 @@ class Const {
     /**
      * attack table
      */
-    static final attack_type attack_table[] = {
+    static final attack_type[] attack_table = {
             new attack_type("none", "hit", -1),  /*  0 */
             new attack_type("slice", "slice", DAM_SLASH),
             new attack_type("stab", "stab", DAM_PIERCE),
@@ -341,7 +341,7 @@ class Const {
     /**
      * God's Name, name of religion, tattoo vnum
      */
-    static final religion_type religion_table[] =
+    static final religion_type[] religion_table =
             {
                     new religion_type("", "None", 0),
                     new religion_type("Atum-Ra", "Lawful Good", OBJ_VNUM_TATTOO_APOLLON),
@@ -367,7 +367,7 @@ class Const {
     /**
      * altar good neut evil, recall good neut evil, pit good neut evil
      */
-    static final hometown_type hometown_table[] =
+    static final hometown_type[] hometown_table =
             {
                     new hometown_type("Midgaard", new int[]{3070, 3054, 3072}, new int[]{3068, 3001, 3071}, new int[]{3069, 3054, 3072}),
                     new hometown_type("New Thalos", new int[]{9605, 9605, 9605}, new int[]{9609, 9609, 9609}, new int[]{9609, 9609, 9609}),
@@ -410,7 +410,7 @@ class Const {
             };
 
 
-    static final int_app_type int_app[] =
+    static final int_app_type[] int_app =
             {
                     new int_app_type(3), /*  0 */
                     new int_app_type(5), /*  1 */
@@ -441,7 +441,7 @@ class Const {
             };
 
 
-    static final wis_app_type wis_app[] =
+    static final wis_app_type[] wis_app =
             {
                     new wis_app_type(0),  /*  0*/
                     new wis_app_type(0),  /*  1*/
@@ -472,7 +472,7 @@ class Const {
             };
 
 
-    static final dex_app_type dex_app[] =
+    static final dex_app_type[] dex_app =
             {
                     new dex_app_type(60),   /* 0*/
                     new dex_app_type(50),   /* 1*/
@@ -503,7 +503,7 @@ class Const {
             };
 
 
-    static final con_app_type con_app[] =
+    static final con_app_type[] con_app =
             {
                     new con_app_type(0, 20),   /*  0*/
                     new con_app_type(1, 25),   /*  1*/
@@ -538,7 +538,7 @@ class Const {
      * Liquid properties.
      * Used in world.obj.
      */
-    static final liq_type liq_table[] =
+    static final liq_type[] liq_table =
             {
 /*    name          color   proof, full, thirst, food, size*/
                     new liq_type("water", "clear", new int[]{0, 1, 10, 0, 16}),

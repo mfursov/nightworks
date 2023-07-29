@@ -45,8 +45,8 @@ public class Clazz {
     final int id;
     final ArrayList<Pose> poses = new ArrayList<>();
 
-    String femaleTitles[] = new String[MAX_LEVEL + 1];
-    String maleTitles[] = new String[MAX_LEVEL + 1];
+    String[] femaleTitles = new String[MAX_LEVEL + 1];
+    String[] maleTitles = new String[MAX_LEVEL + 1];
 
     Clazz(String className) {
         assert (!clazzByName.containsKey(className));
@@ -72,10 +72,10 @@ public class Clazz {
     }
 
     private boolean validate() {
-        return name.length() > 0
-                && who_name.length() > 0
+        return !name.isEmpty()
+                && !who_name.isEmpty()
                 && weapon != 0
-                && guildVnums.size() > 0;
+                && !guildVnums.isEmpty();
     }
 
     static Clazz lookupClass(String className, boolean throwExceptionIfNotFound) {

@@ -7,270 +7,34 @@ import static net.sf.nightworks.ActComm.do_yell;
 import static net.sf.nightworks.ActHera.auction_update;
 import static net.sf.nightworks.ActHera.hunt_victim;
 import static net.sf.nightworks.ActInfo.set_title;
-import static net.sf.nightworks.ActMove.do_human;
-import static net.sf.nightworks.ActMove.do_stand;
-import static net.sf.nightworks.ActMove.do_track;
-import static net.sf.nightworks.ActMove.do_wake;
-import static net.sf.nightworks.ActMove.move_char;
+import static net.sf.nightworks.ActMove.*;
 import static net.sf.nightworks.ActObj.can_loot;
 import static net.sf.nightworks.ActObj.do_quaff;
-import static net.sf.nightworks.ActSkill.base_exp;
-import static net.sf.nightworks.ActSkill.check_improve;
-import static net.sf.nightworks.ActSkill.exp_to_level;
+import static net.sf.nightworks.ActSkill.*;
 import static net.sf.nightworks.ActWiz.reboot_nightworks;
 import static net.sf.nightworks.ActWiz.wiznet;
-import static net.sf.nightworks.Comm.act;
-import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.Comm.write_to_buffer;
+import static net.sf.nightworks.Comm.*;
 import static net.sf.nightworks.Const.con_app;
 import static net.sf.nightworks.Const.wis_app;
-import static net.sf.nightworks.DB.area_update;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_door;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.tail_chain;
-import static net.sf.nightworks.DB.time_info;
-import static net.sf.nightworks.DB.weather_info;
-import static net.sf.nightworks.Fight.damage;
-import static net.sf.nightworks.Fight.do_murder;
-import static net.sf.nightworks.Fight.is_safe_nomessage;
-import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Fight.stop_fighting;
-import static net.sf.nightworks.Fight.update_pos;
-import static net.sf.nightworks.Fight.violence_update;
-import static net.sf.nightworks.Handler.affect_find;
-import static net.sf.nightworks.Handler.affect_join;
-import static net.sf.nightworks.Handler.affect_remove;
-import static net.sf.nightworks.Handler.affect_remove_obj;
-import static net.sf.nightworks.Handler.affect_remove_room;
-import static net.sf.nightworks.Handler.affect_strip;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.back_home;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.check_material;
-import static net.sf.nightworks.Handler.check_time_sync;
-import static net.sf.nightworks.Handler.extract_char;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_light_char;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_wield_char;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.is_safe_rspell;
-import static net.sf.nightworks.Handler.isn_dark_safe;
-import static net.sf.nightworks.Handler.obj_from_obj;
-import static net.sf.nightworks.Handler.obj_from_room;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_obj;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.unequip_char;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Fight.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Magic.saves_spell;
 import static net.sf.nightworks.MartialArt.check_guard;
 import static net.sf.nightworks.MartialArt.do_spellbane;
-import static net.sf.nightworks.Nightworks.ACT_AGGRESSIVE;
-import static net.sf.nightworks.Nightworks.ACT_HUNTER;
-import static net.sf.nightworks.Nightworks.ACT_INDOORS;
-import static net.sf.nightworks.Nightworks.ACT_NOTRACK;
-import static net.sf.nightworks.Nightworks.ACT_OUTDOORS;
-import static net.sf.nightworks.Nightworks.ACT_SCAVENGER;
-import static net.sf.nightworks.Nightworks.ACT_SENTINEL;
-import static net.sf.nightworks.Nightworks.ACT_STAY_AREA;
-import static net.sf.nightworks.Nightworks.ACT_UNDEAD;
-import static net.sf.nightworks.Nightworks.ACT_UPDATE_ALWAYS;
-import static net.sf.nightworks.Nightworks.ACT_WIMPY;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_BLIND;
-import static net.sf.nightworks.Nightworks.AFF_BLOODTHIRST;
-import static net.sf.nightworks.Nightworks.AFF_CALM;
-import static net.sf.nightworks.Nightworks.AFF_CAMOUFLAGE;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_CORRUPTION;
-import static net.sf.nightworks.Nightworks.AFF_FADE;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_HIDE;
-import static net.sf.nightworks.Nightworks.AFF_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.AFF_REGENERATION;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_ESPIRIT;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_POISON;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SCREAM;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_SUFFOCATE;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_HUNTER;
-import static net.sf.nightworks.Nightworks.CABAL_NONE;
-import static net.sf.nightworks.Nightworks.CANT_CHANGE_TITLE;
-import static net.sf.nightworks.Nightworks.CAN_WEAR;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COND_BLOODLUST;
-import static net.sf.nightworks.Nightworks.COND_DESIRE;
-import static net.sf.nightworks.Nightworks.COND_DRUNK;
-import static net.sf.nightworks.Nightworks.COND_FULL;
-import static net.sf.nightworks.Nightworks.COND_HUNGER;
-import static net.sf.nightworks.Nightworks.COND_THIRST;
-import static net.sf.nightworks.Nightworks.CON_PLAYING;
-import static net.sf.nightworks.Nightworks.DAM_CHARM;
-import static net.sf.nightworks.Nightworks.DAM_DISEASE;
-import static net.sf.nightworks.Nightworks.DAM_HUNGER;
-import static net.sf.nightworks.Nightworks.DAM_LIGHT_V;
-import static net.sf.nightworks.Nightworks.DAM_MENTAL;
-import static net.sf.nightworks.Nightworks.DAM_NONE;
-import static net.sf.nightworks.Nightworks.DAM_OTHER;
-import static net.sf.nightworks.Nightworks.DAM_POISON;
-import static net.sf.nightworks.Nightworks.DAM_THIRST;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_HARA_KIRI;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OUTSIDE;
-import static net.sf.nightworks.Nightworks.IS_ROOM_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_VAMPIRE;
-import static net.sf.nightworks.Nightworks.IS_WATER;
-import static net.sf.nightworks.Nightworks.ITEM_CONTAINER;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_PC;
-import static net.sf.nightworks.Nightworks.ITEM_DRINK_CON;
-import static net.sf.nightworks.Nightworks.ITEM_FOOD;
-import static net.sf.nightworks.Nightworks.ITEM_FOUNTAIN;
-import static net.sf.nightworks.Nightworks.ITEM_FURNITURE;
-import static net.sf.nightworks.Nightworks.ITEM_LIGHT;
-import static net.sf.nightworks.Nightworks.ITEM_PORTAL;
-import static net.sf.nightworks.Nightworks.ITEM_POTION;
-import static net.sf.nightworks.Nightworks.ITEM_TAKE;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.LEVEL_HERO;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.MPROG_AREA;
-import static net.sf.nightworks.Nightworks.NIGHTWORKS_REBOOT;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_PIT;
-import static net.sf.nightworks.Nightworks.OFF_BACKSTAB;
-import static net.sf.nightworks.Nightworks.OPROG_AREA;
-import static net.sf.nightworks.Nightworks.OPROG_GET;
-import static net.sf.nightworks.Nightworks.PERS;
-import static net.sf.nightworks.Nightworks.PK_MIN_LEVEL;
-import static net.sf.nightworks.Nightworks.PLR_CHANGED_AFF;
-import static net.sf.nightworks.Nightworks.PLR_HOLYLIGHT;
-import static net.sf.nightworks.Nightworks.PLR_NO_EXP;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_INCAP;
-import static net.sf.nightworks.Nightworks.POS_MORTAL;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.POS_STUNNED;
-import static net.sf.nightworks.Nightworks.PULSE_AREA;
-import static net.sf.nightworks.Nightworks.PULSE_MOBILE;
-import static net.sf.nightworks.Nightworks.PULSE_MUSIC;
-import static net.sf.nightworks.Nightworks.PULSE_RAFFECT;
-import static net.sf.nightworks.Nightworks.PULSE_TICK;
-import static net.sf.nightworks.Nightworks.PULSE_TRACK;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.PULSE_WATER_FLOAT;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.RIDDEN;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_INDOORS;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MOB;
-import static net.sf.nightworks.Nightworks.ROOM_SAFE;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_LIMBO;
-import static net.sf.nightworks.Nightworks.SECT_DESERT;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SEX_FEMALE;
-import static net.sf.nightworks.Nightworks.SIZE_MEDIUM;
-import static net.sf.nightworks.Nightworks.SKY_CLOUDLESS;
-import static net.sf.nightworks.Nightworks.SKY_CLOUDY;
-import static net.sf.nightworks.Nightworks.SKY_LIGHTNING;
-import static net.sf.nightworks.Nightworks.SKY_RAINING;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_WIS;
-import static net.sf.nightworks.Nightworks.SUN_DARK;
-import static net.sf.nightworks.Nightworks.SUN_LIGHT;
-import static net.sf.nightworks.Nightworks.SUN_RISE;
-import static net.sf.nightworks.Nightworks.SUN_SET;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_ALL;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.WEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.WIZ_LEVELS;
-import static net.sf.nightworks.Nightworks.WIZ_TICKS;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.descriptor_list;
-import static net.sf.nightworks.Nightworks.limit_time;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.object_list;
-import static net.sf.nightworks.Nightworks.reboot_counter;
-import static net.sf.nightworks.Nightworks.top_affected_room;
-import static net.sf.nightworks.Nightworks.total_levels;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Quest.quest_update;
 import static net.sf.nightworks.Save.save_char_obj;
-import static net.sf.nightworks.Skill.gsn_backstab;
-import static net.sf.nightworks.Skill.gsn_bandage;
-import static net.sf.nightworks.Skill.gsn_black_death;
-import static net.sf.nightworks.Skill.gsn_blackguard;
-import static net.sf.nightworks.Skill.gsn_blackjack;
-import static net.sf.nightworks.Skill.gsn_caltraps;
-import static net.sf.nightworks.Skill.gsn_deadly_venom;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_evil_spirit;
-import static net.sf.nightworks.Skill.gsn_fast_healing;
-import static net.sf.nightworks.Skill.gsn_headguard;
-import static net.sf.nightworks.Skill.gsn_lethargic_mist;
-import static net.sf.nightworks.Skill.gsn_light_res;
-import static net.sf.nightworks.Skill.gsn_meditation;
-import static net.sf.nightworks.Skill.gsn_mysterious_dream;
-import static net.sf.nightworks.Skill.gsn_neckguard;
-import static net.sf.nightworks.Skill.gsn_path_find;
-import static net.sf.nightworks.Skill.gsn_plague;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_sleep;
-import static net.sf.nightworks.Skill.gsn_slow;
-import static net.sf.nightworks.Skill.gsn_spellbane;
-import static net.sf.nightworks.Skill.gsn_strangle;
-import static net.sf.nightworks.Skill.gsn_trance;
-import static net.sf.nightworks.Skill.gsn_vampiric_touch;
-import static net.sf.nightworks.Skill.gsn_witch_curse;
-import static net.sf.nightworks.Skill.gsn_x_hunger;
+import static net.sf.nightworks.Skill.*;
 
 public class Update {
-/* used for saving */
+    /* used for saving */
 
     private static int save_number = 0;
 
-/*
-* Advancement stuff.
-*/
+    /*
+     * Advancement stuff.
+     */
 
 
     static void advance_level(CHAR_DATA ch) {
@@ -365,9 +129,9 @@ public class Update {
         }
     }
 
-/*
-* Regeneration stuff.
-*/
+    /*
+     * Regeneration stuff.
+     */
 
     static int hit_gain(CHAR_DATA ch) {
         int gain;
@@ -384,17 +148,11 @@ public class Update {
             }
 
             switch (ch.position) {
-                default:
-                    gain /= 2;
-                    break;
-                case POS_SLEEPING:
-                    gain = 3 * gain / 2;
-                    break;
-                case POS_RESTING:
-                    break;
-                case POS_FIGHTING:
-                    gain /= 3;
-                    break;
+                default -> gain /= 2;
+                case POS_SLEEPING -> gain = 3 * gain / 2;
+                case POS_RESTING -> {
+                }
+                case POS_FIGHTING -> gain /= 3;
             }
 
 
@@ -416,17 +174,11 @@ public class Update {
                 }
             }
             switch (ch.position) {
-                default:
-                    gain /= 4;
-                    break;
-                case POS_SLEEPING:
-                    break;
-                case POS_RESTING:
-                    gain /= 2;
-                    break;
-                case POS_FIGHTING:
-                    gain /= 6;
-                    break;
+                default -> gain /= 4;
+                case POS_SLEEPING -> {
+                }
+                case POS_RESTING -> gain /= 2;
+                case POS_FIGHTING -> gain /= 6;
             }
 
             if (ch.pcdata.condition[COND_HUNGER] < 0) {
@@ -484,17 +236,11 @@ public class Update {
         if (IS_NPC(ch)) {
             gain = 5 + ch.level;
             switch (ch.position) {
-                default:
-                    gain /= 2;
-                    break;
-                case POS_SLEEPING:
-                    gain = 3 * gain / 2;
-                    break;
-                case POS_RESTING:
-                    break;
-                case POS_FIGHTING:
-                    gain /= 3;
-                    break;
+                default -> gain /= 2;
+                case POS_SLEEPING -> gain = 3 * gain / 2;
+                case POS_RESTING -> {
+                }
+                case POS_FIGHTING -> gain /= 3;
             }
         } else {
             gain = get_curr_stat(ch, STAT_WIS) + (2 * get_curr_stat(ch, STAT_INT)) + ch.level;
@@ -519,17 +265,11 @@ public class Update {
             }
 
             switch (ch.position) {
-                default:
-                    gain /= 4;
-                    break;
-                case POS_SLEEPING:
-                    break;
-                case POS_RESTING:
-                    gain /= 2;
-                    break;
-                case POS_FIGHTING:
-                    gain /= 6;
-                    break;
+                default -> gain /= 4;
+                case POS_SLEEPING -> {
+                }
+                case POS_RESTING -> gain /= 2;
+                case POS_FIGHTING -> gain /= 6;
             }
 
             if (ch.pcdata.condition[COND_HUNGER] < 0) {
@@ -589,12 +329,8 @@ public class Update {
             gain = UMAX(15, 2 * ch.level);
 
             switch (ch.position) {
-                case POS_SLEEPING:
-                    gain += 2 * (get_curr_stat(ch, STAT_DEX));
-                    break;
-                case POS_RESTING:
-                    gain += get_curr_stat(ch, STAT_DEX);
-                    break;
+                case POS_SLEEPING -> gain += 2 * (get_curr_stat(ch, STAT_DEX));
+                case POS_RESTING -> gain += get_curr_stat(ch, STAT_DEX);
             }
 
             if (ch.pcdata.condition[COND_HUNGER] < 0) {
@@ -657,37 +393,29 @@ public class Update {
 
         if (ch.pcdata.condition[iCond] < 1 && ch.pcdata.condition[iCond] > -6) {
             switch (iCond) {
-                case COND_HUNGER:
-                    send_to_char("You are hungry.\n", ch);
-                    break;
-
-                case COND_THIRST:
-                    send_to_char("You are thirsty.\n", ch);
-                    break;
-
-                case COND_DRUNK:
+                case COND_HUNGER -> send_to_char("You are hungry.\n", ch);
+                case COND_THIRST -> send_to_char("You are thirsty.\n", ch);
+                case COND_DRUNK -> {
                     if (condition != 0) {
                         send_to_char("You are sober.\n", ch);
                     }
-                    break;
-
-                case COND_BLOODLUST:
+                }
+                case COND_BLOODLUST -> {
                     if (condition != 0) {
                         send_to_char("You are hungry for blood.\n", ch);
                     }
-                    break;
-
-                case COND_DESIRE:
+                }
+                case COND_DESIRE -> {
                     if (condition != 0) {
                         send_to_char("You have missed your home.\n", ch);
                     }
-                    break;
+                }
             }
         }
 
         if (ch.pcdata.condition[iCond] == -6 && ch.level >= PK_MIN_LEVEL) {
             switch (iCond) {
-                case COND_HUNGER:
+                case COND_HUNGER -> {
                     send_to_char("You are starving!\n", ch);
                     act("$n is starving!", ch, null, null, TO_ROOM);
                     damage_hunger = ch.max_hit * number_range(2, 4) / 100;
@@ -698,9 +426,8 @@ public class Update {
                     if (ch.position == POS_SLEEPING) {
                         return;
                     }
-                    break;
-
-                case COND_THIRST:
+                }
+                case COND_THIRST -> {
                     send_to_char("You are dying of thrist!\n", ch);
                     act("$n is dying of thirst!", ch, null, null, TO_ROOM);
                     damage_hunger = ch.max_hit * number_range(2, 4) / 100;
@@ -711,9 +438,8 @@ public class Update {
                     if (ch.position == POS_SLEEPING) {
                         return;
                     }
-                    break;
-
-                case COND_BLOODLUST:
+                }
+                case COND_BLOODLUST -> {
                     boolean fdone = false;
                     send_to_char("You are suffering from thrist of blood!\n", ch);
                     act("$n is suffering from thirst of blood!", ch, null, null, TO_ROOM);
@@ -743,26 +469,25 @@ public class Update {
                     if (ch.position == POS_SLEEPING) {
                         return;
                     }
-                    break;
-
-                case COND_DESIRE:
+                }
+                case COND_DESIRE -> {
                     send_to_char("You want to go your home!\n", ch);
                     act("$n desires for $s home!", ch, null, null, TO_ROOM);
                     if (ch.position >= POS_STANDING) {
                         move_char(ch, number_door());
                     }
-                    break;
+                }
             }
         }
 
 
     }
 
-/*
-* Mob autonomous action.
-* This function takes 25% to 35% of ALL Merc cpu time.
-* -- Furey
-*/
+    /*
+     * Mob autonomous action.
+     * This function takes 25% to 35% of ALL Merc cpu time.
+     * -- Furey
+     */
 
     static void mobile_update() {
         CHAR_DATA ch;
@@ -847,8 +572,8 @@ public class Update {
             }
 
             /*
-            *  Potion using and stuff for intelligent mobs
-            */
+             *  Potion using and stuff for intelligent mobs
+             */
 
             if (ch.position == POS_STANDING || ch.position == POS_RESTING || ch.position == POS_FIGHTING) {
                 if (get_curr_stat(ch, STAT_INT) > 15 &&
@@ -1034,9 +759,9 @@ public class Update {
         return false;
     }
 
-/*
- * Update the weather.
- */
+    /*
+     * Update the weather.
+     */
 
     static void weather_update() {
         DESCRIPTOR_DATA d;
@@ -1049,30 +774,26 @@ public class Update {
         }
 
         switch (time_info.hour) {
-            case 5:
+            case 5 -> {
                 weather_info.sunlight = SUN_LIGHT;
                 buf.append("The day has begun.\n");
-                break;
-
-            case 6:
+            }
+            case 6 -> {
                 weather_info.sunlight = SUN_RISE;
                 buf.append("The sun rises in the east.\n");
-                break;
-
-            case 19:
+            }
+            case 19 -> {
                 weather_info.sunlight = SUN_SET;
                 buf.append("The sun slowly disappears in the west.\n");
-                break;
-
-            case 20:
+            }
+            case 20 -> {
                 weather_info.sunlight = SUN_DARK;
                 buf.append("The night has begun.\n");
-                break;
-
-            case 24:
+            }
+            case 24 -> {
                 time_info.hour = 0;
                 time_info.day++;
-                break;
+            }
         }
 
         if (time_info.day >= 35) {
@@ -1103,54 +824,47 @@ public class Update {
         weather_info.mmhg = UMIN(weather_info.mmhg, 1040);
 
         switch (weather_info.sky) {
-            default:
+            default -> {
                 bug("Weather_update: bad sky %d.", weather_info.sky);
                 weather_info.sky = SKY_CLOUDLESS;
-                break;
-
-            case SKY_CLOUDLESS:
+            }
+            case SKY_CLOUDLESS -> {
                 if (weather_info.mmhg < 990
                         || (weather_info.mmhg < 1010 && number_bits(2) == 0)) {
                     buf.append("The sky is getting cloudy.\n");
                     weather_info.sky = SKY_CLOUDY;
                 }
-                break;
-
-            case SKY_CLOUDY:
+            }
+            case SKY_CLOUDY -> {
                 if (weather_info.mmhg < 970
                         || (weather_info.mmhg < 990 && number_bits(2) == 0)) {
                     buf.append("It starts to rain.\n");
                     weather_info.sky = SKY_RAINING;
                 }
-
                 if (weather_info.mmhg > 1030 && number_bits(2) == 0) {
                     buf.append("The clouds disappear.\n");
                     weather_info.sky = SKY_CLOUDLESS;
                 }
-                break;
-
-            case SKY_RAINING:
+            }
+            case SKY_RAINING -> {
                 if (weather_info.mmhg < 970 && number_bits(2) == 0) {
                     buf.append("Lightning flashes in the sky.\n");
                     weather_info.sky = SKY_LIGHTNING;
                 }
-
                 if (weather_info.mmhg > 1030 || (weather_info.mmhg > 1010 && number_bits(2) == 0)) {
                     buf.append("The rain stopped.\n");
                     weather_info.sky = SKY_CLOUDY;
                 }
-                break;
-
-            case SKY_LIGHTNING:
+            }
+            case SKY_LIGHTNING -> {
                 if (weather_info.mmhg > 1010 || (weather_info.mmhg > 990 && number_bits(2) == 0)) {
                     buf.append("The lightning has stopped.\n");
                     weather_info.sky = SKY_RAINING;
-                    break;
                 }
-                break;
+            }
         }
 
-        if (buf.length() != 0) {
+        if (!buf.isEmpty()) {
             for (d = descriptor_list; d != null; d = d.next) {
                 if (d.connected == CON_PLAYING
                         && IS_OUTSIDE(d.character)
@@ -1164,7 +878,7 @@ public class Update {
 
     /*
      * Update all chars, including mobs.
-    */
+     */
     private static int char_update_last_save_time = -1;
 
     static void char_update() {
@@ -1418,10 +1132,10 @@ public class Update {
             }
 
             /*
-            * Careful with the damages here,
-            *   MUST NOT refer to ch after damage taken,
-            *   as it may be lethal damage (on NPC).
-            */
+             * Careful with the damages here,
+             *   MUST NOT refer to ch after damage taken,
+             *   as it may be lethal damage (on NPC).
+             */
 
             if (is_affected(ch, gsn_witch_curse)) {
                 AFFECT_DATA af;
@@ -1529,9 +1243,7 @@ public class Update {
                     damage(ch, ch, dam, gsn_plague, DAM_DISEASE, false);
                 }
             } else if (IS_AFFECTED(ch, AFF_POISON) && ch != null
-                    && !IS_AFFECTED(ch, AFF_SLOW))
-
-            {
+                    && !IS_AFFECTED(ch, AFF_SLOW)) {
                 AFFECT_DATA poison = affect_find(ch.affected, gsn_poison);
 
                 if (poison != null) {
@@ -1630,9 +1342,9 @@ public class Update {
     }
 
     /*
-    * Update all objs.
-    * This function is performance sensitive.
-    */
+     * Update all objs.
+     * This function is performance sensitive.
+     */
     private static int obj_update_pit_count = 1;
 
     static void obj_update() {
@@ -1744,28 +1456,14 @@ public class Update {
             }
 
             switch (obj.item_type) {
-                default:
-                    message = "$p crumbles into dust.";
-                    break;
-                case ITEM_FOUNTAIN:
-                    message = "$p dries up.";
-                    break;
-                case ITEM_CORPSE_NPC:
-                    message = "$p decays into dust.";
-                    break;
-                case ITEM_CORPSE_PC:
-                    message = "$p decays into dust.";
-                    break;
-                case ITEM_FOOD:
-                    message = "$p decomposes.";
-                    break;
-                case ITEM_POTION:
-                    message = "$p has evaporated from disuse.";
-                    break;
-                case ITEM_PORTAL:
-                    message = "$p fades out of existence.";
-                    break;
-                case ITEM_CONTAINER:
+                default -> message = "$p crumbles into dust.";
+                case ITEM_FOUNTAIN -> message = "$p dries up.";
+                case ITEM_CORPSE_NPC -> message = "$p decays into dust.";
+                case ITEM_CORPSE_PC -> message = "$p decays into dust.";
+                case ITEM_FOOD -> message = "$p decomposes.";
+                case ITEM_POTION -> message = "$p has evaporated from disuse.";
+                case ITEM_PORTAL -> message = "$p fades out of existence.";
+                case ITEM_CONTAINER -> {
                     if (CAN_WEAR(obj, ITEM_WEAR_FLOAT)) {
                         if (obj.contains != null) {
                             message = "$p flickers and vanishes, spilling its contents on the floor.";
@@ -1775,7 +1473,7 @@ public class Update {
                     } else {
                         message = "$p crumbles into dust.";
                     }
-                    break;
+                }
             }
 
             if (obj.carried_by != null) {
@@ -1846,20 +1544,20 @@ public class Update {
         }
     }
 
-/*
-* Aggress.
-*
-* for each mortal PC
-*     for each mob in room
-*         aggress on some random PC
-*
-* This function takes 25% to 35% of ALL Merc cpu time.
-* Unfortunately, checking on each PC move is too tricky,
-*   because we don't the mob to just attack the first PC
-*   who leads the party into the room.
-*
-* -- Furey
-*/
+    /*
+     * Aggress.
+     *
+     * for each mortal PC
+     *     for each mob in room
+     *         aggress on some random PC
+     *
+     * This function takes 25% to 35% of ALL Merc cpu time.
+     * Unfortunately, checking on each PC move is too tricky,
+     *   because we don't the mob to just attack the first PC
+     *   who leads the party into the room.
+     *
+     * -- Furey
+     */
 
     static void aggr_update() {
         CHAR_DATA wch;
@@ -1898,9 +1596,7 @@ public class Update {
                     if (!IS_NPC(ch)
                             && !IS_IMMORTAL(ch)
                             && ch.cabal != wch.cabal
-                            && ch.fighting == null)
-
-                    {
+                            && ch.fighting == null) {
                         multi_hit(wch, ch, null);
                     }
 
@@ -1932,9 +1628,7 @@ public class Update {
                         || (IS_SET(ch.act, ACT_WIMPY) && IS_AWAKE(wch))
                         || !can_see(ch, wch)
                         || number_bits(1) == 0
-                        || is_safe_nomessage(ch, wch))
-
-                {
+                        || is_safe_nomessage(ch, wch)) {
                     continue;
                 }
 
@@ -1955,10 +1649,10 @@ public class Update {
                 }
 
                 /*
-                * Ok we have a 'wch' player character and a 'ch' npc aggressor.
-                * Now make the aggressor fight a RANDOM pc victim in the room,
-                *   giving each 'vch' an equal chance of selection.
-                */
+                 * Ok we have a 'wch' player character and a 'ch' npc aggressor.
+                 * Now make the aggressor fight a RANDOM pc victim in the room,
+                 *   giving each 'vch' an equal chance of selection.
+                 */
                 count = 0;
                 victim = null;
                 for (vch = wch.in_room.people; vch != null; vch = vch_next) {
@@ -2004,11 +1698,11 @@ public class Update {
     private static int pulse_raffect;
     private static int pulse_track;
 
-/*
-* Handle all kinds of updates.
-* Called once per pulse from game loop.
-* Random times to defeat tick-timing clients and players.
-*/
+    /*
+     * Handle all kinds of updates.
+     * Called once per pulse from game loop.
+     * Random times to defeat tick-timing clients and players.
+     */
 
     static void update_handler() {
 //TODO: Moved from COMM
@@ -2031,7 +1725,7 @@ public class Update {
 
         if (--pulse_music <= 0) {
             pulse_music = PULSE_MUSIC;
-/*  song_update(); */
+            /*  song_update(); */
         }
 
         if (--pulse_mobile <= 0) {

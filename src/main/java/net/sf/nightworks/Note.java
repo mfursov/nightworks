@@ -124,38 +124,37 @@ class Note {
         NOTE_DATA list;
 
         switch (type) {
-            default:
+            default -> {
                 return;
-            case NOTE_NOTE:
+            }
+            case NOTE_NOTE -> {
                 name = nw_config.note_note_file;
                 list = note_list;
-                break;
-            case NOTE_IDEA:
+            }
+            case NOTE_IDEA -> {
                 name = nw_config.note_idea_file;
                 list = idea_list;
-                break;
-            case NOTE_PENALTY:
+            }
+            case NOTE_PENALTY -> {
                 name = nw_config.note_penalty_file;
                 list = penalty_list;
-                break;
-            case NOTE_NEWS:
+            }
+            case NOTE_NEWS -> {
                 name = nw_config.note_news_file;
                 list = news_list;
-                break;
-            case NOTE_CHANGES:
+            }
+            case NOTE_CHANGES -> {
                 name = nw_config.note_changes_file;
                 list = changes_list;
-                break;
+            }
         }
         try {
             BufferedWriter fw = new BufferedWriter(new FileWriter(name));
-            Formatter fp = new Formatter(fw);
-            try {
+            try (fw) {
+                Formatter fp = new Formatter(fw);
                 for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
                     prepareNote(fp, pnote);
                 }
-            } finally {
-                fw.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -258,37 +257,36 @@ class Note {
     static void append_note(NOTE_DATA pnote) {
         String name;
         switch (pnote.type) {
-            default:
+            default -> {
                 return;
-            case NOTE_NOTE:
+            }
+            case NOTE_NOTE -> {
                 name = nw_config.note_note_file;
                 note_list = append_note(note_list, pnote);
-                break;
-            case NOTE_IDEA:
+            }
+            case NOTE_IDEA -> {
                 name = nw_config.note_idea_file;
                 idea_list = append_note(idea_list, pnote);
-                break;
-            case NOTE_PENALTY:
+            }
+            case NOTE_PENALTY -> {
                 name = nw_config.note_penalty_file;
                 penalty_list = append_note(penalty_list, pnote);
-                break;
-            case NOTE_NEWS:
+            }
+            case NOTE_NEWS -> {
                 name = nw_config.note_news_file;
                 news_list = append_note(news_list, pnote);
-                break;
-            case NOTE_CHANGES:
+            }
+            case NOTE_CHANGES -> {
                 name = nw_config.note_changes_file;
                 changes_list = append_note(changes_list, pnote);
-                break;
+            }
         }
 
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(name, true));
-            Formatter fp = new Formatter(bw);
-            try {
+            try (bw) {
+                Formatter fp = new Formatter(bw);
                 prepareNote(fp, pnote);
-            } finally {
-                bw.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -359,39 +357,30 @@ class Note {
             StringBuilder to_new = new StringBuilder();
             StringBuilder to_one = new StringBuilder();
             String to_list = pnote.to_list;
-            while (to_list != null && to_list.length() != 0) {
+            while (to_list != null && !to_list.isEmpty()) {
                 to_one.setLength(0);
                 to_list = one_argument(to_list, to_one);
-                if (to_one.length() != 0 && str_cmp(ch.name, to_one.toString())) {
+                if (!to_one.isEmpty() && str_cmp(ch.name, to_one.toString())) {
                     to_new.append(" ");
                     to_new.append(to_one);
                 }
             }
             /* Just a simple recipient removal? */
-            if (str_cmp(ch.name, pnote.sender) && to_new.length() != 0) {
+            if (str_cmp(ch.name, pnote.sender) && !to_new.isEmpty()) {
                 pnote.to_list = to_new.substring(1);
                 return;
             }
         }
         /* nuke the whole note */
         switch (pnote.type) {
-            default:
+            default -> {
                 return;
-            case NOTE_NOTE:
-                note_list = note_remove(note_list, pnote);
-                break;
-            case NOTE_IDEA:
-                idea_list = note_remove(idea_list, pnote);
-                break;
-            case NOTE_PENALTY:
-                penalty_list = note_remove(penalty_list, pnote);
-                break;
-            case NOTE_NEWS:
-                news_list = note_remove(news_list, pnote);
-                break;
-            case NOTE_CHANGES:
-                changes_list = note_remove(changes_list, pnote);
-                break;
+            }
+            case NOTE_NOTE -> note_list = note_remove(note_list, pnote);
+            case NOTE_IDEA -> idea_list = note_remove(idea_list, pnote);
+            case NOTE_PENALTY -> penalty_list = note_remove(penalty_list, pnote);
+            case NOTE_NEWS -> news_list = note_remove(news_list, pnote);
+            case NOTE_CHANGES -> changes_list = note_remove(changes_list, pnote);
         }
 
         // Remove note from linked list.
@@ -428,23 +417,14 @@ class Note {
         }
 
         switch (pnote.type) {
-            default:
+            default -> {
                 return true;
-            case NOTE_NOTE:
-                last_read = ch.pcdata.last_note;
-                break;
-            case NOTE_IDEA:
-                last_read = ch.pcdata.last_idea;
-                break;
-            case NOTE_PENALTY:
-                last_read = ch.pcdata.last_penalty;
-                break;
-            case NOTE_NEWS:
-                last_read = ch.pcdata.last_news;
-                break;
-            case NOTE_CHANGES:
-                last_read = ch.pcdata.last_changes;
-                break;
+            }
+            case NOTE_NOTE -> last_read = ch.pcdata.last_note;
+            case NOTE_IDEA -> last_read = ch.pcdata.last_idea;
+            case NOTE_PENALTY -> last_read = ch.pcdata.last_penalty;
+            case NOTE_NEWS -> last_read = ch.pcdata.last_news;
+            case NOTE_CHANGES -> last_read = ch.pcdata.last_changes;
         }
 
         if (pnote.date_stamp <= last_read) {
@@ -470,23 +450,13 @@ class Note {
         stamp = pnote.date_stamp;
 
         switch (pnote.type) {
-            default:
-                return;
-            case NOTE_NOTE:
-                ch.pcdata.last_note = UMAX(ch.pcdata.last_note, stamp);
-                break;
-            case NOTE_IDEA:
-                ch.pcdata.last_idea = UMAX(ch.pcdata.last_idea, stamp);
-                break;
-            case NOTE_PENALTY:
-                ch.pcdata.last_penalty = UMAX(ch.pcdata.last_penalty, stamp);
-                break;
-            case NOTE_NEWS:
-                ch.pcdata.last_news = UMAX(ch.pcdata.last_news, stamp);
-                break;
-            case NOTE_CHANGES:
-                ch.pcdata.last_changes = UMAX(ch.pcdata.last_changes, stamp);
-                break;
+            default -> {
+            }
+            case NOTE_NOTE -> ch.pcdata.last_note = UMAX(ch.pcdata.last_note, stamp);
+            case NOTE_IDEA -> ch.pcdata.last_idea = UMAX(ch.pcdata.last_idea, stamp);
+            case NOTE_PENALTY -> ch.pcdata.last_penalty = UMAX(ch.pcdata.last_penalty, stamp);
+            case NOTE_NEWS -> ch.pcdata.last_news = UMAX(ch.pcdata.last_news, stamp);
+            case NOTE_CHANGES -> ch.pcdata.last_changes = UMAX(ch.pcdata.last_changes, stamp);
         }
     }
 
@@ -498,28 +468,29 @@ class Note {
         NOTE_DATA list;
         String list_name;
         switch (type) {
-            default:
+            default -> {
                 return;
-            case NOTE_NOTE:
+            }
+            case NOTE_NOTE -> {
                 list = note_list;
                 list_name = "notes";
-                break;
-            case NOTE_IDEA:
+            }
+            case NOTE_IDEA -> {
                 list = idea_list;
                 list_name = "ideas";
-                break;
-            case NOTE_PENALTY:
+            }
+            case NOTE_PENALTY -> {
                 list = penalty_list;
                 list_name = "penalties";
-                break;
-            case NOTE_NEWS:
+            }
+            case NOTE_NEWS -> {
                 list = news_list;
                 list_name = "news";
-                break;
-            case NOTE_CHANGES:
+            }
+            case NOTE_CHANGES -> {
                 list = changes_list;
                 list_name = "changes";
-                break;
+            }
         }
 
         StringBuilder arg = new StringBuilder();
@@ -527,13 +498,13 @@ class Note {
         argument = smash_tilde(argument);
         int vnum;
         int anum;
-        if (arg.length() == 0 || !str_prefix(arg.toString(), "read")) {
+        if (arg.isEmpty() || !str_prefix(arg.toString(), "read")) {
             boolean fAll;
 
             if (!str_cmp(argument, "all")) {
                 fAll = true;
                 anum = 0;
-            } else if (argument.length() == 0 || !str_prefix(argument, "next"))
+            } else if (argument.isEmpty() || !str_prefix(argument, "next"))
                 /* read next unread note */ {
                 vnum = 0;
                 for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
@@ -650,21 +621,11 @@ class Note {
 
         if (!str_prefix(arg.toString(), "catchup")) {
             switch (type) {
-                case NOTE_NOTE:
-                    ch.pcdata.last_note = current_time;
-                    break;
-                case NOTE_IDEA:
-                    ch.pcdata.last_idea = current_time;
-                    break;
-                case NOTE_PENALTY:
-                    ch.pcdata.last_penalty = current_time;
-                    break;
-                case NOTE_NEWS:
-                    ch.pcdata.last_news = current_time;
-                    break;
-                case NOTE_CHANGES:
-                    ch.pcdata.last_changes = current_time;
-                    break;
+                case NOTE_NOTE -> ch.pcdata.last_note = current_time;
+                case NOTE_IDEA -> ch.pcdata.last_idea = current_time;
+                case NOTE_PENALTY -> ch.pcdata.last_penalty = current_time;
+                case NOTE_NEWS -> ch.pcdata.last_news = current_time;
+                case NOTE_CHANGES -> ch.pcdata.last_changes = current_time;
             }
             return;
         }
@@ -709,7 +670,7 @@ class Note {
                 return;
             }
 
-            if (ch.pnote.text == null || ch.pnote.text.length() == 0) {
+            if (ch.pnote.text == null || ch.pnote.text.isEmpty()) {
                 send_to_char("No lines left to remove.\n", ch);
                 return;
             }

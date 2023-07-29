@@ -177,7 +177,7 @@ class ActHera {
         }
 
         /* nifty portal stuff */
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             ROOM_INDEX_DATA old_room;
             OBJ_DATA portal;
             CHAR_DATA fch, fch_next, mount;
@@ -400,13 +400,13 @@ class ActHera {
         int number;
         int count;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             return null;
         }
 
         StringBuilder arg = new StringBuilder();
         number = number_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             return null;
         }
         count = 0;
@@ -447,7 +447,7 @@ class ActHera {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Whom are you trying to hunt?\n", ch);
             return;
         }
@@ -842,7 +842,7 @@ class ActHera {
         one_argument(argument, argb);
         String arg = argb.toString();
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             do_say(mob, "I will repair a weapon for you, for a price.");
             send_to_char("Type estimate <weapon> to be assessed for damage.\n", ch);
             return;
@@ -910,7 +910,7 @@ class ActHera {
         one_argument(argument, argb);
         String arg = argb.toString();
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             do_say(mob, "Try estimate <item>");
             return;
         }
@@ -962,7 +962,7 @@ class ActHera {
         argument = one_argument(argument, arg1);
         String arg2 = argument;
 
-        if (arg.length() == 0 || arg1.length() == 0 || arg2.length() == 0) {
+        if (arg.isEmpty() || arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  restring <obj> <field> <string>\n", ch);
             send_to_char("    fields: name int long\n", ch);
@@ -1252,7 +1252,7 @@ class ActHera {
         one_argument(argument, argb);
         String arg = argb.toString();
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Which object do you want to repair.\n", ch);
             return;
         }
@@ -1404,20 +1404,19 @@ class ActHera {
         }
 
         switch (s.charAt(pos)) {
-            case 'k':
-            case 'K':
+            case 'k', 'K' -> {
                 multiplier = 1000;
                 number *= multiplier;
                 pos++;
-                break;
-            case 'm':
-            case 'M':
+            }
+            case 'm', 'M' -> {
                 multiplier = 1000000;
                 number *= multiplier;
                 pos++;
-                break;
-            default:
+            }
+            default -> {
                 return 0; /* not k nor m nor NUL - return 0! */
+            }
         }
 
         while (pos < s.length() && isDigit(s.charAt(pos)) && multiplier > 1) /* if any digits follow k/m, add those too */ {
@@ -1434,7 +1433,7 @@ class ActHera {
 
     static int parsebet(int currentbet, String argument) {
         int newbet = 0;                /* a variable to temporarily hold the new bet */
-        if (argument.length() > 0)               /* check for an empty string */ {
+        if (!argument.isEmpty())               /* check for an empty string */ {
 
             if (Character.isDigit(argument.charAt(0))) /* first char is a digit assume e.g. 433k */ {
                 newbet = advatoi(argument); /* parse and set newbet to that value */
@@ -1466,9 +1465,8 @@ class ActHera {
         if (auction.item != null) {
             if (--auction.pulse <= 0) /* decrease pulse */ {
                 auction.pulse = PULSE_AUCTION;
-                switch (++auction.going) /* increase the going state */ {
-                    case 1: /* going once */
-                    case 2: /* going twice */
+                switch (++auction.going) /* increase the going state */ { /* going once */
+                    case 1, 2 -> { /* going twice */
                         if (auction.bet > 0) {
                             sprintf(buf, "%s: going %s for %d.", auction.item.short_descr,
                                     ((auction.going == 1) ? "once" : "twice"), auction.bet);
@@ -1477,9 +1475,8 @@ class ActHera {
                                     ((auction.going == 1) ? "once" : "twice"));
                         }
                         talk_auction("{c" + buf + "{x");
-                        break;
-
-                    case 3: /* SOLD! */
+                    }
+                    case 3 -> { /* SOLD! */
 
                         if (auction.bet > 0) {
                             sprintf(buf, "%s sold to %s for %d.",
@@ -1509,7 +1506,7 @@ class ActHera {
                             auction.item = null; /* clear auction */
 
                         } /* else */
-
+                    }
                 } /* switch */
             } /* if */
         }
@@ -1538,7 +1535,7 @@ class ActHera {
             }
         }
         TextBuffer buf = new TextBuffer();
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             if (auction.item != null) {
                 /* show item data here */
                 if (auction.bet > 0) {
@@ -1592,7 +1589,7 @@ class ActHera {
                 }
 
                 /* make - perhaps - a bet now */
-                if (argument.length() == 0) {
+                if (argument.isEmpty()) {
                     send_to_char("Bet how much?\n", ch);
                     return;
                 }
@@ -1658,15 +1655,8 @@ class ActHera {
 
 
             switch (obj.item_type) {
-                default:
-                    act("{rYou cannot auction $Ts.{x", ch, null, item_type_name(obj), TO_CHAR, POS_SLEEPING);
-                    return;
-
-                case ITEM_WEAPON:
-                case ITEM_ARMOR:
-                case ITEM_STAFF:
-                case ITEM_WAND:
-                case ITEM_SCROLL:
+                default -> act("{rYou cannot auction $Ts.{x", ch, null, item_type_name(obj), TO_CHAR, POS_SLEEPING);
+                case ITEM_WEAPON, ITEM_ARMOR, ITEM_STAFF, ITEM_WAND, ITEM_SCROLL -> {
                     obj_from_char(obj);
                     auction.item = obj;
                     auction.bet = 0;   /* obj.cost / 100 */
@@ -1675,8 +1665,8 @@ class ActHera {
                     auction.pulse = PULSE_AUCTION;
                     auction.going = 0;
                     buf.sprintf("A new item has been received: %s.", obj.short_descr);
-                    talk_auction("{r" + buf.toString() + "{x");
-
+                    talk_auction("{r" + buf + "{x");
+                }
             } /* switch */
         } else {
             act("Try again later - $p is being auctioned right now!",

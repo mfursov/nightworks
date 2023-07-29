@@ -61,7 +61,7 @@ class Healer {
         StringBuilder argb = new StringBuilder();
         one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             /* display price list */
             act("Healer offers the following spells.", ch, null, mob, TO_CHAR);
             send_to_char("  light   : cure light wounds     10 gold\n", ch);

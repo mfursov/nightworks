@@ -30,16 +30,13 @@ public class DikuTextFile {
         this.file = file;
         int len = (int) file.length();
         data = new char[len];
-        FileReader reader = new FileReader(file);
-        try {
+        try (FileReader reader = new FileReader(file)) {
             int pos = 0;
             do {
                 int dpos = reader.read(data, pos, len - pos);
                 assert (dpos >= 0);
                 pos += dpos;
             } while (pos != len);
-        } finally {
-            reader.close();
         }
     }
 
@@ -261,7 +258,7 @@ public class DikuTextFile {
         }
 
         if (sign) {
-            number = 0 - number;
+            number = -number;
         }
 
         if (c == '|') {
@@ -324,7 +321,7 @@ public class DikuTextFile {
         String str = multiFlag ? fread_string() : fread_word();
         long val;
         if (is_number(str)) {
-            val = Integer.valueOf(str);
+            val = Integer.parseInt(str);
         } else {
             val = flag_type.parseFlagsValue(str, table);
         }

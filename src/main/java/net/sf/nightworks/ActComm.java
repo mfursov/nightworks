@@ -136,7 +136,7 @@ class ActComm {
         }
 
         if (ch.pcdata.confirm_delete) {
-            if (argument.length() != 0) {
+            if (!argument.isEmpty()) {
                 send_to_char("Delete status removed.\n", ch);
                 ch.pcdata.confirm_delete = false;
                 return;
@@ -150,7 +150,7 @@ class ActComm {
             }
         }
 
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             send_to_char("Just type delete. No argument.\n", ch);
             return;
         }
@@ -281,7 +281,7 @@ class ActComm {
     static void do_immtalk(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             if (IS_SET(ch.comm, COMM_NOWIZ)) {
                 send_to_char("Immortal channel is now ON\n", ch);
                 ch.comm = REMOVE_BIT(ch.comm, COMM_NOWIZ);
@@ -314,7 +314,7 @@ class ActComm {
         CHAR_DATA vch;
 
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Say what?\n", ch);
             return;
         }
@@ -372,7 +372,7 @@ class ActComm {
     static void do_shout(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Shout what?.\n", ch);
             return;
         }
@@ -428,7 +428,7 @@ class ActComm {
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0 || argument.length() == 0) {
+        if (arg.isEmpty() || argument.isEmpty()) {
             send_to_char("Tell whom what?\n", ch);
             return;
         }
@@ -544,7 +544,7 @@ class ActComm {
         DESCRIPTOR_DATA d;
 
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Yell what?\n", ch);
             return;
         }
@@ -583,7 +583,7 @@ class ActComm {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Emote what?\n", ch);
             return;
         }
@@ -611,7 +611,7 @@ class ActComm {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Emote what?\n", ch);
             return;
         }
@@ -914,7 +914,7 @@ class ActComm {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Follow whom?\n", ch);
             return;
         }
@@ -1054,7 +1054,7 @@ class ActComm {
             return;
         }
 
-        if (arg.length() == 0 || argument.length() == 0) {
+        if (arg.isEmpty() || argument.isEmpty()) {
             send_to_char("Order whom to do what?\n", ch);
             return;
         }
@@ -1143,29 +1143,13 @@ class ActComm {
             return false;
         }
 
-        switch (cmd) {
-            case do_assassinate:
-            case do_ambush:
-            case do_blackjack:
-            case do_cleave:
-            case do_kill:
-            case do_murder:
-            case do_recall:
-            case do_strangle:
-            case do_vtouch:
-                return false;
-            case do_close:
-            case do_lock:
-            case do_open:
-            case do_unlock:
-                return true;
-            case do_backstab:
-            case do_hide:
-            case do_pick:
-            case do_sneak:
-                return IS_SET(ch.act, ACT_THIEF);
-        }
-        return true;
+        return switch (cmd) {
+            case do_assassinate, do_ambush, do_blackjack, do_cleave, do_kill, do_murder, do_recall, do_strangle, do_vtouch ->
+                    false;
+            case do_close, do_lock, do_open, do_unlock -> true;
+            case do_backstab, do_hide, do_pick, do_sneak -> IS_SET(ch.act, ACT_THIEF);
+            default -> true;
+        };
     }
 
 
@@ -1175,7 +1159,7 @@ class ActComm {
 
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             CHAR_DATA gch;
             CHAR_DATA leader;
 
@@ -1306,7 +1290,7 @@ class ActComm {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             send_to_char("Split how much?\n", ch);
             return;
         }
@@ -1314,7 +1298,7 @@ class ActComm {
 
         amount_silver = atoi(arg1.toString());
 
-        if (arg2.length() != 0) {
+        if (!arg2.isEmpty()) {
             amount_gold = atoi(arg2.toString());
         }
 
@@ -1404,7 +1388,7 @@ class ActComm {
         CHAR_DATA gch;
         int i;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Tell your group what?\n", ch);
             return;
         }
@@ -1537,7 +1521,7 @@ class ActComm {
         for (d = descriptor_list; d != null; d = d.next) {
             if (d.connected == CON_PLAYING && IS_IMMORTAL(d.character) &&
                     !IS_SET(d.character.comm, COMM_NOWIZ)) {
-                if (argument.length() == 0) {
+                if (argument.isEmpty()) {
                     act("{c$n is PRAYING for: any god{x", ch, argument, d.character, TO_VICT, POS_DEAD);
                 } else {
                     act("{c$n is PRAYING for: $t{x", ch, argument, d.character, TO_VICT, POS_DEAD);
@@ -1562,7 +1546,7 @@ class ActComm {
 
     static String translate(CHAR_DATA ch, CHAR_DATA victim, String argument) {
         TextBuffer trans = new TextBuffer();
-        if (argument.length() == 0
+        if (argument.isEmpty()
                 || (ch == null) || (victim == null)
                 || IS_NPC(ch) || IS_NPC(victim)
                 || IS_IMMORTAL(ch) || IS_IMMORTAL(victim)
@@ -1596,7 +1580,7 @@ class ActComm {
         StringBuilder arg = new StringBuilder();
 
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             TextBuffer buf = new TextBuffer();
             buf.sprintf("You now speak %s.\n", language_table[ch.language].name);
             send_to_char(buf, ch);
@@ -1635,7 +1619,7 @@ class ActComm {
 
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Judge whom?\n", ch);
             return;
         }
@@ -1686,7 +1670,7 @@ class ActComm {
             return;
         }
 
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             if (!ch.pcdata.confirm_remort) {
                 send_to_char("Just type remort. No argument.\n", ch);
             }

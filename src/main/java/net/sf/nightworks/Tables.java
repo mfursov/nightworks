@@ -232,7 +232,7 @@ public class Tables {
 
         public static long parseFlagsValue(String flags, flag_type[] table) {
             long res = 0;
-            while (flags.length() != 0) {
+            while (!flags.isEmpty()) {
                 StringBuilder nextFlag = new StringBuilder();
                 flags = one_argument(flags, nextFlag);
                 long flag = getFlagValue(nextFlag.toString(), table);
@@ -273,7 +273,7 @@ public class Tables {
         }
     }
 
-    static final flag_type ethos_table[] = {
+    static final flag_type[] ethos_table = {
             new flag_type("unknown", ETHOS_ANY, true),
             new flag_type("lawful", ETHOS_LAWFUL, true),
             new flag_type("neutral", ETHOS_NEUTRAL, true),
@@ -281,7 +281,7 @@ public class Tables {
     };
 
     /* for position */
-    static final position_type position_table[] = {
+    static final position_type[] position_table = {
             new position_type("dead", "dead"),
             new position_type("mortally wounded", "mort"),
             new position_type("incapacitated", "incap"),
@@ -294,12 +294,12 @@ public class Tables {
     };
 
     /* for sex */
-    static final flag_type sex_table[] = {
+    static final flag_type[] sex_table = {
             new flag_type("male", SEX_MALE, true),
             new flag_type("female", SEX_FEMALE, true),
     };
 
-    static final flag_type stat_names[] = {
+    static final flag_type[] stat_names = {
             new flag_type("str", STAT_STR, true),
             new flag_type("int", STAT_INT, true),
             new flag_type("dex", STAT_DEX, true),
@@ -309,7 +309,7 @@ public class Tables {
     };
 
     /* for sizes */
-    static final flag_type size_table[] = {
+    static final flag_type[] size_table = {
             new flag_type("tiny", SIZE_TINY, true),
             new flag_type("small", SIZE_SMALL, true),
             new flag_type("medium", SIZE_MEDIUM, true),
@@ -320,7 +320,7 @@ public class Tables {
     };
 
     /* various flag tables */
-    static final flag_type act_flags[] = {
+    static final flag_type[] act_flags = {
             new flag_type("npc", A, false),
             new flag_type("sentinel", B, true),
             new flag_type("scavenger", C, true),
@@ -345,7 +345,7 @@ public class Tables {
             new flag_type("changer", BIT_29, true),
     };
 
-    static final flag_type plr_flags[] = {
+    static final flag_type[] plr_flags = {
             new flag_type("npc", A, false),
             new flag_type("autoassist", C, false),
             new flag_type("autoexit", D, false),
@@ -367,7 +367,7 @@ public class Tables {
             new flag_type("vampire", BIT_28, false),
     };
 
-    static final flag_type affect_flags[] =
+    static final flag_type[] affect_flags =
             {
                     new flag_type("blind", A, true),
                     new flag_type("invisible", B, true),
@@ -396,7 +396,7 @@ public class Tables {
                     new flag_type("camouflage", BIT_30, true),
             };
 
-    static final flag_type off_flags[] =
+    static final flag_type[] off_flags =
             {
                     new flag_type("area_attack", A, true),
                     new flag_type("backstab", B, true),
@@ -421,7 +421,7 @@ public class Tables {
                     new flag_type("assist_vnum", U, true),
             };
 
-    static final flag_type imm_flags[] =
+    static final flag_type[] imm_flags =
             {
                     new flag_type("summon", A, true),
                     new flag_type("charm", B, true),
@@ -448,7 +448,7 @@ public class Tables {
                     new flag_type("iron", Z, true),
             };
 
-    static final flag_type form_flags[] =
+    static final flag_type[] form_flags =
             {
                     new flag_type("edible", FORM_EDIBLE, true),
                     new flag_type("poison", FORM_POISON, true),
@@ -478,7 +478,7 @@ public class Tables {
                     new flag_type("cold_blood", FORM_COLD_BLOOD, true),
             };
 
-    static final flag_type part_flags[] =
+    static final flag_type[] part_flags =
             {
                     new flag_type("head", PART_HEAD, true),
                     new flag_type("arms", PART_ARMS, true),
@@ -504,7 +504,7 @@ public class Tables {
                     new flag_type("tusks", PART_TUSKS, true),
             };
 
-    static final flag_type comm_flags[] =
+    static final flag_type[] comm_flags =
             {
                     new flag_type("quiet", COMM_QUIET, true),
                     new flag_type("deaf", COMM_DEAF, true),
@@ -531,7 +531,7 @@ public class Tables {
             };
 
     /* <longname> <shortname> <cabal item> <cabal shrine> null */
-    static final cabal_type cabal_table[] =
+    static final cabal_type[] cabal_table =
             {
                     new cabal_type("None", "None", 0, 0, null),
                     new cabal_type("the Rulers of Nightworks", "RULER", 511, 512, null),
@@ -544,7 +544,7 @@ public class Tables {
                     new cabal_type("the Mercanary of Nightworks", "HUNTER", 571, 573, null)
             };
 
-    static final prac_type prac_table[] =
+    static final prac_type[] prac_table =
             {
                     new prac_type("none", "group_none", GROUP_NONE),
                     new prac_type("weaponsmaster", "group_weaponsmaster", GROUP_WEAPONSMASTER),
@@ -573,7 +573,7 @@ public class Tables {
                     new prac_type("wizard", "group_wizard", GROUP_WIZARD),
             };
 
-    static final flag_type vuln_flags[] =
+    static final flag_type[] vuln_flags =
             {
                     new flag_type("", 0, false),
                     new flag_type("summon", VULN_SUMMON, true),
@@ -602,7 +602,7 @@ public class Tables {
             };
 
 
-    static final flag_type res_flags[] = {
+    static final flag_type[] res_flags = {
             new flag_type("", 0, false),
             new flag_type("summon", RES_SUMMON, true),
             new flag_type("charm", RES_CHARM, true),
@@ -629,14 +629,14 @@ public class Tables {
             new flag_type("iron", RES_IRON, true),
     };
 
-    static final flag_type align_flags[] = {
+    static final flag_type[] align_flags = {
             new flag_type("all", CR_ALL, true),
             new flag_type("good", CR_GOOD, true),
             new flag_type("neutral", CR_NEUTRAL, true),
             new flag_type("evil", CR_EVIL, true)
     };
 
-    static final flag_type slang_table[] = {
+    static final flag_type[] slang_table = {
             new flag_type("common", LANG_COMMON, true),
             new flag_type("human", LANG_HUMAN, true),
             new flag_type("elvish", LANG_ELVISH, true),

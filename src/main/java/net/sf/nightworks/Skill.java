@@ -2904,12 +2904,12 @@ enum Skill {
     /**
      * Level needed by class
      */
-    public final int skill_level[] = new int[MAX_CLASS];
+    public final int[] skill_level = new int[MAX_CLASS];
     /**
      * How hard it is to learn
      */
-    public final int rating[] = new int[MAX_CLASS];
-    public int[] mod = new int[MAX_CLASS];
+    public final int[] rating = new int[MAX_CLASS];
+    public final int[] mod = new int[MAX_CLASS];
     /**
      * Legal targets
      */
@@ -2997,66 +2997,48 @@ enum Skill {
     }
 
     Skill(String name, SpellFun123 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(sn, level, ch);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(sn, level, ch),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun134 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(sn, ch, vo);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(sn, ch, vo),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun1234 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(sn, level, ch, vo);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(sn, level, ch, vo),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun13 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(sn, ch);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(sn, ch),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun23 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(level, ch);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(level, ch),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun34 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(ch, vo);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(ch, vo),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun234 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(level, ch, vo);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(level, ch, vo),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
     Skill(String name, SpellFun2345 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(level, ch, vo, target1);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(level, ch, vo, target1),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
 
     Skill(String name, SpellFun3 spellFun, int target, int minimum_position, int slot, int min_mana, int beats, String noun_damage, String msg_off, String msg_obj, int cabal, Race race, int align, int group) {
-        this(name, (sn, level, ch, vo, target1) -> {
-                    spellFun.do_spell(ch);
-                },
+        this(name, (sn, level, ch, vo, target1) -> spellFun.do_spell(ch),
                 target, minimum_position, slot, min_mana, beats, noun_damage, msg_off, msg_obj, cabal, race, align, group);
     }
 
@@ -3084,7 +3066,7 @@ enum Skill {
     * Lookup a skill by name.
     */
     static Skill lookupSkill(String name) {
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             return null;
         }
         return lookupSkill(name, false);

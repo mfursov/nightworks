@@ -517,7 +517,7 @@ class ActWiz {
         int nMatch;
 
         TextBuffer buf = new TextBuffer();
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             obj_index = get_obj_index(atoi(argument));
             if (obj_index == null) {
                 send_to_char("Not found.\n", ch);
@@ -580,7 +580,7 @@ class ActWiz {
 
     static void do_wiznet(CHAR_DATA ch, String argument) {
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             if (IS_SET(ch.wiznet, WIZ_ON)) {
                 send_to_char("Signing off of Wiznet.\n", ch);
                 ch.wiznet = REMOVE_BIT(ch.wiznet, WIZ_ON);
@@ -694,7 +694,7 @@ class ActWiz {
         StringBuilder argb = new StringBuilder();
         one_argument(argument, argb);
         String arg = argb.toString();
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("tick area : area update\n", ch);
             send_to_char("tick char : char update\n", ch);
             send_to_char("tick obj  : obj  update\n", ch);
@@ -840,7 +840,7 @@ class ActWiz {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Emote what?\n", ch);
             return;
         }
@@ -913,7 +913,7 @@ class ActWiz {
         if (!IS_NPC(ch)) {
             argument = smash_tilde(argument);
             TextBuffer buf = new TextBuffer();
-            if (argument.length() == 0) {
+            if (argument.isEmpty()) {
                 buf.sprintf("Your poofin is %s\n", ch.pcdata.bamfin);
                 send_to_char(buf, ch);
                 return;
@@ -938,7 +938,7 @@ class ActWiz {
             TextBuffer buf = new TextBuffer();
             argument = smash_tilde(argument);
 
-            if (argument.length() == 0) {
+            if (argument.isEmpty()) {
                 buf.sprintf("Your poofout is %s\n", ch.pcdata.bamfout);
                 send_to_char(buf, ch);
                 return;
@@ -1044,7 +1044,7 @@ class ActWiz {
     static void do_echo(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Global echo what?\n", ch);
             return;
         }
@@ -1065,7 +1065,7 @@ class ActWiz {
     static void do_recho(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Local echo what?\n", ch);
 
             return;
@@ -1087,7 +1087,7 @@ class ActWiz {
     static void do_zecho(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Zone echo what?\n", ch);
             return;
         }
@@ -1110,7 +1110,7 @@ class ActWiz {
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (argument.length() == 0 || arg.length() == 0) {
+        if (argument.isEmpty() || arg.length() == 0) {
             send_to_char("Personal echo what?\n", ch);
             return;
         }
@@ -1233,7 +1233,7 @@ class ActWiz {
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0 || argument.length() == 0) {
+        if (arg.length() == 0 || argument.isEmpty()) {
             send_to_char("At where what?\n", ch);
             return;
         }
@@ -1277,7 +1277,7 @@ class ActWiz {
         ROOM_INDEX_DATA location;
         CHAR_DATA rch;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Goto where?\n", ch);
             return;
         }
@@ -1304,7 +1304,7 @@ class ActWiz {
 
         for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
             if (get_trust(rch) >= ch.invis_level) {
-                if (ch.pcdata != null && ch.pcdata.bamfout.length() != 0) {
+                if (ch.pcdata != null && !ch.pcdata.bamfout.isEmpty()) {
                     act("$t", ch, ch.pcdata.bamfout, rch, TO_VICT);
                 } else {
                     act("$n leaves in a swirling mist.", ch, null, rch, TO_VICT);
@@ -1318,7 +1318,7 @@ class ActWiz {
 
         for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
             if (get_trust(rch) >= ch.invis_level) {
-                if (ch.pcdata != null && ch.pcdata.bamfin.length() != 0) {
+                if (ch.pcdata != null && !ch.pcdata.bamfin.isEmpty()) {
                     act("$t", ch, ch.pcdata.bamfin, rch, TO_VICT);
                 } else {
                     act("$n appears in a swirling mist.", ch, null, rch, TO_VICT);
@@ -1333,7 +1333,7 @@ class ActWiz {
         ROOM_INDEX_DATA location;
         CHAR_DATA rch;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Goto where?\n", ch);
             return;
         }
@@ -1354,7 +1354,7 @@ class ActWiz {
 
         for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
             if (get_trust(rch) >= ch.invis_level) {
-                if (ch.pcdata != null && ch.pcdata.bamfout.length() != 0) {
+                if (ch.pcdata != null && !ch.pcdata.bamfout.isEmpty()) {
                     act("$t", ch, ch.pcdata.bamfout, rch, TO_VICT);
                 } else {
                     act("$n leaves in a swirling mist.", ch, null, rch, TO_VICT);
@@ -1368,7 +1368,7 @@ class ActWiz {
 
         for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
             if (get_trust(rch) >= ch.invis_level) {
-                if (ch.pcdata != null && ch.pcdata.bamfin.length() != 0) {
+                if (ch.pcdata != null && !ch.pcdata.bamfin.isEmpty()) {
                     act("$t", ch, ch.pcdata.bamfin, rch, TO_VICT);
                 } else {
                     act("$n appears in a swirling mist.", ch, null, rch, TO_VICT);
@@ -1533,7 +1533,7 @@ class ActWiz {
                         pexit.key,
                         pexit.exit_info,
                         pexit.keyword,
-                        pexit.description.length() != 0
+                        !pexit.description.isEmpty()
                                 ? pexit.description : "(none).\n");
                 send_to_char(buf, ch);
             }
@@ -2046,7 +2046,7 @@ class ActWiz {
 
         buf.sprintf("Short description: %s\nLong  description: %s",
                 victim.short_descr,
-                victim.long_descr.length() != 0 ? victim.long_descr : "(none)\n");
+                !victim.long_descr.isEmpty() ? victim.long_descr : "(none)\n");
         send_to_char(buf, ch);
 
         if (IS_NPC(victim) && victim.spec_fun != null) {
@@ -2251,7 +2251,7 @@ class ActWiz {
         max_found = 200;
 
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Find what?\n", ch);
             return;
         }
@@ -2307,7 +2307,7 @@ class ActWiz {
         StringBuilder buffer = new StringBuilder();
         TextBuffer buf = new TextBuffer();
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             DESCRIPTOR_DATA d;
 
             /* show characters logged */
@@ -2381,7 +2381,7 @@ class ActWiz {
     static void do_protect(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Protect whom from snooping?\n", ch);
             return;
         }
@@ -2596,7 +2596,7 @@ class ActWiz {
         String rest = one_argument(argument, argb);
         String arg = argb.toString();
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Clone what?\n", ch);
             return;
         }
@@ -2898,7 +2898,7 @@ class ActWiz {
         StringBuilder argb = new StringBuilder();
         one_argument(argument, argb);
         String arg = argb.toString();
-        if (arg.length() == 0 || !str_cmp(arg, "room")) {
+        if (arg.isEmpty() || !str_cmp(arg, "room")) {
             /* cure room */
 
             for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
@@ -3378,7 +3378,7 @@ class ActWiz {
         String type = typeb.toString();
 
 
-        if (type.length() == 0 || arg1.length() == 0 || arg2b.length() == 0 || arg3.length() == 0) {
+        if (type.isEmpty() || arg1.length() == 0 || arg2b.length() == 0 || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  string char <name> <field> <string>\n", ch);
             send_to_char("    fields: name int long desc title spec\n", ch);
@@ -3511,7 +3511,7 @@ class ActWiz {
         argument = one_argument(argument, arg2b);
         String arg3 = argument;
 
-        if (arg1.length() == 0 || arg2b.length() == 0 || arg3.length() == 0) {
+        if (arg1.length() == 0 || arg2b.length() == 0 || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set obj <object> <field> <value>\n", ch);
             send_to_char("  Field being one of:\n", ch);
@@ -3606,7 +3606,7 @@ class ActWiz {
         argument = one_argument(argument, arg2);
         String arg3 = argument;
 
-        if (arg1.length() == 0 || arg2.length() == 0 || arg3.length() == 0) {
+        if (arg1.length() == 0 || arg2.length() == 0 || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set room <location> <field> <value>\n", ch);
             send_to_char("  Field being one of:\n", ch);
@@ -3666,7 +3666,7 @@ class ActWiz {
         TextBuffer buf = new TextBuffer();
         for (d = descriptor_list; d != null; d = d.next) {
             if (d.character != null && can_see(ch, d.character)
-                    && (arg.length() == 0 || is_name(arg, d.character.name)
+                    && (arg.isEmpty() || is_name(arg, d.character.name)
                     || (d.original != null && is_name(arg, d.original.name)))) {
                 count++;
                 buf.sprintf(false, "[%3d %2d] %s@%s\n",
@@ -3695,7 +3695,7 @@ class ActWiz {
         StringBuilder arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0 || argument.length() == 0) {
+        if (arg.length() == 0 || argument.isEmpty()) {
             send_to_char("Force whom to do what?\n", ch);
             return;
         }
@@ -3900,8 +3900,8 @@ class ActWiz {
 
     static void do_prefix(CHAR_DATA ch, String argument) {
 
-        if (argument.length() == 0) {
-            if (ch.prefix.length() == 0) {
+        if (argument.isEmpty()) {
+            if (ch.prefix.isEmpty()) {
                 send_to_char("You have no prefix to clear.\n", ch);
                 return;
             }
@@ -3912,7 +3912,7 @@ class ActWiz {
         }
 
         TextBuffer buf = new TextBuffer();
-        if (ch.prefix.length() != 0) {
+        if (!ch.prefix.isEmpty()) {
             buf.sprintf("Prefix changed to %s.\n", argument);
         } else {
             buf.sprintf("Prefix set to %s.\n", argument);
@@ -4050,7 +4050,7 @@ class ActWiz {
         argument = one_argument(argument, arg2);
         String arg3 = argument;
 
-        if (arg1.length() == 0 || arg2.length() == 0 || arg3.length() == 0) {
+        if (arg1.length() == 0 || arg2.length() == 0 || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set char <name> <field> <value>\n", ch);
             send_to_char("  Field being one of:\n", ch);
@@ -4468,7 +4468,7 @@ class ActWiz {
         argument = one_argument(argument, arg1);
         String arg2 = argument;
 
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.length() == 0 || arg2.isEmpty()) {
             send_to_char("Usage: induct <player> <cabal>\n", ch);
             return;
         }
@@ -4605,7 +4605,7 @@ class ActWiz {
     static void do_smite(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("You are so frustrated you smite yourself!  OWW!\n",
                     ch);
             return;
@@ -4679,7 +4679,7 @@ class ActWiz {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Change the title to what?\n", ch);
             return;
         }

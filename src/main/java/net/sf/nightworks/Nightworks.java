@@ -1,7 +1,6 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.TextBuffer;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -469,7 +468,7 @@ final class Nightworks {
         String inlast = "";
         int repeat;
 
-        ArrayList<Object> outbuf = new ArrayList<Object>();
+        ArrayList<Object> outbuf = new ArrayList<>();
         String showstr_head;
         /**
          * pointer inside showstr_head
@@ -557,7 +556,7 @@ final class Nightworks {
     static final class SHOP_DATA {
         SHOP_DATA next;           /* Next shop in list        */
         int keeper;         /* Vnum of shop keeper mob  */
-        int buy_type[] = new int[MAX_TRADE];   /* Item types shop will buy */
+        int[] buy_type = new int[MAX_TRADE];   /* Item types shop will buy */
         int profit_buy;     /* Cost multiplier for buying   */
         int profit_sell;        /* Cost multiplier for selling  */
         int open_hour;      /* First opening hour       */
@@ -884,7 +883,6 @@ final class Nightworks {
     static final int ACT_UPDATE_ALWAYS = BIT_28;
     static final int ACT_IS_CHANGER = BIT_29;
     static final int ACT_NOTRACK = BIT_30;
-    ;
 
     /* damage classes */
     static final int DAM_NONE = 0;
@@ -2316,17 +2314,16 @@ final class Nightworks {
 */
 
     static int UMIN(int a, int b) {
-        return ((a) < (b) ? (a) : (b));
+        return Math.min(a, b);
     }
 
     static int UMAX(int a, int b) {
-        return ((a) > (b) ? (a) : (b));
+        return Math.max(a, b);
     }
 
     static int URANGE(int a, int b, int c) {
-        return ((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)));
+        return b < a ? a : Math.min(b, c);
     }
-
 
     static boolean IS_SET(long flag, long bit) {
         return (flag & bit) != 0;
@@ -2475,7 +2472,6 @@ final class Nightworks {
         return IS_SET(room.affected_by, sn);
     }
 
-    @Nullable
     static CHAR_DATA MOUNTED(CHAR_DATA ch) {
         return !IS_NPC(ch) && ch.mount != null && ch.riding ? ch.mount : null;
     }
@@ -2580,7 +2576,7 @@ final class Nightworks {
     /*
     * Global constants.
     */
-    static final ArrayList<social_type> social_table = new ArrayList<social_type>(MAX_SOCIALS);
+    static final ArrayList<social_type> social_table = new ArrayList<>(MAX_SOCIALS);
 
     /*
     * Global variables.

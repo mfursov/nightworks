@@ -23,7 +23,7 @@ class Flags {
 
     static void do_flag(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        flag_type flag_table[];
+        flag_type[] flag_table;
 
         StringBuilder arg1 = new StringBuilder();
         StringBuilder arg2 = new StringBuilder();
@@ -38,7 +38,7 @@ class Flags {
             argument = one_argument(argument, word);
         }
 
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  flag mob  <name> <field> <flags>\n", ch);
             send_to_char("  flag char <name> <field> <flags>\n", ch);
@@ -53,17 +53,17 @@ class Flags {
             return;
         }
 
-        if (arg2.length() == 0) {
+        if (arg2.isEmpty()) {
             send_to_char("What do you wish to set flags on?\n", ch);
             return;
         }
 
-        if (arg3.length() == 0) {
+        if (arg3.isEmpty()) {
             send_to_char("You need to specify a flag to set.\n", ch);
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Which flags do you wish to change?\n", ch);
             return;
         }
@@ -148,7 +148,7 @@ class Flags {
         for (; ; ) {
             argument = one_argument(argument, word);
 
-            if (word.length() == 0) {
+            if (word.isEmpty()) {
                 break;
             }
 
@@ -168,19 +168,15 @@ class Flags {
             }
             if (IS_SET(marked, flag_table[pos].bit)) {
                 switch (type) {
-                    case '=':
-                    case '+':
-                        newFlag = SET_BIT(newFlag, flag_table[pos].bit);
-                        break;
-                    case '-':
-                        newFlag = REMOVE_BIT(newFlag, flag_table[pos].bit);
-                        break;
-                    default:
+                    case '=', '+' -> newFlag = SET_BIT(newFlag, flag_table[pos].bit);
+                    case '-' -> newFlag = REMOVE_BIT(newFlag, flag_table[pos].bit);
+                    default -> {
                         if (IS_SET(newFlag, flag_table[pos].bit)) {
                             newFlag = REMOVE_BIT(newFlag, flag_table[pos].bit);
                         } else {
                             newFlag = SET_BIT(newFlag, flag_table[pos].bit);
                         }
+                    }
                 }
             }
         }

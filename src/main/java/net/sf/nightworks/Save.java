@@ -10,138 +10,15 @@ import java.util.Arrays;
 import java.util.Formatter;
 
 import static net.sf.nightworks.Comm.act;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_mobile;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.create_object_nocount;
-import static net.sf.nightworks.DB.get_mob_index;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.extract_obj_nocount;
-import static net.sf.nightworks.Handler.get_played_day;
-import static net.sf.nightworks.Handler.get_played_time;
-import static net.sf.nightworks.Handler.get_total_played;
-import static net.sf.nightworks.Handler.get_trust;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_obj;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_COMBINE;
-import static net.sf.nightworks.Nightworks.COMM_PROMPT;
-import static net.sf.nightworks.Nightworks.COND_BLOODLUST;
-import static net.sf.nightworks.Nightworks.COND_DESIRE;
-import static net.sf.nightworks.Nightworks.COND_FULL;
-import static net.sf.nightworks.Nightworks.COND_HUNGER;
-import static net.sf.nightworks.Nightworks.COND_THIRST;
-import static net.sf.nightworks.Nightworks.DEFAULT_PROMPT;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.DICE_BONUS;
-import static net.sf.nightworks.Nightworks.ETHOS_ANY;
-import static net.sf.nightworks.Nightworks.EXTRA_DESCR_DATA;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_QUESTOR;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.ITEM_ARMOR;
-import static net.sf.nightworks.Nightworks.ITEM_CONTAINER;
-import static net.sf.nightworks.Nightworks.ITEM_KEY;
-import static net.sf.nightworks.Nightworks.ITEM_MAP;
-import static net.sf.nightworks.Nightworks.ITEM_PILL;
-import static net.sf.nightworks.Nightworks.ITEM_POTION;
-import static net.sf.nightworks.Nightworks.ITEM_SCROLL;
-import static net.sf.nightworks.Nightworks.ITEM_STAFF;
-import static net.sf.nightworks.Nightworks.ITEM_WAND;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MAX_CABAL;
-import static net.sf.nightworks.Nightworks.MAX_STATS;
-import static net.sf.nightworks.Nightworks.MAX_TIME_LOG;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_FIDO;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_EYED_SWORD;
-import static net.sf.nightworks.Nightworks.ORG_RACE;
-import static net.sf.nightworks.Nightworks.OWEAR_ABOUT;
-import static net.sf.nightworks.Nightworks.OWEAR_ARMS;
-import static net.sf.nightworks.Nightworks.OWEAR_BODY;
-import static net.sf.nightworks.Nightworks.OWEAR_FEET;
-import static net.sf.nightworks.Nightworks.OWEAR_FINGER_L;
-import static net.sf.nightworks.Nightworks.OWEAR_FINGER_R;
-import static net.sf.nightworks.Nightworks.OWEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.OWEAR_HANDS;
-import static net.sf.nightworks.Nightworks.OWEAR_HEAD;
-import static net.sf.nightworks.Nightworks.OWEAR_HOLD;
-import static net.sf.nightworks.Nightworks.OWEAR_LEGS;
-import static net.sf.nightworks.Nightworks.OWEAR_LIGHT;
-import static net.sf.nightworks.Nightworks.OWEAR_NECK_1;
-import static net.sf.nightworks.Nightworks.OWEAR_NECK_2;
-import static net.sf.nightworks.Nightworks.OWEAR_SECOND_WIELD;
-import static net.sf.nightworks.Nightworks.OWEAR_SHIELD;
-import static net.sf.nightworks.Nightworks.OWEAR_STUCK_IN;
-import static net.sf.nightworks.Nightworks.OWEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.OWEAR_WAIST;
-import static net.sf.nightworks.Nightworks.OWEAR_WIELD;
-import static net.sf.nightworks.Nightworks.OWEAR_WRIST_L;
-import static net.sf.nightworks.Nightworks.OWEAR_WRIST_R;
-import static net.sf.nightworks.Nightworks.PC_DATA;
-import static net.sf.nightworks.Nightworks.PLR_NOCANCEL;
-import static net.sf.nightworks.Nightworks.PLR_NOSUMMON;
-import static net.sf.nightworks.Nightworks.PLR_REMORTED;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM1;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM2;
-import static net.sf.nightworks.Nightworks.QUEST_ITEM3;
-import static net.sf.nightworks.Nightworks.RELIGION_NONE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_LIMBO;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SET_ORG_RACE;
-import static net.sf.nightworks.Nightworks.STAT_CHA;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.STAT_WIS;
-import static net.sf.nightworks.Nightworks.TLP_NOLOG;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.WEAR_ABOUT;
-import static net.sf.nightworks.Nightworks.WEAR_ARMS;
-import static net.sf.nightworks.Nightworks.WEAR_BODY;
-import static net.sf.nightworks.Nightworks.WEAR_FEET;
-import static net.sf.nightworks.Nightworks.WEAR_FINGER;
-import static net.sf.nightworks.Nightworks.WEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.WEAR_HANDS;
-import static net.sf.nightworks.Nightworks.WEAR_HEAD;
-import static net.sf.nightworks.Nightworks.WEAR_LEFT;
-import static net.sf.nightworks.Nightworks.WEAR_LEGS;
-import static net.sf.nightworks.Nightworks.WEAR_NECK;
-import static net.sf.nightworks.Nightworks.WEAR_NONE;
-import static net.sf.nightworks.Nightworks.WEAR_RIGHT;
-import static net.sf.nightworks.Nightworks.WEAR_STUCK_IN;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.WEAR_WAIST;
-import static net.sf.nightworks.Nightworks.WEAR_WRIST;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.object_list;
-import static net.sf.nightworks.Nightworks.perror;
-import static net.sf.nightworks.Nightworks.sprintf;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Handler.*;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Recycle.get_pc_id;
 import static net.sf.nightworks.Recycle.new_char;
 import static net.sf.nightworks.Skill.gsn_doppelganger;
 import static net.sf.nightworks.Skill.lookupSkill;
 import static net.sf.nightworks.Tables.cabal_table;
-import static net.sf.nightworks.util.TextUtils.UPPER;
-import static net.sf.nightworks.util.TextUtils.capitalize;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
+import static net.sf.nightworks.util.TextUtils.*;
 
 class Save {
 
@@ -150,7 +27,7 @@ class Save {
         StringBuilder buf = new StringBuilder();
 
         for (count = 0; count < 64; count++) {
-            if (IS_SET(flag, 1 << count)) {
+            if (IS_SET(flag, 1L << count)) {
                 if (count < 26) {
                     buf.append((char) ('A' + count));
                 } else {
@@ -165,7 +42,7 @@ class Save {
     * Array of containers read for proper re-nesting of objects.
     */
     private static final int MAX_NEST = 100;
-    private static OBJ_DATA rgObjNest[] = new OBJ_DATA[MAX_NEST];
+    private static OBJ_DATA[] rgObjNest = new OBJ_DATA[MAX_NEST];
 
 /*
 * Save a character and inventory.
@@ -243,13 +120,13 @@ class Save {
         fp.sprintf(false, "Dead %d\n", ch.pcdata.death);
         fp.sprintf(false, "Ques %s\n", print_flags(ch.quest));
 
-        if (ch.short_descr.length() != 0) {
+        if (!ch.short_descr.isEmpty()) {
             fp.sprintf(false, "ShD  %s~\n", ch.short_descr);
         }
-        if (ch.long_descr.length() != 0) {
+        if (!ch.long_descr.isEmpty()) {
             fp.sprintf(false, "LnD  %s~\n", ch.long_descr);
         }
-        if (ch.description.length() != 0) {
+        if (!ch.description.isEmpty()) {
             fp.sprintf(false, "Desc %s~\n", ch.description);
         }
         if (ch.prompt != null) {
@@ -276,16 +153,8 @@ class Save {
 
         fp.sprintf(false, "HMV  %d %d %d\n", ch.hit, ch.mana, ch.move);
 
-        if (ch.gold > 0) {
-            fp.sprintf(false, "Gold %d\n", ch.gold);
-        } else {
-            fp.sprintf(false, "Gold %d\n", 0);
-        }
-        if (ch.silver > 0) {
-            fp.sprintf(false, "Silv %d\n", ch.silver);
-        } else {
-            fp.sprintf(false, "Silv %d\n", 0);
-        }
+        fp.sprintf(false, "Gold %d\n", Math.max(ch.gold, 0));
+        fp.sprintf(false, "Silv %d\n", Math.max(ch.silver, 0));
         if (ch.pcdata.bank_s > 0) {
             fp.sprintf(false, "Banks %d\n", ch.pcdata.bank_s);
         } else {
@@ -364,10 +233,10 @@ class Save {
 */
 
         fp.sprintf(false, "Pass %s~\n", ch.pcdata.pwd);
-        if (ch.pcdata.bamfin.length() != 0) {
+        if (!ch.pcdata.bamfin.isEmpty()) {
             fp.sprintf(false, "Bin  %s~\n", ch.pcdata.bamfin);
         }
-        if (ch.pcdata.bamfout.length() != 0) {
+        if (!ch.pcdata.bamfout.isEmpty()) {
             fp.sprintf(false, "Bout %s~\n", ch.pcdata.bamfout);
         }
         fp.sprintf(false, "Titl %s~\n", ch.pcdata.title);
@@ -646,30 +515,22 @@ class Save {
         }
 
         switch (obj.item_type) {
-            case ITEM_POTION:
-            case ITEM_SCROLL:
+            case ITEM_POTION, ITEM_SCROLL -> {
                 if (obj.value[1] > 0) {
                     fp.sprintf(false, "Spell 1 '%s'\n", Skill.skills[obj.value[1]].name);
                 }
-
                 if (obj.value[2] > 0) {
                     fp.sprintf(false, "Spell 2 '%s'\n", Skill.skills[obj.value[2]].name);
                 }
-
                 if (obj.value[3] > 0) {
                     fp.sprintf(false, "Spell 3 '%s'\n", Skill.skills[obj.value[3]].name);
                 }
-
-                break;
-
-            case ITEM_PILL:
-            case ITEM_STAFF:
-            case ITEM_WAND:
+            }
+            case ITEM_PILL, ITEM_STAFF, ITEM_WAND -> {
                 if (obj.value[3] > 0) {
                     fp.sprintf(false, "Spell 3 '%s'\n", Skill.skills[obj.value[3]].name);
                 }
-
-                break;
+            }
         }
 
         for (paf = obj.affected; paf != null; paf = paf.next) {
@@ -868,7 +729,7 @@ class Save {
 */
 
 
-    static void fread_char(CHAR_DATA ch, DikuTextFile fp) throws IOException {
+    static void fread_char(CHAR_DATA ch, DikuTextFile fp) {
         String word;
         boolean fPlayLog = false;
         int count = 0;
@@ -888,19 +749,17 @@ class Save {
             }
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
-                case '*':
+                case '*' -> {
                     fp.fMatch = true;
                     fp.fread_to_eol();
-                    break;
-
-                case 'A':
+                }
+                case 'A' -> {
                     ch.act = fp.FLAG64_OLD("Act", word, ch.act);
                     fp.FLAG64_OLD("AffectedBy", word, 0);
                     fp.FLAG64_OLD("AfBy", word, 0);
                     ch.alignment = fp.NKEY("Alignment", word, ch.alignment);
                     ch.alignment = fp.NKEY("Alig", word, ch.alignment);
                     ch.pcdata.anti_killed = fp.NKEY("AntKilled", word, ch.pcdata.anti_killed);
-
                     if (!str_cmp(word, "Alia")) {
                         if (count >= nw_config.max_alias) {
                             fp.fread_to_eol();
@@ -914,7 +773,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "Alias")) {
                         if (count >= nw_config.max_alias) {
                             fp.fread_to_eol();
@@ -928,13 +786,11 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "AC") || !str_cmp(word, "Armor")) {
                         fp.fread_to_eol();
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "ACs")) {
                         for (int i = 0; i < 4; i++) {
                             ch.armor[i] = fp.fread_number();
@@ -942,7 +798,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "AffD")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
                         Skill sn = lookupSkill(fp.fread_word());
@@ -962,7 +817,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "Affc")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
                         Skill sn = lookupSkill(fp.fread_word());
@@ -983,7 +837,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "AttrMod") || !str_cmp(word, "AMod")) {
                         int stat;
                         for (stat = 0; stat < MAX_STATS; stat++) {
@@ -992,7 +845,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "AttrPerm") || !str_cmp(word, "Attr")) {
                         int stat;
 
@@ -1000,20 +852,17 @@ class Save {
                             ch.perm_stat[stat] = fp.fread_number();
                         }
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'B':
+                }
+                case 'B' -> {
                     ch.pcdata.bamfin = fp.SKEY("Bamfin", word, ch.pcdata.bamfin);
                     ch.pcdata.bank_s = fp.NKEY("Banks", word, ch.pcdata.bank_s);
                     ch.pcdata.bank_g = fp.NKEY("Bankg", word, ch.pcdata.bank_g);
                     ch.pcdata.bamfout = fp.SKEY("Bamfout", word, ch.pcdata.bamfout);
                     ch.pcdata.bamfin = fp.SKEY("Bin", word, ch.pcdata.bamfin);
                     ch.pcdata.bamfout = fp.SKEY("Bout", word, ch.pcdata.bamfout);
-                    break;
-
-                case 'C':
+                }
+                case 'C' -> {
                     if (!str_prefix(word, "Cla")) {
                         fp.fMatch = true;
                         String className = fp.fread_word();
@@ -1024,7 +873,6 @@ class Save {
                     } else {
                         ch.cabal = fp.NKEY("Cab", word, ch.cabal);
                     }
-
                     if (!str_cmp(word, "Condition") || !str_cmp(word, "Cond")) {
                         ch.pcdata.condition[0] = fp.fread_number();
                         ch.pcdata.condition[1] = fp.fread_number();
@@ -1051,19 +899,16 @@ class Save {
                         break;
                     }
                     ch.comm = (int) fp.FLAG64_OLD("Comm", word, ch.comm);
-
-                    break;
-
-                case 'D':
+                }
+                case 'D' -> {
                     fp.NKEY("Damroll", word, 0);
                     fp.NKEY("Dam", word, 0);
                     ch.description = fp.SKEY("Description", word, ch.description);
                     ch.description = fp.SKEY("Desc", word, ch.description);
                     ch.pcdata.death = fp.NKEY("Dead", word, ch.pcdata.death);
                     fp.FLAG64_OLD("Detect", word, 0);
-                    break;
-
-                case 'E':
+                }
+                case 'E' -> {
                     if (!str_cmp(word, "End")) {
                         /* adjust hp mana move up  -- here for speed's sake
                         int percent;
@@ -1090,22 +935,19 @@ class Save {
                     }
                     ch.exp = fp.NKEY("Exp", word, ch.exp);
                     ch.ethos = fp.NKEY("Etho", word, ch.ethos);
-                    break;
-
-                case 'G':
+                }
+                case 'G' -> {
                     ch.gold = fp.NKEY("Gold", word, ch.gold);
                     if (!str_cmp(word, "Group") || !str_cmp(word, "Gr")) {
                         fp.fread_word();
                         fp.fMatch = true;
                     }
-                    break;
-
-                case 'H':
+                }
+                case 'H' -> {
                     fp.NKEY("Hitroll", word, 0);
                     fp.NKEY("Hit", word, 0);
                     ch.hometown = fp.NKEY("Home", word, ch.hometown);
                     ch.pcdata.has_killed = fp.NKEY("Haskilled", word, ch.pcdata.has_killed);
-
                     if (!str_cmp(word, "HpManaMove") || !str_cmp(word, "HMV")) {
                         ch.hit = fp.fread_number();
                         ch.mana = fp.fread_number();
@@ -1113,25 +955,20 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "HpManaMovePerm") || !str_cmp(word, "HMVP")) {
                         ch.pcdata.perm_hit = fp.fread_number();
                         ch.pcdata.perm_mana = fp.fread_number();
                         ch.pcdata.perm_move = fp.fread_number();
                         fp.fMatch = true;
-                        break;
                     }
-
-                    break;
-
-                case 'I':
+                }
+                case 'I' -> {
                     ch.id = fp.NKEY("Id", word, ch.id);
                     ch.invis_level = fp.NKEY("InvisLevel", word, ch.invis_level);
                     ch.incog_level = fp.NKEY("Inco", word, ch.incog_level);
                     ch.invis_level = fp.NKEY("Invi", word, ch.invis_level);
-                    break;
-
-                case 'L':
+                }
+                case 'L' -> {
                     ch.pcdata.last_level = fp.NKEY("LastLevel", word, ch.pcdata.last_level);
                     ch.pcdata.last_level = fp.NKEY("LLev", word, ch.pcdata.last_level);
                     ch.level = fp.NKEY("Level", word, ch.level);
@@ -1140,9 +977,8 @@ class Save {
                     lastlogoff = fp.NKEY("LogO", word, lastlogoff);
                     ch.long_descr = fp.SKEY("LongDescr", word, ch.long_descr);
                     ch.long_descr = fp.SKEY("LnD", word, ch.long_descr);
-                    break;
-
-                case 'N':
+                }
+                case 'N' -> {
                     ch.name = fp.SKEY("Name", word, ch.name);
                     ch.pcdata.last_note = fp.NKEY("Note", word, ch.pcdata.last_note);
                     if (!str_cmp(word, "Not")) {
@@ -1152,11 +988,9 @@ class Save {
                         ch.pcdata.last_news = fp.fread_number();
                         ch.pcdata.last_changes = fp.fread_number();
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'P':
+                }
+                case 'P' -> {
                     ch.pcdata.pwd = fp.SKEY("Password", word, ch.pcdata.pwd);
                     ch.pcdata.pwd = fp.SKEY("Pass", word, ch.pcdata.pwd);
                     ch.pcdata.played = fp.NKEY("Played", word, ch.pcdata.played);
@@ -1194,11 +1028,9 @@ class Save {
                         }
                         fPlayLog = true;
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'Q':
+                }
+                case 'Q' -> {
                     ch.pcdata.countdown = fp.NKEY("QuestCnt", word, ch.pcdata.countdown);
                     ch.pcdata.questmob = fp.NKEY("QuestMob", word, ch.pcdata.questmob);
                     ch.pcdata.questobj = fp.NKEY("QuestObj", word, ch.pcdata.questobj);
@@ -1206,12 +1038,11 @@ class Save {
                     ch.pcdata.questpoints = fp.NKEY("QuestPnts", word, ch.pcdata.questpoints);
                     ch.pcdata.nextquest = fp.NKEY("QuestNext", word, ch.pcdata.nextquest);
                     ch.quest = (int) fp.FLAG64_OLD("Ques", word, ch.quest);
-                    break;
-
-                case 'R':
+                }
+                case 'R' -> {
                     ch.religion = fp.NKEY("Relig", word, ch.religion);
 
-/*      KEY( "Race",        ch.race,  Race.lookupRace(fp.fread_string()) ); */
+                    /*      KEY( "Race",        ch.race,  Race.lookupRace(fp.fread_string()) ); */
                     if (!str_cmp(word, "Race")) {
                         ch.race = Race.lookupRace(fp.fread_string());
                         SET_ORG_RACE(ch, ch.race);
@@ -1224,12 +1055,9 @@ class Save {
                             ch.in_room = get_room_index(ROOM_VNUM_LIMBO);
                         }
                         fp.fMatch = true;
-                        break;
                     }
-
-                    break;
-
-                case 'S':
+                }
+                case 'S' -> {
                     fp.NKEY("SavingThrow", word, 0);
                     fp.NKEY("Save", word, 0);
                     ch.lines = fp.NKEY("Scro", word, ch.lines);
@@ -1237,8 +1065,6 @@ class Save {
                     ch.short_descr = fp.SKEY("ShortDescr", word, ch.short_descr);
                     ch.short_descr = fp.SKEY("ShD", word, ch.short_descr);
                     ch.silver = fp.NKEY("Silv", word, ch.silver);
-
-
                     if (!str_cmp(word, "Skill") || !str_cmp(word, "Sk")) {
                         int value;
                         String temp;
@@ -1255,16 +1081,13 @@ class Save {
                         }
                         fp.fMatch = true;
                     }
-
-                    break;
-
-                case 'T':
+                }
+                case 'T' -> {
                     ch.pcdata.true_sex = fp.NKEY("trueSex", word, ch.pcdata.true_sex);
                     ch.pcdata.true_sex = fp.NKEY("TSex", word, ch.pcdata.true_sex);
                     ch.train = fp.NKEY("Trai", word, ch.train);
                     ch.trust = fp.NKEY("Trust", word, ch.trust);
                     ch.trust = fp.NKEY("Tru", word, ch.trust);
-
                     if (!str_cmp(word, "Title") || !str_cmp(word, "Titl")) {
                         ch.pcdata.title = fp.fread_string();
                         if (ch.pcdata.title.charAt(0) != '.' && ch.pcdata.title.charAt(0) != ','
@@ -1272,24 +1095,19 @@ class Save {
                             ch.pcdata.title = " " + ch.pcdata.title;
                         }
                         fp.fMatch = true;
-                        break;
                     }
-
-                    break;
-
-                case 'V':
+                }
+                case 'V' -> {
                     if (!str_cmp(word, "Vnum")) {
                         ch.pIndexData = get_mob_index(fp.fread_number());
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'W':
+                }
+                case 'W' -> {
                     ch.wimpy = fp.NKEY("Wimpy", word, ch.wimpy);
                     ch.wimpy = fp.NKEY("Wimp", word, ch.wimpy);
                     ch.wiznet = (int) fp.FLAG64_OLD("Wizn", word, ch.wiznet);
-                    break;
+                }
             }
 
             if (!fp.fMatch) {
@@ -1302,7 +1120,7 @@ class Save {
 /* load a pet from the forgotten reaches */
 
 
-    static void fread_pet(CHAR_DATA ch, DikuTextFile fp) throws IOException {
+    static void fread_pet(CHAR_DATA ch, DikuTextFile fp) {
         String word;
         CHAR_DATA pet;
         int lastlogoff = current_time;
@@ -1330,16 +1148,14 @@ class Save {
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
-                case '*':
+                case '*' -> {
                     fp.fMatch = true;
                     fp.fread_to_eol();
-                    break;
-
-                case 'A':
+                }
+                case 'A' -> {
                     pet.act = fp.FLAG64_OLD("Act", word, pet.act);
                     pet.affected_by = fp.FLAG64_OLD("AfBy", word, pet.affected_by);
                     pet.alignment = fp.NKEY("Alig", word, pet.alignment);
-
                     if (!str_cmp(word, "ACs")) {
                         for (int i = 0; i < 4; i++) {
                             pet.armor[i] = fp.fread_number();
@@ -1347,7 +1163,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "AffD")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
                         Skill sn = lookupSkill(fp.fread_word());
@@ -1367,7 +1182,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "Affc")) {
 
 
@@ -1391,7 +1205,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "AMod")) {
                         int stat;
 
@@ -1401,7 +1214,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "Attr")) {
                         int stat;
 
@@ -1409,21 +1221,17 @@ class Save {
                             pet.perm_stat[stat] = fp.fread_number();
                         }
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'C':
+                }
+                case 'C' -> {
                     pet.cabal = fp.NKEY("Cab", word, pet.cabal);
                     pet.comm = (int) fp.FLAG64_OLD("Comm", word, pet.comm);
-                    break;
-
-                case 'D':
+                }
+                case 'D' -> {
                     pet.damroll = fp.NKEY("Dam", word, pet.damroll);
                     pet.description = fp.SKEY("Desc", word, pet.description);
-                    break;
-
-                case 'E':
+                }
+                case 'E' -> {
                     if (!str_cmp(word, "End")) {
                         pet.leader = ch;
                         pet.master = ch;
@@ -1441,15 +1249,10 @@ class Save {
                         return;
                     }
                     pet.exp = fp.NKEY("Exp", word, pet.exp);
-                    break;
-
-                case 'G':
-                    pet.gold = fp.NKEY("Gold", word, pet.gold);
-                    break;
-
-                case 'H':
+                }
+                case 'G' -> pet.gold = fp.NKEY("Gold", word, pet.gold);
+                case 'H' -> {
                     pet.hitroll = fp.NKEY("Hit", word, pet.hitroll);
-
                     if (!str_cmp(word, "HMV")) {
                         pet.hit = fp.fread_number();
                         pet.max_hit = fp.fread_number();
@@ -1458,41 +1261,28 @@ class Save {
                         pet.move = fp.fread_number();
                         pet.max_move = fp.fread_number();
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'L':
+                }
+                case 'L' -> {
                     pet.level = fp.NKEY("Levl", word, pet.level);
                     pet.long_descr = fp.SKEY("LnD", word, pet.long_descr);
                     lastlogoff = fp.NKEY("LogO", word, lastlogoff);
-                    break;
-
-                case 'N':
-                    pet.name = fp.SKEY("Name", word, pet.name);
-                    break;
-
-                case 'P':
-                    pet.position = fp.NKEY("Pos", word, pet.position);
-                    break;
-
-                case 'R':
+                }
+                case 'N' -> pet.name = fp.SKEY("Name", word, pet.name);
+                case 'P' -> pet.position = fp.NKEY("Pos", word, pet.position);
+                case 'R' -> {
                     if (!str_cmp(word, "Race")) {
                         pet.race = Race.lookupRace(fp.fread_string());
                         SET_ORG_RACE(pet, pet.race);
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'S':
+                }
+                case 'S' -> {
                     pet.saving_throw = fp.NKEY("Save", word, pet.saving_throw);
                     pet.sex = fp.NKEY("Sex", word, pet.sex);
                     pet.short_descr = fp.SKEY("ShD", word, pet.short_descr);
                     pet.silver = fp.NKEY("Silv", word, pet.silver);
-                    break;
-
-
+                }
             }
             if (!fp.fMatch) {
                 bug("Fread_pet: no match.");
@@ -1503,7 +1293,7 @@ class Save {
     }
 
 
-    static void fread_obj(CHAR_DATA ch, DikuTextFile fp) throws IOException {
+    static void fread_obj(CHAR_DATA ch, DikuTextFile fp) {
         OBJ_DATA obj;
         String word;
         int iNest;
@@ -1553,12 +1343,11 @@ class Save {
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
-                case '*':
+                case '*' -> {
                     fp.fMatch = true;
                     fp.fread_to_eol();
-                    break;
-
-                case 'A':
+                }
+                case 'A' -> {
                     if (!str_cmp(word, "AffD")) {
 
                         AFFECT_DATA paf = new AFFECT_DATA();
@@ -1600,11 +1389,9 @@ class Save {
                         paf.next = obj.affected;
                         obj.affected = paf;
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'C':
+                }
+                case 'C' -> {
                     if (!str_cmp(word, "Cond")) {
                         obj.condition = fp.fread_number();
                         if (obj.condition < 1) {
@@ -1614,24 +1401,19 @@ class Save {
                         break;
                     }
                     obj.cost = fp.NKEY("Cost", word, obj.cost);
-                    break;
-
-                case 'D':
+                }
+                case 'D' -> {
                     obj.description = fp.SKEY("Description", word, obj.description);
                     obj.description = fp.SKEY("Desc", word, obj.description);
-                    break;
-
-                case 'E':
-
+                }
+                case 'E' -> {
                     if (!str_cmp(word, "Enchanted")) {
                         obj.enchanted = true;
                         fp.fMatch = true;
                         break;
                     }
-
                     obj.extra_flags = fp.FLAG64_OLD("ExtraFlags", word, obj.extra_flags);
                     obj.extra_flags = fp.FLAG64_OLD("ExtF", word, obj.extra_flags);
-
                     if (!str_cmp(word, "ExtraDescr") || !str_cmp(word, "ExDe")) {
                         EXTRA_DESCR_DATA ed = new EXTRA_DESCR_DATA();
 
@@ -1641,7 +1423,6 @@ class Save {
                         obj.extra_descr = ed;
                         fp.fMatch = true;
                     }
-
                     if (!str_cmp(word, "End")) {
                         if (!fNest || !fVnum || obj.pIndexData == null) {
                             bug("Fread_obj: incomplete object.");
@@ -1683,21 +1464,17 @@ class Save {
                             return;
                         }
                     }
-                    break;
-
-                case 'I':
+                }
+                case 'I' -> {
                     obj.item_type = fp.NKEY("ItemType", word, obj.item_type);
                     obj.item_type = fp.NKEY("Ityp", word, obj.item_type);
-                    break;
-
-                case 'L':
+                }
+                case 'L' -> {
                     obj.level = fp.NKEY("Level", word, obj.level);
                     obj.level = fp.NKEY("Lev", word, obj.level);
-                    break;
-
-                case 'N':
+                }
+                case 'N' -> {
                     obj.name = fp.SKEY("Name", word, obj.name);
-
                     if (!str_cmp(word, "Nest")) {
                         iNest = fp.fread_number();
                         if (iNest < 0 || iNest >= MAX_NEST) {
@@ -1708,26 +1485,19 @@ class Save {
                         }
                         fp.fMatch = true;
                     }
-                    break;
-
-                case 'O':
+                }
+                case 'O' -> {
                     if (!str_cmp(word, "Oldstyle")) {
                         if (obj.pIndexData != null && obj.pIndexData.new_format) {
                             make_new = true;
                         }
                         fp.fMatch = true;
                     }
-                    break;
-
-
-                case 'Q':
-                    obj.condition = fp.NKEY("Quality", word, obj.condition);
-                    break;
-
-                case 'S':
+                }
+                case 'Q' -> obj.condition = fp.NKEY("Quality", word, obj.condition);
+                case 'S' -> {
                     obj.short_descr = fp.SKEY("ShortDescr", word, obj.short_descr);
                     obj.short_descr = fp.SKEY("ShD", word, obj.short_descr);
-
                     if (!str_cmp(word, "Spell")) {
                         int iValue;
 
@@ -1741,17 +1511,13 @@ class Save {
                             obj.value[iValue] = sn.ordinal();
                         }
                         fp.fMatch = true;
-                        break;
                     }
-
-                    break;
-
-                case 'T':
+                }
+                case 'T' -> {
                     obj.timer = fp.NKEY("Timer", word, obj.timer);
                     obj.timer = fp.NKEY("Time", word, obj.timer);
-                    break;
-
-                case 'V':
+                }
+                case 'V' -> {
                     if (!str_cmp(word, "Values") || !str_cmp(word, "Vals")) {
                         obj.value[0] = fp.fread_number();
                         obj.value[1] = fp.fread_number();
@@ -1763,7 +1529,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "Val")) {
                         obj.value[0] = fp.fread_number();
                         obj.value[1] = fp.fread_number();
@@ -1773,7 +1538,6 @@ class Save {
                         fp.fMatch = true;
                         break;
                     }
-
                     if (!str_cmp(word, "Vnum")) {
                         int vnum;
 
@@ -1784,11 +1548,9 @@ class Save {
                             fVnum = true;
                         }
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
-                case 'W':
+                }
+                case 'W' -> {
                     obj.wear_flags = fp.NKEY("WearFlags", word, obj.wear_flags);
                     obj.wear_flags = fp.NKEY("WeaF", word, obj.wear_flags);
                     obj.weight = fp.NKEY("Weight", word, obj.weight);
@@ -1802,10 +1564,8 @@ class Save {
                     if (!str_cmp(word, "Wearloc")) {
                         obj.wear_loc = wear_convert(fp.fread_number());
                         fp.fMatch = true;
-                        break;
                     }
-                    break;
-
+                }
             }
 
             if (!fp.fMatch) {
@@ -1817,67 +1577,26 @@ class Save {
 
 
     static int wear_convert(int oldwear) {
-        int iWear;
+        int iWear = switch (oldwear) {
+            case OWEAR_FINGER_L, OWEAR_FINGER_R -> WEAR_FINGER;
+            case OWEAR_NECK_1, OWEAR_NECK_2 -> WEAR_NECK;
+            case OWEAR_BODY -> WEAR_BODY;
+            case OWEAR_HEAD -> WEAR_HEAD;
+            case OWEAR_LEGS -> WEAR_LEGS;
+            case OWEAR_FEET -> WEAR_FEET;
+            case OWEAR_HANDS -> WEAR_HANDS;
+            case OWEAR_ARMS -> WEAR_ARMS;
+            case OWEAR_SHIELD -> WEAR_LEFT;
+            case OWEAR_ABOUT -> WEAR_ABOUT;
+            case OWEAR_WAIST -> WEAR_WAIST;
+            case OWEAR_WRIST_L, OWEAR_WRIST_R -> WEAR_WRIST;
+            case OWEAR_WIELD -> WEAR_RIGHT;
+            case OWEAR_FLOAT -> WEAR_FLOAT;
+            case OWEAR_TATTOO -> WEAR_TATTOO;
+            case OWEAR_STUCK_IN -> WEAR_STUCK_IN;
+            default -> WEAR_NONE;
+        };
 
-        switch (oldwear) {
-            case OWEAR_FINGER_L:
-            case OWEAR_FINGER_R:
-                iWear = WEAR_FINGER;
-                break;
-            case OWEAR_NECK_1:
-            case OWEAR_NECK_2:
-                iWear = WEAR_NECK;
-                break;
-            case OWEAR_BODY:
-                iWear = WEAR_BODY;
-                break;
-            case OWEAR_HEAD:
-                iWear = WEAR_HEAD;
-                break;
-            case OWEAR_LEGS:
-                iWear = WEAR_LEGS;
-                break;
-            case OWEAR_FEET:
-                iWear = WEAR_FEET;
-                break;
-            case OWEAR_HANDS:
-                iWear = WEAR_HANDS;
-                break;
-            case OWEAR_ARMS:
-                iWear = WEAR_ARMS;
-                break;
-            case OWEAR_SHIELD:
-                iWear = WEAR_LEFT;
-                break;
-            case OWEAR_ABOUT:
-                iWear = WEAR_ABOUT;
-                break;
-            case OWEAR_WAIST:
-                iWear = WEAR_WAIST;
-                break;
-            case OWEAR_WRIST_L:
-            case OWEAR_WRIST_R:
-                iWear = WEAR_WRIST;
-                break;
-            case OWEAR_WIELD:
-                iWear = WEAR_RIGHT;
-                break;
-            case OWEAR_FLOAT:
-                iWear = WEAR_FLOAT;
-                break;
-            case OWEAR_TATTOO:
-                iWear = WEAR_TATTOO;
-                break;
-            case OWEAR_STUCK_IN:
-                iWear = WEAR_STUCK_IN;
-                break;
-            case OWEAR_LIGHT:
-            case OWEAR_HOLD:
-            case OWEAR_SECOND_WIELD:
-            default:
-                iWear = WEAR_NONE;
-                break;
-        }
         return iWear;
     }
 

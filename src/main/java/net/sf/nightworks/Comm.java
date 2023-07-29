@@ -684,7 +684,7 @@ class Comm {
     }
 
 
-    static final char dir_name_char[] = {'N', 'E', 'S', 'W', 'U', 'D'};
+    static final char[] dir_name_char = {'N', 'E', 'S', 'W', 'U', 'D'};
 
     /**
      * Bust a prompt (player settable prompt) coded by Morgenes for Aldara Mud
@@ -836,9 +836,7 @@ class Comm {
 */
 
     private static void write_to_buffer(DESCRIPTOR_DATA snoop_by, ArrayList outbuf) {
-        for (Object o : outbuf) {
-            snoop_by.outbuf.add(o);
-        }
+        snoop_by.outbuf.addAll(outbuf);
     }
 
     static void write_to_buffer(DESCRIPTOR_DATA d, byte[] data) {
@@ -847,7 +845,7 @@ class Comm {
 
     static void write_to_buffer(DESCRIPTOR_DATA d, CharSequence txt) {
         // Initial \n if needed.
-        if (d.outbuf.size() == 0 && !d.fcommand) {
+        if (d.outbuf.isEmpty() && !d.fcommand) {
             d.outbuf.add("\n");
         }
 
@@ -1982,16 +1980,16 @@ class Comm {
     }
 
     static void act(CharSequence seq, CHAR_DATA ch, Object arg1, Object arg2, int type) {
-        if (seq == null || seq.length() == 0) {
+        if (seq == null || seq.isEmpty()) {
             return;
         }
         act(seq.toString(), ch, arg1, arg2, type, POS_RESTING);
     }
 
-    static final String he_she[] = {"it", "he", "she"};
+    static final String[] he_she = {"it", "he", "she"};
 
-    static final String him_her[] = {"it", "him", "her"};
-    static final String his_her[] = {"its", "his", "her"};
+    static final String[] him_her = {"it", "him", "her"};
+    static final String[] his_her = {"its", "his", "her"};
 
     static void act(String actStr, CHAR_DATA ch, Object arg1, Object arg2, int type, int min_pos) {
         // Discard null and zero-length messages: useful to avoid null-checks in clients
@@ -2047,64 +2045,38 @@ class Comm {
                 c = actStr.charAt(++ii);
                 String i;
                 switch (c) {
-                    default:
+                    default -> {
                         bug("Act: bad code %d.", c);
                         i = " <@@@> ";
-                        break;
-                        /* Thx alex for 't' idea */
-                    case 't':
-                        i = (String) arg1;
-                        break;
-                    case 'T':
-                        i = (String) arg2;
-                        break;
-                    case 'n':
-                        i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                PERS(ch.doppel, to) : PERS(ch, to);
-                        break;
-                    case 'N':
-                        i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                PERS(vch.doppel, to) : PERS(vch, to);
-                        break;
-                    case 'e':
-                        i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                he_she[URANGE(0, ch.doppel.sex, 2)] :
-                                he_she[URANGE(0, ch.sex, 2)];
-                        break;
-                    case 'E':
-                        i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                he_she[URANGE(0, vch.doppel.sex, 2)] :
-                                he_she[URANGE(0, vch.sex, 2)];
-                        break;
-                    case 'm':
-                        i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                him_her[URANGE(0, ch.doppel.sex, 2)] :
-                                him_her[URANGE(0, ch.sex, 2)];
-                        break;
-                    case 'M':
-                        i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                him_her[URANGE(0, vch.doppel.sex, 2)] :
-                                him_her[URANGE(0, vch.sex, 2)];
-                        break;
-                    case 's':
-                        i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                his_her[URANGE(0, ch.doppel.sex, 2)] :
-                                his_her[URANGE(0, ch.sex, 2)];
-                        break;
-                    case 'S':
-                        i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                                his_her[URANGE(0, vch.doppel.sex, 2)] :
-                                his_her[URANGE(0, vch.sex, 2)];
-                        break;
-                    case 'p':
-                        i = can_see_obj(to, (OBJ_DATA) arg1) ? ((OBJ_DATA) arg1).short_descr : "something";
-                        break;
-
-                    case 'P':
-                        i = can_see_obj(to, (OBJ_DATA) arg2) ? ((OBJ_DATA) arg2).short_descr : "something";
-                        break;
-
-                    case 'd':
+                    }
+                    /* Thx alex for 't' idea */
+                    case 't' -> i = (String) arg1;
+                    case 'T' -> i = (String) arg2;
+                    case 'n' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            PERS(ch.doppel, to) : PERS(ch, to);
+                    case 'N' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            PERS(vch.doppel, to) : PERS(vch, to);
+                    case 'e' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            he_she[URANGE(0, ch.doppel.sex, 2)] :
+                            he_she[URANGE(0, ch.sex, 2)];
+                    case 'E' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            he_she[URANGE(0, vch.doppel.sex, 2)] :
+                            he_she[URANGE(0, vch.sex, 2)];
+                    case 'm' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            him_her[URANGE(0, ch.doppel.sex, 2)] :
+                            him_her[URANGE(0, ch.sex, 2)];
+                    case 'M' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            him_her[URANGE(0, vch.doppel.sex, 2)] :
+                            him_her[URANGE(0, vch.sex, 2)];
+                    case 's' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            his_her[URANGE(0, ch.doppel.sex, 2)] :
+                            his_her[URANGE(0, ch.sex, 2)];
+                    case 'S' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
+                            his_her[URANGE(0, vch.doppel.sex, 2)] :
+                            his_her[URANGE(0, vch.sex, 2)];
+                    case 'p' -> i = can_see_obj(to, (OBJ_DATA) arg1) ? ((OBJ_DATA) arg1).short_descr : "something";
+                    case 'P' -> i = can_see_obj(to, (OBJ_DATA) arg2) ? ((OBJ_DATA) arg2).short_descr : "something";
+                    case 'd' -> {
                         if (arg2 == null || ((String) arg2).length() == 0) {
                             i = "door";
                         } else {
@@ -2112,7 +2084,7 @@ class Comm {
                             one_argument((String) arg2, fname);
                             i = fname.toString();
                         }
-                        break;
+                    }
                 }
                 buf.append(i);
             }

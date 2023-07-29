@@ -383,8 +383,8 @@ class ActInfo {
 
     static String format_obj_to_char(OBJ_DATA obj, CHAR_DATA ch, boolean fShort) {
 
-        if ((fShort && (obj.short_descr == null || obj.short_descr.length() == 0))
-                || (obj.description == null || obj.description.length() == 0)) {
+        if ((fShort && (obj.short_descr == null || obj.short_descr.isEmpty()))
+                || (obj.description == null || obj.description.isEmpty())) {
             return "";
         }
 
@@ -482,7 +482,7 @@ class ActInfo {
         /*
          * Format the list of objects.
          */
-        int prgnShow[] = new int[count];
+        int[] prgnShow = new int[count];
         String[] prgpstrShow = new String[count];
 
         for (obj = list; obj != null; obj = obj.next_content) {
@@ -522,14 +522,14 @@ class ActInfo {
         TextBuffer buf = new TextBuffer();
         StringBuilder output = new StringBuilder();
         for (int iShow = 0; iShow < nShow; iShow++) {
-            if (prgpstrShow[iShow].length() == 0) {
+            if (prgpstrShow[iShow].isEmpty()) {
                 continue;
             }
 
             if (IS_NPC(ch) || IS_SET(ch.comm, COMM_COMBINE)) {
                 if (prgnShow[iShow] != 1) {
                     buf.sprintf("(%2d) ", prgnShow[iShow]);
-                    output.append(buf.toString());
+                    output.append(buf);
                 } else {
                     output.append("     ");
                 }
@@ -614,7 +614,7 @@ class ActInfo {
             buf.append("(CRIMINAL) ");
         }
 
-        if (victim.position == victim.start_pos && victim.long_descr.length() != 0) {
+        if (victim.position == victim.start_pos && !victim.long_descr.isEmpty()) {
             buf.append(victim.long_descr);
             send_to_char(buf, ch);
             return;
@@ -627,13 +627,13 @@ class ActInfo {
         }
 
         if (is_affected(victim, gsn_doppelganger) &&
-                victim.doppel.long_descr.length() != 0) {
+                !victim.doppel.long_descr.isEmpty()) {
             buf.append(victim.doppel.long_descr);
             send_to_char(buf, ch);
             return;
         }
 
-        if (victim.long_descr.length() != 0 && !is_affected(victim, gsn_doppelganger)) {
+        if (!victim.long_descr.isEmpty() && !is_affected(victim, gsn_doppelganger)) {
             buf.append(victim.long_descr);
             send_to_char(buf, ch);
             return;
@@ -776,7 +776,7 @@ class ActInfo {
             }
         }
 
-        if (vict.description.length() != 0) {
+        if (!vict.description.isEmpty()) {
             send_to_char(vict.description, ch);
         } else {
             act("You see nothing special about $M.", ch, null, victim, TO_CHAR);
@@ -1331,7 +1331,7 @@ class ActInfo {
     }
 
     static void do_prompt(CHAR_DATA ch, String argument) {
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             if (IS_SET(ch.comm, COMM_PROMPT)) {
                 send_to_char("You will no longer see prompts.\n", ch);
                 ch.comm = REMOVE_BIT(ch.comm, COMM_PROMPT);
@@ -1465,7 +1465,7 @@ class ActInfo {
         count = 0;
 
         String arg1 = arg1b.toString();
-        if (arg1.length() == 0 || !str_cmp(arg1, "auto")) {
+        if (arg1.isEmpty() || !str_cmp(arg1, "auto")) {
             /* 'look' or 'look auto' */
             send_to_char("{W" + ch.in_room.name + "{x", ch);
 
@@ -1477,7 +1477,7 @@ class ActInfo {
 
             send_to_char("\n", ch);
 
-            if (arg1.length() == 0 || (!IS_NPC(ch) && !IS_SET(ch.comm, COMM_BRIEF))) {
+            if (arg1.isEmpty() || (!IS_NPC(ch) && !IS_SET(ch.comm, COMM_BRIEF))) {
                 send_to_char("  ", ch);
                 send_to_char(ch.in_room.description, ch);
             }
@@ -1495,7 +1495,7 @@ class ActInfo {
         String arg2 = arg2b.toString();
         if (!str_cmp(arg1, "i") || !str_cmp(arg1, "in") || !str_cmp(arg1, "on")) {
             /* 'look in' */
-            if (arg2.length() == 0) {
+            if (arg2.isEmpty()) {
                 send_to_char("Look in what?\n", ch);
                 return;
             }
@@ -1681,13 +1681,13 @@ class ActInfo {
             return;
         }
 
-        if (pexit.description != null && pexit.description.length() != 0) {
+        if (pexit.description != null && !pexit.description.isEmpty()) {
             send_to_char(pexit.description, ch);
         } else {
             send_to_char("Nothing special there.\n", ch);
         }
 
-        if (pexit.keyword != null && pexit.keyword.length() != 0 && pexit.keyword.charAt(0) != ' ') {
+        if (pexit.keyword != null && !pexit.keyword.isEmpty() && pexit.keyword.charAt(0) != ' ') {
             if (IS_SET(pexit.exit_info, EX_CLOSED)) {
                 act("The $d is closed.", ch, null, pexit.keyword, TO_CHAR);
             } else if (IS_SET(pexit.exit_info, EX_ISDOOR)) {
@@ -1884,11 +1884,11 @@ class ActInfo {
     }
 
 
-    static final String day_name[] = {"the Moon", "the Bull", "Deception", "Thunder", "Freedom",
+    static final String[] day_name = {"the Moon", "the Bull", "Deception", "Thunder", "Freedom",
             "the Great Gods", "the Sun"
     };
 
-    static final String month_name[] = {
+    static final String[] month_name = {
             "Winter", "the Winter Wolf", "the Frost Giant", "the Old Forces",
             "the Grand Struggle", "the Spring", "Nature", "Futility", "the Dragon",
             "the Sun", "the Heat", "the Battle", "the Dark Shades", "the Shadows",
@@ -1951,7 +1951,7 @@ class ActInfo {
     }
 
 
-    static final String sky_look[] = {
+    static final String[] sky_look = {
             "cloudless",
             "cloudy",
             "rainy",
@@ -1977,14 +1977,14 @@ class ActInfo {
 
     static void do_help(CHAR_DATA ch, String argument) {
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             argument = "summary";
         }
 
         /* this parts handles help a b so that it returns help 'a b' */
         StringBuilder argall = new StringBuilder();
         StringBuilder argone = new StringBuilder();
-        while (argument.length() != 0) {
+        while (!argument.isEmpty()) {
             argone.setLength(0);
             argument = one_argument(argument, argone);
             if (argall.length() != 0) {
@@ -2348,7 +2348,7 @@ class ActInfo {
         String pkbuf = "{r(PK){x ";
 
         TextBuffer buf = new TextBuffer();
-        if (arg.length() == 0 || fPKonly) {
+        if (arg.isEmpty() || fPKonly) {
             send_to_char("Players near you:\n", ch);
             found = false;
             for (d = descriptor_list; d != null; d = d.next) {
@@ -2494,7 +2494,7 @@ class ActInfo {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             send_to_char("Change your title to what?\n", ch);
             return;
         }
@@ -2512,14 +2512,14 @@ class ActInfo {
     static void do_description(CHAR_DATA ch, String argument) {
 
         StringBuilder buf = new StringBuilder();
-        if (argument.length() != 0) {
+        if (!argument.isEmpty()) {
             argument = smash_tilde(argument);
 
             if (argument.charAt(0) == '-') {
                 int len;
                 boolean found = false;
 
-                if (ch.description == null || ch.description.length() == 0) {
+                if (ch.description == null || ch.description.isEmpty()) {
                     send_to_char("No lines left to remove.\n", ch);
                     return;
                 }
@@ -2536,7 +2536,7 @@ class ActInfo {
                         } else /* found the second one */ {
                             ch.description = buf.substring(0, len + 1);
                             send_to_char("Your description is:\n", ch);
-                            send_to_char(ch.description.length() != 0 ? ch.description : "(None).\n", ch);
+                            send_to_char(!ch.description.isEmpty() ? ch.description : "(None).\n", ch);
                             return;
                         }
                     }
@@ -2559,7 +2559,7 @@ class ActInfo {
         }
 
         send_to_char("Your description is:\n", ch);
-        send_to_char(ch.description.length() != 0 ? ch.description : "(None).\n", ch);
+        send_to_char(!ch.description.isEmpty() ? ch.description : "(None).\n", ch);
     }
 
 
@@ -2581,7 +2581,7 @@ class ActInfo {
 
         TextBuffer buf = new TextBuffer();
         StringBuilder buf2 = new StringBuilder();
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             int col;
 
             col = 0;
@@ -2749,7 +2749,7 @@ class ActInfo {
 
         String arg1 = arg_first.toString();
         String arg2 = argument;
-        if (arg1.length() == 0 || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Syntax: password <old> <new>.\n", ch);
             return;
         }
@@ -3027,7 +3027,7 @@ class ActInfo {
 
         amount = (ch.level * ch.level * 250) + 1000;
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             TextBuffer buf = new TextBuffer();
             buf.sprintf("It will cost you %d gold.\n", amount);
             send_to_char(buf, ch);
@@ -3773,7 +3773,7 @@ class ActInfo {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             int col;
 
             col = 0;
@@ -3788,7 +3788,7 @@ class ActInfo {
                 }
 
                 buf.sprintf("%-18s %3d%%  ", sn.name, ch.pcdata.learned[sn.ordinal()]);
-                buf2.append(buf.toString());
+                buf2.append(buf);
                 if (++col % 3 == 0) {
                     buf2.append("\n");
                 }
@@ -3799,7 +3799,7 @@ class ActInfo {
             }
 
             buf.sprintf("You have {w%d{x practice sessions left.\n", ch.practice);
-            buf2.append(buf.toString());
+            buf2.append(buf);
             page_to_char(buf2, ch);
         } else {
             CHAR_DATA mob;
@@ -3896,7 +3896,7 @@ class ActInfo {
         boolean fLionsRestrict = false;
         boolean fTattoo = false;
 
-        boolean rgfClass[] = new boolean[MAX_CLASS];
+        boolean[] rgfClass = new boolean[MAX_CLASS];
         Set<Race> rgfRaces = null;
 
         /*
@@ -4022,7 +4022,7 @@ class ActInfo {
                         } else {
                             fRaceRestrict = true;
                             if (rgfRaces == null) {
-                                rgfRaces = new HashSet<Race>();
+                                rgfRaces = new HashSet<>();
                             }
                             rgfRaces.add(race);
                         }
@@ -4622,7 +4622,7 @@ class ActInfo {
         one_argument(argument, argb);
         String arg = argb.toString();
         Skill color;
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             color = null;
         } else if (!str_prefix(arg, "green")) {
             color = gsn_green_arrow;

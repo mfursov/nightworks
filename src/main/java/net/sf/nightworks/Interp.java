@@ -110,7 +110,7 @@ class Interp {
         */
         argument = smash_tilde(argument);
         argument = trimSpaces(argument, 0);
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             return;
         }
 
@@ -201,7 +201,7 @@ class Interp {
         }
 
         if (((!IS_NPC(ch) && IS_SET(ch.act, PLR_LOG)) || fLogAll
-                || (cmd != null && cmd.log == LOG_ALWAYS) && logLine.length() != 0 && logLine.charAt(0) != '\n')) {
+                || (cmd != null && cmd.log == LOG_ALWAYS) && !logLine.isEmpty() && logLine.charAt(0) != '\n')) {
             String log_buf = "Log " + ch.name + ": " + logLine;
             wiznet(log_buf, ch, null, WIZ_SECURE, 0, get_trust(ch));
             log_string(log_buf);
@@ -259,35 +259,13 @@ class Interp {
         */
         if (ch.position < minPos) {
             switch (ch.position) {
-                case POS_DEAD:
-                    send_to_char("Lie still; you are DEAD.\n", ch);
-                    break;
-
-                case POS_MORTAL:
-                case POS_INCAP:
-                    send_to_char("You are hurt far too bad for that.\n", ch);
-                    break;
-
-                case POS_STUNNED:
-                    send_to_char("You are too stunned to do that.\n", ch);
-                    break;
-
-                case POS_SLEEPING:
-                    send_to_char("In your dreams, or what?\n", ch);
-                    break;
-
-                case POS_RESTING:
-                    send_to_char("Nah... You feel too relaxed...\n", ch);
-                    break;
-
-                case POS_SITTING:
-                    send_to_char("Better stand up first.\n", ch);
-                    break;
-
-                case POS_FIGHTING:
-                    send_to_char("No way!  You are still fighting!\n", ch);
-                    break;
-
+                case POS_DEAD -> send_to_char("Lie still; you are DEAD.\n", ch);
+                case POS_MORTAL, POS_INCAP -> send_to_char("You are hurt far too bad for that.\n", ch);
+                case POS_STUNNED -> send_to_char("You are too stunned to do that.\n", ch);
+                case POS_SLEEPING -> send_to_char("In your dreams, or what?\n", ch);
+                case POS_RESTING -> send_to_char("Nah... You feel too relaxed...\n", ch);
+                case POS_SITTING -> send_to_char("Better stand up first.\n", ch);
+                case POS_FIGHTING -> send_to_char("No way!  You are still fighting!\n", ch);
             }
             return;
         }
@@ -330,7 +308,7 @@ class Interp {
         CHAR_DATA victim;
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             act(soc.noarg_room, ch, null, null, TO_ROOM);
             act(soc.noarg_char, ch, null, null, TO_CHAR);
         } else if ((victim = get_char_room(ch, arg.toString())) == null) {
@@ -345,27 +323,16 @@ class Interp {
 
             if (!IS_NPC(ch) && IS_NPC(victim) && !IS_AFFECTED(victim, AFF_CHARM) && IS_AWAKE(victim) && victim.desc == null) {
                 switch (number_bits(4)) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
+                    case 0, 1, 2, 3, 4, 5, 6, 7, 8 -> {
                         act(soc.found_novictim, victim, null, ch, TO_NOTVICT);
                         act(soc.found_char, victim, null, ch, TO_CHAR);
                         act(soc.found_victim, victim, null, ch, TO_VICT);
-                        break;
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
+                    }
+                    case 9, 10, 11, 12 -> {
                         act("$n slaps $N.", victim, null, ch, TO_NOTVICT);
                         act("You slap $N.", victim, null, ch, TO_CHAR);
                         act("$n slaps you.", victim, null, ch, TO_VICT);
-                        break;
+                    }
                 }
             }
         }
@@ -443,7 +410,7 @@ class Interp {
         CHAR_DATA ch = d.original != null ? d.original : d.character;
 
         /* check for prefix */
-        if (ch.prefix.length() != 0 && str_prefix("prefix", argument)) {
+        if (!ch.prefix.isEmpty() && str_prefix("prefix", argument)) {
             if (ch.prefix.length() + argument.length() > MAX_INPUT_LENGTH) {
                 send_to_char("Line to long, prefix not processed.\n", ch);
             } else {
@@ -509,7 +476,7 @@ class Interp {
         argument = one_argument(argument, argb);
 
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
 
             if (rch.pcdata.alias[0] == null) {
                 send_to_char("You have no aliases defined.\n", ch);
@@ -535,7 +502,7 @@ class Interp {
             return;
         }
 
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             for (pos = 0; pos < nw_config.max_alias; pos++) {
                 if (rch.pcdata.alias[pos] == null
                         || rch.pcdata.alias_sub[pos] == null) {
@@ -600,7 +567,7 @@ class Interp {
         StringBuilder arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Unalias what?\n", ch);
             return;
         }

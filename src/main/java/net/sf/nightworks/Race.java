@@ -16,6 +16,7 @@ class Race {
     // except 2 difference:
     // 1. Predefined race can be referenced from code by a constant
     // 2. Predefined race must be found in configuration file during startup
+    @SuppressWarnings("unused")
     static final Race
             HUMAN = new Race("human"),
             ELF = new Race("elf"),
@@ -57,7 +58,7 @@ class Race {
     }
 
     private boolean validate() {
-        return name.length() > 0;
+        return !name.isEmpty();
     }
 
     static Race createRace(String raceName) {

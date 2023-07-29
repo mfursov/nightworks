@@ -25,7 +25,7 @@ public class TextUtils {
     }
 
     /**
-     * Compare strings, case insensitive.
+     * Compare strings, case insensitively.
      * Return true if different
      * (compatibility with historical functions).
      */
@@ -35,7 +35,7 @@ public class TextUtils {
     }
 
     /**
-     * Compare strings, case insensitive, for prefix matching.
+     * Compare strings, case-insensitive, for prefix matching.
      * Return true if p not a prefix of str
      * (compatibility with historical functions).
      */
@@ -49,7 +49,7 @@ public class TextUtils {
 
 
     /**
-     * Compare strings, case insensitive, for suffix matching.
+     * Compare strings, case-insensitive, for suffix matching.
      * Return true if s not a suffix of str
      * (compatibility with historical functions).
      */
@@ -65,7 +65,7 @@ public class TextUtils {
      */
 
     public static String capitalize(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
         return Character.toUpperCase(str.charAt(0)) + (str.length() > 1 ? str.substring(1).toLowerCase() : "");
@@ -84,7 +84,7 @@ public class TextUtils {
      */
 
     public static boolean is_number(CharSequence arg) {
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             return false;
         }
         int i = 0;
@@ -105,11 +105,11 @@ public class TextUtils {
      */
 
     public static String one_argument(String argument, StringBuilder arg_first) {
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             return argument;
         }
         argument = trimSpaces(argument, 0);
-        if (argument.length() == 0) {
+        if (argument.isEmpty()) {
             return argument;
         }
 

@@ -2,9 +2,7 @@ package net.sf.nightworks;
 
 import net.sf.nightworks.util.TextBuffer;
 
-import static net.sf.nightworks.ActComm.do_say;
-import static net.sf.nightworks.ActComm.do_yell;
-import static net.sf.nightworks.ActComm.is_same_group;
+import static net.sf.nightworks.ActComm.*;
 import static net.sf.nightworks.ActHera.get_char_area;
 import static net.sf.nightworks.ActHera.hunt_victim;
 import static net.sf.nightworks.ActInfo.do_look;
@@ -14,360 +12,15 @@ import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Const.hometown_table;
 import static net.sf.nightworks.Const.religion_table;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.clone_mobile;
-import static net.sf.nightworks.DB.create_mobile;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_mob_index;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.interpolate;
-import static net.sf.nightworks.DB.kill_table;
-import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_fuzzy;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.weather_info;
-import static net.sf.nightworks.Effects.acid_effect;
-import static net.sf.nightworks.Effects.cold_effect;
-import static net.sf.nightworks.Effects.fire_effect;
-import static net.sf.nightworks.Effects.poison_effect;
-import static net.sf.nightworks.Effects.sand_effect;
-import static net.sf.nightworks.Effects.scream_effect;
-import static net.sf.nightworks.Effects.shock_effect;
-import static net.sf.nightworks.Fight.damage;
-import static net.sf.nightworks.Fight.do_murder;
-import static net.sf.nightworks.Fight.is_safe;
-import static net.sf.nightworks.Fight.is_safe_nomessage;
-import static net.sf.nightworks.Fight.is_safe_spell;
-import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Fight.raw_kill;
-import static net.sf.nightworks.Fight.stop_fighting;
-import static net.sf.nightworks.Fight.update_pos;
-import static net.sf.nightworks.Handler.affect_join;
-import static net.sf.nightworks.Handler.affect_remove;
-import static net.sf.nightworks.Handler.affect_strip_room;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.affect_to_obj;
-import static net.sf.nightworks.Handler.affect_to_room;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.can_see_room;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.check_exit;
-import static net.sf.nightworks.Handler.count_charmed;
-import static net.sf.nightworks.Handler.count_worn;
-import static net.sf.nightworks.Handler.equip_char;
-import static net.sf.nightworks.Handler.extract_char;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_char_world;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_hold_char;
-import static net.sf.nightworks.Handler.get_light_char;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_trust;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_affected_room;
-import static net.sf.nightworks.Handler.max_can_wear;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_from_obj;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.room_dark;
-import static net.sf.nightworks.Handler.room_is_private;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Effects.*;
+import static net.sf.nightworks.Fight.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Interp.interpret;
 import static net.sf.nightworks.Interp.number_argument;
-import static net.sf.nightworks.Magic.check_dispel;
-import static net.sf.nightworks.Magic.saves_spell;
-import static net.sf.nightworks.Magic.spell_bless;
-import static net.sf.nightworks.Magic.spell_blindness;
-import static net.sf.nightworks.Magic.spell_charm_person;
-import static net.sf.nightworks.Magic.spell_cure_blindness;
-import static net.sf.nightworks.Magic.spell_cure_disease;
-import static net.sf.nightworks.Magic.spell_cure_poison;
-import static net.sf.nightworks.Magic.spell_heal;
-import static net.sf.nightworks.Magic.spell_poison;
-import static net.sf.nightworks.Magic.spell_refresh;
-import static net.sf.nightworks.Magic.spell_remove_curse;
-import static net.sf.nightworks.Magic.spell_slow;
-import static net.sf.nightworks.Magic.spell_weaken;
-import static net.sf.nightworks.Magic.target_name;
-import static net.sf.nightworks.Nightworks.A;
-import static net.sf.nightworks.Nightworks.ACT_AGGRESSIVE;
-import static net.sf.nightworks.Nightworks.ACT_HUNTER;
-import static net.sf.nightworks.Nightworks.ACT_UNDEAD;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_ACUTE_VISION;
-import static net.sf.nightworks.Nightworks.AFF_AURA_CHAOS;
-import static net.sf.nightworks.Nightworks.AFF_BERSERK;
-import static net.sf.nightworks.Nightworks.AFF_BLIND;
-import static net.sf.nightworks.Nightworks.AFF_BLOODTHIRST;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_FEAR;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_FORM_GRASS;
-import static net.sf.nightworks.Nightworks.AFF_FORM_TREE;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_INFRARED;
-import static net.sf.nightworks.Nightworks.AFF_LION;
-import static net.sf.nightworks.Nightworks.AFF_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.AFF_PROTECTOR;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_EVIL;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_ESPIRIT;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_POISON;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_PREVENT;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_RANDOMIZER;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SANCTUARY;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_STUN;
-import static net.sf.nightworks.Nightworks.AFF_SUFFOCATE;
-import static net.sf.nightworks.Nightworks.AFF_WEB;
-import static net.sf.nightworks.Nightworks.APPLY_AC;
-import static net.sf.nightworks.Nightworks.APPLY_CHA;
-import static net.sf.nightworks.Nightworks.APPLY_DAMROLL;
-import static net.sf.nightworks.Nightworks.APPLY_DEX;
-import static net.sf.nightworks.Nightworks.APPLY_HIT;
-import static net.sf.nightworks.Nightworks.APPLY_HITROLL;
-import static net.sf.nightworks.Nightworks.APPLY_INT;
-import static net.sf.nightworks.Nightworks.APPLY_MANA;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_ROOM_MANA;
-import static net.sf.nightworks.Nightworks.APPLY_SAVING_SPELL;
-import static net.sf.nightworks.Nightworks.APPLY_SIZE;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.APPLY_WIS;
-import static net.sf.nightworks.Nightworks.AREA_DATA;
-import static net.sf.nightworks.Nightworks.AREA_HOMETOWN;
-import static net.sf.nightworks.Nightworks.B;
-import static net.sf.nightworks.Nightworks.BIT_26;
-import static net.sf.nightworks.Nightworks.BIT_28;
-import static net.sf.nightworks.Nightworks.BIT_30;
-import static net.sf.nightworks.Nightworks.C;
-import static net.sf.nightworks.Nightworks.CABAL_HUNTER;
-import static net.sf.nightworks.Nightworks.CABAL_NONE;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COND_BLOODLUST;
-import static net.sf.nightworks.Nightworks.COND_DESIRE;
-import static net.sf.nightworks.Nightworks.COND_FULL;
-import static net.sf.nightworks.Nightworks.COND_HUNGER;
-import static net.sf.nightworks.Nightworks.COND_THIRST;
-import static net.sf.nightworks.Nightworks.D;
-import static net.sf.nightworks.Nightworks.DAM_ACID;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.DAM_CHARM;
-import static net.sf.nightworks.Nightworks.DAM_COLD;
-import static net.sf.nightworks.Nightworks.DAM_ENERGY;
-import static net.sf.nightworks.Nightworks.DAM_FIRE;
-import static net.sf.nightworks.Nightworks.DAM_HOLY;
-import static net.sf.nightworks.Nightworks.DAM_LIGHT;
-import static net.sf.nightworks.Nightworks.DAM_LIGHTNING;
-import static net.sf.nightworks.Nightworks.DAM_MENTAL;
-import static net.sf.nightworks.Nightworks.DAM_NEGATIVE;
-import static net.sf.nightworks.Nightworks.DAM_NONE;
-import static net.sf.nightworks.Nightworks.DAM_OTHER;
-import static net.sf.nightworks.Nightworks.DAM_PIERCE;
-import static net.sf.nightworks.Nightworks.DAM_POISON;
-import static net.sf.nightworks.Nightworks.DICE_BONUS;
-import static net.sf.nightworks.Nightworks.DICE_NUMBER;
-import static net.sf.nightworks.Nightworks.DICE_TYPE;
-import static net.sf.nightworks.Nightworks.E;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.EXTRA_DESCR_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.EX_LOCKED;
-import static net.sf.nightworks.Nightworks.EX_NOPASS;
-import static net.sf.nightworks.Nightworks.F;
-import static net.sf.nightworks.Nightworks.G;
-import static net.sf.nightworks.Nightworks.H;
-import static net.sf.nightworks.Nightworks.IMM_CHARM;
-import static net.sf.nightworks.Nightworks.IMM_NEGATIVE;
-import static net.sf.nightworks.Nightworks.IMM_SUMMON;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OBJ_STAT;
-import static net.sf.nightworks.Nightworks.IS_OUTSIDE;
-import static net.sf.nightworks.Nightworks.IS_RAFFECTED;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_EVIL;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_GOOD;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_NEUTRAL;
-import static net.sf.nightworks.Nightworks.ITEM_BLESS;
-import static net.sf.nightworks.Nightworks.ITEM_BURN_PROOF;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_PC;
-import static net.sf.nightworks.Nightworks.ITEM_GLOW;
-import static net.sf.nightworks.Nightworks.ITEM_KEY;
-import static net.sf.nightworks.Nightworks.ITEM_LIGHT;
-import static net.sf.nightworks.Nightworks.ITEM_MAGIC;
-import static net.sf.nightworks.Nightworks.ITEM_TRASH;
-import static net.sf.nightworks.Nightworks.ITEM_TREASURE;
-import static net.sf.nightworks.Nightworks.ITEM_WARP_STONE;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.J;
-import static net.sf.nightworks.Nightworks.LEVEL_HERO;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MAX_LEVEL;
-import static net.sf.nightworks.Nightworks.MAX_RELIGION;
-import static net.sf.nightworks.Nightworks.MAX_SKILL;
-import static net.sf.nightworks.Nightworks.MAX_STATS;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_ADAMANTITE_GOLEM;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_BEAR;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_DEMON;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_DOG;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_HUNTER;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_IRON_GOLEM;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_LESSER_GOLEM;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_MIRROR_IMAGE;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_NIGHTWALKER;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_SHADOW;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_SPECIAL_GUARD;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_SQUIRE;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_STALKER;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_STONE_GOLEM;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_SUM_SHADOW;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_UNDEAD;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_WOLF;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.N;
-import static net.sf.nightworks.Nightworks.O;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CHAOS_BLADE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_DEPUTY_BADGE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_DRAGONDAGGER;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_DRAGONLANCE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_DRAGONMACE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_DRAGONSWORD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_EYED_SWORD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_FIRE_SHIELD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_LION_SHIELD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAGIC_JAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_PLATE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_PORTAL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_POTION_GOLDEN;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_POTION_SILVER;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_POTION_SWIRLING;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_POTION_VIAL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RANGER_STAFF;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_BADGE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_SHIELD1;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_SHIELD2;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_SHIELD3;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_SHIELD4;
-import static net.sf.nightworks.Nightworks.PK_MIN_LEVEL;
-import static net.sf.nightworks.Nightworks.PLR_BOUGHT_PET;
-import static net.sf.nightworks.Nightworks.PLR_CANINDUCT;
-import static net.sf.nightworks.Nightworks.PLR_NOSUMMON;
-import static net.sf.nightworks.Nightworks.PLR_NO_EXP;
-import static net.sf.nightworks.Nightworks.PLR_VAMPIRE;
-import static net.sf.nightworks.Nightworks.PLR_WANTED;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.RES_ENERGY;
-import static net.sf.nightworks.Nightworks.RES_MAGIC;
-import static net.sf.nightworks.Nightworks.RES_NEGATIVE;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_LAW;
-import static net.sf.nightworks.Nightworks.ROOM_NOSUMMON;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MOB;
-import static net.sf.nightworks.Nightworks.ROOM_NO_RECALL;
-import static net.sf.nightworks.Nightworks.ROOM_PRIVATE;
-import static net.sf.nightworks.Nightworks.ROOM_SAFE;
-import static net.sf.nightworks.Nightworks.ROOM_SOLITARY;
-import static net.sf.nightworks.Nightworks.SECT_AIR;
-import static net.sf.nightworks.Nightworks.SECT_CITY;
-import static net.sf.nightworks.Nightworks.SECT_DESERT;
-import static net.sf.nightworks.Nightworks.SECT_FIELD;
-import static net.sf.nightworks.Nightworks.SECT_FOREST;
-import static net.sf.nightworks.Nightworks.SECT_HILLS;
-import static net.sf.nightworks.Nightworks.SECT_INSIDE;
-import static net.sf.nightworks.Nightworks.SECT_MOUNTAIN;
-import static net.sf.nightworks.Nightworks.SECT_WATER_NOSWIM;
-import static net.sf.nightworks.Nightworks.SECT_WATER_SWIM;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SIZE_GARGANTUAN;
-import static net.sf.nightworks.Nightworks.SKY_RAINING;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.TARGET_CHAR;
-import static net.sf.nightworks.Nightworks.TARGET_OBJ;
-import static net.sf.nightworks.Nightworks.TARGET_ROOM;
-import static net.sf.nightworks.Nightworks.TO_ACT_FLAG;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_ALL;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_IMMUNE;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_OBJECT;
-import static net.sf.nightworks.Nightworks.TO_RACE;
-import static net.sf.nightworks.Nightworks.TO_RESIST;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_ROOM_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_ROOM_CONST;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.TO_WEAPON;
-import static net.sf.nightworks.Nightworks.U;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.V;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAMING;
-import static net.sf.nightworks.Nightworks.WEAPON_FROST;
-import static net.sf.nightworks.Nightworks.WEAPON_HOLY;
-import static net.sf.nightworks.Nightworks.WEAPON_SHARP;
-import static net.sf.nightworks.Nightworks.WEAPON_SHOCKING;
-import static net.sf.nightworks.Nightworks.WEAPON_VAMPIRIC;
-import static net.sf.nightworks.Nightworks.WEAPON_VORPAL;
-import static net.sf.nightworks.Nightworks.WEAR_NECK;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.sprintf;
-import static net.sf.nightworks.Skill.gsn_black_death;
-import static net.sf.nightworks.Skill.gsn_bless;
-import static net.sf.nightworks.Skill.gsn_blindness;
-import static net.sf.nightworks.Skill.gsn_charm_person;
-import static net.sf.nightworks.Skill.gsn_confuse;
-import static net.sf.nightworks.Skill.gsn_cursed_lands;
-import static net.sf.nightworks.Skill.gsn_deadly_venom;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_entangle;
-import static net.sf.nightworks.Skill.gsn_fear;
-import static net.sf.nightworks.Skill.gsn_fire_shield;
-import static net.sf.nightworks.Skill.gsn_lethargic_mist;
-import static net.sf.nightworks.Skill.gsn_mend;
-import static net.sf.nightworks.Skill.gsn_mirror;
-import static net.sf.nightworks.Skill.gsn_mysterious_dream;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_protection_cold;
-import static net.sf.nightworks.Skill.gsn_protection_heat;
-import static net.sf.nightworks.Skill.gsn_weaken;
-import static net.sf.nightworks.Skill.gsn_witch_curse;
-import static net.sf.nightworks.Skill.lookupSkill;
+import static net.sf.nightworks.Magic.*;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
@@ -1108,7 +761,7 @@ class Magic2 {
             af.duration = 5 + level / 5;
             af.bitvector = 0;
 
-            af.modifier = 0 - (get_curr_stat(victim, STAT_DEX) - 4);
+            af.modifier = -(get_curr_stat(victim, STAT_DEX) - 4);
             af.location = APPLY_DEX;
             affect_to_char(victim, af);
 
@@ -1755,19 +1408,19 @@ class Magic2 {
 
         if (ch.level <= 10) {
             blade.value[2] = 2;
-        } else if (ch.level > 10 && ch.level <= 20) {
+        } else if (ch.level <= 20) {
             blade.value[2] = 3;
-        } else if (ch.level > 20 && ch.level <= 30) {
+        } else if (ch.level <= 30) {
             blade.value[2] = 4;
-        } else if (ch.level > 30 && ch.level <= 40) {
+        } else if (ch.level <= 40) {
             blade.value[2] = 5;
-        } else if (ch.level > 40 && ch.level <= 50) {
+        } else if (ch.level <= 50) {
             blade.value[2] = 6;
-        } else if (ch.level > 50 && ch.level <= 60) {
+        } else if (ch.level <= 60) {
             blade.value[2] = 7;
-        } else if (ch.level > 60 && ch.level <= 70) {
+        } else if (ch.level <= 70) {
             blade.value[2] = 9;
-        } else if (ch.level > 70 && ch.level <= 80) {
+        } else if (ch.level <= 80) {
             blade.value[2] = 11;
         } else {
             blade.value[2] = 12;
@@ -2163,33 +1816,17 @@ class Magic2 {
                 spell = Skill.gsn_word_of_recall;
             }
         } else if (obj.item_type == ITEM_TREASURE) {
-            switch (number_bits(3)) {
-                case 0:
-                    spell = Skill.gsn_cure_critical;
-                    break;
-                case 1:
-                    spell = Skill.gsn_haste;
-                    break;
-                case 2:
-                    spell = Skill.gsn_frenzy;
-                    break;
-                case 3:
-                    spell = Skill.gsn_create_spring;
-                    break;
-                case 4:
-                    spell = Skill.gsn_holy_word;
-                    break;
-                case 5:
-                    spell = Skill.gsn_invis;
-                    break;
-                case 6:
-                    spell = Skill.gsn_cure_light;
-                    break;
-                case 7:
-                    spell = Skill.gsn_cure_serious;
-                    break;
-
-            }
+            spell = switch (number_bits(3)) {
+                case 0 -> Skill.gsn_cure_critical;
+                case 1 -> Skill.gsn_haste;
+                case 2 -> Skill.gsn_frenzy;
+                case 3 -> Skill.gsn_create_spring;
+                case 4 -> Skill.gsn_holy_word;
+                case 5 -> Skill.gsn_invis;
+                case 6 -> Skill.gsn_cure_light;
+                case 7 -> Skill.gsn_cure_serious;
+                default -> spell;
+            };
         } else {
             if (number_percent() < 20) {
                 spell = Skill.gsn_detect_magic;
@@ -2294,7 +1931,7 @@ class Magic2 {
         for (badge = ch.carrying; badge != null;
              badge = obj_next) {
             obj_next = badge.next_content;
-            if (badge.pIndexData.vnum == OBJ_VNUM_DEPUTY_BADGE || badge.pIndexData.vnum == OBJ_VNUM_RULER_BADGE) {
+            if (badge.pIndexData.vnum == OBJ_VNUM_DEPUTY_BADGE) {
                 act("Your $p vanishes.", ch, badge, null, TO_CHAR);
                 obj_from_char(badge);
                 extract_obj(badge);
@@ -2351,8 +1988,7 @@ class Magic2 {
         for (badge = victim.carrying; badge != null;
              badge = obj_next) {
             obj_next = badge.next_content;
-            if (badge.pIndexData.vnum == OBJ_VNUM_DEPUTY_BADGE
-                    || badge.pIndexData.vnum == OBJ_VNUM_RULER_BADGE) {
+            if (badge.pIndexData.vnum == OBJ_VNUM_DEPUTY_BADGE) {
                 act("Your $p vanishes.", ch, badge, null, TO_CHAR);
                 act("$n's $p vanishes.", ch, badge, null, TO_ROOM);
 
@@ -2447,7 +2083,7 @@ class Magic2 {
             af.bitvector = 0;
             affect_to_char(vch, af);
 
-            af.modifier = 0 - level / 8;
+            af.modifier = -level / 8;
             af.location = APPLY_SAVING_SPELL;
             affect_to_char(vch, af);
 
@@ -3248,13 +2884,13 @@ class Magic2 {
             String argument = obj.short_descr;
             StringBuilder argb = new StringBuilder();
             StringBuilder buf3 = new StringBuilder();
-            while (argument.length() != 0) {
+            while (!argument.isEmpty()) {
                 argb.setLength(0);
                 argument = one_argument(argument, argb);
                 String arg = argb.toString();
                 if (!(!str_cmp(arg, "The") || !str_cmp(arg, "undead") || !str_cmp(arg, "body") ||
                         !str_cmp(arg, "corpse") || !str_cmp(arg, "of"))) {
-                    if (buf3.length() == 0) {
+                    if (buf3.isEmpty()) {
                         buf3.append(arg);
                     } else {
                         buf3.append(" ");
@@ -3489,7 +3125,7 @@ class Magic2 {
             affect_to_char(gch, af);
 
             af.location = APPLY_SAVING_SPELL;
-            af.modifier = 0 - level / 12;
+            af.modifier = -level / 12;
             affect_to_char(gch, af);
 
             send_to_char("You feel inspired!\n", gch);
@@ -3702,7 +3338,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         int i;
         StringBuilder arg = new StringBuilder();
         target_name = one_argument(target_name, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Whom do you want to have killed.\n", ch);
             return;
         }
@@ -4176,7 +3812,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("Now he got the path to death.\n", ch);
     }
 
-    private static final int rev_dir[] = {2, 3, 0, 1, 5, 4};
+    private static final int[] rev_dir = {2, 3, 0, 1, 5, 4};
 
     static void spell_knock(Skill sn, CHAR_DATA ch) {
         int chance;
@@ -4185,7 +3821,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         StringBuilder arg = new StringBuilder();
         target_name = one_argument(target_name, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Knock which door or direction.\n", ch);
             return;
         }
@@ -4596,19 +4232,17 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        if (obj.item_type == ITEM_WEAPON) {
-            if (IS_WEAPON_STAT(obj, WEAPON_FLAMING)
-                    || IS_WEAPON_STAT(obj, WEAPON_FROST)
-                    || IS_WEAPON_STAT(obj, WEAPON_VAMPIRIC)
-                    || IS_WEAPON_STAT(obj, WEAPON_SHARP)
-                    || IS_WEAPON_STAT(obj, WEAPON_VORPAL)
-                    || IS_WEAPON_STAT(obj, WEAPON_SHOCKING)
-                    || IS_WEAPON_STAT(obj, WEAPON_HOLY)
-                    || IS_OBJ_STAT(obj, ITEM_BLESS)
-                    || IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
-                act("You can't seem to bless $p.", ch, obj, null, TO_CHAR);
-                return;
-            }
+        if (IS_WEAPON_STAT(obj, WEAPON_FLAMING)
+                || IS_WEAPON_STAT(obj, WEAPON_FROST)
+                || IS_WEAPON_STAT(obj, WEAPON_VAMPIRIC)
+                || IS_WEAPON_STAT(obj, WEAPON_SHARP)
+                || IS_WEAPON_STAT(obj, WEAPON_VORPAL)
+                || IS_WEAPON_STAT(obj, WEAPON_SHOCKING)
+                || IS_WEAPON_STAT(obj, WEAPON_HOLY)
+                || IS_OBJ_STAT(obj, ITEM_BLESS)
+                || IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
+            act("You can't seem to bless $p.", ch, obj, null, TO_CHAR);
+            return;
         }
         if (IS_WEAPON_STAT(obj, WEAPON_HOLY)) {
             act("$p is already blessed for holy attacks.", ch, obj, null, TO_CHAR);
@@ -6211,13 +5845,13 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             String argument = obj.short_descr;
             StringBuilder buf3 = new StringBuilder();
             StringBuilder argb = new StringBuilder();
-            while (argument.length() != 0) {
+            while (!argument.isEmpty()) {
                 argb.setLength(0);
                 argument = one_argument(argument, argb);
                 String arg = argb.toString();
                 if (!(!str_cmp(arg, "The") || !str_cmp(arg, "undead") || !str_cmp(arg, "body") ||
                         !str_cmp(arg, "corpse") || !str_cmp(arg, "of"))) {
-                    if (buf3.length() == 0) {
+                    if (buf3.isEmpty()) {
                         buf3.append(arg);
                     } else {
                         buf3.append(" ").append(arg);

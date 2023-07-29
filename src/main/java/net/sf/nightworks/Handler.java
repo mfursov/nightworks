@@ -603,9 +603,9 @@ class Handler {
 
         return IS_SET(ch.off_flags, ASSIST_ALIGN)
                 && !IS_SET(ch.act, ACT_NOALIGN) && !IS_SET(victim.act, ACT_NOALIGN)
-                && ((IS_GOOD(ch) && IS_GOOD(victim))
-                || (IS_EVIL(ch) && IS_EVIL(victim))
-                || (IS_NEUTRAL(ch) && IS_NEUTRAL(victim)));
+                && (IS_GOOD(ch) && IS_GOOD(victim)
+                || IS_EVIL(ch) && IS_EVIL(victim)
+                || IS_NEUTRAL(ch) && IS_NEUTRAL(victim));
 
     }
 
@@ -822,42 +822,22 @@ class Handler {
     static int floating_time(OBJ_DATA obj) {
         int ftime = 0;
         switch (obj.item_type) {
-            default:
-                break;
-            case ITEM_KEY:
-                ftime = 1;
-                break;
-            case ITEM_ARMOR:
-                ftime = 2;
-                break;
-            case ITEM_TREASURE:
-                ftime = 2;
-                break;
-            case ITEM_PILL:
-                ftime = 2;
-                break;
-            case ITEM_POTION:
-                ftime = 3;
-                break;
-            case ITEM_TRASH:
-                ftime = 3;
-                break;
-            case ITEM_FOOD:
-                ftime = 4;
-                break;
-            case ITEM_CONTAINER:
-                ftime = 5;
-                break;
-            case ITEM_CORPSE_NPC:
-                ftime = 10;
-                break;
-            case ITEM_CORPSE_PC:
-                ftime = 10;
-                break;
+            default -> {
+            }
+            case ITEM_KEY -> ftime = 1;
+            case ITEM_ARMOR -> ftime = 2;
+            case ITEM_TREASURE -> ftime = 2;
+            case ITEM_PILL -> ftime = 2;
+            case ITEM_POTION -> ftime = 3;
+            case ITEM_TRASH -> ftime = 3;
+            case ITEM_FOOD -> ftime = 4;
+            case ITEM_CONTAINER -> ftime = 5;
+            case ITEM_CORPSE_NPC -> ftime = 10;
+            case ITEM_CORPSE_PC -> ftime = 10;
         }
         ftime = number_fuzzy(ftime);
 
-        return (ftime < 0 ? 0 : ftime);
+        return Math.max(ftime, 0);
     }
 
     static int attack_lookup(String name) {
@@ -919,59 +899,26 @@ class Handler {
         /* set bits to check -- VULN etc. must ALL be the same or this will fail */
         int bit;
         switch (dam_type) {
-            case (DAM_BASH):
-                bit = IMM_BASH;
-                break;
-            case (DAM_PIERCE):
-                bit = IMM_PIERCE;
-                break;
-            case (DAM_SLASH):
-                bit = IMM_SLASH;
-                break;
-            case (DAM_FIRE):
-                bit = IMM_FIRE;
-                break;
-            case (DAM_COLD):
-                bit = IMM_COLD;
-                break;
-            case (DAM_LIGHTNING):
-                bit = IMM_LIGHTNING;
-                break;
-            case (DAM_ACID):
-                bit = IMM_ACID;
-                break;
-            case (DAM_POISON):
-                bit = IMM_POISON;
-                break;
-            case (DAM_NEGATIVE):
-                bit = IMM_NEGATIVE;
-                break;
-            case (DAM_HOLY):
-                bit = IMM_HOLY;
-                break;
-            case (DAM_ENERGY):
-                bit = IMM_ENERGY;
-                break;
-            case (DAM_MENTAL):
-                bit = IMM_MENTAL;
-                break;
-            case (DAM_DISEASE):
-                bit = IMM_DISEASE;
-                break;
-            case (DAM_DROWNING):
-                bit = IMM_DROWNING;
-                break;
-            case (DAM_LIGHT):
-                bit = IMM_LIGHT;
-                break;
-            case (DAM_CHARM):
-                bit = IMM_CHARM;
-                break;
-            case (DAM_SOUND):
-                bit = IMM_SOUND;
-                break;
-            default:
+            case DAM_BASH -> bit = IMM_BASH;
+            case DAM_PIERCE -> bit = IMM_PIERCE;
+            case DAM_SLASH -> bit = IMM_SLASH;
+            case DAM_FIRE -> bit = IMM_FIRE;
+            case DAM_COLD -> bit = IMM_COLD;
+            case DAM_LIGHTNING -> bit = IMM_LIGHTNING;
+            case DAM_ACID -> bit = IMM_ACID;
+            case DAM_POISON -> bit = IMM_POISON;
+            case DAM_NEGATIVE -> bit = IMM_NEGATIVE;
+            case DAM_HOLY -> bit = IMM_HOLY;
+            case DAM_ENERGY -> bit = IMM_ENERGY;
+            case DAM_MENTAL -> bit = IMM_MENTAL;
+            case DAM_DISEASE -> bit = IMM_DISEASE;
+            case DAM_DROWNING -> bit = IMM_DROWNING;
+            case DAM_LIGHT -> bit = IMM_LIGHT;
+            case DAM_CHARM -> bit = IMM_CHARM;
+            case DAM_SOUND -> bit = IMM_SOUND;
+            default -> {
                 return def;
+            }
         }
 
         if (IS_SET(ch.imm_flags, bit)) {
@@ -1001,12 +948,7 @@ class Handler {
      */
 
     static boolean is_old_mob(CHAR_DATA ch) {
-        if (ch.pIndexData == null) {
-            return false;
-        } else if (ch.pIndexData.new_format) {
-            return false;
-        }
-        return true;
+        return ch.pIndexData != null && !ch.pIndexData.new_format;
     }
 
     /**
@@ -1030,8 +972,8 @@ class Handler {
                 skill = 40 + 2 * ch.level;
             } else if (sn == gsn_sneak || sn == gsn_hide) {
                 skill = ch.level + 20;
-            } else if ((sn == gsn_dodge && IS_SET(ch.off_flags, OFF_DODGE))
-                    || (sn == gsn_parry && IS_SET(ch.off_flags, OFF_PARRY))) {
+            } else if (sn == gsn_dodge && IS_SET(ch.off_flags, OFF_DODGE)
+                    || sn == gsn_parry && IS_SET(ch.off_flags, OFF_PARRY)) {
                 skill = ch.level * 2;
             } else if (sn == gsn_shield_block) {
                 skill = 10 + 2 * ch.level;
@@ -1098,7 +1040,7 @@ class Handler {
             skill = 9 * skill / 10;
         }
 
-        if (ch.hit < (ch.max_hit * 0.6)) {
+        if (ch.hit < ch.max_hit * 0.6) {
             skill = 9 * skill / 10;
         }
 
@@ -1123,44 +1065,20 @@ class Handler {
         if (wield == null || wield.item_type != ITEM_WEAPON) {
             sn = gsn_hand_to_hand;
         } else {
-            switch (wield.value[0]) {
-                default:
-                    sn = null;
-                    break;
-                case WEAPON_SWORD:
-                    sn = gsn_sword;
-                    break;
-                case WEAPON_DAGGER:
-                    sn = gsn_dagger;
-                    break;
-                case WEAPON_SPEAR:
-                    sn = gsn_spear;
-                    break;
-                case WEAPON_MACE:
-                    sn = gsn_mace;
-                    break;
-                case WEAPON_AXE:
-                    sn = gsn_axe;
-                    break;
-                case WEAPON_FLAIL:
-                    sn = gsn_flail;
-                    break;
-                case WEAPON_WHIP:
-                    sn = gsn_whip;
-                    break;
-                case WEAPON_POLEARM:
-                    sn = gsn_polearm;
-                    break;
-                case WEAPON_BOW:
-                    sn = gsn_bow;
-                    break;
-                case WEAPON_ARROW:
-                    sn = gsn_arrow;
-                    break;
-                case WEAPON_LANCE:
-                    sn = gsn_lance;
-                    break;
-            }
+            sn = switch (wield.value[0]) {
+                default -> null;
+                case WEAPON_SWORD -> gsn_sword;
+                case WEAPON_DAGGER -> gsn_dagger;
+                case WEAPON_SPEAR -> gsn_spear;
+                case WEAPON_MACE -> gsn_mace;
+                case WEAPON_AXE -> gsn_axe;
+                case WEAPON_FLAIL -> gsn_flail;
+                case WEAPON_WHIP -> gsn_whip;
+                case WEAPON_POLEARM -> gsn_polearm;
+                case WEAPON_BOW -> gsn_bow;
+                case WEAPON_ARROW -> gsn_arrow;
+                case WEAPON_LANCE -> gsn_lance;
+            };
         }
         return sn;
     }
@@ -1185,7 +1103,7 @@ class Handler {
             }
         }
 
-        if (ch.hit < (ch.max_hit * 0.6)) {
+        if (ch.hit < ch.max_hit * 0.6) {
             skill = 9 * skill / 10;
         }
 
@@ -1298,8 +1216,8 @@ class Handler {
             return 25;
         }
 
-        max = (20 + ORG_RACE(ch).pcRace.stats[stat] + /* ORG_RACE && RACE serdar*/
-                ch.clazz.stats[stat]);
+        max = 20 + ORG_RACE(ch).pcRace.stats[stat] + /* ORG_RACE && RACE serdar*/
+                ch.clazz.stats[stat];
 
         return UMIN(max, 25);
     }
@@ -1316,8 +1234,8 @@ class Handler {
             return 25;
         }
 
-        max = (20 + ORG_RACE(ch).pcRace.stats[stat] +
-                ch.clazz.stats[stat]);
+        max = 20 + ORG_RACE(ch).pcRace.stats[stat] +
+                ch.clazz.stats[stat];
 
         return UMIN(max, 25);
     }
@@ -1365,7 +1283,7 @@ class Handler {
             part.setLength(0);
             str = one_argument(str, part);
 
-            if (part.length() == 0) {
+            if (part.isEmpty()) {
                 return false;
             }
 
@@ -1376,7 +1294,7 @@ class Handler {
             for (; ; )  /* start parsing namelist */ {
                 part.setLength(0);
                 list = one_argument(list, part);
-                if (part.length() == 0)  /* this name was not found */ {
+                if (part.isEmpty())  /* this name was not found */ {
                     return false;
                 }
 
@@ -1431,25 +1349,17 @@ class Handler {
 
         if (fAdd) {
             switch (paf.where) {
-                case TO_AFFECTS:
+                case TO_AFFECTS -> {
                     ch.affected_by = SET_BIT(ch.affected_by, paf.bitvector);
                     if (IS_SET(paf.bitvector, AFF_FLYING) && !IS_NPC(ch)) {
                         ch.act = REMOVE_BIT(ch.act, PLR_CHANGED_AFF);
                     }
-                    break;
-                case TO_IMMUNE:
-                    ch.imm_flags = SET_BIT(ch.imm_flags, paf.bitvector);
-                    break;
-                case TO_RESIST:
-                    ch.res_flags = SET_BIT(ch.res_flags, paf.bitvector);
-                    break;
-                case TO_ACT_FLAG:
-                    ch.act = SET_BIT(ch.act, paf.bitvector);
-                    break;
-                case TO_VULN:
-                    ch.vuln_flags = SET_BIT(ch.vuln_flags, paf.bitvector);
-                    break;
-                case TO_RACE:
+                }
+                case TO_IMMUNE -> ch.imm_flags = SET_BIT(ch.imm_flags, paf.bitvector);
+                case TO_RESIST -> ch.res_flags = SET_BIT(ch.res_flags, paf.bitvector);
+                case TO_ACT_FLAG -> ch.act = SET_BIT(ch.act, paf.bitvector);
+                case TO_VULN -> ch.vuln_flags = SET_BIT(ch.vuln_flags, paf.bitvector);
+                case TO_RACE -> {
                     ch.race = (Race) paf.objModifier;
                     ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
                     ch.affected_by = SET_BIT(ch.affected_by, ch.race.aff);
@@ -1461,26 +1371,16 @@ class Handler {
                     ch.vuln_flags = SET_BIT(ch.vuln_flags, ch.race.vuln);
                     ch.form = ch.race.form;
                     ch.parts = ch.race.parts;
-                    break;
+                }
             }
         } else {
             switch (paf.where) {
-                case TO_AFFECTS:
-                    ch.affected_by = REMOVE_BIT(ch.affected_by, paf.bitvector);
-                    break;
-                case TO_IMMUNE:
-                    ch.imm_flags = REMOVE_BIT(ch.imm_flags, paf.bitvector);
-                    break;
-                case TO_RESIST:
-                    ch.res_flags = REMOVE_BIT(ch.res_flags, paf.bitvector);
-                    break;
-                case TO_ACT_FLAG:
-                    ch.act = REMOVE_BIT(ch.act, paf.bitvector);
-                    break;
-                case TO_VULN:
-                    ch.vuln_flags = REMOVE_BIT(ch.vuln_flags, paf.bitvector);
-                    break;
-                case TO_RACE:
+                case TO_AFFECTS -> ch.affected_by = REMOVE_BIT(ch.affected_by, paf.bitvector);
+                case TO_IMMUNE -> ch.imm_flags = REMOVE_BIT(ch.imm_flags, paf.bitvector);
+                case TO_RESIST -> ch.res_flags = REMOVE_BIT(ch.res_flags, paf.bitvector);
+                case TO_ACT_FLAG -> ch.act = REMOVE_BIT(ch.act, paf.bitvector);
+                case TO_VULN -> ch.vuln_flags = REMOVE_BIT(ch.vuln_flags, paf.bitvector);
+                case TO_RACE -> {
                     ch.affected_by = REMOVE_BIT(ch.affected_by, ch.race.aff);
                     ch.affected_by = SET_BIT(ch.affected_by, ORG_RACE(ch).aff);
                     ch.imm_flags = REMOVE_BIT(ch.imm_flags, ch.race.imm);
@@ -1492,91 +1392,55 @@ class Handler {
                     ch.form = ORG_RACE(ch).form;
                     ch.parts = ORG_RACE(ch).parts;
                     ch.race = ORG_RACE(ch);
-                    break;
+                }
             }
-            mod = 0 - mod;
+            mod = -mod;
         }
 
         switch (paf.location) {
-            default:
+            default -> {
                 bug("Affect_modify: unknown location %d.", paf.location);
                 return;
-
-            case APPLY_NONE:
-                break;
-            case APPLY_STR:
-                ch.mod_stat[STAT_STR] += mod;
-                break;
-            case APPLY_DEX:
-                ch.mod_stat[STAT_DEX] += mod;
-                break;
-            case APPLY_INT:
-                ch.mod_stat[STAT_INT] += mod;
-                break;
-            case APPLY_WIS:
-                ch.mod_stat[STAT_WIS] += mod;
-                break;
-            case APPLY_CON:
-                ch.mod_stat[STAT_CON] += mod;
-                break;
-            case APPLY_CHA:
-                ch.mod_stat[STAT_CHA] += mod;
-                break;
-            case APPLY_CLASS:
-                break;
-            case APPLY_LEVEL:
-                break;
-            case APPLY_AGE:
-                ch.played += age_to_num(mod);
-                break;
-            case APPLY_HEIGHT:
-                break;
-            case APPLY_WEIGHT:
-                break;
-            case APPLY_MANA:
-                ch.max_mana += mod;
-                break;
-            case APPLY_HIT:
-                ch.max_hit += mod;
-                break;
-            case APPLY_MOVE:
-                ch.max_move += mod;
-                break;
-            case APPLY_GOLD:
-                break;
-            case APPLY_EXP:
-                break;
-            case APPLY_AC:
+            }
+            case APPLY_NONE -> {
+            }
+            case APPLY_STR -> ch.mod_stat[STAT_STR] += mod;
+            case APPLY_DEX -> ch.mod_stat[STAT_DEX] += mod;
+            case APPLY_INT -> ch.mod_stat[STAT_INT] += mod;
+            case APPLY_WIS -> ch.mod_stat[STAT_WIS] += mod;
+            case APPLY_CON -> ch.mod_stat[STAT_CON] += mod;
+            case APPLY_CHA -> ch.mod_stat[STAT_CHA] += mod;
+            case APPLY_CLASS -> {
+            }
+            case APPLY_LEVEL -> {
+            }
+            case APPLY_AGE -> ch.played += age_to_num(mod);
+            case APPLY_HEIGHT -> {
+            }
+            case APPLY_WEIGHT -> {
+            }
+            case APPLY_MANA -> ch.max_mana += mod;
+            case APPLY_HIT -> ch.max_hit += mod;
+            case APPLY_MOVE -> ch.max_move += mod;
+            case APPLY_GOLD -> {
+            }
+            case APPLY_EXP -> {
+            }
+            case APPLY_AC -> {
                 for (i = 0; i < 4; i++) {
                     ch.armor[i] += mod;
                 }
-                break;
-            case APPLY_HITROLL:
-                ch.hitroll += mod;
-                break;
-            case APPLY_DAMROLL:
-                ch.damroll += mod;
-                break;
-            case APPLY_SIZE:
-                ch.size += mod;
-                break;
-            case APPLY_SAVES:
-                ch.saving_throw += mod;
-                break;
-            case APPLY_SAVING_ROD:
-                ch.saving_throw += mod;
-                break;
-            case APPLY_SAVING_PETRI:
-                ch.saving_throw += mod;
-                break;
-            case APPLY_SAVING_BREATH:
-                ch.saving_throw += mod;
-                break;
-            case APPLY_SAVING_SPELL:
-                ch.saving_throw += mod;
-                break;
-            case APPLY_SPELL_AFFECT:
-                break;
+            }
+            case APPLY_HITROLL -> ch.hitroll += mod;
+            case APPLY_DAMROLL -> ch.damroll += mod;
+            case APPLY_SIZE -> ch.size += mod;
+            case APPLY_SAVES -> ch.saving_throw += mod;
+            case APPLY_SAVING_ROD -> ch.saving_throw += mod;
+            case APPLY_SAVING_PETRI -> ch.saving_throw += mod;
+            case APPLY_SAVING_BREATH -> ch.saving_throw += mod;
+            case APPLY_SAVING_SPELL -> ch.saving_throw += mod;
+            case APPLY_SPELL_AFFECT -> {
+            }
         }
 
         /*
@@ -1652,22 +1516,12 @@ class Handler {
         for (paf = ch.affected; paf != null; paf = paf.next) {
             if (paf.where == where && paf.bitvector == vector) {
                 switch (where) {
-                    case TO_AFFECTS:
-                        ch.affected_by = SET_BIT(ch.affected_by, vector);
-                        break;
-                    case TO_IMMUNE:
-                        ch.imm_flags = SET_BIT(ch.imm_flags, vector);
-                        break;
-                    case TO_RESIST:
-                        ch.res_flags = SET_BIT(ch.res_flags, vector);
-                        break;
-                    case TO_ACT_FLAG:
-                        ch.act = SET_BIT(ch.act, paf.bitvector);
-                        break;
-                    case TO_VULN:
-                        ch.vuln_flags = SET_BIT(ch.vuln_flags, vector);
-                        break;
-                    case TO_RACE:
+                    case TO_AFFECTS -> ch.affected_by = SET_BIT(ch.affected_by, vector);
+                    case TO_IMMUNE -> ch.imm_flags = SET_BIT(ch.imm_flags, vector);
+                    case TO_RESIST -> ch.res_flags = SET_BIT(ch.res_flags, vector);
+                    case TO_ACT_FLAG -> ch.act = SET_BIT(ch.act, paf.bitvector);
+                    case TO_VULN -> ch.vuln_flags = SET_BIT(ch.vuln_flags, vector);
+                    case TO_RACE -> {
                         if (ch.race == ORG_RACE(ch)) {
                             ch.race = (Race) paf.objModifier;
                             ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
@@ -1681,7 +1535,7 @@ class Handler {
                             ch.form = ch.race.form;
                             ch.parts = ch.race.parts;
                         }
-                        break;
+                    }
                 }
                 return;
             }
@@ -1695,22 +1549,12 @@ class Handler {
             for (paf = obj.affected; paf != null; paf = paf.next) {
                 if (paf.where == where && paf.bitvector == vector) {
                     switch (where) {
-                        case TO_AFFECTS:
-                            ch.affected_by = SET_BIT(ch.affected_by, vector);
-                            break;
-                        case TO_IMMUNE:
-                            ch.imm_flags = SET_BIT(ch.imm_flags, vector);
-                            break;
-                        case TO_ACT_FLAG:
-                            ch.act = SET_BIT(ch.act, paf.bitvector);
-                            break;
-                        case TO_RESIST:
-                            ch.res_flags = SET_BIT(ch.res_flags, vector);
-                            break;
-                        case TO_VULN:
-                            ch.vuln_flags = SET_BIT(ch.vuln_flags, vector);
-                            break;
-                        case TO_RACE:
+                        case TO_AFFECTS -> ch.affected_by = SET_BIT(ch.affected_by, vector);
+                        case TO_IMMUNE -> ch.imm_flags = SET_BIT(ch.imm_flags, vector);
+                        case TO_ACT_FLAG -> ch.act = SET_BIT(ch.act, paf.bitvector);
+                        case TO_RESIST -> ch.res_flags = SET_BIT(ch.res_flags, vector);
+                        case TO_VULN -> ch.vuln_flags = SET_BIT(ch.vuln_flags, vector);
+                        case TO_RACE -> {
                             if (ch.race == ORG_RACE(ch)) {
                                 ch.race = (Race) paf.objModifier;
                                 ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
@@ -1724,7 +1568,7 @@ class Handler {
                                 ch.form = ch.race.form;
                                 ch.parts = ch.race.parts;
                             }
-                            break;
+                        }
                     }
                     return;
                 }
@@ -1737,22 +1581,12 @@ class Handler {
             for (paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 if (paf.where == where && paf.bitvector == vector) {
                     switch (where) {
-                        case TO_AFFECTS:
-                            ch.affected_by = SET_BIT(ch.affected_by, vector);
-                            break;
-                        case TO_IMMUNE:
-                            ch.imm_flags = SET_BIT(ch.imm_flags, vector);
-                            break;
-                        case TO_ACT_FLAG:
-                            ch.act = SET_BIT(ch.act, paf.bitvector);
-                            break;
-                        case TO_RESIST:
-                            ch.res_flags = SET_BIT(ch.res_flags, vector);
-                            break;
-                        case TO_VULN:
-                            ch.vuln_flags = SET_BIT(ch.vuln_flags, vector);
-                            break;
-                        case TO_RACE:
+                        case TO_AFFECTS -> ch.affected_by = SET_BIT(ch.affected_by, vector);
+                        case TO_IMMUNE -> ch.imm_flags = SET_BIT(ch.imm_flags, vector);
+                        case TO_ACT_FLAG -> ch.act = SET_BIT(ch.act, paf.bitvector);
+                        case TO_RESIST -> ch.res_flags = SET_BIT(ch.res_flags, vector);
+                        case TO_VULN -> ch.vuln_flags = SET_BIT(ch.vuln_flags, vector);
+                        case TO_RACE -> {
                             if (ch.race == ORG_RACE(ch)) {
                                 ch.race = (Race) paf.objModifier;
                                 ch.affected_by = REMOVE_BIT(ch.affected_by, ORG_RACE(ch).aff);
@@ -1766,7 +1600,7 @@ class Handler {
                                 ch.form = ch.race.form;
                                 ch.parts = ch.race.parts;
                             }
-                            break;
+                        }
                     }
                     return;
                 }
@@ -1802,14 +1636,12 @@ class Handler {
         /* apply any affect vectors to the object's extra_flags */
         if (paf.bitvector != 0) {
             switch (paf.where) {
-                case TO_OBJECT:
-                    obj.extra_flags = SET_BIT(obj.extra_flags, paf.bitvector);
-                    break;
-                case TO_WEAPON:
+                case TO_OBJECT -> obj.extra_flags = SET_BIT(obj.extra_flags, paf.bitvector);
+                case TO_WEAPON -> {
                     if (obj.item_type == ITEM_WEAPON) {
                         obj.value[4] = (int) SET_BIT(obj.value[4], paf.bitvector);
                     }
-                    break;
+                }
             }
         }
     }
@@ -1865,14 +1697,12 @@ class Handler {
         /* remove flags from the object if needed */
         if (paf.bitvector != 0) {
             switch (paf.where) {
-                case TO_OBJECT:
-                    obj.extra_flags = REMOVE_BIT(obj.extra_flags, paf.bitvector);
-                    break;
-                case TO_WEAPON:
+                case TO_OBJECT -> obj.extra_flags = REMOVE_BIT(obj.extra_flags, paf.bitvector);
+                case TO_WEAPON -> {
                     if (obj.item_type == ITEM_WEAPON) {
                         obj.value[4] = (int) REMOVE_BIT(obj.value[4], paf.bitvector);
                     }
-                    break;
+                }
             }
         }
 
@@ -1939,7 +1769,7 @@ class Handler {
         AFFECT_DATA paf_old;
         for (paf_old = ch.affected; paf_old != null; paf_old = paf_old.next) {
             if (paf_old.type == paf.type) {
-                paf.level = ((paf.level += paf_old.level) / 2);
+                paf.level = (paf.level += paf_old.level) / 2;
                 paf.duration += paf_old.duration;
                 paf.modifier += paf_old.modifier;
                 affect_remove(ch, paf_old);
@@ -2066,7 +1896,7 @@ class Handler {
                     AFFECT_DATA plague = new AFFECT_DATA();
                     plague.where = TO_AFFECTS;
                     plague.type = gsn_plague;
-                    plague.level = (af.level - 1);
+                    plague.level = af.level - 1;
                     plague.duration = number_range(1, 2 * plague.level);
                     plague.location = APPLY_STR;
                     plague.modifier = -5;
@@ -2158,38 +1988,24 @@ class Handler {
             return 0;
         }
 
-        switch (iWear) {
-            case WEAR_BODY:
-                return 3 * obj.value[type];
-            case WEAR_HEAD:
-                return 2 * obj.value[type];
-            case WEAR_LEGS:
-                return 2 * obj.value[type];
-            case WEAR_FEET:
-                return obj.value[type];
-            case WEAR_HANDS:
-                return obj.value[type];
-            case WEAR_ARMS:
-                return obj.value[type];
-            case WEAR_FINGER:
-                return obj.value[type];
-            case WEAR_NECK:
-                return obj.value[type];
-            case WEAR_ABOUT:
-                return 2 * obj.value[type];
-            case WEAR_WAIST:
-                return obj.value[type];
-            case WEAR_WRIST:
-                return obj.value[type];
-            case WEAR_LEFT:
-                return obj.value[type];
-            case WEAR_RIGHT:
-                return obj.value[type];
-            case WEAR_BOTH:
-                return obj.value[type];
-        }
+        return switch (iWear) {
+            case WEAR_BODY -> 3 * obj.value[type];
+            case WEAR_HEAD -> 2 * obj.value[type];
+            case WEAR_LEGS -> 2 * obj.value[type];
+            case WEAR_FEET -> obj.value[type];
+            case WEAR_HANDS -> obj.value[type];
+            case WEAR_ARMS -> obj.value[type];
+            case WEAR_FINGER -> obj.value[type];
+            case WEAR_NECK -> obj.value[type];
+            case WEAR_ABOUT -> 2 * obj.value[type];
+            case WEAR_WAIST -> obj.value[type];
+            case WEAR_WRIST -> obj.value[type];
+            case WEAR_LEFT -> obj.value[type];
+            case WEAR_RIGHT -> obj.value[type];
+            case WEAR_BOTH -> obj.value[type];
+            default -> 0;
+        };
 
-        return 0;
     }
 
 /*
@@ -2230,9 +2046,9 @@ class Handler {
             return;
         }
 
-        if ((IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) && IS_EVIL(ch))
-                || (IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) && IS_GOOD(ch))
-                || (IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) && IS_NEUTRAL(ch))) {
+        if (IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) && IS_EVIL(ch)
+                || IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) && IS_GOOD(ch)
+                || IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) && IS_NEUTRAL(ch)) {
             /*
             * Thanks to Morgenes for the bug fix here!
             */
@@ -2249,8 +2065,8 @@ class Handler {
         }
 
         if (get_light_char(ch) == null && ch.in_room != null
-                && ((obj.item_type == ITEM_LIGHT && obj.value[2] != 0)
-                || (iWear == WEAR_HEAD && IS_OBJ_STAT(obj, ITEM_GLOW)))) {
+                && (obj.item_type == ITEM_LIGHT && obj.value[2] != 0
+                || iWear == WEAR_HEAD && IS_OBJ_STAT(obj, ITEM_GLOW))) {
             ++ch.in_room.light;
         }
 
@@ -2308,9 +2124,9 @@ class Handler {
                 if (paf.location == APPLY_SPELL_AFFECT) {
                     for (lpaf = ch.affected; lpaf != null; lpaf = lpaf_next) {
                         lpaf_next = lpaf.next;
-                        if ((lpaf.type == paf.type) &&
-                                (lpaf.level == paf.level) &&
-                                (lpaf.location == APPLY_SPELL_AFFECT)) {
+                        if (lpaf.type == paf.type &&
+                                lpaf.level == paf.level &&
+                                lpaf.location == APPLY_SPELL_AFFECT) {
                             affect_remove(ch, lpaf);
                             lpaf_next = null;
                         }
@@ -2327,9 +2143,9 @@ class Handler {
                 bug("Norm-Apply: %d", 0);
                 for (lpaf = ch.affected; lpaf != null; lpaf = lpaf_next) {
                     lpaf_next = lpaf.next;
-                    if ((lpaf.type == paf.type) &&
-                            (lpaf.level == paf.level) &&
-                            (lpaf.location == APPLY_SPELL_AFFECT)) {
+                    if (lpaf.type == paf.type &&
+                            lpaf.level == paf.level &&
+                            lpaf.location == APPLY_SPELL_AFFECT) {
                         bug("location = %d", lpaf.location);
                         bug("type = " + lpaf.type);
                         affect_remove(ch, lpaf);
@@ -2343,8 +2159,8 @@ class Handler {
         }
 
         if (get_light_char(ch) == null && ch.in_room != null
-                && ((obj.item_type == ITEM_LIGHT && obj.value[2] != 0)
-                || (old_wear == WEAR_HEAD && IS_OBJ_STAT(obj, ITEM_GLOW)))
+                && (obj.item_type == ITEM_LIGHT && obj.value[2] != 0
+                || old_wear == WEAR_HEAD && IS_OBJ_STAT(obj, ITEM_GLOW))
                 && ch.in_room.light > 0) {
             --ch.in_room.light;
         }
@@ -2760,12 +2576,12 @@ class Handler {
                 continue;
             }
 
-            if (ugly != 0 && (count + 1) == number && IS_VAMPIRE(rch)) {
+            if (ugly != 0 && count + 1 == number && IS_VAMPIRE(rch)) {
                 return rch;
             }
 
-            if ((is_affected(rch, gsn_doppelganger)
-                    && !IS_SET(ch.act, PLR_HOLYLIGHT)) ?
+            if (is_affected(rch, gsn_doppelganger)
+                    && !IS_SET(ch.act, PLR_HOLYLIGHT) ?
                     !is_name(arg, rch.doppel.name) : !is_name(arg, rch.name)) {
                 continue;
             }
@@ -2803,12 +2619,12 @@ class Handler {
                 continue;
             }
 
-            if (ugly != 0 && (count + 1) == number[0] && IS_VAMPIRE(rch)) {
+            if (ugly != 0 && count + 1 == number[0] && IS_VAMPIRE(rch)) {
                 return rch;
             }
 
-            if ((is_affected(rch, gsn_doppelganger)
-                    && !IS_SET(ch.act, PLR_HOLYLIGHT)) ?
+            if (is_affected(rch, gsn_doppelganger)
+                    && !IS_SET(ch.act, PLR_HOLYLIGHT) ?
                     !is_name(argument, rch.doppel.name) : !is_name(argument, rch.name)) {
                 continue;
             }
@@ -2908,7 +2724,7 @@ class Handler {
         String argstr = arg.toString();
         count = 0;
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
-            if (obj.wear_loc == WEAR_NONE && (can_see_obj(ch, obj)) && is_name(argstr, obj.name)) {
+            if (obj.wear_loc == WEAR_NONE && can_see_obj(ch, obj) && is_name(argstr, obj.name)) {
                 if (++count == number) {
                     return obj;
                 }
@@ -3004,7 +2820,7 @@ class Handler {
         silver = UMIN(ch.silver, cost);
 
         if (silver < cost) {
-            gold = ((cost - silver + 99) / 100);
+            gold = (cost - silver + 99) / 100;
             silver = cost - 100 * gold;
         }
 
@@ -3027,7 +2843,7 @@ class Handler {
     static OBJ_DATA create_money(int gold, int silver) {
         OBJ_DATA obj;
 
-        if (gold < 0 || silver < 0 || (gold == 0 && silver == 0)) {
+        if (gold < 0 || silver < 0 || gold == 0 && silver == 0) {
             bug("Create_money: zero or negative money.", UMIN(gold, silver));
             gold = UMAX(1, gold);
             silver = UMAX(1, silver);
@@ -3044,7 +2860,7 @@ class Handler {
             obj.short_descr = f.toString();
             obj.value[1] = gold;
             obj.cost = gold;
-            obj.weight = (gold / 5);
+            obj.weight = gold / 5;
         } else if (gold == 0) {
             obj = create_object(get_obj_index(OBJ_VNUM_SILVER_SOME), 0);
             Formatter f = new Formatter();
@@ -3052,7 +2868,7 @@ class Handler {
             obj.short_descr = f.toString();
             obj.value[0] = silver;
             obj.cost = silver;
-            obj.weight = (silver / 20);
+            obj.weight = silver / 20;
         } else {
             obj = create_object(get_obj_index(OBJ_VNUM_COINS), 0);
             Formatter f = new Formatter();
@@ -3061,7 +2877,7 @@ class Handler {
             obj.value[0] = silver;
             obj.value[1] = gold;
             obj.cost = 100 * gold + silver;
-            obj.weight = (gold / 5 + silver / 20);
+            obj.weight = gold / 5 + silver / 20;
         }
 
         return obj;
@@ -3242,7 +3058,7 @@ class Handler {
 
     static boolean can_see(CHAR_DATA ch, CHAR_DATA victim) {
 /* RT changed so that WIZ_INVIS has levels */
-        assert (ch != null && victim != null);
+        assert ch != null && victim != null;
 
         if (ch == victim) {
             return true;
@@ -3258,8 +3074,8 @@ class Handler {
             return false;
         }
 
-        if ((!IS_NPC(ch) && IS_SET(ch.act, PLR_HOLYLIGHT))
-                || (IS_NPC(ch) && IS_IMMORTAL(ch))) {
+        if (!IS_NPC(ch) && IS_SET(ch.act, PLR_HOLYLIGHT)
+                || IS_NPC(ch) && IS_IMMORTAL(ch)) {
             return true;
         }
 
@@ -3387,62 +3203,90 @@ class Handler {
 
     static String item_type_name(OBJ_DATA obj) {
         switch (obj.item_type) {
-            case ITEM_LIGHT:
+            case ITEM_LIGHT -> {
                 return "light";
-            case ITEM_SCROLL:
+            }
+            case ITEM_SCROLL -> {
                 return "scroll";
-            case ITEM_WAND:
+            }
+            case ITEM_WAND -> {
                 return "wand";
-            case ITEM_STAFF:
+            }
+            case ITEM_STAFF -> {
                 return "staff";
-            case ITEM_WEAPON:
+            }
+            case ITEM_WEAPON -> {
                 return "weapon";
-            case ITEM_TREASURE:
+            }
+            case ITEM_TREASURE -> {
                 return "treasure";
-            case ITEM_ARMOR:
+            }
+            case ITEM_ARMOR -> {
                 return "armor";
-            case ITEM_CLOTHING:
+            }
+            case ITEM_CLOTHING -> {
                 return "clothing";
-            case ITEM_POTION:
+            }
+            case ITEM_POTION -> {
                 return "potion";
-            case ITEM_FURNITURE:
+            }
+            case ITEM_FURNITURE -> {
                 return "furniture";
-            case ITEM_TRASH:
+            }
+            case ITEM_TRASH -> {
                 return "trash";
-            case ITEM_CONTAINER:
+            }
+            case ITEM_CONTAINER -> {
                 return "container";
-            case ITEM_DRINK_CON:
+            }
+            case ITEM_DRINK_CON -> {
                 return "drink container";
-            case ITEM_KEY:
+            }
+            case ITEM_KEY -> {
                 return "key";
-            case ITEM_FOOD:
+            }
+            case ITEM_FOOD -> {
                 return "food";
-            case ITEM_MONEY:
+            }
+            case ITEM_MONEY -> {
                 return "money";
-            case ITEM_BOAT:
+            }
+            case ITEM_BOAT -> {
                 return "boat";
-            case ITEM_CORPSE_NPC:
+            }
+            case ITEM_CORPSE_NPC -> {
                 return "npc corpse";
-            case ITEM_CORPSE_PC:
+            }
+            case ITEM_CORPSE_PC -> {
                 return "pc corpse";
-            case ITEM_FOUNTAIN:
+            }
+            case ITEM_FOUNTAIN -> {
                 return "fountain";
-            case ITEM_PILL:
+            }
+            case ITEM_PILL -> {
                 return "pill";
-            case ITEM_MAP:
+            }
+            case ITEM_MAP -> {
                 return "map";
-            case ITEM_PORTAL:
+            }
+            case ITEM_PORTAL -> {
                 return "portal";
-            case ITEM_WARP_STONE:
+            }
+            case ITEM_WARP_STONE -> {
                 return "warp stone";
-            case ITEM_GEM:
+            }
+            case ITEM_GEM -> {
                 return "gem";
-            case ITEM_JEWELRY:
+            }
+            case ITEM_JEWELRY -> {
                 return "jewelry";
-            case ITEM_JUKEBOX:
+            }
+            case ITEM_JUKEBOX -> {
                 return "juke box";
-            case ITEM_TATTOO:
+            }
+            case ITEM_TATTOO -> {
                 return "tattoo";
+            }
         }
 
         bug("Item_type_name: unknown type %d.", obj.item_type);
@@ -3455,56 +3299,81 @@ class Handler {
 
     static String affect_loc_name(int location) {
         switch (location) {
-            case APPLY_NONE:
+            case APPLY_NONE -> {
                 return "none";
-            case APPLY_STR:
+            }
+            case APPLY_STR -> {
                 return "strength";
-            case APPLY_DEX:
+            }
+            case APPLY_DEX -> {
                 return "dexterity";
-            case APPLY_INT:
+            }
+            case APPLY_INT -> {
                 return "intelligence";
-            case APPLY_WIS:
+            }
+            case APPLY_WIS -> {
                 return "wisdom";
-            case APPLY_CON:
+            }
+            case APPLY_CON -> {
                 return "constitution";
-            case APPLY_CHA:
+            }
+            case APPLY_CHA -> {
                 return "charisma";
-            case APPLY_CLASS:
+            }
+            case APPLY_CLASS -> {
                 return "class";
-            case APPLY_LEVEL:
+            }
+            case APPLY_LEVEL -> {
                 return "level";
-            case APPLY_AGE:
+            }
+            case APPLY_AGE -> {
                 return "age";
-            case APPLY_MANA:
+            }
+            case APPLY_MANA -> {
                 return "mana";
-            case APPLY_HIT:
+            }
+            case APPLY_HIT -> {
                 return "hp";
-            case APPLY_MOVE:
+            }
+            case APPLY_MOVE -> {
                 return "moves";
-            case APPLY_GOLD:
+            }
+            case APPLY_GOLD -> {
                 return "gold";
-            case APPLY_EXP:
+            }
+            case APPLY_EXP -> {
                 return "experience";
-            case APPLY_AC:
+            }
+            case APPLY_AC -> {
                 return "armor class";
-            case APPLY_HITROLL:
+            }
+            case APPLY_HITROLL -> {
                 return "hit roll";
-            case APPLY_DAMROLL:
+            }
+            case APPLY_DAMROLL -> {
                 return "damage roll";
-            case APPLY_SIZE:
+            }
+            case APPLY_SIZE -> {
                 return "size";
-            case APPLY_SAVES:
+            }
+            case APPLY_SAVES -> {
                 return "saves";
-            case APPLY_SAVING_ROD:
+            }
+            case APPLY_SAVING_ROD -> {
                 return "save vs rod";
-            case APPLY_SAVING_PETRI:
+            }
+            case APPLY_SAVING_PETRI -> {
                 return "save vs petrification";
-            case APPLY_SAVING_BREATH:
+            }
+            case APPLY_SAVING_BREATH -> {
                 return "save vs breath";
-            case APPLY_SAVING_SPELL:
+            }
+            case APPLY_SAVING_SPELL -> {
                 return "save vs spell";
-            case APPLY_SPELL_AFFECT:
+            }
+            case APPLY_SPELL_AFFECT -> {
                 return "none";
+            }
         }
 
         bug("Affect_location_name: unknown location %d.", location);
@@ -3605,7 +3474,7 @@ class Handler {
         if ((vector & AFF_SWIM) != 0) {
             stat_buf.append(" swim");
         }
-        return stat_buf.length() == 0 ? stat_buf.toString() : "none";
+        return stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
 /*
@@ -3657,7 +3526,7 @@ class Handler {
         if ((vector & AFF_DETECT_SNEAK) != 0) {
             stat_buf.append(" detect_sneak");
         }
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
 /*
@@ -3733,7 +3602,7 @@ class Handler {
         if ((extra_flags & ITEM_BURIED) != 0) {
             stat_buf.append(" buried");
         }
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
 /* return ascii name of an act vector */
@@ -3888,7 +3757,7 @@ class Handler {
                 stat_buf.append(" blink_on");
             }
         }
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String comm_bit_name(long comm_flags) {
@@ -3943,7 +3812,7 @@ class Handler {
         }
 
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String imm_bit_name(long imm_flags) {
@@ -4015,7 +3884,7 @@ class Handler {
             stat_buf.append(" silver");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String wear_bit_name(int wear_flags) {
@@ -4072,7 +3941,7 @@ class Handler {
             stat_buf.append(" tattoo");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String form_bit_name(int form_flags) {
@@ -4155,7 +4024,7 @@ class Handler {
             stat_buf.append(" cold_blooded");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String part_bit_name(int part_flags) {
@@ -4224,7 +4093,7 @@ class Handler {
             stat_buf.append(" scales");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String weapon_bit_name(long weapon_flags) {
@@ -4258,7 +4127,7 @@ class Handler {
             stat_buf.append(" holy");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static String cont_bit_name(int cont_flags) {
@@ -4277,7 +4146,7 @@ class Handler {
             stat_buf.append(" locked");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
 
@@ -4348,7 +4217,7 @@ class Handler {
             stat_buf.append(" assist_vnum");
         }
 
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
     static int cabal_lookup(String argument) {
@@ -4405,7 +4274,7 @@ class Handler {
     static int skill_failure_nomessage(CHAR_DATA ch, Skill skill, int npcOffFlag) {
         int i;
 
-        if (IS_NPC(ch) && npcOffFlag != 0 && CABAL_OK(ch, skill) && (RACE_OK(ch, skill)) || IS_SET(ch.off_flags, npcOffFlag)) {
+        if (IS_NPC(ch) && npcOffFlag != 0 && CABAL_OK(ch, skill) && RACE_OK(ch, skill) || IS_SET(ch.off_flags, npcOffFlag)) {
             return 0;
         }
 
@@ -4438,7 +4307,7 @@ class Handler {
         if (r != 0) {
             if (r == 2) {
                 send_to_char("You cannot find the Cabal Power within you.\n", ch);
-            } else if (msg != null && msg.length() != 0) {
+            } else if (msg != null && !msg.isEmpty()) {
                 send_to_char(msg, ch);
             } else {
                 send_to_char("Huh?\n", ch);
@@ -4460,42 +4329,27 @@ class Handler {
 
         if (fAdd) {
             switch (paf.where) {
-                case TO_ROOM_AFFECTS:
-                    room.affected_by = SET_BIT(room.affected_by, paf.bitvector);
-                    break;
-                case TO_ROOM_FLAGS:
-                    room.room_flags = SET_BIT(room.room_flags, paf.bitvector);
-                    break;
-                case TO_ROOM_CONST:
-                    break;
+                case TO_ROOM_AFFECTS -> room.affected_by = SET_BIT(room.affected_by, paf.bitvector);
+                case TO_ROOM_FLAGS -> room.room_flags = SET_BIT(room.room_flags, paf.bitvector);
+                case TO_ROOM_CONST -> {
+                }
             }
         } else {
             switch (paf.where) {
-                case TO_ROOM_AFFECTS:
-                    room.affected_by = REMOVE_BIT(room.affected_by, paf.bitvector);
-                    break;
-                case TO_ROOM_FLAGS:
-                    room.room_flags = REMOVE_BIT(room.room_flags, paf.bitvector);
-                    break;
-                case TO_ROOM_CONST:
-                    break;
+                case TO_ROOM_AFFECTS -> room.affected_by = REMOVE_BIT(room.affected_by, paf.bitvector);
+                case TO_ROOM_FLAGS -> room.room_flags = REMOVE_BIT(room.room_flags, paf.bitvector);
+                case TO_ROOM_CONST -> {
+                }
             }
-            mod = 0 - mod;
+            mod = -mod;
         }
 
         switch (paf.location) {
-            default:
-                bug("Affect_modify_room: unknown location %d.", paf.location);
-                return;
-
-            case APPLY_ROOM_NONE:
-                break;
-            case APPLY_ROOM_HEAL:
-                room.heal_rate += mod;
-                break;
-            case APPLY_ROOM_MANA:
-                room.mana_rate += mod;
-                break;
+            default -> bug("Affect_modify_room: unknown location %d.", paf.location);
+            case APPLY_ROOM_NONE -> {
+            }
+            case APPLY_ROOM_HEAL -> room.heal_rate += mod;
+            case APPLY_ROOM_MANA -> room.mana_rate += mod;
         }
 
     }
@@ -4538,14 +4392,10 @@ class Handler {
         for (paf = room.affected; paf != null; paf = paf.next) {
             if (paf.where == where && paf.bitvector == vector) {
                 switch (where) {
-                    case TO_ROOM_AFFECTS:
-                        room.affected_by = SET_BIT(room.affected_by, vector);
-                        break;
-                    case TO_ROOM_FLAGS:
-                        room.room_flags = SET_BIT(room.room_flags, vector);
-                        break;
-                    case TO_ROOM_CONST:
-                        break;
+                    case TO_ROOM_AFFECTS -> room.affected_by = SET_BIT(room.affected_by, vector);
+                    case TO_ROOM_FLAGS -> room.room_flags = SET_BIT(room.room_flags, vector);
+                    case TO_ROOM_CONST -> {
+                    }
                 }
                 return;
             }
@@ -4646,7 +4496,7 @@ class Handler {
 
         for (paf_old = room.affected; paf_old != null; paf_old = paf_old.next) {
             if (paf_old.type == paf.type) {
-                paf.level = ((paf.level += paf_old.level) / 2);
+                paf.level = (paf.level += paf_old.level) / 2;
                 paf.duration += paf_old.duration;
                 paf.modifier += paf_old.modifier;
                 affect_remove_room(room, paf_old);
@@ -4663,12 +4513,15 @@ class Handler {
 
     static String raffect_loc_name(int location) {
         switch (location) {
-            case APPLY_ROOM_NONE:
+            case APPLY_ROOM_NONE -> {
                 return "none";
-            case APPLY_ROOM_HEAL:
+            }
+            case APPLY_ROOM_HEAL -> {
                 return "heal rate";
-            case APPLY_ROOM_MANA:
+            }
+            case APPLY_ROOM_MANA -> {
                 return "mana rate";
+            }
         }
         bug("Affect_location_name: unknown location %d.", location);
         return "(unknown)";
@@ -4704,7 +4557,7 @@ class Handler {
         if ((vector & AFF_ROOM_SLOW) != 0) {
             stat_buf.append(" slow");
         }
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
 
@@ -4715,8 +4568,8 @@ class Handler {
         }
 
         /* link dead players who do not have rushing adrenalin are safe */
-        if (!IS_NPC(victim) && ((victim.last_fight_time == -1) ||
-                ((current_time - victim.last_fight_time) > FIGHT_DELAY_TIME)) &&
+        if (!IS_NPC(victim) && (victim.last_fight_time == -1 ||
+                current_time - victim.last_fight_time > FIGHT_DELAY_TIME) &&
                 victim.desc == null) {
             return true;
         }
@@ -4726,13 +4579,13 @@ class Handler {
         }
 
         if (!IS_NPC(victim) &&
-                (victim.last_death_time != -1 && current_time - victim.last_death_time < 600)) {
+                victim.last_death_time != -1 && current_time - victim.last_death_time < 600) {
             return true;
         }
 
 
         return !IS_NPC(victim) &&
-                ((level >= victim.level + 5) || (victim.level >= level + 5));
+                (level >= victim.level + 5 || victim.level >= level + 5);
 
     }
 
@@ -4901,7 +4754,7 @@ class Handler {
         if ((vector & ROOM_REGISTRY) != 0) {
             stat_buf.append(" registry");
         }
-        return stat_buf.length() != 0 ? stat_buf.toString() : "none";
+        return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
 
@@ -4982,13 +4835,13 @@ class Handler {
             arg.setLength(0);
             mind = one_argument(mind, arg);
             if (!is_name(str, arg.toString())) {
-                if (buf.length() != 0) {
+                if (!buf.isEmpty()) {
                     buf.append(" ");
                 }
                 buf.append(arg);
             }
         }
-        while (mind.length() != 0);
+        while (!mind.isEmpty());
 
         do_say(ch, "At last, I took my revenge!");
         ch.in_mind = buf.toString();
@@ -4998,32 +4851,15 @@ class Handler {
     }
 
     static int opposite_door(int door) {
-        int opdoor;
-
-        switch (door) {
-            case 0:
-                opdoor = 2;
-                break;
-            case 1:
-                opdoor = 3;
-                break;
-            case 2:
-                opdoor = 0;
-                break;
-            case 3:
-                opdoor = 1;
-                break;
-            case 4:
-                opdoor = 5;
-                break;
-            case 5:
-                opdoor = 4;
-                break;
-            default:
-                opdoor = -1;
-                break;
-        }
-        return opdoor;
+        return switch (door) {
+            case 0 -> 2;
+            case 1 -> 3;
+            case 2 -> 0;
+            case 3 -> 1;
+            case 4 -> 5;
+            case 5 -> 4;
+            default -> -1;
+        };
     }
 
     static void back_home(CHAR_DATA ch) {
@@ -5051,7 +4887,7 @@ class Handler {
         }
     }
 
-    private static int _n[] = new int[1];
+    private static int[] _n = new int[1];
 
     static CHAR_DATA find_char(CHAR_DATA ch, String argument, int door, int range) {
         EXIT_DATA pExit, bExit;
@@ -5184,13 +5020,13 @@ class Handler {
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (obj.item_type == ITEM_WEAPON) {
                 if (second) {
-                    if ((obj.wear_loc == WEAR_RIGHT && LEFT_HANDER(ch))
-                            || (obj.wear_loc == WEAR_LEFT && RIGHT_HANDER(ch))) {
+                    if (obj.wear_loc == WEAR_RIGHT && LEFT_HANDER(ch)
+                            || obj.wear_loc == WEAR_LEFT && RIGHT_HANDER(ch)) {
                         return obj;
                     }
                 } else {
-                    if ((obj.wear_loc == WEAR_RIGHT && RIGHT_HANDER(ch))
-                            || (obj.wear_loc == WEAR_LEFT && LEFT_HANDER(ch))
+                    if (obj.wear_loc == WEAR_RIGHT && RIGHT_HANDER(ch)
+                            || obj.wear_loc == WEAR_LEFT && LEFT_HANDER(ch)
                             || obj.wear_loc == WEAR_BOTH) {
                         return obj;
                     }
@@ -5246,13 +5082,13 @@ class Handler {
         }
 
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
-            if ((obj.item_type == ITEM_LIGHT
+            if (obj.item_type == ITEM_LIGHT
                     && obj.value[2] != 0
                     && (obj.wear_loc == WEAR_LEFT
                     || obj.wear_loc == WEAR_RIGHT
-                    || obj.wear_loc == WEAR_BOTH))
-                    || (obj.wear_loc == WEAR_HEAD
-                    && IS_OBJ_STAT(obj, ITEM_GLOW)))
+                    || obj.wear_loc == WEAR_BOTH)
+                    || obj.wear_loc == WEAR_HEAD
+                    && IS_OBJ_STAT(obj, ITEM_GLOW))
 
             {
                 return obj;
@@ -5337,17 +5173,17 @@ class Handler {
 
     static int max_can_wear(CHAR_DATA ch, int i) {
         if (IS_NPC(ch) || !IS_SET(ch.act, PLR_REMORTED)) {
-            return (i == WEAR_FINGER ? MAX_FINGER :
+            return i == WEAR_FINGER ? MAX_FINGER :
                     i == WEAR_STUCK_IN ? MAX_STUCK_IN :
                             i == WEAR_WRIST ? MAX_WRIST :
                                     i == WEAR_TATTOO ? MAX_TATTOO :
-                                            i == WEAR_NECK ? MAX_NECK : 1);
+                                            i == WEAR_NECK ? MAX_NECK : 1;
         } else {
-            return (i == WEAR_FINGER ? (MAX_FINGER + 2) :
+            return i == WEAR_FINGER ? MAX_FINGER + 2 :
                     i == WEAR_STUCK_IN ? MAX_STUCK_IN :
                             i == WEAR_WRIST ? MAX_WRIST :
                                     i == WEAR_TATTOO ? MAX_TATTOO :
-                                            i == WEAR_NECK ? MAX_NECK : 1);
+                                            i == WEAR_NECK ? MAX_NECK : 1;
         }
     }
 
@@ -5368,7 +5204,7 @@ class Handler {
         }
 
         /* fix if it is passed midnight */
-        ref_time = (ch.logon > limit_time) ? ch.logon : limit_time;
+        ref_time = ch.logon > limit_time ? ch.logon : limit_time;
         played = ch.pcdata.log_time[0] + (int) ((current_time - ref_time) / 60);
 
         return played;
