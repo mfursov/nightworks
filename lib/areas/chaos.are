@@ -12,7 +12,7 @@ a Healer~
 An adept and healer of the Lords of Anatolia is here.
 ~
   He is an old, wise cleric blessing his old friends of Lords of Chaos
-Realms to break law. He belives that the more powerful you are the longer
+Realms to break law. He believes that the more powerful you are the longer
 you live.
 ~
 human~
@@ -26,7 +26,7 @@ stand stand male 1000
 #551
 guardian Chaos Ivan~
 Ivan the guardian of Chaos Realms~
-Ivan, the guardian of Chaos Realms, is guarding the enterance.
+Ivan, the guardian of Chaos Realms, is guarding the entrance.
 ~
 Ivan is wearing a complete set of dark armor and he is standing as a steel
 wall in front of the chaos realms.
@@ -94,7 +94,7 @@ S
 
 #551
 Inside the Great Hall~
-  There is a long hall covered with the embles of the Lords of the Chaos
+  There is a long hall covered with the emblems of the Lords of the Chaos
 Realms. The smooth wooden floors are well polished. 
 ~
 0 DX 0
@@ -116,7 +116,7 @@ D3
 0 -1 553
 S
 #552
-Squire Barracs~
+Squire Barracks~
   This room serves as a barracks of the squires of this chaos realms. The
 room is gloomy, wet and in a state of disorder. 
 ~
@@ -129,7 +129,7 @@ S
 #553
 Storage Room~
   You see many boxes before you, apparently this is a storage room some
-sort. This is where the lords of chaos realms store all theirspare
+sort. This is where the lords of chaos realms store all their spare
 clothing, armor and weapon.
 ~
 0 DX 0

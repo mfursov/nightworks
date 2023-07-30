@@ -106,7 +106,7 @@ a crocodile~
 A crocodile floats just below the surface of the water.
 ~
 A big green scaly creature with very large teeth. You better hope that it has 
-been fed laterly.
+been fed lately.
 ~
 lizard~
 ABF 0 -100 8206
@@ -118,7 +118,7 @@ stand stand female 0
 #8207
 bear~
 the bear~
-A large bear growls louly as it advances.
+A large bear growls loudly as it advances.
 ~
 This bear is one of the largest you have ever seen. The thought of what its 
 huge claws can do to your face makes you shudder     
@@ -136,7 +136,7 @@ the baby dragon~
 A huge 8ft long lizard sits here.
 ~
 This lizard looks like a scaled down version of a dragon. As you look at him 
-he burps and a cloud of smoke comes outa of his mouth.
+he burps and a cloud of smoke comes out of his mouth.
 ~
 dragon~
 AB 0 2 0
@@ -207,7 +207,7 @@ small bird~
 a small bird~
 A small bird flies around here.
 ~
-The little birdy flies merily around in the sky twerping and whistling.
+The little birdy flies merrily around in the sky twerping and whistling.
 ~
 bird~
 A 0 0 0
@@ -285,7 +285,7 @@ an old horse~
 An old horse stands here. 
 ~
 The horse looked as if it was once a war horse. It is big and muscular and 
-can proberly still do a lot of damage despite being retired.
+can probably still do a lot of damage despite being retired.
 ~
 fox~
 AB 0 0 0
@@ -329,7 +329,7 @@ or marks of any kind.
 #8201
 tee shirt tee-shirt~
 a tee-shirt~
-A plain white tee-shite with large multi-coloured writting on the front 
+A plain white tee-shite with large multi-coloured writing on the front 
 is here.~
 satin~
 clothing 0 AK
@@ -338,21 +338,21 @@ clothing 0 AK
 A
 17 -1
 E
-writting~
-The writting on the tee-shirt reads 
+writing~
+The writing on the tee-shirt reads 
 "I've been to the Midgaard Zoo"
 ~
 #8202
 china mug~
 a mug~
-A china mug with multi-coloured writting on it.~
+A china mug with multi-coloured writing on it.~
 porcelain~
 drink 0 AO
 3 3 'lemonade' 0 0
 1 10 10 P
 E
-writting~
-The writting on the mug reads
+writing~
+The writing on the mug reads
 "I've been to the Midgaard Zoo"
 ~
 #8203
@@ -399,14 +399,14 @@ The Midgaard Zoo
 #8205
 zoo dagger~
 a zoo dagger~
-A small, iron dagger with multi-coloured writting lies here.~
+A small, iron dagger with multi-coloured writing lies here.~
 iron~
 weapon 0 AN
 dagger 3 5 pierce 0
 10 80 750 P
 E
-writting~
-The writting on the tee-shirt reads
+writing~
+The writing on the tee-shirt reads
 "I've been to the Midgaard Zoo"
 ~
 #0
@@ -509,7 +509,7 @@ door~
 S
 #8205
 The Gift Shop~
-   Row apon row of pointless zoo mercandise lines the walls of this room. 
+   Row apon row of pointless zoo merchandise lines the walls of this room. 
 Why anyone one would want an 'I've been to Midgaard Zoo' Tee-shirt is beyond 
 you. North leads through a turnstile to the out side world and east leads back 
 into the zoo. A sign sits on the shop counter. 
@@ -539,7 +539,7 @@ S
 #8206
 Zoo Keepers Office~
    You are standing in the office of the Zoo keeper. A large oak desk fills 
-the room litered with numerous small pieces of paper.
+the room littered with numerous small pieces of paper.
 ~
 8200 8 0
 D1
@@ -581,7 +581,7 @@ You can see a small path.
 S
 #8208
 A path between cages~
-   You are standing in a path inside the famous midgaarrd zoo. To the north 
+   You are standing in a path inside the famous Midgaard zoo. To the north 
 and south there are cages. The path continues to the east and west.
 ~
 0 0 1
@@ -610,7 +610,7 @@ You can see the crossroads.
 S
 #8209
 A path between cages~
-   You are standing in a path inside the famous midgaarrd zoo. To the west 
+   You are standing in a path inside the famous Midgaard zoo. To the west 
 and south there are cages. The path leads back north.
 ~
 0 0 1
@@ -633,7 +633,7 @@ cage door~
 S
 #8210
 A path between cages~
-   You are standing in a path inside the famous midgaarrd zoo. To the north 
+   You are standing in a path inside the famous Midgaard zoo. To the north 
 and south there are cages. Both of these cages are around pools of water. The 
 path leads back to the east.
 ~
@@ -721,7 +721,7 @@ dust. A door out of the cage is to the east.
 ~
 0 0 1
 D1
-You can see a samll path through the door.
+You can see a small path through the door.
 ~
 cage door~
 2 8200 8209
@@ -752,7 +752,7 @@ cage door~
 S
 #8218
 A path between cages~
-   You are standing in a path inside the famous midgaarrd zoo. To the east 
+   You are standing in a path inside the famous Midgaard zoo. To the east 
 and south there are cages. The path leads back north.
 ~
 0 0 1
@@ -881,7 +881,7 @@ S
 #8234
 A small path in the Kiddies Zoo~
    You are standing on a small path in the Kiddies Zoo. To the north there is 
-a large aviry and to the south there is a small stable. The path leads back 
+a large aviary and to the south there is a small stable. The path leads back
 west.
 ~
 0 0 1
@@ -909,14 +909,14 @@ walls. There is a door out to the north.
 ~
 0 D 0
 D0
-Through the stable door you can see a small path with a aviry in the distance.
+Through the stable door you can see a small path with a aviary in the distance.
 ~
 door~
 1 -1 8234
 S
 #8236
 In the Aviary~
-   You are standing in a large aviary. The aviry continues to the north and 
+   You are standing in a large aviary. The aviary continues to the north and
 a door out is to the south.
 ~
 0 D 0
