@@ -25,8 +25,8 @@ class Configuration {
 
         pl_temp_file = "./lib/players/player.tmp";
 
-        var_astat_file = "./var/area_stat.txt";
-        var_ban_file = "./var/ban.txt";
+        var_astat_file = "./lib/area_stat.txt";
+        var_ban_file = "./lib/ban.txt";
 
 
         etc_area_list = "./etc/areas.list";

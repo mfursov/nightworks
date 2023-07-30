@@ -42,7 +42,7 @@ class Save {
     * Array of containers read for proper re-nesting of objects.
     */
     private static final int MAX_NEST = 100;
-    private static OBJ_DATA[] rgObjNest = new OBJ_DATA[MAX_NEST];
+    private static final OBJ_DATA[] rgObjNest = new OBJ_DATA[MAX_NEST];
 
 /*
 * Save a character and inventory.

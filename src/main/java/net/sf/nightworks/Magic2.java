@@ -30,9 +30,9 @@ class Magic2 {
         EXIT_DATA pExit;
         ROOM_INDEX_DATA dest_room;
         int number, door;
-        int range = (ch.level / 10) + 1;
+        var range = (ch.level / 10) + 1;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         number = number_argument(argument, arg);
         if ((door = check_exit(arg.toString())) == -1) {
@@ -167,7 +167,7 @@ class Magic2 {
 
 
     static void spell_disintegrate(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA tmp_ch;
         OBJ_DATA obj;
         OBJ_DATA obj_next;
@@ -266,7 +266,7 @@ class Magic2 {
                     if (!can_see(tmp_vict, ch)) {
                         do_yell(tmp_vict, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ? ch.doppel.name : ch.name);
                         do_yell(tmp_vict, buf.toString());
@@ -298,7 +298,7 @@ class Magic2 {
                     if (!can_see(tmp_vict, ch)) {
                         do_yell(tmp_vict, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ?
                                         ch.doppel.name : ch.name);
@@ -318,7 +318,7 @@ class Magic2 {
     }
 
     static void spell_bark_skin(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(ch, sn)) {
             if (victim == ch) {
@@ -328,7 +328,7 @@ class Magic2 {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -398,7 +398,7 @@ class Magic2 {
         send_to_char("Two bears come to your rescue!\n", ch);
         act("Two bears come to $n's rescue!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -424,7 +424,7 @@ class Magic2 {
         }
         staff.level = ch.level;
 
-        AFFECT_DATA tohit = new AFFECT_DATA();
+        var tohit = new AFFECT_DATA();
         tohit.where = TO_OBJECT;
         tohit.type = sn;
         tohit.level = ch.level;
@@ -434,7 +434,7 @@ class Magic2 {
         tohit.bitvector = 0;
         affect_to_obj(staff, tohit);
 
-        AFFECT_DATA todam = new AFFECT_DATA();
+        var todam = new AFFECT_DATA();
         todam.where = TO_OBJECT;
         todam.type = sn;
         todam.level = ch.level;
@@ -452,7 +452,7 @@ class Magic2 {
 
     static void spell_vanish(CHAR_DATA ch, Object vo) {
         ROOM_INDEX_DATA pRoomIndex = null;
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int i;
 
         if (victim.in_room == null || IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL)) {
@@ -500,7 +500,7 @@ class Magic2 {
 
         ch.hit += UMIN(30000 - ch.max_hit, ch.max_hit);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -515,7 +515,7 @@ class Magic2 {
     }
 
     static void spell_mana_transfer(Skill sn, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (victim == ch) {
             send_to_char("You would implode if you tried to transfer mana to yourself.\n", ch);
@@ -536,7 +536,7 @@ class Magic2 {
     }
 
     static void spell_mental_knife(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (ch.level < 40) {
@@ -553,7 +553,7 @@ class Magic2 {
         damage(ch, victim, dam, sn, DAM_MENTAL, true);
 
         if (!is_affected(victim, sn) && !saves_spell(level, victim, DAM_MENTAL)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = level;
@@ -622,7 +622,7 @@ class Magic2 {
         send_to_char("A demon arrives from the underworld!\n", ch);
         act("A demon arrives from the underworld!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -670,7 +670,7 @@ class Magic2 {
                     if (!can_see(tmp_vict, ch)) {
                         do_yell(tmp_vict, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ? ch.doppel.name : ch.name);
                         do_yell(tmp_vict, buf);
@@ -703,7 +703,7 @@ class Magic2 {
     }
 
     static void spell_doppelganger(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if ((ch == victim) ||
                 (is_affected(ch, sn) && (ch.doppel == victim))) {
@@ -730,7 +730,7 @@ class Magic2 {
         act("$n changes form to look like YOU!", ch, null, victim, TO_VICT);
         act("$n changes form to look like $N!", ch, null, victim, TO_NOTVICT);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -745,7 +745,7 @@ class Magic2 {
     }
 
     static void spell_manacles(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (!IS_SET(victim.act, PLR_WANTED)) {
             act("But $N is not wanted.", ch, null, victim, TO_CHAR);
@@ -753,7 +753,7 @@ class Magic2 {
         }
 
         if (!is_affected(victim, sn) && !saves_spell(ch.level, victim, DAM_CHARM)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
 
             af.where = TO_AFFECTS;
             af.type = sn;
@@ -798,7 +798,7 @@ class Magic2 {
         shield.cost = 0;
         obj_to_char(shield, ch);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -849,7 +849,7 @@ class Magic2 {
         CHAR_DATA guard;
         CHAR_DATA guard2;
         CHAR_DATA guard3;
-        String buf = "Guards! Guards!";
+        var buf = "Guards! Guards!";
         int i;
 
         if (is_affected(ch, sn)) {
@@ -914,7 +914,7 @@ class Magic2 {
         send_to_char("Three guards come to your rescue!\n", ch);
         act("Three guards come to $n's rescue!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -977,13 +977,13 @@ class Magic2 {
         char_to_room(walker, ch.in_room);
         send_to_char("A Nightwalker rises from the shadows!\n", ch);
         act("A Nightwalker rises from the shadows!", ch, null, null, TO_ROOM);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("A Nightwalker kneels before you.");
         send_to_char(buf, ch);
         buf.sprintf("A Nightwalker kneels before %s!", ch.name);
         act(buf, ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1026,7 +1026,7 @@ class Magic2 {
     }
 
     static void spell_shadow_cloak(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch.cabal != victim.cabal) {
             send_to_char("You may only use this spell on fellow cabal members.\n", ch);
@@ -1042,7 +1042,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1094,7 +1094,7 @@ class Magic2 {
             }
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1106,7 +1106,7 @@ class Magic2 {
     }
 
     static void spell_mirror(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int mirrors, new_mirrors;
         CHAR_DATA gch;
         CHAR_DATA tmp_vict;
@@ -1133,7 +1133,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.level = level;
         af.modifier = 0;
@@ -1143,8 +1143,8 @@ class Magic2 {
         for (tmp_vict = victim; is_affected(tmp_vict, gsn_doppelganger); tmp_vict = tmp_vict.doppel) {
         }
 
-        TextBuffer long_buf = new TextBuffer();
-        TextBuffer short_buf = new TextBuffer();
+        var long_buf = new TextBuffer();
+        var short_buf = new TextBuffer();
         sprintf(long_buf, "%s%s is here.\n", tmp_vict.name, tmp_vict.pcdata.title);
         sprintf(short_buf, tmp_vict.name);
 
@@ -1199,7 +1199,7 @@ class Magic2 {
     }
 
     static void spell_garble(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch == victim) {
             send_to_char("Garble whose speech?\n", ch);
@@ -1220,7 +1220,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1235,9 +1235,9 @@ class Magic2 {
     }
 
     static void spell_confuse(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA rch;
-        int count = 0;
+        var count = 0;
 
         if (is_affected(victim, gsn_confuse)) {
             act("$N is already thoroughly confused.", ch, null, victim, TO_CHAR);
@@ -1248,7 +1248,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1282,13 +1282,13 @@ class Magic2 {
     }
 
     static void spell_terangreal(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_NPC(victim)) {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
 
         af.where = TO_AFFECTS;
         af.type = sn;
@@ -1317,7 +1317,7 @@ class Magic2 {
                             ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1340,7 +1340,7 @@ class Magic2 {
                     , ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1355,7 +1355,7 @@ class Magic2 {
 
 
     static void spell_matandra(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (is_affected(ch, sn)) {
@@ -1364,7 +1364,7 @@ class Magic2 {
                             ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1381,13 +1381,13 @@ class Magic2 {
 
     @SuppressWarnings("UnusedParameters")
     static void spell_amnesia(CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_NPC(victim)) {
             return;
         }
 
-        for (int i = 0; i < MAX_SKILL; i++) {
+        for (var i = 0; i < MAX_SKILL; i++) {
             victim.pcdata.learned[i] /= 2;
         }
 
@@ -1426,7 +1426,7 @@ class Magic2 {
             blade.value[2] = 12;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -1445,7 +1445,7 @@ class Magic2 {
 
     static void spell_tattoo(CHAR_DATA ch, Object vo) {
         OBJ_DATA tattoo;
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int i;
 
         if (IS_NPC(victim)) {
@@ -1481,7 +1481,7 @@ class Magic2 {
 
     static void spell_remove_tattoo(CHAR_DATA ch, Object vo) {
         OBJ_DATA tattoo;
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         tattoo = get_eq_char(victim, WEAR_TATTOO);
         if (tattoo != null) {
@@ -1497,7 +1497,7 @@ class Magic2 {
 
 
     static void spell_wrath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (!IS_NPC(ch) && IS_EVIL(ch)) {
@@ -1525,7 +1525,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1559,7 +1559,7 @@ class Magic2 {
             send_to_char("This room is far too orderly for your powers to work on it.\n", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = UMIN(level + 15, MAX_LEVEL);
@@ -1596,7 +1596,7 @@ class Magic2 {
         send_to_char("You feel very drained from the effort.\n", ch);
         ch.hit -= UMIN(200, ch.hit / 2);
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         sprintf(buf, "%s used randomizer in room %d", ch.name, ch.in_room.vnum);
         log_string(buf.toString());
 
@@ -1628,7 +1628,7 @@ class Magic2 {
         act("$n attempts to summon a stalker.", ch, null, null, TO_ROOM);
 
         stalker = create_mobile(get_mob_index(MOB_VNUM_STALKER));
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1672,7 +1672,7 @@ class Magic2 {
         act("An invisible stalker arrives to stalk $n!", victim, null, null, TO_ROOM);
         send_to_char("An invisible stalker has been sent.\n", ch);
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         sprintf(buf, "%s used stalker on %s", ch.name, victim.name);
         log_string(buf.toString());
     }
@@ -1757,7 +1757,7 @@ class Magic2 {
     }
 
     static void spell_brew(int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         OBJ_DATA potion;
         OBJ_DATA vial;
 
@@ -1853,7 +1853,7 @@ class Magic2 {
 
 
     static void spell_shadowlife(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA shadow;
         int i;
         String name;
@@ -1893,7 +1893,7 @@ class Magic2 {
         shadow.gold = 0;
 
         name = IS_NPC(victim) ? victim.short_descr : victim.name;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf(shadow.short_descr, name);
         shadow.short_descr = buf.toString();
 
@@ -1906,7 +1906,7 @@ class Magic2 {
         char_to_room(shadow, ch.in_room);
 
         do_murder(shadow, victim.name);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1920,7 +1920,7 @@ class Magic2 {
 
     static void spell_ruler_badge(Skill sn, int level, CHAR_DATA ch, Object vo) {
         OBJ_DATA badge;
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         OBJ_DATA obj_next;
 
         if (count_worn(ch, WEAR_NECK) >= max_can_wear(ch, WEAR_NECK)) {
@@ -1941,7 +1941,7 @@ class Magic2 {
 
         badge = create_object(get_obj_index(OBJ_VNUM_RULER_BADGE), level);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -1982,7 +1982,7 @@ class Magic2 {
 
     static void spell_remove_badge(CHAR_DATA ch, Object vo) {
         OBJ_DATA badge;
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         OBJ_DATA obj_next;
 
         for (badge = victim.carrying; badge != null;
@@ -2006,7 +2006,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2038,7 +2038,7 @@ class Magic2 {
     }
 
     static void spell_dragon_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 6);
@@ -2068,7 +2068,7 @@ class Magic2 {
                 continue;
             }
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = level;
@@ -2106,7 +2106,7 @@ class Magic2 {
         plate.cost = 0;
         plate.level = ch.level;
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -2169,7 +2169,7 @@ class Magic2 {
         squire.armor[3] = interpolate(squire.level, 100, 0);
         squire.gold = 0;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf(squire.short_descr, ch.name);
         squire.short_descr = buf.toString();
 
@@ -2187,7 +2187,7 @@ class Magic2 {
         send_to_char("A squire arrives from nowhere!\n", ch);
         act("A squire arrives from nowhere!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2206,9 +2206,9 @@ class Magic2 {
     static void spell_dragonsword(Skill sn, int level, CHAR_DATA ch) {
         int sword_vnum;
         OBJ_DATA sword;
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         target_name = one_argument(target_name, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (!str_cmp(arg, "sword")) {
             sword_vnum = OBJ_VNUM_DRAGONSWORD;
@@ -2233,7 +2233,7 @@ class Magic2 {
         }
         sword.level = ch.level;
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -2261,7 +2261,7 @@ class Magic2 {
     }
 
     static void spell_entangle(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch.in_room.sector_type == SECT_INSIDE ||
                 ch.in_room.sector_type == SECT_CITY ||
@@ -2286,7 +2286,7 @@ class Magic2 {
         victim.move = UMAX(0, victim.move);
 
         if (!is_affected(victim, gsn_entangle)) {
-            AFFECT_DATA todex = new AFFECT_DATA();
+            var todex = new AFFECT_DATA();
 
             todex.type = gsn_entangle;
             todex.level = level;
@@ -2304,7 +2304,7 @@ class Magic2 {
             send_to_char("You are already protected from harm.", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2319,7 +2319,7 @@ class Magic2 {
     }
 
     static void spell_love_potion(Skill sn, int level, CHAR_DATA ch) {
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2333,7 +2333,7 @@ class Magic2 {
     }
 
     static void spell_protective_shield(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -2345,7 +2345,7 @@ class Magic2 {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2359,7 +2359,7 @@ class Magic2 {
     }
 
     static void spell_deafen(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch == victim) {
             send_to_char("Deafen who?\n", ch);
@@ -2380,7 +2380,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2435,7 +2435,7 @@ class Magic2 {
                 do_look(vch, "auto");
             }
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2449,7 +2449,7 @@ class Magic2 {
 
 
     static void spell_honor_shield(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -2460,7 +2460,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2478,7 +2478,7 @@ class Magic2 {
     }
 
     static void spell_acute_vision(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_ACUTE_VISION)) {
             if (victim == ch) {
@@ -2488,7 +2488,7 @@ class Magic2 {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2504,7 +2504,7 @@ class Magic2 {
     }
 
     static void spell_dragons_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA vch, vch_next;
         int dam, hp_dam, dice_dam;
         int hpch;
@@ -2603,7 +2603,7 @@ class Magic2 {
             case 4:
                 poison_effect(ch.in_room, level, dam, TARGET_ROOM);
 
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 for (vch = ch.in_room.people; vch != null; vch = vch_next) {
                     vch_next = vch.next_in_room;
 
@@ -2735,7 +2735,7 @@ class Magic2 {
     }
 
     static void spell_attract_other(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch.sex == victim.sex) {
             send_to_char("You'd better try your chance on other sex!\n", ch);
@@ -2752,7 +2752,7 @@ class Magic2 {
             return;
         }
 /* haste */
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2878,16 +2878,16 @@ class Magic2 {
             undead.master = ch;
             undead.leader = ch;
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s body undead", obj.name);
             undead.name = buf.toString();
-            String argument = obj.short_descr;
-            StringBuilder argb = new StringBuilder();
-            StringBuilder buf3 = new StringBuilder();
+            var argument = obj.short_descr;
+            var argb = new StringBuilder();
+            var buf3 = new StringBuilder();
             while (!argument.isEmpty()) {
                 argb.setLength(0);
                 argument = one_argument(argument, argb);
-                String arg = argb.toString();
+                var arg = argb.toString();
                 if (!(!str_cmp(arg, "The") || !str_cmp(arg, "undead") || !str_cmp(arg, "body") ||
                         !str_cmp(arg, "corpse") || !str_cmp(arg, "of"))) {
                     if (buf3.isEmpty()) {
@@ -2910,7 +2910,7 @@ class Magic2 {
             }
             interpret(undead, "wear all", true);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = ch.level;
@@ -2941,7 +2941,7 @@ class Magic2 {
 
 
     static void spell_enhanced_armor(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -2951,7 +2951,7 @@ class Magic2 {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2968,7 +2968,7 @@ class Magic2 {
 
 
     static void spell_meld_into_stone(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -2980,7 +2980,7 @@ class Magic2 {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2994,7 +2994,7 @@ class Magic2 {
     }
 
     static void spell_web(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (saves_spell(level, victim, DAM_OTHER)) {
             return;
@@ -3009,7 +3009,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.type = sn;
         af.level = level;
         af.duration = 1;
@@ -3036,8 +3036,8 @@ class Magic2 {
     static void spell_group_defense(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill shield_sn = Skill.gsn_shield;
-        Skill armor_sn = Skill.gsn_armor;
+        var shield_sn = Skill.gsn_shield;
+        var armor_sn = Skill.gsn_armor;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if (!is_same_group(gch, ch)) {
@@ -3052,7 +3052,7 @@ class Magic2 {
                 continue;
             }
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = armor_sn;
             af.level = level;
             af.duration = level;
@@ -3100,7 +3100,7 @@ class Magic2 {
     static void spell_inspire(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill bless_sn = Skill.gsn_bless;
+        var bless_sn = Skill.gsn_bless;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if (!is_same_group(gch, ch)) {
@@ -3115,7 +3115,7 @@ class Magic2 {
                 }
                 continue;
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = bless_sn;
             af.level = level;
             af.duration = 6 + level;
@@ -3141,7 +3141,7 @@ class Magic2 {
     static void spell_mass_sanctuary(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill sanc_sn = Skill.gsn_sanctuary;
+        var sanc_sn = Skill.gsn_sanctuary;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if (!is_same_group(gch, ch)) {
@@ -3155,7 +3155,7 @@ class Magic2 {
                 }
                 continue;
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = sanc_sn;
             af.level = level;
             af.duration = number_fuzzy(level / 6);
@@ -3174,7 +3174,7 @@ class Magic2 {
     }
 
     static void spell_mend(CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int result, skill;
 
         if (obj.condition > 99) {
@@ -3212,7 +3212,7 @@ class Magic2 {
     }
 
     static void spell_shielding(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (saves_spell(level, victim, DAM_NONE)) {
             act("$N shivers slightly, but it passes quickly.",
@@ -3222,7 +3222,7 @@ class Magic2 {
         }
 
         if (is_affected(victim, sn)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = sn;
             af.level = level;
             af.duration = level / 20;
@@ -3235,7 +3235,7 @@ class Magic2 {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.type = sn;
         af.level = level;
         af.duration = level / 15;
@@ -3250,7 +3250,7 @@ class Magic2 {
 
 
     static void spell_link(CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int random, tmpmana;
 
         random = number_percent();
@@ -3263,7 +3263,7 @@ class Magic2 {
     }
 
     static void spell_power_kill(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
 
@@ -3311,7 +3311,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         eyed.pit = hometown_table[ch.hometown].pit[i];
         eyed.level = ch.level;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf(eyed.short_descr, ch.name);
         eyed.short_descr = buf.toString();
 
@@ -3336,7 +3336,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         CHAR_DATA lion;
         CHAR_DATA victim;
         int i;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         target_name = one_argument(target_name, arg);
         if (arg.isEmpty()) {
             send_to_char("Whom do you want to have killed.\n", ch);
@@ -3412,7 +3412,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
         send_to_char("A hunter lion comes to kill your victim!\n", ch);
         act("A hunter lion comes to kill $n's victim!", ch, null, null, TO_ROOM);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -3429,7 +3429,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_magic_jar(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         OBJ_DATA vial;
         OBJ_DATA fire;
         int i;
@@ -3476,7 +3476,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         fire.pit = hometown_table[ch.hometown].pit[i];
         fire.level = ch.level;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf(fire.name, victim.name);
         fire.name = buf.toString();
 
@@ -3502,7 +3502,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void turn_spell(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam, align;
 
         if (victim != ch) {
@@ -3586,7 +3586,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             send_to_char("This power is used too recently.", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3617,7 +3617,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_fear(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if ((victim.clazz == Clazz.SAMURAI) && (victim.level >= 10)) {
             send_to_char("Your victim is beyond this power.\n", ch);
@@ -3628,7 +3628,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_fear;
         af.level = level;
@@ -3642,7 +3642,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_protection_heat(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, gsn_protection_heat)) {
             if (victim == ch) {
@@ -3671,7 +3671,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_protection_heat;
         af.level = level;
@@ -3687,7 +3687,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_protection_cold(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, gsn_protection_cold)) {
             if (victim == ch) {
@@ -3715,7 +3715,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_protection_cold;
         af.level = level;
@@ -3734,7 +3734,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         OBJ_DATA fire;
         int i;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         target_name = one_argument(target_name, arg);
         if (!(!str_cmp(arg.toString(), "cold") || !str_cmp(arg.toString(), "fire"))) {
             send_to_char("You must specify the type.\n", ch);
@@ -3755,7 +3755,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         fire.pit = hometown_table[ch.hometown].pit[i];
         fire.level = ch.level;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf(fire.short_descr, arg);
         fire.short_descr = buf.toString();
 
@@ -3783,7 +3783,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_witch_curse(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, gsn_witch_curse)) {
             send_to_char("It has already underflowing with health.\n", ch);
@@ -3798,7 +3798,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         ch.hit -= (2 * level);
         ch.hit = UMAX(ch.hit, 1);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_witch_curse;
         af.level = level;
@@ -3818,7 +3818,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         int chance;
         int door;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         target_name = one_argument(target_name, arg);
 
         if (arg.isEmpty()) {
@@ -3898,7 +3898,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         if (!is_affected(ch, sn)) {
             send_to_char("You are now resistive to magic.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_RESIST;
             af.type = sn;
             af.duration = level / 10;
@@ -3967,7 +3967,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("The wolf arrives and bows before you!\n", ch);
         act("A wolf arrives from somewhere and bows!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3982,7 +3982,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_vam_blast(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 12);
@@ -3993,7 +3993,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_dragon_skin(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -4005,7 +4005,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4026,7 +4026,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_CONST;
         af.type = sn;
         af.level = level;
@@ -4036,7 +4036,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         af.bitvector = 0;
         affect_to_room(ch.in_room, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = level;
@@ -4050,7 +4050,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_insanity(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_NPC(ch)) {
             send_to_char("This spell can cast on PC's only.\n", ch);
@@ -4061,7 +4061,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4076,14 +4076,14 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_power_stun(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
 
         if (is_affected(victim, sn) || saves_spell(level, victim, DAM_OTHER)) {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4098,7 +4098,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_improved_invis(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_IMP_INVIS)) {
             return;
@@ -4106,7 +4106,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
         act("$n fades out of existence.", victim, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4120,7 +4120,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_improved_detection(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_DETECT_IMP_INVIS)) {
             if (victim == ch) {
@@ -4131,7 +4131,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4147,9 +4147,9 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_severity_force(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You cracked the ground towards the %s.\n", victim.name);
         send_to_char(buf, ch);
         act("$n cracked the ground towards you!.", ch, null, victim, TO_VICT);
@@ -4183,7 +4183,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
         if (number_bits(1) == 0) {
             send_to_char("Despite your efforts, the universe resisted chaos.\n", ch);
-            AFFECT_DATA af2 = new AFFECT_DATA();
+            var af2 = new AFFECT_DATA();
             af2.where = TO_AFFECTS;
             af2.type = sn;
             af2.level = ch.level;
@@ -4194,7 +4194,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             affect_to_char(ch, af2);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -4204,7 +4204,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         af.bitvector = AFF_ROOM_RANDOMIZER;
         affect_to_room(ch.in_room, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = ch.level;
@@ -4220,7 +4220,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_bless_weapon(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
 
         if (obj.item_type != ITEM_WEAPON) {
             send_to_char("That isn't a weapon.\n", ch);
@@ -4249,7 +4249,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_WEAPON;
         af.type = sn;
         af.level = level / 2;
@@ -4268,7 +4268,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         if (!is_affected(ch, sn)) {
             send_to_char("You are now resistive to draining attacks.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_RESIST;
             af.type = sn;
             af.duration = level / 10;
@@ -4283,8 +4283,8 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_super_heal(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
-        int bonus = 170 + level + dice(1, 20);
+        var victim = (CHAR_DATA) vo;
+        var bonus = 170 + level + dice(1, 20);
 
         victim.hit = UMIN(victim.hit + bonus, victim.max_hit);
         update_pos(victim);
@@ -4295,8 +4295,8 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_master_heal(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
-        int bonus = 300 + level + dice(1, 40);
+        var victim = (CHAR_DATA) vo;
+        var bonus = 300 + level + dice(1, 40);
 
         victim.hit = UMIN(victim.hit + bonus, victim.max_hit);
         update_pos(victim);
@@ -4309,8 +4309,8 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     static void spell_group_heal(int level, CHAR_DATA ch) {
         CHAR_DATA gch;
 
-        Skill heal_num = Skill.gsn_mass_healing;
-        Skill refresh_num = Skill.gsn_refresh;
+        var heal_num = Skill.gsn_mass_healing;
+        var refresh_num = Skill.gsn_refresh;
 
         for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
             if ((IS_NPC(ch) && IS_NPC(gch)) ||
@@ -4323,22 +4323,22 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_restoring_light(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int mana_add;
 
         if (IS_AFFECTED(victim, AFF_BLIND)) {
-            Skill nsn = Skill.gsn_cure_blindness;
+            var nsn = Skill.gsn_cure_blindness;
             spell_cure_blindness(level, ch, victim);
         }
         if (IS_AFFECTED(victim, AFF_CURSE)) {
-            Skill nsn = Skill.gsn_remove_curse;
+            var nsn = Skill.gsn_remove_curse;
             spell_remove_curse(level, ch, victim, TARGET_CHAR);
         }
         if (IS_AFFECTED(victim, AFF_POISON)) {
             spell_cure_poison(level, ch, victim);
         }
         if (IS_AFFECTED(victim, AFF_PLAGUE)) {
-            Skill nsn = Skill.gsn_cure_disease;
+            var nsn = Skill.gsn_cure_disease;
             spell_cure_disease(level, ch, victim);
         }
 
@@ -4358,7 +4358,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     static void spell_lesser_golem(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA golem;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another golem right now.\n",
@@ -4415,7 +4415,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("You created a lesser golem!\n", ch);
         act("$n creates a lesser golem!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4434,7 +4434,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     static void spell_stone_golem(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA golem;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another golem right now.\n",
@@ -4491,7 +4491,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("You created a stone golem!\n", ch);
         act("$n creates a stone golem!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4564,7 +4564,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("You created an iron golem!\n", ch);
         act("$n creates an iron golem!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4608,7 +4608,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         golem = create_mobile(get_mob_index(MOB_VNUM_ADAMANTITE_GOLEM));
 
 
-        for (int i = 0; i < MAX_STATS; i++) {
+        for (var i = 0; i < MAX_STATS; i++) {
             golem.perm_stat[i] = UMIN(25, 15 + ch.level / 10);
         }
 
@@ -4622,7 +4622,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         golem.max_mana = IS_NPC(ch) ? ch.max_mana : ch.pcdata.perm_mana;
         golem.mana = golem.max_mana;
         golem.level = ch.level;
-        for (int i = 0; i < 3; i++) {
+        for (var i = 0; i < 3; i++) {
             golem.armor[i] = interpolate(golem.level, 100, -100);
         }
         golem.armor[3] = interpolate(golem.level, 100, 0);
@@ -4636,7 +4636,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("You created an Adamantite golem!\n", ch);
         act("$n creates an Adamantite golem!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4697,7 +4697,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -4723,7 +4723,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -4749,7 +4749,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -4775,7 +4775,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -4801,7 +4801,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -4827,14 +4827,14 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        Race race = Race.lookupRace(target_name);
+        var race = Race.lookupRace(target_name);
 
         if (race == null || race.pcRace == null) {
             send_to_char("That is not a valid race to polymorph.\n", ch);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_RACE;
         af.type = sn;
         af.level = level;
@@ -4861,7 +4861,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_fear;
         af.level = level;
@@ -4883,7 +4883,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_blade_barrier(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         act("Many sharp blades appear around $n and crash $N.",
@@ -4905,7 +4905,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help someone is attacking me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Die, %s, you sorcerous dog!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf);
@@ -4952,7 +4952,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         if (!is_affected(ch, sn)) {
             send_to_char("You are now immune to negative attacks.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_IMMUNE;
             af.type = sn;
             af.duration = level / 4;
@@ -4972,7 +4972,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         if (!is_affected(ch, sn)) {
             send_to_char("You now feel more self confident in rulership.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_IMMUNE;
             af.type = sn;
             af.duration = level / 4;
@@ -4988,7 +4988,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_evil_spirit(Skill sn, int level, CHAR_DATA ch) {
-        AREA_DATA pArea = ch.in_room.area;
+        var pArea = ch.in_room.area;
         ROOM_INDEX_DATA room;
         int i;
 
@@ -5009,7 +5009,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = ch.level;
@@ -5019,7 +5019,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         af2.bitvector = 0;
         affect_to_char(ch, af2);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -5042,10 +5042,10 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_disgrace(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, sn) && !saves_spell(level, victim, DAM_MENTAL)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = level;
@@ -5063,7 +5063,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_control_undead(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (!IS_NPC(victim) || !IS_SET(victim.act, ACT_UNDEAD)) {
             act("$N doesn't seem to be an undead.", ch, null, victim, TO_CHAR);
@@ -5074,14 +5074,14 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_assist(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(ch, sn)) {
             send_to_char("This power is used too recently.\n", ch);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5102,14 +5102,14 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_aid(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(ch, sn)) {
             send_to_char("This power is used too recently.\n", ch);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5180,7 +5180,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         char_to_room(shadow, ch.in_room);
         act("A shadow conjures!", ch, null, null, TO_ALL);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5207,7 +5207,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         if (ch.in_room == room) {
             do_look(ch, "auto");
         } else {
-            boolean mount = MOUNTED(ch) != null;
+            var mount = MOUNTED(ch) != null;
             oldr = ch.in_room;
             char_from_room(ch);
             char_to_room(ch, room);
@@ -5223,7 +5223,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_remove_fear(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (check_dispel(level, victim, gsn_fear)) {
             send_to_char("You feel more brave.\n", victim);
@@ -5234,7 +5234,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_desert_fist(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if ((ch.in_room.sector_type != SECT_HILLS)
@@ -5255,7 +5255,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_holy_aura(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -5271,7 +5271,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5294,7 +5294,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_holy_fury(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || IS_AFFECTED(victim, AFF_BERSERK)) {
             if (victim == ch) {
@@ -5320,7 +5320,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5343,7 +5343,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_light_arrow(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 12);
@@ -5355,7 +5355,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_hydroblast(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if ((ch.in_room.sector_type != SECT_WATER_SWIM)
@@ -5382,7 +5382,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
 
 /* haste */
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5419,7 +5419,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_sword_of_justice(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if ((IS_GOOD(ch) && IS_GOOD(victim))
@@ -5508,7 +5508,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("Two dogs arrive and bows before you!\n", ch);
         act("Two dogs arrive from somewhere and bows!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5562,7 +5562,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         obj_to_char(shield, ch);
 
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -5617,7 +5617,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
         ch.hit += ch.pcdata.perm_hit;
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5665,7 +5665,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5675,7 +5675,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         af.bitvector = AFF_ROOM_PREVENT;
         affect_to_room(ch.in_room, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = level;
@@ -5690,7 +5690,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_enlarge(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -5701,7 +5701,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5717,7 +5717,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_chromatic_orb(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 14);
@@ -5735,7 +5735,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_suffocate(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_SUFFOCATE)) {
             act("$N already cannot breathe.\n", ch, null, victim, TO_CHAR);
@@ -5751,7 +5751,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level * 3 / 4;
@@ -5839,16 +5839,16 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             undead.master = ch;
             undead.leader = ch;
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s body undead", obj.name);
             undead.name = buf.toString();
-            String argument = obj.short_descr;
-            StringBuilder buf3 = new StringBuilder();
-            StringBuilder argb = new StringBuilder();
+            var argument = obj.short_descr;
+            var buf3 = new StringBuilder();
+            var argb = new StringBuilder();
             while (!argument.isEmpty()) {
                 argb.setLength(0);
                 argument = one_argument(argument, argb);
-                String arg = argb.toString();
+                var arg = argb.toString();
                 if (!(!str_cmp(arg, "The") || !str_cmp(arg, "undead") || !str_cmp(arg, "body") ||
                         !str_cmp(arg, "corpse") || !str_cmp(arg, "of"))) {
                     if (buf3.isEmpty()) {
@@ -5869,7 +5869,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
                 obj_to_char(obj2, undead);
             }
             interpret(undead, "wear all", true);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = ch.level;
@@ -5899,7 +5899,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_soul_bind(CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch.pet != null) {
             send_to_char("Your soul is already binded to someone else.\n", ch);
@@ -5921,7 +5921,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_forcecage(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECTOR)) {
             if (victim == ch) {
@@ -5932,7 +5932,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5946,7 +5946,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_iron_body(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECTOR)) {
             if (victim == ch) {
@@ -5957,7 +5957,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5971,7 +5971,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
     static void spell_elemental_sphere(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECTOR)) {
             if (victim == ch) {
@@ -5981,7 +5981,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5996,7 +5996,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
 
     static void spell_aura_of_chaos(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (ch.cabal != victim.cabal) {
             send_to_char("You may only use this spell on fellow cabal members.\n", ch);
@@ -6012,7 +6012,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;

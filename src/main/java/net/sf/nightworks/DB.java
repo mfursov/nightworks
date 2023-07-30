@@ -1,231 +1,24 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.DikuTextFile;
+import net.sf.nightworks.util.NotNull;
+import net.sf.nightworks.util.Nullable;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static net.sf.nightworks.ActMove.rev_dir;
 import static net.sf.nightworks.ActWiz.wiznet;
 import static net.sf.nightworks.Ban.load_bans;
-import static net.sf.nightworks.Comm.dump_to_scr;
-import static net.sf.nightworks.Comm.page_to_char;
-import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.affect_to_obj;
-import static net.sf.nightworks.Handler.attack_lookup;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.count_obj_list;
-import static net.sf.nightworks.Handler.equip_char;
-import static net.sf.nightworks.Handler.get_obj_type;
-import static net.sf.nightworks.Handler.get_played_day;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.item_lookup;
-import static net.sf.nightworks.Handler.liq_lookup;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_obj;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.room_record;
-import static net.sf.nightworks.Handler.weapon_type;
-import static net.sf.nightworks.Lookup.position_lookup;
-import static net.sf.nightworks.Lookup.sex_lookup;
-import static net.sf.nightworks.Lookup.size_lookup;
+import static net.sf.nightworks.Comm.*;
+import static net.sf.nightworks.Handler.*;
+import static net.sf.nightworks.Lookup.*;
 import static net.sf.nightworks.Magic.slot_lookup_skill_num;
 import static net.sf.nightworks.MobProg.mprog_set;
-import static net.sf.nightworks.Nightworks.ACT_CLERIC;
-import static net.sf.nightworks.Nightworks.ACT_IS_NPC;
-import static net.sf.nightworks.Nightworks.ACT_MAGE;
-import static net.sf.nightworks.Nightworks.ACT_PET;
-import static net.sf.nightworks.Nightworks.ACT_THIEF;
-import static net.sf.nightworks.Nightworks.ACT_WARRIOR;
-import static net.sf.nightworks.Nightworks.AC_BASH;
-import static net.sf.nightworks.Nightworks.AC_EXOTIC;
-import static net.sf.nightworks.Nightworks.AC_PIERCE;
-import static net.sf.nightworks.Nightworks.AC_SLASH;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_EVIL;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_GOOD;
-import static net.sf.nightworks.Nightworks.AFF_SANCTUARY;
-import static net.sf.nightworks.Nightworks.APPLY_DEX;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_SAVES;
-import static net.sf.nightworks.Nightworks.APPLY_SPELL_AFFECT;
-import static net.sf.nightworks.Nightworks.AREA_DATA;
-import static net.sf.nightworks.Nightworks.ASSIST_RACE;
-import static net.sf.nightworks.Nightworks.AUCTION_DATA;
-import static net.sf.nightworks.Nightworks.BIT_30;
-import static net.sf.nightworks.Nightworks.BIT_31;
-import static net.sf.nightworks.Nightworks.C;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_CHAOS;
-import static net.sf.nightworks.Nightworks.CABAL_HUNTER;
-import static net.sf.nightworks.Nightworks.CABAL_INVADER;
-import static net.sf.nightworks.Nightworks.CABAL_KNIGHT;
-import static net.sf.nightworks.Nightworks.CABAL_LIONS;
-import static net.sf.nightworks.Nightworks.CABAL_NONE;
-import static net.sf.nightworks.Nightworks.CABAL_RULER;
-import static net.sf.nightworks.Nightworks.CABAL_SHALAFI;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_NOCHANNELS;
-import static net.sf.nightworks.Nightworks.COMM_NOSHOUT;
-import static net.sf.nightworks.Nightworks.COMM_NOTELL;
-import static net.sf.nightworks.Nightworks.CON_PLAYING;
-import static net.sf.nightworks.Nightworks.D;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.DICE_BONUS;
-import static net.sf.nightworks.Nightworks.DICE_NUMBER;
-import static net.sf.nightworks.Nightworks.DICE_TYPE;
-import static net.sf.nightworks.Nightworks.E;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.EXTRA_DESCR_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.EX_ISDOOR;
-import static net.sf.nightworks.Nightworks.EX_LOCKED;
-import static net.sf.nightworks.Nightworks.EX_NOFLEE;
-import static net.sf.nightworks.Nightworks.EX_NOPASS;
-import static net.sf.nightworks.Nightworks.EX_PICKPROOF;
-import static net.sf.nightworks.Nightworks.F;
-import static net.sf.nightworks.Nightworks.G;
-import static net.sf.nightworks.Nightworks.HELP_DATA;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.ITEM_ARMOR;
-import static net.sf.nightworks.Nightworks.ITEM_BOAT;
-import static net.sf.nightworks.Nightworks.ITEM_CLOTHING;
-import static net.sf.nightworks.Nightworks.ITEM_CONTAINER;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_PC;
-import static net.sf.nightworks.Nightworks.ITEM_DRINK_CON;
-import static net.sf.nightworks.Nightworks.ITEM_FOOD;
-import static net.sf.nightworks.Nightworks.ITEM_FOUNTAIN;
-import static net.sf.nightworks.Nightworks.ITEM_FURNITURE;
-import static net.sf.nightworks.Nightworks.ITEM_GEM;
-import static net.sf.nightworks.Nightworks.ITEM_INVENTORY;
-import static net.sf.nightworks.Nightworks.ITEM_JEWELRY;
-import static net.sf.nightworks.Nightworks.ITEM_JUKEBOX;
-import static net.sf.nightworks.Nightworks.ITEM_KEY;
-import static net.sf.nightworks.Nightworks.ITEM_LIGHT;
-import static net.sf.nightworks.Nightworks.ITEM_MAP;
-import static net.sf.nightworks.Nightworks.ITEM_MONEY;
-import static net.sf.nightworks.Nightworks.ITEM_PILL;
-import static net.sf.nightworks.Nightworks.ITEM_PORTAL;
-import static net.sf.nightworks.Nightworks.ITEM_POTION;
-import static net.sf.nightworks.Nightworks.ITEM_ROOM_KEY;
-import static net.sf.nightworks.Nightworks.ITEM_SCROLL;
-import static net.sf.nightworks.Nightworks.ITEM_STAFF;
-import static net.sf.nightworks.Nightworks.ITEM_TATTOO;
-import static net.sf.nightworks.Nightworks.ITEM_TRASH;
-import static net.sf.nightworks.Nightworks.ITEM_TREASURE;
-import static net.sf.nightworks.Nightworks.ITEM_WAND;
-import static net.sf.nightworks.Nightworks.ITEM_WARP_STONE;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.KILL_DATA;
-import static net.sf.nightworks.Nightworks.LEVEL_HERO;
-import static net.sf.nightworks.Nightworks.MAX_CABAL;
-import static net.sf.nightworks.Nightworks.MAX_CLASS;
-import static net.sf.nightworks.Nightworks.MAX_KEY_HASH;
-import static net.sf.nightworks.Nightworks.MAX_LEVEL;
-import static net.sf.nightworks.Nightworks.MAX_NEWBIES;
-import static net.sf.nightworks.Nightworks.MAX_OLDIES;
-import static net.sf.nightworks.Nightworks.MAX_STATS;
-import static net.sf.nightworks.Nightworks.MAX_TRADE;
-import static net.sf.nightworks.Nightworks.MOB_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.MPROG_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_BATTLE_THRONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CHAOS_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_HUNTER_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_INVADER_SKULL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_KNIGHT_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_LIONS_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_PIT;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_STAND;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SHALAFI_ALTAR;
-import static net.sf.nightworks.Nightworks.OFF_DISARM;
-import static net.sf.nightworks.Nightworks.OFF_DODGE;
-import static net.sf.nightworks.Nightworks.OFF_FAST;
-import static net.sf.nightworks.Nightworks.OFF_TRIP;
-import static net.sf.nightworks.Nightworks.OPROG_DATA;
-import static net.sf.nightworks.Nightworks.PAGELEN;
-import static net.sf.nightworks.Nightworks.PLR_COLOR;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.PULSE_PER_SCD;
-import static net.sf.nightworks.Nightworks.PULSE_TICK;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.RESET_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_INDOORS;
-import static net.sf.nightworks.Nightworks.ROOM_LAW;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MOB;
-import static net.sf.nightworks.Nightworks.ROOM_PET_SHOP;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_ALTAR;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_SCHOOL;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SEX_FEMALE;
-import static net.sf.nightworks.Nightworks.SEX_MALE;
-import static net.sf.nightworks.Nightworks.SHOP_DATA;
-import static net.sf.nightworks.Nightworks.SIZE_MEDIUM;
-import static net.sf.nightworks.Nightworks.SKY_CLOUDLESS;
-import static net.sf.nightworks.Nightworks.SKY_CLOUDY;
-import static net.sf.nightworks.Nightworks.SKY_LIGHTNING;
-import static net.sf.nightworks.Nightworks.SKY_RAINING;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.STAT_WIS;
-import static net.sf.nightworks.Nightworks.SUN_DARK;
-import static net.sf.nightworks.Nightworks.SUN_LIGHT;
-import static net.sf.nightworks.Nightworks.SUN_RISE;
-import static net.sf.nightworks.Nightworks.SUN_SET;
-import static net.sf.nightworks.Nightworks.TIME_INFO_DATA;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_IMMUNE;
-import static net.sf.nightworks.Nightworks.TO_OBJECT;
-import static net.sf.nightworks.Nightworks.TO_RESIST;
-import static net.sf.nightworks.Nightworks.TO_VULN;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.WEAPON_TWO_HANDS;
-import static net.sf.nightworks.Nightworks.WEAR_NONE;
-import static net.sf.nightworks.Nightworks.WEATHER_DATA;
-import static net.sf.nightworks.Nightworks.WIZ_RESETS;
-import static net.sf.nightworks.Nightworks.Z;
-import static net.sf.nightworks.Nightworks.area_first;
-import static net.sf.nightworks.Nightworks.auction;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.descriptor_list;
-import static net.sf.nightworks.Nightworks.exit;
-import static net.sf.nightworks.Nightworks.help_first;
-import static net.sf.nightworks.Nightworks.iNumPlayers;
-import static net.sf.nightworks.Nightworks.max_newbies;
-import static net.sf.nightworks.Nightworks.max_oldies;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.object_list;
-import static net.sf.nightworks.Nightworks.perror;
-import static net.sf.nightworks.Nightworks.prac_type;
-import static net.sf.nightworks.Nightworks.reboot_counter;
-import static net.sf.nightworks.Nightworks.shop_first;
-import static net.sf.nightworks.Nightworks.social_table;
-import static net.sf.nightworks.Nightworks.social_type;
-import static net.sf.nightworks.Nightworks.time_sync;
-import static net.sf.nightworks.Nightworks.top_affected_room;
-import static net.sf.nightworks.Nightworks.total_levels;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Note.load_notes;
 import static net.sf.nightworks.ObjProg.oprog_set;
 import static net.sf.nightworks.Recycle.get_mob_id;
@@ -234,28 +27,8 @@ import static net.sf.nightworks.Save.wear_convert;
 import static net.sf.nightworks.Skill.gsn_track;
 import static net.sf.nightworks.Skill.skill_num_lookup;
 import static net.sf.nightworks.Special.spec_lookup;
-import static net.sf.nightworks.Tables.act_flags;
-import static net.sf.nightworks.Tables.affect_flags;
-import static net.sf.nightworks.Tables.align_flags;
-import static net.sf.nightworks.Tables.cabal_table;
-import static net.sf.nightworks.Tables.ethos_table;
-import static net.sf.nightworks.Tables.flag_type;
-import static net.sf.nightworks.Tables.form_flags;
-import static net.sf.nightworks.Tables.imm_flags;
-import static net.sf.nightworks.Tables.off_flags;
-import static net.sf.nightworks.Tables.part_flags;
-import static net.sf.nightworks.Tables.position_type;
-import static net.sf.nightworks.Tables.prac_table;
-import static net.sf.nightworks.Tables.res_flags;
-import static net.sf.nightworks.Tables.sex_table;
-import static net.sf.nightworks.Tables.size_table;
-import static net.sf.nightworks.Tables.slang_table;
-import static net.sf.nightworks.Tables.stat_names;
-import static net.sf.nightworks.Tables.vuln_flags;
-import static net.sf.nightworks.util.TextUtils.UPPER;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
+import static net.sf.nightworks.Tables.*;
+import static net.sf.nightworks.util.TextUtils.*;
 
 class DB {
     /**
@@ -271,8 +44,8 @@ class DB {
     static final int MAGIC_NUM = 52571214;
 
     /*
-    * Globals.
-    */
+     * Globals.
+     */
     /* TODO: move to Nightworks? */
     private static HELP_DATA help_last;
     private static SHOP_DATA shop_last;
@@ -294,11 +67,11 @@ class DB {
 /*
  * for limited objects
  */
-/*    long                    total_levels; */
+    /*    long                    total_levels; */
 
     /*
-    * Locals.
-    */
+     * Locals.
+     */
     static MOB_INDEX_DATA[] mob_index_hash = new MOB_INDEX_DATA[MAX_KEY_HASH];
     static OBJ_INDEX_DATA[] obj_index_hash = new OBJ_INDEX_DATA[MAX_KEY_HASH];
     static ROOM_INDEX_DATA[] room_index_hash = new ROOM_INDEX_DATA[MAX_KEY_HASH];
@@ -310,7 +83,7 @@ class DB {
     static final KILL_DATA[] kill_table = new KILL_DATA[MAX_LEVEL];
 
     static {
-        for (int i = 0; i < kill_table.length; i++) {
+        for (var i = 0; i < kill_table.length; i++) {
             kill_table[i] = new KILL_DATA();
         }
     }
@@ -331,19 +104,19 @@ class DB {
     static int newobjs = 0;
 
     /*
-    * Semi-locals.
-    */
+     * Semi-locals.
+     */
     static boolean fBootDb;
     private static DikuTextFile currentFile;
     private static AREA_DATA Serarea;   /* currently read area */
 
-/*
- * Local booting procedures.
-*/
+    /*
+     * Local booting procedures.
+     */
 
     /*
-    * Big mama top level function.
-    */
+     * Big mama top level function.
+     */
     private static DikuTextFile currentList = null;
 
     static void boot_db() {
@@ -379,16 +152,14 @@ class DB {
             /* Read in all the area files.*/
             readAreas();
             /*
-            * Fix up exits.
-            * Declare db booting over.
-            * Reset all areas once.
-            * Load up the songs, notes and ban files.
-            */
+             * Fix up exits.
+             * Declare db booting over.
+             * Reset all areas once.
+             * Load up the songs, notes and ban files.
+             */
             fix_exits();
 
             load_limited_objects();
-            String s = "Total non-immortal levels > 5: " + total_levels;
-            log_string(s);
 
             fBootDb = false;
             area_update();
@@ -410,7 +181,7 @@ class DB {
     private static void read_races() throws IOException {
         currentList = new DikuTextFile(nw_config.etc_races_list);
         for (; ; ) {
-            String raceFile = currentList.fread_word();
+            var raceFile = currentList.fread_word();
             if (raceFile.charAt(0) == '#') {
                 continue;
             }
@@ -421,7 +192,7 @@ class DB {
             Race race = null;
             label:
             while (!currentFile.feof()) {
-                String word = currentFile.fread_word();
+                var word = currentFile.fread_word();
                 switch (word) {
                     case "#RACE":
                         if (race != null) {
@@ -447,12 +218,12 @@ class DB {
 
     private static Race read_race(DikuTextFile fp) throws RuntimeException {
         Race race;
-        String word = fp.fread_word();
+        var word = fp.fread_word();
         fp.fMatch = false;
         if (!word.equals("Name")) {
             throw new RuntimeException("read_race: first token is not 'Name'");
         }
-        String name = fp.fread_string();
+        var name = fp.fread_string();
         race = Race.createRace(name);
         race.fileName = fp.getFile().getName();
         fp.fMatch = true;
@@ -460,41 +231,33 @@ class DB {
             word = fp.feof() ? "End" : fp.fread_word();
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
-                case 'A':
+                case 'A' -> {
                     race.aff = fp.FLAG64_SKEY("Aff", word, race.aff, affect_flags);
                     race.act = fp.FLAG64_SKEY("Act", word, race.act, act_flags);
-                    break;
-                case 'E':
+                }
+                case 'E' -> {
                     if (!str_cmp(word, "End")) {
                         if (race == null) {
                             throw new RuntimeException("load_race: race name undefined");
                         }
                         return race;
                     }
-                    break;
-                case 'F':
+                }
+                case 'F' -> {
                     race.form = fp.FLAG32_SKEY("Form", word, race.form, form_flags);
                     fp.FLAG32_SKEY("Flags", word, race.res, res_flags); //todo: SoG race
-                    break;
-                case 'I':
-                    race.imm = fp.FLAG32_SKEY("Imm", word, race.imm, imm_flags);
-                    break;
-                case 'O':
-                    race.off = fp.FLAG32_SKEY("Off", word, race.off, off_flags);
-                    break;
-                case 'P':
-                    race.parts = fp.FLAG32_SKEY("Parts", word, race.parts, part_flags);
-                    break;
-                case 'R':
+                }
+                case 'I' -> race.imm = fp.FLAG32_SKEY("Imm", word, race.imm, imm_flags);
+                case 'O' -> race.off = fp.FLAG32_SKEY("Off", word, race.off, off_flags);
+                case 'P' -> race.parts = fp.FLAG32_SKEY("Parts", word, race.parts, part_flags);
+                case 'R' -> {
                     race.res = fp.FLAG32_SKEY("Res", word, race.res, res_flags);
                     if (word.equals("Resist")) {
                         fp.fread_string_eol();
                         fp.fMatch = true;
                     }
-                    break;
-                case 'V':
-                    race.vuln = fp.FLAG32_SKEY("Vuln", word, race.vuln, vuln_flags);
-                    break;
+                }
+                case 'V' -> race.vuln = fp.FLAG32_SKEY("Vuln", word, race.vuln, vuln_flags);
             }
             if (!fp.fMatch) {
                 throw new RuntimeException("unknown keyword:" + word);
@@ -503,10 +266,10 @@ class DB {
     }
 
     private static PCRace read_pcrace(DikuTextFile fp) {
-        PCRace pcRace = new PCRace();
+        var pcRace = new PCRace();
         for (; ; ) {
             int i;
-            String word = fp.feof() ? "End" : fp.fread_word();
+            var word = fp.feof() ? "End" : fp.fread_word();
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
                 case 'A':
@@ -515,12 +278,12 @@ class DB {
 
                 case 'B':
                     if (word.equals("BonusSkills")) {
-                        String skills = fp.fread_string();
+                        var skills = fp.fread_string();
                         List<Skill> skillsList = new ArrayList<>();
                         while (!skills.isEmpty()) {
-                            StringBuilder oneSkill = new StringBuilder();
+                            var oneSkill = new StringBuilder();
                             skills = one_argument(skills, oneSkill);
-                            Skill skill = Skill.lookupSkill(oneSkill.toString());
+                            var skill = Skill.lookupSkill(oneSkill.toString());
                             if (skill == null) {
                                 throw new RuntimeException("not a skill:" + oneSkill);
                             }
@@ -533,10 +296,10 @@ class DB {
                     break;
                 case 'C':
                     if (!str_cmp(word, "Class")) {
-                        String name = fp.fread_word();
-                        int expMult = fp.fread_number();
-                        Clazz clazz = Clazz.lookupClass(name);
-                        RaceToClassModifier mod = new RaceToClassModifier(clazz, expMult);
+                        var name = fp.fread_word();
+                        var expMult = fp.fread_number();
+                        var clazz = Clazz.lookupClass(name);
+                        var mod = new RaceToClassModifier(clazz, expMult);
                         pcRace.addClassModifier(clazz, mod);
                         fp.fMatch = true;
                     }
@@ -600,7 +363,7 @@ class DB {
     private static void read_classes() throws IOException {
         currentList = new DikuTextFile(nw_config.etc_classes_list);
         for (; ; ) {
-            String classFile = currentList.fread_word();
+            var classFile = currentList.fread_word();
             if (classFile.charAt(0) == '$') {
                 break;
             }
@@ -608,7 +371,7 @@ class DB {
             Clazz clazz = null;
             label:
             while (!currentFile.feof()) {
-                String word = currentFile.fread_word();
+                var word = currentFile.fread_word();
                 switch (word) {
                     case "#CLASS":
                         if (clazz != null) {
@@ -620,7 +383,7 @@ class DB {
                         if (clazz == null) {
                             throw new RuntimeException("Error: #POSE before #CLASS");
                         }
-                        Pose pose = read_class_pose(currentFile);
+                        var pose = read_class_pose(currentFile);
                         clazz.poses.add(pose);
                         break;
                     case "#$":
@@ -637,7 +400,7 @@ class DB {
         Clazz clazz = null;
         for (; ; ) {
             int i;
-            String word = fp.feof() ? "End" : fp.fread_word();
+            var word = fp.feof() ? "End" : fp.fread_word();
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
@@ -657,7 +420,7 @@ class DB {
                 }
                 case 'G' -> {
                     if (!str_cmp(word, "GuildRoom")) {
-                        int vnum = fp.fread_number();
+                        var vnum = fp.fread_number();
                         clazz.guildVnums.add(vnum);
                         fp.fMatch = true;
                     }
@@ -667,7 +430,7 @@ class DB {
                 case 'N' -> {
                     if (!str_cmp(word, "Name")) {
                         fp.fMatch = true;
-                        String name = fp.fread_string();
+                        var name = fp.fread_string();
                         clazz = Clazz.lookupClass(name, false);
                         if (clazz == null) {
                             clazz = new Clazz(name);
@@ -677,10 +440,10 @@ class DB {
                 case 'P' -> clazz.attr_prime = fp.FLAG32_WKEY("PrimeStat", word, clazz.attr_prime, stat_names);
                 case 'S' -> {
                     if (!str_cmp(word, "Skill")) {
-                        Skill skill = Skill.lookupSkill(fp.fread_word(), true);
-                        int level = fp.fread_number();
-                        int rating = fp.fread_number();
-                        int mod = fp.fread_number();
+                        var skill = Skill.lookupSkill(fp.fread_word(), true);
+                        var level = fp.fread_number();
+                        var rating = fp.fread_number();
+                        var mod = fp.fread_number();
                         skill.skill_level[clazz.id] = level;
                         skill.rating[clazz.id] = rating;
                         skill.mod[clazz.id] = mod;
@@ -709,12 +472,12 @@ class DB {
                         if (level < 0 || level > MAX_LEVEL) {
                             throw new RuntimeException("load_class: invalid level: " + level);
                         }
-                        String sexStr = fp.fread_word();
+                        var sexStr = fp.fread_word();
                         sex = (int) flag_type.parseFlagsValue(sexStr, sex_table);
                         if (sex != SEX_MALE && sex != SEX_FEMALE) {
                             throw new RuntimeException("load_class: invalid sex");
                         }
-                        String title = fp.fread_string();
+                        var title = fp.fread_string();
                         if (sex == SEX_MALE) {
                             clazz.maleTitles[level] = title;
                         } else {
@@ -732,23 +495,19 @@ class DB {
     }
 
     private static Pose read_class_pose(DikuTextFile fp) {
-        Pose pose = new Pose();
+        var pose = new Pose();
         for (; ; ) {
             int i;
-            String word = fp.feof() ? "End" : fp.fread_word();
+            var word = fp.feof() ? "End" : fp.fread_word();
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
-                case 'E':
+                case 'E' -> {
                     if (!str_cmp(word, "End")) {
                         return pose;
                     }
-                    break;
-                case 'O':
-                    pose.message_to_room = fp.SKEY("Others", word, pose.message_to_room);
-                    break;
-                case 'S':
-                    pose.message_to_char = fp.SKEY("Self", word, pose.message_to_char);
-                    break;
+                }
+                case 'O' -> pose.message_to_room = fp.SKEY("Others", word, pose.message_to_room);
+                case 'S' -> pose.message_to_char = fp.SKEY("Self", word, pose.message_to_char);
             }
             if (!fp.fMatch) {
                 throw new RuntimeException("load_class: Unknown keyword:" + word);
@@ -802,7 +561,7 @@ class DB {
     private static void readAreas() throws IOException, NoSuchMethodException {
         currentList = new DikuTextFile(nw_config.etc_area_list);
         for (; ; ) {
-            String strArea = currentList.fread_word();
+            var strArea = currentList.fread_word();
             if (strArea.charAt(0) == '$') {
                 break;
             }
@@ -820,7 +579,7 @@ class DB {
                     exit(1);
                 }
 
-                String word = currentFile.fread_word();
+                var word = currentFile.fread_word();
 
                 if (word.charAt(0) == '$') {
                     break;
@@ -866,12 +625,12 @@ class DB {
         currentList = null;
     }
 
-/*
-* Snarf an 'area' header line.
-*/
+    /*
+     * Snarf an 'area' header line.
+     */
 
     static void load_area(DikuTextFile fp) {
-        AREA_DATA pArea = new AREA_DATA();
+        var pArea = new AREA_DATA();
         pArea.reset_first = null;
         pArea.reset_last = null;
         pArea.file_name = fp.fread_string();
@@ -904,9 +663,9 @@ class DB {
         top_area++;
     }
 
-/*
-* Snarf a help section.
-*/
+    /*
+     * Snarf a help section.
+     */
 
     static void load_helps(DikuTextFile fp) {
         HELP_DATA pHelp;
@@ -936,9 +695,9 @@ class DB {
         }
     }
 
-/*
-* Snarf a mob section.  old style
-*/
+    /*
+     * Snarf a mob section.  old style
+     */
 
     static void load_old_mob(DikuTextFile fp) {
         MOB_INDEX_DATA pMobIndex;
@@ -987,9 +746,9 @@ class DB {
             pMobIndex.level = fp.fread_number();
             pMobIndex.mprogs = null;
             /*
-            * The unused stuff is for imps who want to use the old-style
-            * stats-in-files method.
-            */
+             * The unused stuff is for imps who want to use the old-style
+             * stats-in-files method.
+             */
             fp.fread_number();   /* Unused */
             fp.fread_number();   /* Unused */
             fp.fread_number();   /* Unused */
@@ -1020,14 +779,14 @@ class DB {
             }
 
             /*
-            * Back to meaningful values.
-            */
+             * Back to meaningful values.
+             */
             pMobIndex.sex = fp.fread_number();
 
             /* compute the race BS */
-            StringBuilder name = new StringBuilder();
+            var name = new StringBuilder();
             one_argument(pMobIndex.player_name, name);
-            Race race = Race.lookupRace(name.toString());
+            var race = Race.lookupRace(name.toString());
 
 //FIXME            if (race == null) {
 //                /* fill in with blanks */
@@ -1073,9 +832,9 @@ class DB {
         }
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
-/*
- * Snarf an obj section.  old style
- */
+    /*
+     * Snarf an obj section.  old style
+     */
 
     static void load_old_obj(DikuTextFile fp) {
         OBJ_INDEX_DATA pObjIndex;
@@ -1178,22 +937,16 @@ class DB {
             }
 
             /*
-            * Translate spell "slot numbers" to internal "skill numbers."
-            */
+             * Translate spell "slot numbers" to internal "skill numbers."
+             */
             switch (pObjIndex.item_type) {
-                case ITEM_PILL:
-                case ITEM_POTION:
-                case ITEM_SCROLL:
+                case ITEM_PILL, ITEM_POTION, ITEM_SCROLL -> {
                     pObjIndex.value[1] = slot_lookup_skill_num(pObjIndex.value[1]);
                     pObjIndex.value[2] = slot_lookup_skill_num(pObjIndex.value[2]);
                     pObjIndex.value[3] = slot_lookup_skill_num(pObjIndex.value[3]);
                     pObjIndex.value[4] = slot_lookup_skill_num(pObjIndex.value[4]);
-                    break;
-
-                case ITEM_STAFF:
-                case ITEM_WAND:
-                    pObjIndex.value[3] = slot_lookup_skill_num(pObjIndex.value[3]);
-                    break;
+                }
+                case ITEM_STAFF, ITEM_WAND -> pObjIndex.value[3] = slot_lookup_skill_num(pObjIndex.value[3]);
             }
 
             iHash = vnum % MAX_KEY_HASH;
@@ -1204,9 +957,9 @@ class DB {
 
     }
 
-/*
-* Snarf a reset section.
-*/
+    /*
+     * Snarf a reset section.
+     */
 
     static void load_resets(DikuTextFile fp) {
         RESET_DATA pReset;
@@ -1244,41 +997,34 @@ class DB {
             fp.fread_to_eol();
 
             /*
-            * Validate parameters.
-            * We're calling the index functions for the side effect.
-            */
+             * Validate parameters.
+             * We're calling the index functions for the side effect.
+             */
             switch (letter) {
-                default:
+                default -> {
                     bug("Load_resets: bad command '%c'.", letter);
                     exit(1);
-                    break;
-
-                case 'M':
+                }
+                case 'M' -> {
                     get_mob_index(pReset.arg1);
                     get_room_index(pReset.arg3);
-                    break;
-
-                case 'O':
+                }
+                case 'O' -> {
                     temp_index = get_obj_index(pReset.arg1);
                     temp_index.reset_num++;
                     get_room_index(pReset.arg3);
-                    break;
-
-                case 'P':
+                }
+                case 'P' -> {
                     temp_index = get_obj_index(pReset.arg1);
                     temp_index.reset_num++;
                     get_obj_index(pReset.arg3);
-                    break;
-
-                case 'G':
-                case 'E':
+                }
+                case 'G', 'E' -> {
                     temp_index = get_obj_index(pReset.arg1);
                     temp_index.reset_num++;
-                    break;
-
-                case 'D':
+                }
+                case 'D' -> {
                     pRoomIndex = get_room_index(pReset.arg1);
-
                     if (pReset.arg2 < 0
                             || pReset.arg2 > 5
                             || (pexit = pRoomIndex.exit[pReset.arg2]) == null
@@ -1286,23 +1032,18 @@ class DB {
                         bug("Load_resets: 'D': exit %d not door.", pReset.arg2);
                         exit(1);
                     }
-
                     if (pReset.arg3 < 0 || pReset.arg3 > 2) {
                         bug("Load_resets: 'D': bad 'locks': %d.", pReset.arg3);
                         exit(1);
                     }
-
-                    break;
-
-                case 'R':
+                }
+                case 'R' -> {
                     get_room_index(pReset.arg1);
-
                     if (pReset.arg2 < 0 || pReset.arg2 > 6) {
                         bug("Load_resets: 'R': bad exit %d.", pReset.arg2);
                         exit(1);
                     }
-
-                    break;
+                }
             }
 
             if (area_last.reset_first == null) {
@@ -1318,9 +1059,9 @@ class DB {
         }
     }
 
-/*
-* Snarf a room section.
-*/
+    /*
+     * Snarf a room section.
+     */
 
     static void load_rooms(DikuTextFile fp) {
         ROOM_INDEX_DATA pRoomIndex;
@@ -1420,21 +1161,11 @@ class DB {
                     pexit.vnum = fp.fread_number();
 
                     switch (locks) {
-                        case 1:
-                            pexit.exit_info = EX_ISDOOR;
-                            break;
-                        case 2:
-                            pexit.exit_info = EX_ISDOOR | EX_PICKPROOF;
-                            break;
-                        case 3:
-                            pexit.exit_info = EX_ISDOOR | EX_NOPASS;
-                            break;
-                        case 4:
-                            pexit.exit_info = EX_ISDOOR | EX_NOPASS | EX_PICKPROOF;
-                            break;
-                        case 5:
-                            pexit.exit_info = EX_NOFLEE;
-                            break;
+                        case 1 -> pexit.exit_info = EX_ISDOOR;
+                        case 2 -> pexit.exit_info = EX_ISDOOR | EX_PICKPROOF;
+                        case 3 -> pexit.exit_info = EX_ISDOOR | EX_NOPASS;
+                        case 4 -> pexit.exit_info = EX_ISDOOR | EX_NOPASS | EX_PICKPROOF;
+                        case 5 -> pexit.exit_info = EX_NOFLEE;
                     }
 
                     pRoomIndex.exit[door] = pexit;
@@ -1469,9 +1200,9 @@ class DB {
         }
     }
 
-/*
-* Snarf a shop section.
-*/
+    /*
+     * Snarf a shop section.
+     */
 
     static void load_shops(DikuTextFile fp) {
         SHOP_DATA pShop;
@@ -1509,9 +1240,9 @@ class DB {
         }
     }
 
-/*
-* Snarf spec proc declarations.
-*/
+    /*
+     * Snarf spec proc declarations.
+     */
 
     static void load_specials(DikuTextFile fp) {
         for (; ; ) {
@@ -1543,63 +1274,70 @@ class DB {
         }
     }
 
-/*
-* Translate all room exits from virtual to real.
-* Has to be done after all rooms are read in.
-* Check for bad reverse exits.
-*/
+    /*
+     * Translate all room exits from virtual to real.
+     * Has to be done after all rooms are read in.
+     * Check for bad reverse exits.
+     */
 
     private static void fix_exits() {
-        ROOM_INDEX_DATA pRoomIndex;
-        ROOM_INDEX_DATA to_room;
-        EXIT_DATA pexit;
-        EXIT_DATA pexit_rev;
-        int iHash;
-        int door;
-
-        for (iHash = 0; iHash < MAX_KEY_HASH; iHash++) {
-            for (pRoomIndex = room_index_hash[iHash];
-                 pRoomIndex != null;
-                 pRoomIndex = pRoomIndex.next) {
-                boolean fexit = false;
-                for (door = 0; door <= 5; door++) {
-                    if ((pexit = pRoomIndex.exit[door]) != null) {
-                        if (pexit.vnum <= 0 || get_room_index(pexit.vnum) == null) {
-                            pexit.to_room = null;
-                        } else {
-                            fexit = true;
-                            pexit.to_room = get_room_index(pexit.vnum);
-                        }
+        for (int iHash = 0; iHash < MAX_KEY_HASH; iHash++) {
+            for (ROOM_INDEX_DATA roomIndex = room_index_hash[iHash]; roomIndex != null; roomIndex = roomIndex.next) {
+                var hasExit = false;
+                for (int door = 0; door <= 5; door++) {
+                    EXIT_DATA exit = roomIndex.exit[door];
+                    if (exit == null) {
+                        continue;
+                    }
+                    if (exit.vnum <= 0 || get_room_index(exit.vnum) == null) {
+                        exit.to_room = null;
+                    } else {
+                        hasExit = true;
+                        exit.to_room = get_room_index(exit.vnum);
                     }
                 }
-                if (!fexit) {
-                    pRoomIndex.room_flags = SET_BIT(pRoomIndex.room_flags, ROOM_NO_MOB);
+                if (!hasExit) {
+                    // Rooms with no exits are ROOM_NO_MOB.
+                    roomIndex.room_flags = SET_BIT(roomIndex.room_flags, ROOM_NO_MOB);
                 }
             }
         }
 
-        for (iHash = 0; iHash < MAX_KEY_HASH; iHash++) {
-            for (pRoomIndex = room_index_hash[iHash];
-                 pRoomIndex != null;
-                 pRoomIndex = pRoomIndex.next) {
-                for (door = 0; door <= 5; door++) {
-                    if ((pexit = pRoomIndex.exit[door]) != null
-                            && (to_room = pexit.to_room) != null
-                            && (pexit_rev = to_room.exit[rev_dir[door]]) != null
-                            && pexit_rev.to_room != pRoomIndex
-                            && (pRoomIndex.vnum < 1200 || pRoomIndex.vnum > 1299)) {
-                        TextBuffer buf = new TextBuffer();
-                        buf.sprintf("Fix_exits: %d:%d . %d:%d . %d .", pRoomIndex.vnum, door, to_room.vnum, rev_dir[door], (pexit_rev.to_room == null ? 0 : pexit_rev.to_room.vnum));
-                        bug(buf);
+        for (int iHash = 0; iHash < MAX_KEY_HASH; iHash++) {
+            for (ROOM_INDEX_DATA room = room_index_hash[iHash]; room != null; room = room.next) {
+                for (int door = 0; door <= 5; door++) {
+                    EXIT_DATA exit = room.exit[door];
+                    if (exit == null) {
+                        continue;
+                    }
+                    ROOM_INDEX_DATA toRoom = exit.to_room;
+                    EXIT_DATA revExit = toRoom == null ? null : toRoom.exit[rev_dir[door]];
+                    if (toRoom == null || revExit == null) {
+                        continue;
+                    }
+                    if (revExit.to_room != room && revExit.to_room.area == room.area && !checkRoomCanHaveNonSymmetricExit(room.vnum)) {
+                        var buf = new TextBuffer();
+                        buf.sprintf("Fix_exits: %d:%d expected to have reverse exit %d:%d but the reverse exit room is %d .",
+                                room.vnum, door,
+                                toRoom.vnum, rev_dir[door],
+                                (revExit.to_room == null ? 0 : revExit.to_room.vnum));
+                        bug(buf, (DikuTextFile) null);
                     }
                 }
             }
         }
     }
 
-/*
-* Repopulate areas periodically.
-*/
+    private static boolean checkRoomCanHaveNonSymmetricExit(int vnum) {
+        return (vnum >= 1200 && vnum <= 1299)
+                || vnum == 20034 || vnum == 20044
+                || vnum == 15091 || vnum == 15093
+                || vnum == 12124 || vnum == 12125 || vnum == 12126 || vnum == 12127;
+    }
+
+    /*
+     * Repopulate areas periodically.
+     */
 
     static void area_update() {
         AREA_DATA pArea;
@@ -1612,14 +1350,14 @@ class DB {
             }
 
             /*
-            * Check age and reset.
-            * Note: Mud School resets every 3 minutes (not 15).
-            */
+             * Check age and reset.
+             * Note: Mud School resets every 3 minutes (not 15).
+             */
             if ((!pArea.empty && (pArea.nplayer == 0 || pArea.age >= 15)) || pArea.age >= 31) {
                 ROOM_INDEX_DATA pRoomIndex;
 
                 reset_area(pArea);
-                String str = pArea.name + " has just been reset.";
+                var str = pArea.name + " has just been reset.";
                 wiznet(str, null, null, WIZ_RESETS, 0, 0);
 
                 if (pArea.resetmsg != null) {
@@ -1662,9 +1400,9 @@ class DB {
         }
     }
 
-/*
-* Reset one area.
-*/
+    /*
+     * Reset one area.
+     */
 
     static void reset_area(AREA_DATA pArea) {
         RESET_DATA pReset;
@@ -1716,26 +1454,20 @@ class DB {
             int count = 0, limit, ci_vnum = 0;
 
             switch (pReset.command) {
-                default:
-                    bug("Reset_area: bad command %c.", pReset.command);
-                    break;
-
-                case 'M':
+                default -> bug("Reset_area: bad command %c.", pReset.command);
+                case 'M' -> {
                     if ((pMobIndex = get_mob_index(pReset.arg1)) == null) {
                         bug("Reset_area: 'M': bad vnum %d.", pReset.arg1);
                         continue;
                     }
-
                     if ((pRoomIndex = get_room_index(pReset.arg3)) == null) {
                         bug("Reset_area: 'R': bad vnum %d.", pReset.arg3);
                         continue;
                     }
-
                     if (pMobIndex.count >= pReset.arg2) {
                         last = false;
                         break;
                     }
-
                     count = 0;
                     for (mob = pRoomIndex.people; mob != null; mob = mob.next_in_room) {
                         if (mob.pIndexData == pMobIndex) {
@@ -1746,105 +1478,76 @@ class DB {
                             }
                         }
                     }
-
                     if (count >= pReset.arg4) {
                         break;
                     }
-
                     mob = create_mobile(pMobIndex);
 
                     /*
-                    * Check for pet shop.
-                    */
-                {
-                    ROOM_INDEX_DATA pRoomIndexPrev;
-                    pRoomIndexPrev = get_room_index(pRoomIndex.vnum - 1);
-                    if (pRoomIndexPrev != null
-                            && IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP)) {
-                        mob.act = SET_BIT(mob.act, ACT_PET);
+                     * Check for pet shop.
+                     */
+                    {
+                        ROOM_INDEX_DATA pRoomIndexPrev;
+                        pRoomIndexPrev = get_room_index(pRoomIndex.vnum - 1);
+                        if (pRoomIndexPrev != null
+                                && IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP)) {
+                            mob.act = SET_BIT(mob.act, ACT_PET);
+                        }
                     }
+
+                    /* set area */
+                    mob.zone = pRoomIndex.area;
+                    char_to_room(mob, pRoomIndex);
+                    level = URANGE(0, mob.level - 2, LEVEL_HERO - 1);
+                    last = true;
                 }
-
-                /* set area */
-                mob.zone = pRoomIndex.area;
-
-                char_to_room(mob, pRoomIndex);
-                level = URANGE(0, mob.level - 2, LEVEL_HERO - 1);
-                last = true;
-                break;
-
-                case 'O':
+                case 'O' -> {
                     if ((pObjIndex = get_obj_index(pReset.arg1)) == null) {
                         bug("Reset_area: 'O': bad vnum %d.", pReset.arg1);
                         continue;
                     }
-
                     if ((pRoomIndex = get_room_index(pReset.arg3)) == null) {
                         bug("Reset_area: 'R': bad vnum %d.", pReset.arg3);
                         continue;
                     }
-
                     if (pArea.nplayer > 0 || count_obj_list(pObjIndex, pRoomIndex.contents) > 0) {
                         last = false;
                         break;
                     }
-
                     switch (pObjIndex.vnum) {
-                        case OBJ_VNUM_RULER_STAND:
-                            ci_vnum = cabal_table[CABAL_RULER].obj_vnum;
-                            break;
-                        case OBJ_VNUM_INVADER_SKULL:
-                            ci_vnum = cabal_table[CABAL_INVADER].obj_vnum;
-                            break;
-                        case OBJ_VNUM_SHALAFI_ALTAR:
-                            ci_vnum = cabal_table[CABAL_SHALAFI].obj_vnum;
-                            break;
-                        case OBJ_VNUM_CHAOS_ALTAR:
-                            ci_vnum = cabal_table[CABAL_CHAOS].obj_vnum;
-                            break;
-                        case OBJ_VNUM_KNIGHT_ALTAR:
-                            ci_vnum = cabal_table[CABAL_KNIGHT].obj_vnum;
-                            break;
-                        case OBJ_VNUM_LIONS_ALTAR:
-                            ci_vnum = cabal_table[CABAL_LIONS].obj_vnum;
-                            break;
-                        case OBJ_VNUM_BATTLE_THRONE:
-                            ci_vnum = cabal_table[CABAL_BATTLE].obj_vnum;
-                            break;
-                        case OBJ_VNUM_HUNTER_ALTAR:
-                            ci_vnum = cabal_table[CABAL_HUNTER].obj_vnum;
-                            break;
+                        case OBJ_VNUM_RULER_STAND -> ci_vnum = cabal_table[CABAL_RULER].obj_vnum;
+                        case OBJ_VNUM_INVADER_SKULL -> ci_vnum = cabal_table[CABAL_INVADER].obj_vnum;
+                        case OBJ_VNUM_SHALAFI_ALTAR -> ci_vnum = cabal_table[CABAL_SHALAFI].obj_vnum;
+                        case OBJ_VNUM_CHAOS_ALTAR -> ci_vnum = cabal_table[CABAL_CHAOS].obj_vnum;
+                        case OBJ_VNUM_KNIGHT_ALTAR -> ci_vnum = cabal_table[CABAL_KNIGHT].obj_vnum;
+                        case OBJ_VNUM_LIONS_ALTAR -> ci_vnum = cabal_table[CABAL_LIONS].obj_vnum;
+                        case OBJ_VNUM_BATTLE_THRONE -> ci_vnum = cabal_table[CABAL_BATTLE].obj_vnum;
+                        case OBJ_VNUM_HUNTER_ALTAR -> ci_vnum = cabal_table[CABAL_HUNTER].obj_vnum;
                     }
-
                     cabal_item = get_obj_index(ci_vnum);
                     if (ci_vnum != 0 && cabal_item.count > 0) {
                         last = false;
                         break;
                     }
-
                     if ((pObjIndex.limit != -1) && (pObjIndex.count >= pObjIndex.limit)) {
                         last = false;
                         break;
                     }
-
                     obj = create_object(pObjIndex, UMIN(number_fuzzy(level),
                             LEVEL_HERO - 1));
                     obj.cost = 0;
                     obj_to_room(obj, pRoomIndex);
                     last = true;
-                    break;
-
-                case 'P':
+                }
+                case 'P' -> {
                     if ((pObjIndex = get_obj_index(pReset.arg1)) == null) {
                         bug("Reset_area: 'P': bad vnum %d.", pReset.arg1);
                         continue;
                     }
-
                     if ((pObjToIndex = get_obj_index(pReset.arg3)) == null) {
                         bug("Reset_area: 'P': bad vnum %d.", pReset.arg3);
                         continue;
                     }
-
                     if (pReset.arg2 > 50)      /* old format */ {
                         limit = 6;
                     } else if (pReset.arg2 == -1)    /* no limit */ {
@@ -1852,23 +1555,20 @@ class DB {
                     } else {
                         limit = pReset.arg2;
                     }
-
                     if (pArea.nplayer > 0
                             || (obj_to = get_obj_type(pObjToIndex)) == null
                             || (obj_to.in_room == null && !last)
                             || (pObjIndex.count >= limit && number_range(0, 4) != 0)
                             || (count = count_obj_list(pObjIndex, obj_to.contains)) > pReset.arg4
-                            ) {
+                    ) {
                         last = false;
                         break;
                     }
-
                     if ((pObjIndex.limit != -1) && (pObjIndex.count >= pObjIndex.limit)) {
                         last = false;
                         dump_to_scr("Reseting area: [P] OBJ limit reached\n");
                         break;
                     }
-
                     while (count < pReset.arg4) {
                         obj = create_object(pObjIndex, number_fuzzy(obj_to.level));
                         obj_to_obj(obj, obj_to);
@@ -1880,59 +1580,42 @@ class DB {
                     /* fix object lock state! */
                     obj_to.value[1] = obj_to.pIndexData.value[1];
                     last = true;
-                    break;
-
-                case 'G':
-                case 'E':
+                }
+                case 'G', 'E' -> {
                     if ((pObjIndex = get_obj_index(pReset.arg1)) == null) {
                         bug("Reset_area: 'E' or 'G': bad vnum %d.", pReset.arg1);
                         continue;
                     }
-
                     if (!last) {
                         break;
                     }
-
                     if (mob == null) {
                         bug("Reset_area: 'E' or 'G': null mob for vnum %d.",
                                 pReset.arg1);
                         last = false;
                         break;
                     }
-
                     if (mob.pIndexData.pShop != null) {
-                        int olevel = 0;
+                        var olevel = 0;
 
                         if (!pObjIndex.new_format) {
                             switch (pObjIndex.item_type) {
-                                case ITEM_PILL:
-                                case ITEM_POTION:
-                                case ITEM_SCROLL:
+                                case ITEM_PILL, ITEM_POTION, ITEM_SCROLL -> {
                                     olevel = MAX_LEVEL - 7;
                                     for (i = 1; i < 5; i++) {
                                         if (pObjIndex.value[i] > 0) {
-                                            for (int j = 0; j < MAX_CLASS; j++) {
+                                            for (var j = 0; j < MAX_CLASS; j++) {
                                                 olevel = UMIN(olevel, Skill.skills[pObjIndex.value[i]].skill_level[j]);
                                             }
                                         }
                                     }
                                     olevel = UMAX(0, (olevel * 3 / 4) - 2);
-                                    break;
-                                case ITEM_WAND:
-                                    olevel = number_range(10, 20);
-                                    break;
-                                case ITEM_STAFF:
-                                    olevel = number_range(15, 25);
-                                    break;
-                                case ITEM_ARMOR:
-                                    olevel = number_range(5, 15);
-                                    break;
-                                case ITEM_WEAPON:
-                                    olevel = number_range(5, 15);
-                                    break;
-                                case ITEM_TREASURE:
-                                    olevel = number_range(10, 20);
-                                    break;
+                                }
+                                case ITEM_WAND -> olevel = number_range(10, 20);
+                                case ITEM_STAFF -> olevel = number_range(15, 25);
+                                case ITEM_ARMOR -> olevel = number_range(5, 15);
+                                case ITEM_WEAPON -> olevel = number_range(5, 15);
+                                case ITEM_TREASURE -> olevel = number_range(10, 20);
                             }
                         }
 
@@ -1947,72 +1630,63 @@ class DB {
                         }
 
                     }
-
                     obj_to_char(obj, mob);
                     if (pReset.command == 'E') {
-                        int iWear = wear_convert(pReset.arg3);
+                        var iWear = wear_convert(pReset.arg3);
                         if (iWear != WEAR_NONE) {
                             equip_char(mob, obj, iWear);
                         }
                     }
                     last = true;
-                    break;
-
-                case 'D':
+                }
+                case 'D' -> {
                     if ((pRoomIndex = get_room_index(pReset.arg1)) == null) {
                         bug("Reset_area: 'D': bad vnum %d.", pReset.arg1);
                         continue;
                     }
-
                     if ((pexit = pRoomIndex.exit[pReset.arg2]) == null) {
                         break;
                     }
-
                     switch (pReset.arg3) {
-                        case 0:
+                        case 0 -> {
                             pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_CLOSED);
                             pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_LOCKED);
-                            break;
-
-                        case 1:
+                        }
+                        case 1 -> {
                             pexit.exit_info = SET_BIT(pexit.exit_info, EX_CLOSED);
                             pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_LOCKED);
-                            break;
-
-                        case 2:
+                        }
+                        case 2 -> {
                             pexit.exit_info = SET_BIT(pexit.exit_info, EX_CLOSED);
                             pexit.exit_info = SET_BIT(pexit.exit_info, EX_LOCKED);
-                            break;
+                        }
                     }
-
                     last = true;
-                    break;
-
-                case 'R':
+                }
+                case 'R' -> {
                     if ((pRoomIndex = get_room_index(pReset.arg1)) == null) {
                         bug("Reset_area: 'R': bad vnum %d.", pReset.arg1);
                         continue;
                     }
+                    {
+                        int d0;
+                        int d1;
 
-                {
-                    int d0;
-                    int d1;
-
-                    for (d0 = 0; d0 < pReset.arg2 - 1; d0++) {
-                        d1 = number_range(d0, pReset.arg2 - 1);
-                        pexit = pRoomIndex.exit[d0];
-                        pRoomIndex.exit[d0] = pRoomIndex.exit[d1];
-                        pRoomIndex.exit[d1] = pexit;
+                        for (d0 = 0; d0 < pReset.arg2 - 1; d0++) {
+                            d1 = number_range(d0, pReset.arg2 - 1);
+                            pexit = pRoomIndex.exit[d0];
+                            pRoomIndex.exit[d0] = pRoomIndex.exit[d1];
+                            pRoomIndex.exit[d1] = pexit;
+                        }
                     }
                 }
-                break;
             }
         }
     }
 
-/*
-* Create an instance of a mobile.
-*/
+    /*
+     * Create an instance of a mobile.
+     */
 
     static CHAR_DATA create_mobile(MOB_INDEX_DATA pMobIndex) {
 
@@ -2024,7 +1698,7 @@ class DB {
             exit(1);
         }
 
-        CHAR_DATA mob = new_char();
+        var mob = new_char();
 
         mob.pIndexData = pMobIndex;
 
@@ -2082,15 +1756,12 @@ class DB {
             mob.status = 0;
             if (mob.dam_type == 0) {
                 switch (number_range(1, 3)) {
-                    case (1):
-                        mob.dam_type = 3;
-                        break;  /* slash */
-                    case (2):
-                        mob.dam_type = 7;
-                        break;  /* pound */
-                    case (3):
-                        mob.dam_type = 11;
-                        break;  /* pierce */
+                    case (1) -> mob.dam_type = 3;
+                    /* slash */
+                    case (2) -> mob.dam_type = 7;
+                    /* pound */
+                    case (3) -> mob.dam_type = 11;
+                    /* pierce */
                 }
             }
             System.arraycopy(pMobIndex.ac, 0, mob.armor, 0, 4);
@@ -2115,7 +1786,7 @@ class DB {
 
             /* computed on the spot */
 
-            for (int i = 0; i < MAX_STATS; i++) {
+            for (var i = 0; i < MAX_STATS; i++) {
                 mob.perm_stat[i] = UMIN(25, 11 + mob.level / 4);
             }
 
@@ -2151,7 +1822,7 @@ class DB {
             mob.perm_stat[STAT_CON] += (mob.size - SIZE_MEDIUM) / 2;
 
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             /* let's get some spell action */
             if (IS_AFFECTED(mob, AFF_SANCTUARY)) {
                 af.where = TO_AFFECTS;
@@ -2217,17 +1888,14 @@ class DB {
             mob.max_mana = 100 + dice(mob.level, 10);
             mob.mana = mob.max_mana;
             switch (number_range(1, 3)) {
-                case (1):
-                    mob.dam_type = 3;
-                    break;  /* slash */
-                case (2):
-                    mob.dam_type = 7;
-                    break;  /* pound */
-                case (3):
-                    mob.dam_type = 11;
-                    break;  /* pierce */
+                case (1) -> mob.dam_type = 3;
+                /* slash */
+                case (2) -> mob.dam_type = 7;
+                /* pound */
+                case (3) -> mob.dam_type = 11;
+                /* pierce */
             }
-            for (int i = 0; i < 3; i++) {
+            for (var i = 0; i < 3; i++) {
                 mob.armor[i] = interpolate(mob.level, 100, -100);
             }
             mob.armor[3] = interpolate(mob.level, 100, 0);
@@ -2249,7 +1917,7 @@ class DB {
             mob.perm_stat[i] = 11 + mob.level/4;
  computed on the spot */
 
-            for (int i = 0; i < MAX_STATS; i++) {
+            for (var i = 0; i < MAX_STATS; i++) {
                 mob.perm_stat[i] = UMIN(25, 11 + mob.level / 4);
             }
 
@@ -2296,7 +1964,7 @@ class DB {
         return mob;
     }
 
-/* duplicate a mobile exactly -- except inventory */
+    /* duplicate a mobile exactly -- except inventory */
 
     static void clone_mobile(CHAR_DATA parent, CHAR_DATA clone) {
         int i;
@@ -2380,26 +2048,26 @@ class DB {
 
     }
 
-/*
-* Create an object with modifying the count
-*/
+    /*
+     * Create an object with modifying the count
+     */
 
     static OBJ_DATA create_object(OBJ_INDEX_DATA pObjIndex, int level) {
         return create_object_org(pObjIndex, level, true);
     }
 
-/*
-* for player load/quit
-* Create an object and do not modify the count
-*/
+    /*
+     * for player load/quit
+     * Create an object and do not modify the count
+     */
 
     static OBJ_DATA create_object_nocount(OBJ_INDEX_DATA pObjIndex, int level) {
         return create_object_org(pObjIndex, level, false);
     }
 
-/*
- * Create an instance of an object.
- */
+    /*
+     * Create an instance of an object.
+     */
 
     static OBJ_DATA create_object_org(OBJ_INDEX_DATA pObjIndex, int level, boolean Count) {
         AFFECT_DATA paf;
@@ -2429,9 +2097,7 @@ class DB {
                 break;
             }
         }
-        if ((obj.pIndexData.limit != -1) && (obj.pIndexData.count >= obj.pIndexData.limit))
-
-        {
+        if ((obj.pIndexData.limit != -1) && (obj.pIndexData.count >= obj.pIndexData.limit)) {
             if (pObjIndex.new_format) {
                 dump_to_scr("");
             }
@@ -2475,56 +2141,30 @@ class DB {
          * Mess with object properties.
          */
         switch (obj.item_type) {
-            default:
-                bug("Read_object: vnum %d bad type.", pObjIndex.vnum);
-                break;
-
-            case ITEM_LIGHT:
+            default -> bug("Read_object: vnum %d bad type.", pObjIndex.vnum);
+            case ITEM_LIGHT -> {
                 if (obj.value[2] == 999) {
                     obj.value[2] = -1;
                 }
-                break;
-
-            case ITEM_FURNITURE:
-            case ITEM_TRASH:
-            case ITEM_CONTAINER:
-            case ITEM_DRINK_CON:
-            case ITEM_KEY:
-            case ITEM_FOOD:
-            case ITEM_BOAT:
-            case ITEM_CORPSE_NPC:
-            case ITEM_CORPSE_PC:
-            case ITEM_FOUNTAIN:
-            case ITEM_MAP:
-            case ITEM_CLOTHING:
-            case ITEM_PORTAL:
+            }
+            case ITEM_FURNITURE, ITEM_TRASH, ITEM_CONTAINER, ITEM_DRINK_CON, ITEM_KEY, ITEM_FOOD, ITEM_BOAT, ITEM_CORPSE_NPC, ITEM_CORPSE_PC, ITEM_FOUNTAIN, ITEM_MAP, ITEM_CLOTHING, ITEM_PORTAL -> {
                 if (!pObjIndex.new_format) {
                     obj.cost /= 5;
                 }
-                break;
-
-            case ITEM_TREASURE:
-            case ITEM_WARP_STONE:
-            case ITEM_ROOM_KEY:
-            case ITEM_GEM:
-            case ITEM_JEWELRY:
-            case ITEM_TATTOO:
-                break;
-
-            case ITEM_JUKEBOX:
+            }
+            case ITEM_TREASURE, ITEM_WARP_STONE, ITEM_ROOM_KEY, ITEM_GEM, ITEM_JEWELRY, ITEM_TATTOO -> {
+            }
+            case ITEM_JUKEBOX -> {
                 for (i = 0; i < 5; i++) {
                     obj.value[i] = -1;
                 }
-                break;
-
-            case ITEM_SCROLL:
+            }
+            case ITEM_SCROLL -> {
                 if (level != -1 && !pObjIndex.new_format) {
                     obj.value[0] = number_fuzzy(obj.value[0]);
                 }
-                break;
-
-            case ITEM_WAND:
-            case ITEM_STAFF:
+            }
+            case ITEM_WAND, ITEM_STAFF -> {
                 if (level != -1 && !pObjIndex.new_format) {
                     obj.value[0] = number_fuzzy(obj.value[0]);
                     obj.value[1] = number_fuzzy(obj.value[1]);
@@ -2533,35 +2173,30 @@ class DB {
                 if (!pObjIndex.new_format) {
                     obj.cost *= 2;
                 }
-                break;
-
-            case ITEM_WEAPON:
+            }
+            case ITEM_WEAPON -> {
                 if (level != -1 && !pObjIndex.new_format) {
                     obj.value[1] = number_fuzzy(number_fuzzy(level / 4 + 2));
                     obj.value[2] = number_fuzzy(number_fuzzy(3 * level / 4 + 6));
                 }
-                break;
-
-            case ITEM_ARMOR:
+            }
+            case ITEM_ARMOR -> {
                 if (level != -1 && !pObjIndex.new_format) {
                     obj.value[0] = number_fuzzy(level / 5 + 3);
                     obj.value[1] = number_fuzzy(level / 5 + 3);
                     obj.value[2] = number_fuzzy(level / 5 + 3);
                 }
-                break;
-
-            case ITEM_POTION:
-            case ITEM_PILL:
+            }
+            case ITEM_POTION, ITEM_PILL -> {
                 if (level != -1 && !pObjIndex.new_format) {
                     obj.value[0] = number_fuzzy(number_fuzzy(obj.value[0]));
                 }
-                break;
-
-            case ITEM_MONEY:
+            }
+            case ITEM_MONEY -> {
                 if (!pObjIndex.new_format) {
                     obj.value[0] = obj.cost;
                 }
-                break;
+            }
         }
 
         for (paf = pObjIndex.affected; paf != null; paf = paf.next) {
@@ -2578,7 +2213,7 @@ class DB {
         return obj;
     }
 
-/* duplicate an object exactly -- except contents */
+    /* duplicate an object exactly -- except contents */
 
     static void clone_object(OBJ_DATA parent, OBJ_DATA clone) {
         int i;
@@ -2629,9 +2264,9 @@ class DB {
 
     }
 
-/*
-* Clear a new character.
-*/
+    /*
+     * Clear a new character.
+     */
 
     static void clear_char(CHAR_DATA ch) {
         int i;
@@ -2663,9 +2298,9 @@ class DB {
         }
     }
 
-/*
- * Get an extra description from a list.
- */
+    /*
+     * Get an extra description from a list.
+     */
 
     static String get_extra_descr(String name, EXTRA_DESCR_DATA ed) {
         for (; ed != null; ed = ed.next) {
@@ -2676,10 +2311,10 @@ class DB {
         return null;
     }
 
-/*
-* Translates mob virtual number to its mob index struct.
-* Hash table lookupRace.
-*/
+    /*
+     * Translates mob virtual number to its mob index struct.
+     * Hash table lookupRace.
+     */
 
     static MOB_INDEX_DATA get_mob_index(int vnum) {
         MOB_INDEX_DATA pMobIndex;
@@ -2698,10 +2333,10 @@ class DB {
         return null;
     }
 
-/*
-* Translates mob virtual number to its obj index struct.
-* Hash table lookupRace.
-*/
+    /*
+     * Translates mob virtual number to its obj index struct.
+     * Hash table lookupRace.
+     */
 
     static OBJ_INDEX_DATA get_obj_index(int vnum) {
         OBJ_INDEX_DATA pObjIndex;
@@ -2719,10 +2354,10 @@ class DB {
         return null;
     }
 
-/*
-* Translates mob virtual number to its room index struct.
-* Hash table lookupRace.
-*/
+    /*
+     * Translates mob virtual number to its room index struct.
+     * Hash table lookupRace.
+     */
 
     static ROOM_INDEX_DATA get_room_index(int vnum) {
         ROOM_INDEX_DATA pRoomIndex;
@@ -2761,12 +2396,12 @@ class DB {
         for (iArea = 0; iArea < iAreaHalf; iArea++) {
             pArea2 = pArea2.next;
         }
-        StringBuilder bufpage = new StringBuilder(1024);
+        var bufpage = new StringBuilder(1024);
         bufpage.append("Current areas of Nightworks MUD: \n");
-        Formatter f = new Formatter(bufpage);
+        var f = new Formatter(bufpage);
         for (iArea = 0; iArea < iAreaHalf; iArea++) {
-            String buf1 = formatAreaDetails(ch, pArea1);
-            String buf2 = (pArea2 != null) ? formatAreaDetails(ch, pArea2) : "\n";
+            var buf1 = formatAreaDetails(ch, pArea1);
+            var buf2 = (pArea2 != null) ? formatAreaDetails(ch, pArea2) : "\n";
             if (IS_SET(ch.act, PLR_COLOR)) {
                 f.format("%-69s %s\n", buf1, buf2);
             } else {
@@ -2783,15 +2418,15 @@ class DB {
     }
 
     private static String formatAreaDetails(CHAR_DATA ch, AREA_DATA pArea) {
-        Formatter f = new Formatter();
+        var f = new Formatter();
         f.format("{W%2d %3d{x} {b%s {c%s{x", pArea.low_range, pArea.high_range, pArea.writer, pArea.credits);
         return f.toString();
     }
 
 
     static void do_memory(CHAR_DATA ch, String argument) {
-        StringBuilder buf = new StringBuilder(1024);
-        Formatter f = new Formatter(buf);
+        var buf = new StringBuilder(1024);
+        var f = new Formatter(buf);
         f.format("Affects %5d\n", top_affect);
         f.format("Areas   %5d\n", top_area);
         f.format("ExDes   %5d\n", top_ed);
@@ -2811,23 +2446,23 @@ class DB {
     static void do_dump(CHAR_DATA ch, String argument) {
         /* open file */
         try {
-            FileWriter fp = new FileWriter("mem.dmp", false);
+            var fp = new FileWriter("mem.dmp", false);
             try {
 
                 /* report use of data structures */
 
-                Formatter f = new Formatter(fp);
+                var f = new Formatter(fp);
                 /* mobile prototypes */
                 f.format("MobProt %4d (%8d bytes)\n", top_mob_index, -1);
 
                 /* mobs */
                 int count = 0, num_pcs = 0, aff_count = 0;
-                for (CHAR_DATA fch = char_list; fch != null; fch = fch.next) {
+                for (var fch = char_list; fch != null; fch = fch.next) {
                     count++;
                     if (fch.pcdata != null) {
                         num_pcs++;
                     }
-                    for (AFFECT_DATA af = fch.affected; af != null; af = af.next) {
+                    for (var af = fch.affected; af != null; af = af.next) {
                         aff_count++;
                     }
                 }
@@ -2838,18 +2473,18 @@ class DB {
 
                 /* descriptors */
                 count = 0;
-                for (DESCRIPTOR_DATA d = descriptor_list; d != null; d = d.next) {
+                for (var d = descriptor_list; d != null; d = d.next) {
                     count++;
                 }
 
                 f.format("Descs  %4d (%8d bytes), %2d free (%d bytes)\n", count, -1, -1, -1);
 
                 /* object prototypes */
-                int nMatch = 0;
-                for (int vnum = 0; nMatch < top_obj_index; vnum++) {
+                var nMatch = 0;
+                for (var vnum = 0; nMatch < top_obj_index; vnum++) {
                     OBJ_INDEX_DATA pObjIndex;
                     if ((pObjIndex = get_obj_index(vnum)) != null) {
-                        for (AFFECT_DATA af = pObjIndex.affected; af != null; af = af.next) {
+                        for (var af = pObjIndex.affected; af != null; af = af.next) {
                             aff_count++;
                         }
                         nMatch++;
@@ -2860,9 +2495,9 @@ class DB {
 
                 /* objects */
                 count = 0;
-                for (OBJ_DATA obj = object_list; obj != null; obj = obj.next) {
+                for (var obj = object_list; obj != null; obj = obj.next) {
                     count++;
-                    for (AFFECT_DATA af = obj.affected; af != null; af = af.next) {
+                    for (var af = obj.affected; af != null; af = af.next) {
                         aff_count++;
                     }
                 }
@@ -2884,11 +2519,11 @@ class DB {
             /* start printing out mobile data */
             fp = new FileWriter("mob.dmp", false);
             try {
-                Formatter f = new Formatter(fp);
+                var f = new Formatter(fp);
                 f.out().append("\nMobile Analysis\n");
                 f.out().append("---------------\n");
-                int nMatch = 0;
-                for (int vnum = 0; nMatch < top_mob_index; vnum++) {
+                var nMatch = 0;
+                for (var vnum = 0; nMatch < top_mob_index; vnum++) {
                     MOB_INDEX_DATA pMobIndex;
                     if ((pMobIndex = get_mob_index(vnum)) != null) {
                         nMatch++;
@@ -2902,11 +2537,11 @@ class DB {
             /* start printing out object data */
             fp = new FileWriter("obj.dmp", false);
             try {
-                Formatter f = new Formatter(fp);
+                var f = new Formatter(fp);
                 f.out().append("\nObject Analysis\n");
                 f.out().append("---------------\n");
-                int nMatch = 0;
-                for (int vnum = 0; nMatch < top_obj_index; vnum++) {
+                var nMatch = 0;
+                for (var vnum = 0; nMatch < top_obj_index; vnum++) {
                     OBJ_INDEX_DATA pObjIndex;
                     if ((pObjIndex = get_obj_index(vnum)) != null) {
                         nMatch++;
@@ -2922,25 +2557,21 @@ class DB {
         }
     }
 
-/*
-* Stick a little fuzz on a number.
-*/
+    /*
+     * Stick a little fuzz on a number.
+     */
 
     static int number_fuzzy(int number) {
         switch (number_bits(2)) {
-            case 0:
-                number -= 1;
-                break;
-            case 3:
-                number += 1;
-                break;
+            case 0 -> number -= 1;
+            case 3 -> number += 1;
         }
         return UMAX(1, number);
     }
 
-/*
-* Generate a random number.
-*/
+    /*
+     * Generate a random number.
+     */
 
     static int number_range(int from, int to) {
 
@@ -2952,7 +2583,7 @@ class DB {
             return from;
         }
 
-        int power = 2;
+        var power = 2;
         while (power < to) {
             power <<= 1;
         }
@@ -2961,9 +2592,9 @@ class DB {
         return from + number;
     }
 
-/*
-* Generate a percentile roll.
-*/
+    /*
+     * Generate a percentile roll.
+     */
 
     static int number_percent() {
         int percent;
@@ -2973,9 +2604,9 @@ class DB {
         return 1 + percent;
     }
 
-/*
-* Generate a random door.
-*/
+    /*
+     * Generate a random door.
+     */
 
     static int number_door() {
         int door;
@@ -2998,44 +2629,46 @@ class DB {
         return rnd.nextInt();
     }
 
-/*
-* Roll some dice.
-*/
+    /*
+     * Roll some dice.
+     */
 
     static int dice(int number, int size) {
         switch (size) {
-            case 0:
+            case 0 -> {
                 return 0;
-            case 1:
+            }
+            case 1 -> {
                 return number;
+            }
         }
 
-        int sum = 0;
-        for (int idice = 0; idice < number; idice++) {
+        var sum = 0;
+        for (var idice = 0; idice < number; idice++) {
             sum += number_range(1, size);
         }
 
         return sum;
     }
 
-/*
-* Simple linear interpolation.
-*/
+    /*
+     * Simple linear interpolation.
+     */
 
     static int interpolate(int level, int value_00, int value_32) {
         return value_00 + level * (value_32 - value_00) / 32;
     }
 
-/*
-* Append a string to a file.
-*/
+    /*
+     * Append a string to a file.
+     */
 
     static void append_file(CHAR_DATA ch, String file, String str) {
         if (IS_NPC(ch) || str == null) {
             return;
         }
-        try (FileWriter fp = new FileWriter(file, true)) {
-            Formatter f = new Formatter();
+        try (var fp = new FileWriter(file, true)) {
+            var f = new Formatter();
             f.format("[%5d] %s: %s\n", (ch.in_room != null ? ch.in_room.vnum : 0), ch.name, str);
             fp.write(f.toString());
         } catch (IOException e) {
@@ -3044,12 +2677,12 @@ class DB {
         }
     }
 
-/*
-* Reports a bug.
-*/
+    /*
+     * Reports a bug.
+     */
 
     static void bug(CharSequence str, Object... params) {
-        String str2 = new Formatter().format(str.toString(), params).toString();
+        var str2 = new Formatter().format(str.toString(), params).toString();
         bug(str2, currentFile);
     }
 
@@ -3057,33 +2690,35 @@ class DB {
         bug(str, currentFile);
     }
 
-    static void bug(CharSequence str, DikuTextFile fp) {
-        str = str + "\n" + fp.buildCurrentStateInfo();
+    static void bug(@NotNull CharSequence str, @Nullable DikuTextFile fp) {
+        if (fp != null) {
+            str = str + "\n" + fp.buildCurrentStateInfo();
+        }
         log_string(str);
     }
 
-/*
-* Writes a string to the log.
-*/
+    /*
+     * Writes a string to the log.
+     */
 
     static void log_string(CharSequence str) {
         System.err.println(new Date() + "::" + str);
     }
 
-/*
-* This function is here to aid in debugging.
-* If the last expression in a function is another function call,
-*   gcc likes to generate a JMP instead of a CALL.
-* This is called "tail chaining."
-* It hoses the debugger call stack for that call.
-* So I make this the last call in certain critical functions,
-*   where I really need the call stack to be right for debugging!
-*
-* If you don't understand this, then LEAVE IT ALONE.
-* Don't remove any calls to tail_chain anywhere.
-*
-* -- Furey
-*/
+    /*
+     * This function is here to aid in debugging.
+     * If the last expression in a function is another function call,
+     *   gcc likes to generate a JMP instead of a CALL.
+     * This is called "tail chaining."
+     * It hoses the debugger call stack for that call.
+     * So I make this the last call in certain critical functions,
+     *   where I really need the call stack to be right for debugging!
+     *
+     * If you don't understand this, then LEAVE IT ALONE.
+     * Don't remove any calls to tail_chain anywhere.
+     *
+     * -- Furey
+     */
 
     static void tail_chain() {
     }
@@ -3096,7 +2731,7 @@ class DB {
 
         for (ch = fp.fread_letter(); ch != 'S'; ch = fp.fread_letter()) {
             switch (ch) {
-                case 'O':
+                case 'O' -> {
                     vnum = fp.fread_number();
                     limit = fp.fread_number();
                     if ((pIndex = get_obj_index(vnum)) == null) {
@@ -3105,46 +2740,44 @@ class DB {
                     } else {
                         pIndex.limit = limit;
                     }
-                    break;
-
-                case '*':
-                    fp.fread_to_eol();
-                    break;
-                default:
+                }
+                case '*' -> fp.fread_to_eol();
+                default -> {
                     bug("Load_olimits: bad command '%c'", ch);
                     exit(1);
+                }
             }
         }
     }
 
-/*
-* Add the objects in players not logged on to object count
-*/
+    /*
+     * Add the objects in players not logged on to object count
+     */
 
     private static void load_limited_objects() {
-        File dir = new File(nw_config.lib_player_dir);
+        var dir = new File(nw_config.lib_player_dir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        File[] files = dir.listFiles();
+        var files = dir.listFiles();
         if (!dir.exists() || !dir.isDirectory() || files == null) {
             bug("Load_limited_objects: unable to open player directory:" + dir.getAbsolutePath(), 0);
             exit(1);
             return;
         }
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
             if (file.getName().length() < 3 || file.isDirectory()) {
                 continue;
             }
             try {
-                DikuTextFile fp = new DikuTextFile(file);
-                boolean fReadLevel = false;
-                int tplayed = 0;
+                var fp = new DikuTextFile(file);
+                var fReadLevel = false;
+                var tplayed = 0;
                 for (int letter = fp.fread_letter(); !fp.feof(); letter = fp.fread_letter()) {
                     if (letter == 'L') {
                         if (!fReadLevel) {
-                            String word = fp.fread_word();
+                            var word = fp.fread_word();
 
                             if (!str_cmp(word, "evl") || !str_cmp(word, "ev") || !str_cmp(word, "evel")) {
                                 i = fp.fread_number();
@@ -3154,7 +2787,7 @@ class DB {
                             }
                         }
                     } else if (letter == 'P') {
-                        String word = fp.fread_word();
+                        var word = fp.fread_word();
 
                         if (!str_cmp(word, "layLog")) {
                             int d, t, d_start, d_stop;
@@ -3176,7 +2809,7 @@ class DB {
 
                         }
                     } else if (letter == '#') {
-                        String word = fp.fread_word();
+                        var word = fp.fread_word();
                         if (!str_cmp(word, "O") || !str_cmp(word, "OBJECT")) {
                             if (tplayed < nw_config.min_time_limit) {
                                 log_string("Discarding the player " + file.getName() + "'s limited equipments.");
@@ -3185,7 +2818,7 @@ class DB {
 
                             fp.fread_word();
                             fBootDb = false;
-                            int vnum = fp.fread_number();
+                            var vnum = fp.fread_number();
                             if (get_obj_index(vnum) != null) {
                                 get_obj_index(vnum).count++;
                             }
@@ -3201,12 +2834,12 @@ class DB {
         }
     }
 
-/*
- * Given a name, return the appropriate prac fun.
- */
+    /*
+     * Given a name, return the appropriate prac fun.
+     */
 
     static int prac_lookup(String name) {
-        for (prac_type p : prac_table) {
+        for (var p : prac_table) {
             if (!str_prefix(name, p.name)) {
                 return (1 << p.number);
             }
@@ -3214,9 +2847,9 @@ class DB {
         return 0;
     }
 
-/*
- * Snarf can prac declarations.
- */
+    /*
+     * Snarf can prac declarations.
+     */
 
     static void load_practicer(DikuTextFile fp) {
         for (; ; ) {
@@ -3259,9 +2892,9 @@ class DB {
         DikuTextFile fp;
         try {
             fp = new DikuTextFile("etc" + "/" + "socials.conf");
-            social_type social = new social_type();
+            var social = new social_type();
             for (; ; ) {
-                String word = fp.fread_word();
+                var word = fp.fread_word();
                 if (word.isEmpty()) {
                     break;
                 }
@@ -3273,7 +2906,7 @@ class DB {
                 }
                 fp.fMatch = false;
                 switch (word.charAt(0)) {
-                    case 'e':
+                    case 'e' -> {
                         if (!str_cmp(word, "end")) {
                             fp.fMatch = true;
                             if (social.name != null) {
@@ -3283,25 +2916,23 @@ class DB {
                             }
                             social = new social_type();
                         }
-                        break;
-                    case 'f':
+                    }
+                    case 'f' -> {
                         social.found_char = fp.SKEY("found_char", word, social.found_char);
                         social.found_victim = fp.SKEY("found_vict", word, social.found_victim);
                         social.found_novictim = fp.SKEY("found_notvict", word, social.found_novictim);
-                        break;
-                    case 'n':
+                    }
+                    case 'n' -> {
                         social.name = fp.WKEY("name", word, social.name);
                         social.not_found_char = fp.SKEY("notfound_char", word, social.not_found_char);
                         social.noarg_char = fp.SKEY("noarg_char", word, social.noarg_char);
                         social.noarg_room = fp.SKEY("noarg_room", word, social.noarg_room);
-                        break;
-                    case 'm':
-                        social.minPos = position_type.getIndexInTable((fp.WKEY("min_pos", word, null)));
-                        break;
-                    case 's':
+                    }
+                    case 'm' -> social.minPos = position_type.getIndexInTable((fp.WKEY("min_pos", word, null)));
+                    case 's' -> {
                         social.self_char = fp.SKEY("self_char", word, social.self_char);
                         social.self_room = fp.SKEY("self_room", word, social.self_room);
-                        break;
+                    }
                 }
                 if (!fp.fMatch) {
                     perror("Loading socials: unknown keyword:" + word + "Context:" + fp.buildCurrentStateInfo());
@@ -3313,9 +2944,9 @@ class DB {
         }
     }
 
-/*
-* Snarf a mob section.  new style
-*/
+    /*
+     * Snarf a mob section.  new style
+     */
 
     static void load_mobiles(DikuTextFile fp) {
         MOB_INDEX_DATA pMobIndex;
@@ -3426,7 +3057,7 @@ class DB {
 
                     int vector;
 
-                    String word = fp.fread_word();
+                    var word = fp.fread_word();
                     vector = fp.fread_flag();
 
                     if (!str_prefix(word, "act")) {
@@ -3464,9 +3095,9 @@ class DB {
 
     }
 
-/*
- * Snarf an obj section. new style
- */
+    /*
+     * Snarf an obj section. new style
+     */
 
     static void load_objects(DikuTextFile fp) {
         OBJ_INDEX_DATA pObjIndex;
@@ -3508,52 +3139,48 @@ class DB {
             pObjIndex.extra_flags = fp.fread_flag();
             pObjIndex.wear_flags = fp.fread_flag();
             switch (pObjIndex.item_type) {
-                case ITEM_WEAPON:
+                case ITEM_WEAPON -> {
                     pObjIndex.value[0] = weapon_type(fp.fread_word());
                     pObjIndex.value[1] = fp.fread_number();
                     pObjIndex.value[2] = fp.fread_number();
                     pObjIndex.value[3] = attack_lookup(fp.fread_word());
                     pObjIndex.value[4] = fp.fread_flag();
-                    break;
-                case ITEM_CONTAINER:
+                }
+                case ITEM_CONTAINER -> {
                     pObjIndex.value[0] = fp.fread_number();
                     pObjIndex.value[1] = fp.fread_flag();
                     pObjIndex.value[2] = fp.fread_number();
                     pObjIndex.value[3] = fp.fread_number();
                     pObjIndex.value[4] = fp.fread_number();
-                    break;
-                case ITEM_DRINK_CON:
-                case ITEM_FOUNTAIN:
+                }
+                case ITEM_DRINK_CON, ITEM_FOUNTAIN -> {
                     pObjIndex.value[0] = fp.fread_number();
                     pObjIndex.value[1] = fp.fread_number();
                     pObjIndex.value[2] = liq_lookup(fp.fread_word());
                     pObjIndex.value[3] = fp.fread_number();
                     pObjIndex.value[4] = fp.fread_number();
-                    break;
-                case ITEM_WAND:
-                case ITEM_STAFF:
+                }
+                case ITEM_WAND, ITEM_STAFF -> {
                     pObjIndex.value[0] = fp.fread_number();
                     pObjIndex.value[1] = fp.fread_number();
                     pObjIndex.value[2] = fp.fread_number();
                     pObjIndex.value[3] = skill_num_lookup(fp.fread_word());
                     pObjIndex.value[4] = fp.fread_number();
-                    break;
-                case ITEM_POTION:
-                case ITEM_PILL:
-                case ITEM_SCROLL:
+                }
+                case ITEM_POTION, ITEM_PILL, ITEM_SCROLL -> {
                     pObjIndex.value[0] = fp.fread_number();
                     pObjIndex.value[1] = skill_num_lookup(fp.fread_word());
                     pObjIndex.value[2] = skill_num_lookup(fp.fread_word());
                     pObjIndex.value[3] = skill_num_lookup(fp.fread_word());
                     pObjIndex.value[4] = skill_num_lookup(fp.fread_word());
-                    break;
-                default:
+                }
+                default -> {
                     pObjIndex.value[0] = fp.fread_flag();
                     pObjIndex.value[1] = fp.fread_flag();
                     pObjIndex.value[2] = fp.fread_flag();
                     pObjIndex.value[3] = fp.fread_flag();
                     pObjIndex.value[4] = fp.fread_flag();
-                    break;
+                }
             }
             pObjIndex.level = fp.fread_number();
             pObjIndex.weight = fp.fread_number();
@@ -3565,30 +3192,14 @@ class DB {
             /* condition */
             letter = fp.fread_letter();
             switch (letter) {
-                case ('P'):
-                    pObjIndex.condition = 100;
-                    break;
-                case ('G'):
-                    pObjIndex.condition = 90;
-                    break;
-                case ('A'):
-                    pObjIndex.condition = 75;
-                    break;
-                case ('W'):
-                    pObjIndex.condition = 50;
-                    break;
-                case ('D'):
-                    pObjIndex.condition = 25;
-                    break;
-                case ('B'):
-                    pObjIndex.condition = 10;
-                    break;
-                case ('R'):
-                    pObjIndex.condition = 0;
-                    break;
-                default:
-                    pObjIndex.condition = 100;
-                    break;
+                case ('P') -> pObjIndex.condition = 100;
+                case ('G') -> pObjIndex.condition = 90;
+                case ('A') -> pObjIndex.condition = 75;
+                case ('W') -> pObjIndex.condition = 50;
+                case ('D') -> pObjIndex.condition = 25;
+                case ('B') -> pObjIndex.condition = 10;
+                case ('R') -> pObjIndex.condition = 0;
+                default -> pObjIndex.condition = 100;
             }
 
             for (; ; ) {
@@ -3596,7 +3207,7 @@ class DB {
                 letter = fp.fread_letter();
 
                 if (letter == 'A') {
-                    AFFECT_DATA paf = new AFFECT_DATA();
+                    var paf = new AFFECT_DATA();
                     paf.where = TO_OBJECT;
                     paf.type = null;
                     paf.level = pObjIndex.level;
@@ -3608,27 +3219,18 @@ class DB {
                     pObjIndex.affected = paf;
                     top_affect++;
                 } else if (letter == 'F') {
-                    AFFECT_DATA paf = new AFFECT_DATA();
+                    var paf = new AFFECT_DATA();
                     letter = fp.fread_letter();
                     switch (letter) {
-                        case 'A':
-                            paf.where = TO_AFFECTS;
-                            break;
-                        case 'I':
-                            paf.where = TO_IMMUNE;
-                            break;
-                        case 'R':
-                            paf.where = TO_RESIST;
-                            break;
-                        case 'V':
-                            paf.where = TO_VULN;
-                            break;
-                        case 'D':
-                            paf.where = TO_AFFECTS;
-                            break;
-                        default:
+                        case 'A' -> paf.where = TO_AFFECTS;
+                        case 'I' -> paf.where = TO_IMMUNE;
+                        case 'R' -> paf.where = TO_RESIST;
+                        case 'V' -> paf.where = TO_VULN;
+                        case 'D' -> paf.where = TO_AFFECTS;
+                        default -> {
                             bug("Load_objects: Bad where on flag set.");
                             exit(1);
+                        }
                     }
                     paf.type = null;
                     paf.level = pObjIndex.level;
@@ -3640,7 +3242,7 @@ class DB {
                     pObjIndex.affected = paf;
                     top_affect++;
                 } else if (letter == 'E') {
-                    EXTRA_DESCR_DATA ed = new EXTRA_DESCR_DATA();
+                    var ed = new EXTRA_DESCR_DATA();
                     ed.keyword = fp.fread_string();
                     ed.description = fp.fread_string();
                     ed.next = pObjIndex.extra_descr;
@@ -3659,9 +3261,9 @@ class DB {
         }
     }
 
-/*
- * Snarf a mprog section
- */
+    /*
+     * Snarf a mprog section
+     */
 
     static void load_omprogs(DikuTextFile fp) throws NoSuchMethodException {
         String progtype, progname;

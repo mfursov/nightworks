@@ -50,7 +50,7 @@ class MartialArt {
         }
 
         if (skill_failure_nomessage(victim, gsn_grip, 0) == 0) {
-            int skill = get_skill(victim, gsn_grip);
+            var skill = get_skill(victim, gsn_grip);
 
             skill += (get_curr_stat(victim, STAT_STR) - get_curr_stat(ch, STAT_STR)) * 5;
             if (number_percent() < skill) {
@@ -141,7 +141,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             send_to_char("Your pulse races as you are consumned by rage!\n", ch);
             act("{r$n gets a wild look in $s eyes.{x", ch, null, null, TO_ROOM, POS_FIGHTING);
             check_improve(ch, gsn_berserk, true, 2);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_berserk;
             af.level = ch.level;
@@ -173,12 +173,12 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         int chance, wait;
         int damage_bash;
 
-        boolean FightingCheck = ch.fighting != null;
+        var FightingCheck = ch.fighting != null;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (!arg.isEmpty() && !str_cmp(arg, "door")) {
             do_bash_door(ch, argument);
             return;
@@ -306,7 +306,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! Someone is bashing me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! %s is bashing me!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -322,13 +322,13 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        boolean FightingCheck = ch.fighting != null;
+        var FightingCheck = ch.fighting != null;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
 
         chance = get_skill(ch, gsn_dirt);
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (arg.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
@@ -420,7 +420,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             check_improve(ch, gsn_dirt, true, 2);
             WAIT_STATE(ch, gsn_dirt.beats);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_dirt;
             af.level = ch.level;
@@ -440,7 +440,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Someone just kicked dirt in my eyes!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Die, %s!  You dirty fool!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -457,13 +457,13 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        boolean FightingCheck = ch.fighting != null;
+        var FightingCheck = ch.fighting != null;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
 
         chance = get_skill(ch, gsn_dirt);
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (argb.isEmpty()) {
             victim = ch.fighting;
             if (victim == null) {
@@ -554,7 +554,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, " Help! Someone just tripped me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! %s just tripped me!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -567,7 +567,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         CHAR_DATA victim;
         OBJ_DATA obj;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_backstab, false, 0, "You don't know how to backstab.\n")) {
@@ -639,7 +639,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! I've been backstabbed!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Die, %s, you backstabbing scum!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -653,7 +653,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         if (skill_failure_check(ch, gsn_cleave, false, 0, "You don't know how to cleave.\n")) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (ch.master != null && IS_NPC(ch)) {
@@ -708,7 +708,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! Someone is attacking me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Die, %s, you butchering fool!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -723,7 +723,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -768,7 +768,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! I've been ambushed by someone!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! I've been ambushed by %s!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -780,7 +780,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     static void do_rescue(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         CHAR_DATA fch;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("Rescue whom?\n", ch);
@@ -933,7 +933,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     static void do_disarm(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance, hth, ch_weapon, vict_weapon, ch_vict_weapon;
-        boolean disarm_second = false;
+        var disarm_second = false;
 
 
         if (skill_failure_check(ch, gsn_disarm, false, OFF_DISARM, "You don't know how to disarm opponents.\n")) {
@@ -960,7 +960,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (!IS_NPC(ch) && !arg.isEmpty()) {
             disarm_second = is_name(arg.toString(), "second");
@@ -1012,7 +1012,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     static void do_nerve(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_nerve, false, 0, null)) {
@@ -1039,7 +1039,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         if (IS_NPC(ch) ||
                 number_percent() < (get_skill(ch, gsn_nerve) + ch.level
                         + get_curr_stat(ch, STAT_DEX)) / 2) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_nerve;
             af.level = ch.level;
@@ -1069,7 +1069,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! I'm being attacked by someone!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! I'm being attacked by %s!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -1090,7 +1090,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
 
         WAIT_STATE(ch, gsn_endure.beats);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_endure;
         af.level = ch.level;
@@ -1109,7 +1109,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     static void do_tame(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_tame, true, 0, "You lack the skills to tame anyone.\n")) {
@@ -1163,7 +1163,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         one_argument(argument, arg);
 
@@ -1245,7 +1245,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! Someone tried to assassinate me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! %s tried to assassinate me!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -1255,7 +1255,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
 
     static void do_caltraps(CHAR_DATA ch) {
-        CHAR_DATA victim = ch.fighting;
+        var victim = ch.fighting;
 
         if (skill_failure_check(ch, gsn_caltraps, false, 0, "Caltraps? Is that a dance step?\n")) {
             return;
@@ -1286,7 +1286,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         damage(ch, victim, ch.level, gsn_caltraps, DAM_PIERCE, true);
 
         if (!is_affected(victim, gsn_caltraps)) {
-            AFFECT_DATA tohit = new AFFECT_DATA();
+            var tohit = new AFFECT_DATA();
 
             tohit.where = TO_AFFECTS;
             tohit.type = gsn_caltraps;
@@ -1297,7 +1297,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             tohit.bitvector = 0;
             affect_to_char(victim, tohit);
 
-            AFFECT_DATA todam = new AFFECT_DATA();
+            var todam = new AFFECT_DATA();
             todam.where = TO_AFFECTS;
             todam.type = gsn_caltraps;
             todam.level = ch.level;
@@ -1307,7 +1307,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             todam.bitvector = 0;
             affect_to_char(victim, todam);
 
-            AFFECT_DATA todex = new AFFECT_DATA();
+            var todex = new AFFECT_DATA();
             todex.type = gsn_caltraps;
             todex.level = ch.level;
             todex.duration = -1;
@@ -1326,7 +1326,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     static void do_throw(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
         if (!str_cmp(arg.toString(), "spear")) {
@@ -1475,7 +1475,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
                     ch, null, victim, TO_NOTVICT);
             check_improve(ch, gsn_strangle, true, 1);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = gsn_strangle;
             af.where = TO_AFFECTS;
             af.level = ch.level;
@@ -1495,14 +1495,14 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! I'm being strangled by someone!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! I'm being strangled by %s!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 if (!IS_NPC(victim)) {
                     do_yell(victim, buf.toString());
                 }
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = gsn_neckguard;
             af.where = TO_AFFECTS;
             af.level = victim.level;
@@ -1575,7 +1575,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
                     ch, null, victim, TO_NOTVICT);
             check_improve(ch, gsn_blackjack, true, 1);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = gsn_blackjack;
             af.where = TO_AFFECTS;
             af.level = ch.level;
@@ -1597,7 +1597,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
                 if (!can_see(victim, ch)) {
                     do_yell(victim, "Help! I'm being blackjacked by someone!");
                 } else {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("Help! I'm being blackjacked by %s!",
                             (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                     if (!IS_NPC(victim)) {
@@ -1606,7 +1606,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
                 }
             }
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = gsn_headguard;
             af.where = TO_AFFECTS;
             af.level = victim.level;
@@ -1657,7 +1657,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             act("$n gets a bloodthirsty look in $s eyes.", ch, null, null, TO_ROOM);
             check_improve(ch, gsn_bloodthirst, true, 2);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_bloodthirst;
             af.level = ch.level;
@@ -1697,7 +1697,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
         WAIT_STATE(ch, gsn_spellbane.beats);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_spellbane;
         af.level = ch.level;
@@ -1732,7 +1732,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         WAIT_STATE(ch, gsn_resistance.beats);
 
         if (IS_NPC(ch) || number_percent() < get_skill(ch, gsn_resistance)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
 
             af.where = TO_AFFECTS;
             af.type = gsn_resistance;
@@ -1764,7 +1764,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         OBJ_DATA trophy;
         OBJ_DATA part;
         int level;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_trophy, false, 0, null)) {
@@ -1823,7 +1823,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
 
         if (!IS_NPC(ch) && number_percent() < ch.pcdata.learned[gsn_trophy.ordinal()]) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_trophy;
             af.level = ch.level;
@@ -1834,7 +1834,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             af.location = 0;
             affect_to_char(ch, af);
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             level = UMIN(part.level + 5, MAX_LEVEL);
 
             trophy = create_object(get_obj_index(trophy_vnum), level);
@@ -1911,7 +1911,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         WAIT_STATE(ch, gsn_truesight.beats);
 
         if (!IS_NPC(ch) && number_percent() < ch.pcdata.learned[gsn_truesight.ordinal()]) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_truesight;
             af.level = ch.level;
@@ -1975,7 +1975,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
 
         ch.mana -= 30;
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
 
         af.where = TO_AFFECTS;
         af.type = gsn_warcry;
@@ -1994,7 +1994,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     static void do_guard(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_guard, true, 0, null)) {
@@ -2106,7 +2106,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
 
     static void do_explode(CHAR_DATA ch, String argument) {
-        CHAR_DATA victim = ch.fighting;
+        var victim = ch.fighting;
         int dam = 0, hp_dam, dice_dam, mana;
         int hpch, level = ch.level;
 
@@ -2115,7 +2115,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
 
         if (victim == null) {
-            StringBuilder arg = new StringBuilder();
+            var arg = new StringBuilder();
             one_argument(argument, arg);
             if (arg.isEmpty()) {
                 send_to_char("You play with the exploding material.\n", ch);
@@ -2295,7 +2295,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             send_to_char("10 tigers come for your call, as you call them!\n", ch);
             act("10 tigers come across $n , and connect with $n.", ch, null, null, TO_ROOM);
             check_improve(ch, gsn_tiger_power, true, 2);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_tiger_power;
             af.level = ch.level;
@@ -2365,7 +2365,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             check_improve(ch, gsn_hara_kiri, true, 2);
             do_sleep(ch, "");
             ch.act = SET_BIT(ch.act, PLR_HARA_KIRI);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_hara_kiri;
             af.level = ch.level;
@@ -2376,7 +2376,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             affect_to_char(ch, af);
         } else {
             WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_hara_kiri;
             af.level = ch.level;
@@ -2438,7 +2438,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
                 check_improve(ch, gsn_ground_strike, true, 4);
                 if (!IS_AFFECTED(victim, AFF_BLIND)) {
-                    AFFECT_DATA baf = new AFFECT_DATA();
+                    var baf = new AFFECT_DATA();
                     baf.type = gsn_dirt;
                     baf.level = ch.level;
                     baf.location = APPLY_HITROLL;
@@ -2508,7 +2508,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
                 check_improve(ch, gsn_critical, true, 4);
                 if (!IS_AFFECTED(victim, AFF_BLIND)) {
-                    AFFECT_DATA baf = new AFFECT_DATA();
+                    var baf = new AFFECT_DATA();
                     baf.type = gsn_dirt;
                     baf.level = ch.level;
                     baf.location = APPLY_HITROLL;
@@ -2692,9 +2692,9 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        boolean FightingCheck = ch.fighting != null;
+        var FightingCheck = ch.fighting != null;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if ((chance = get_skill(ch, gsn_tail)) == 0) {
@@ -2816,7 +2816,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! Someone hit me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! %s try to hit me with its tail!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -2864,7 +2864,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             send_to_char("You sit down and relax , concentrate on the next fight.!\n", ch);
             act("{r$n concentrates for the next fight.{x", ch, null, null, TO_ROOM, POS_FIGHTING);
             check_improve(ch, gsn_concentrate, true, 2);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_concentrate;
             af.level = ch.level;
@@ -2915,7 +2915,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             update_pos(ch);
             send_to_char("You feel better!\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_bandage;
             af.level = ch.level;
@@ -2937,7 +2937,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     static void do_katana(CHAR_DATA ch, String argument) {
         OBJ_DATA katana;
         OBJ_DATA part;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_katana, false, 0, null)) {
@@ -2978,7 +2978,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         WAIT_STATE(ch, gsn_katana.beats);
 
         if (!IS_NPC(ch) && number_percent() < get_skill(ch, gsn_katana)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_katana;
             af.level = ch.level;
@@ -3006,7 +3006,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             affect_to_obj(katana, af);
 
             katana.value[2] = ch.level / 10;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf(katana.pIndexData.extra_descr.description, ch.name);
             katana.extra_descr = new EXTRA_DESCR_DATA();
             katana.extra_descr.keyword = katana.pIndexData.extra_descr.keyword;
@@ -3156,7 +3156,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         WAIT_STATE(ch, gsn_sense_life.beats);
 
         if (!IS_NPC(ch) && number_percent() < ch.pcdata.learned[gsn_sense_life.ordinal()]) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_sense_life;
             af.level = ch.level;
@@ -3205,7 +3205,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         act("A cloud of poison smoke fills the room.", ch, null, null, TO_ROOM);
 
         check_improve(ch, gsn_poison_smoke, true, 1);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         for (tmp_vict = ch.in_room.people; tmp_vict != null;
              tmp_vict = tmp_vict.next_in_room) {
             if (!is_safe_spell(ch, tmp_vict, true)) {
@@ -3258,7 +3258,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         act("A cloud of dust fills the room.", ch, null, null, TO_ROOM);
 
         check_improve(ch, gsn_blindness_dust, true, 1);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         for (tmp_vict = ch.in_room.people; tmp_vict != null;
              tmp_vict = tmp_vict.next_in_room) {
             if (!is_safe_spell(ch, tmp_vict, true)) {
@@ -3293,8 +3293,8 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        boolean FightingCheck = ch.fighting != null;
-        StringBuilder arg = new StringBuilder();
+        var FightingCheck = ch.fighting != null;
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         chance = get_skill(ch, gsn_lash);
 
@@ -3385,7 +3385,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! Someone is lashing me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! %s is lashing me!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -3403,7 +3403,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {

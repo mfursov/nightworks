@@ -228,7 +228,7 @@ class ActHera {
                 return;
             }
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             mount = MOUNTED(ch);
             if (mount != null) {
                 buf.sprintf("$n steps into $p, riding on %s.", mount.short_descr);
@@ -362,7 +362,7 @@ class ActHera {
                 send_to_char("This skill is used too recently.\n", ch);
                 return;
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_ROOM_AFFECTS;
             af.type = gsn_settraps;
             af.level = ch.level;
@@ -372,7 +372,7 @@ class ActHera {
             af.bitvector = AFF_ROOM_THIEF_TRAP;
             affect_to_room(ch.in_room, af);
 
-            AFFECT_DATA af2 = new AFFECT_DATA();
+            var af2 = new AFFECT_DATA();
             af2.where = TO_AFFECTS;
             af2.type = gsn_settraps;
             af2.level = ch.level;
@@ -404,7 +404,7 @@ class ActHera {
             return null;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
         if (arg.isEmpty()) {
             return null;
@@ -444,7 +444,7 @@ class ActHera {
         if (skill_failure_check(ch, gsn_hunt, false, 0, null)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -540,7 +540,7 @@ class ActHera {
             * Display the results of the search.
             */
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N is %s from here.", dir_name[direction]);
         act(buf, ch, null, victim, TO_CHAR);
     }
@@ -557,7 +557,7 @@ class ActHera {
         /*
         * Make sure the victim still exists.
         */
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         for (found = false, tmp = char_list; tmp != null && !found; tmp = tmp.next) {
             if (ch.hunting == tmp) {
                 found = true;
@@ -697,7 +697,7 @@ class ActHera {
 
     static void check_weapon_destroy(CHAR_DATA ch, CHAR_DATA victim, boolean second) {
         OBJ_DATA wield, destroy;
-        int chance = 0;
+        var chance = 0;
 
         if (IS_NPC(victim) || number_percent() < 94) {
             return;
@@ -706,11 +706,11 @@ class ActHera {
         if ((wield = get_wield_char(ch, second)) == null) {
             return;
         }
-        Skill sn = get_weapon_sn(ch, second);
-        int skill = get_skill(ch, sn);
+        var sn = get_weapon_sn(ch, second);
+        var skill = get_skill(ch, sn);
 
         if (is_metal(wield)) {
-            for (int i = 0; i < MAX_WEAR; i++) {
+            for (var i = 0; i < MAX_WEAR; i++) {
                 if ((destroy = get_eq_char(victim, i)) == null
                         || number_percent() > 95
                         || number_percent() > 94
@@ -765,7 +765,7 @@ class ActHera {
                 }
             }
         } else {
-            for (int i = 0; i < MAX_WEAR; i++) {
+            for (var i = 0; i < MAX_WEAR; i++) {
                 if ((destroy = get_eq_char(victim, i)) == null
                         || number_percent() > 95
                         || number_percent() > 94
@@ -838,9 +838,9 @@ class ActHera {
             return;
         }
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (arg.isEmpty()) {
             do_say(mob, "I will repair a weapon for you, for a price.");
@@ -862,7 +862,7 @@ class ActHera {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (obj.cost == 0) {
             sprintf(buf, "%s is beyond repair.\n", obj.short_descr);
             do_say(mob, buf.toString());
@@ -906,9 +906,9 @@ class ActHera {
             send_to_char("You can't do that here.\n", ch);
             return;
         }
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (arg.isEmpty()) {
             do_say(mob, "Try estimate <item>");
@@ -934,7 +934,7 @@ class ActHera {
         cost = ((obj.level * 10) +
                 ((obj.cost * (100 - obj.condition)) / 100));
         cost /= 100;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("It will cost %d to fix that item", cost);
         do_say(mob, buf.toString());
     }
@@ -942,7 +942,7 @@ class ActHera {
     static void do_restring(CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         OBJ_DATA obj;
-        int cost = 2000;
+        var cost = 2000;
 
         for (mob = ch.in_room.people; mob != null; mob = mob.next_in_room) {
             if (IS_NPC(mob) && IS_SET(mob.act, ACT_IS_HEALER)) {
@@ -956,11 +956,11 @@ class ActHera {
         }
 
         argument = smash_tilde(argument);
-        StringBuilder arg = new StringBuilder();
-        StringBuilder arg1 = new StringBuilder();
+        var arg = new StringBuilder();
+        var arg1 = new StringBuilder();
         argument = one_argument(argument, arg);
         argument = one_argument(argument, arg1);
-        String arg2 = argument;
+        var arg2 = argument;
 
         if (arg.isEmpty() || arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Syntax:\n", ch);
@@ -982,7 +982,7 @@ class ActHera {
             return;
         }
 
-        String arg1str = arg1.toString();
+        var arg1str = arg1.toString();
         if (!str_prefix(arg1str, "name")) {
             obj.name = arg2;
         } else if (!str_prefix(arg1str, "short")) {
@@ -998,7 +998,7 @@ class ActHera {
 
         ch.gold -= cost;
         mob.gold += cost;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N takes $n's item, tinkers with it, and returns it to $n.");
         act(buf, ch, null, mob, TO_ROOM);
         buf.sprintf("%s takes your item, tinkers with it, and returns %s to you.\n", mob.short_descr, obj.short_descr);
@@ -1009,7 +1009,7 @@ class ActHera {
 
     static void check_shield_destroyed(CHAR_DATA ch, CHAR_DATA victim, boolean second) {
         OBJ_DATA wield, destroy;
-        int chance = 0;
+        var chance = 0;
 
         if (IS_NPC(victim) || number_percent() < 94) {
             return;
@@ -1018,8 +1018,8 @@ class ActHera {
         if ((wield = get_wield_char(ch, second)) == null) {
             return;
         }
-        Skill sn = get_weapon_sn(ch, second);
-        int skill = get_skill(ch, sn);
+        var sn = get_weapon_sn(ch, second);
+        var skill = get_skill(ch, sn);
 
         destroy = get_shield_char(victim);
 
@@ -1123,7 +1123,7 @@ class ActHera {
 
     static void check_weapon_destroyed(CHAR_DATA ch, CHAR_DATA victim, boolean second) {
         OBJ_DATA wield, destroy;
-        int chance = 0;
+        var chance = 0;
 
         if (IS_NPC(victim) || number_percent() < 94) {
             return;
@@ -1132,8 +1132,8 @@ class ActHera {
         if ((wield = get_wield_char(ch, second)) == null) {
             return;
         }
-        Skill sn = get_weapon_sn(ch, second);
-        int skill = get_skill(ch, sn);
+        var sn = get_weapon_sn(ch, second);
+        var skill = get_skill(ch, sn);
 
         destroy = get_wield_char(victim, false);
         if (destroy == null) {
@@ -1248,9 +1248,9 @@ class ActHera {
             return;
         }
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (arg.isEmpty()) {
             send_to_char("Which object do you want to repair.\n", ch);
@@ -1278,7 +1278,7 @@ class ActHera {
         }
 
         WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (number_percent() > get_skill(ch, gsn_smithing)) {
             check_improve(ch, gsn_smithing, false, 8);
             buf.sprintf("$n try to repair %s with the hammer.But $n fails.", obj.short_descr);
@@ -1317,7 +1317,7 @@ class ActHera {
     static void talk_auction(String argument) {
         DESCRIPTOR_DATA d;
         CHAR_DATA original;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         sprintf(buf, "AUCTION: %s", argument);
 
         for (d = descriptor_list; d != null; d = d.next) {
@@ -1390,11 +1390,11 @@ class ActHera {
    works:) (read: it seems to work:)
 */
 
-        int number = 0;           /* number to be returned */
+        var number = 0;           /* number to be returned */
         int multiplier;       /* multiplier used to get the extra digits right */
 
 
-        int pos = 0;
+        var pos = 0;
         while (pos < s.length() && isDigit(s.charAt(pos))) {/* as long as the current character is a digit */
             number = (number * 10) + atoi(s.substring(pos, pos + 1)); /* add to current number */
             pos++;                                /* advance */
@@ -1432,7 +1432,7 @@ class ActHera {
 
 
     static int parsebet(int currentbet, String argument) {
-        int newbet = 0;                /* a variable to temporarily hold the new bet */
+        var newbet = 0;                /* a variable to temporarily hold the new bet */
         if (!argument.isEmpty())               /* check for an empty string */ {
 
             if (Character.isDigit(argument.charAt(0))) /* first char is a digit assume e.g. 433k */ {
@@ -1444,7 +1444,7 @@ class ActHera {
                     newbet = (currentbet * (100 + atoi(argument.substring(1)))) / 100; /* cut off the first char */
                 }
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("considering: * x \n");
                 if ((argument.charAt(0) == '*') || (argument.charAt(0) == 'x')) /* multiply */ {
                     if (argument.length() == 1) /* only x specified, assume default */ {
@@ -1461,7 +1461,7 @@ class ActHera {
 
     static void auction_update() {
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (auction.item != null) {
             if (--auction.pulse <= 0) /* decrease pulse */ {
                 auction.pulse = PULSE_AUCTION;
@@ -1516,7 +1516,7 @@ class ActHera {
     static void do_auction(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int i;
-        StringBuilder arg1 = new StringBuilder();
+        var arg1 = new StringBuilder();
         argument = one_argument(argument, arg1);
 
         if (IS_NPC(ch))    /* NPC extracted can't auction! */ {
@@ -1534,7 +1534,7 @@ class ActHera {
                 return;
             }
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (arg1.isEmpty()) {
             if (auction.item != null) {
                 /* show item data here */

@@ -83,7 +83,7 @@ public class Update {
         ch.pcdata.perm_mana += add_mana;
         ch.pcdata.perm_move += add_move;
 
-        Formatter f = new Formatter().format("You gain: {W%d{x hp, {W%d{x mana, {W%d{x mv {W%d{x prac.\n", add_hp, add_mana, add_move, add_prac);
+        var f = new Formatter().format("You gain: {W%d{x hp, {W%d{x mana, {W%d{x mv {W%d{x prac.\n", add_hp, add_mana, add_move, add_prac);
         send_to_char(f.toString(), ch);
     }
 
@@ -424,7 +424,6 @@ public class Update {
                     }
                     damage(ch, ch, damage_hunger, gsn_x_hunger, DAM_HUNGER, true);
                     if (ch.position == POS_SLEEPING) {
-                        return;
                     }
                 }
                 case COND_THIRST -> {
@@ -436,11 +435,10 @@ public class Update {
                     }
                     damage(ch, ch, damage_hunger, gsn_x_hunger, DAM_THIRST, true);
                     if (ch.position == POS_SLEEPING) {
-                        return;
                     }
                 }
                 case COND_BLOODLUST -> {
-                    boolean fdone = false;
+                    var fdone = false;
                     send_to_char("You are suffering from thrist of blood!\n", ch);
                     act("$n is suffering from thirst of blood!", ch, null, null, TO_ROOM);
                     if (ch.in_room != null && ch.in_room.people != null && ch.fighting != null) {
@@ -467,7 +465,6 @@ public class Update {
                     }
                     damage(ch, ch, damage_hunger, gsn_x_hunger, DAM_THIRST, true);
                     if (ch.position == POS_SLEEPING) {
-                        return;
                     }
                 }
                 case COND_DESIRE -> {
@@ -516,9 +513,8 @@ public class Update {
             if (IS_AFFECTED(ch, AFF_CORRUPTION) && ch.in_room != null) {
                 ch.hit -= ch.level / 10;
                 if (ch.hit < 1) {
-                    Skill sn = Skill.gsn_corruption;
                     ch.hit = 1;
-                    damage(ch, ch, 16, sn, DAM_NONE, false);
+                    damage(ch, ch, 16, Skill.gsn_corruption, DAM_NONE, false);
                     continue;
                 } else {
                     send_to_char("", ch);
@@ -528,9 +524,8 @@ public class Update {
             if (IS_AFFECTED(ch, AFF_SUFFOCATE) && ch.in_room != null) {
                 ch.hit -= ch.level / 5;
                 if (ch.hit < 1) {
-                    Skill sn = Skill.gsn_suffocate;
                     ch.hit = 1;
-                    damage(ch, ch, 16, sn, DAM_NONE, false);
+                    damage(ch, ch, 16, Skill.gsn_suffocate, DAM_NONE, false);
                     continue;
                 } else {
                     if (number_percent() < 30) {
@@ -649,8 +644,8 @@ public class Update {
             /* Scavenge */
             if (IS_SET(ch.act, ACT_SCAVENGER) && ch.in_room.contents != null && number_bits(6) == 0) {
                 OBJ_DATA obj_best = null;
-                int max = 1;
-                for (OBJ_DATA tobj = ch.in_room.contents; tobj != null; tobj = tobj.next_content) {
+                var max = 1;
+                for (var tobj = ch.in_room.contents; tobj != null; tobj = tobj.next_content) {
                     if (CAN_WEAR(tobj, ITEM_TAKE) && can_loot(ch, tobj)
                             && tobj.cost > max && tobj.cost > 0) {
                         obj_best = tobj;
@@ -711,8 +706,8 @@ public class Update {
     }
 
     static int potion_arm_level(OBJ_DATA potion) {
-        int al = 0;
-        for (int i = 1; i < 5; i++) {
+        var al = 0;
+        for (var i = 1; i < 5; i++) {
             if (Skill.gsn_armor.ordinal() == potion.value[i]) {
                 al += 1;
             }
@@ -733,7 +728,7 @@ public class Update {
     }
 
     static boolean potion_cure_blind(OBJ_DATA potion) {
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             if (Skill.gsn_cure_blindness.ordinal() == potion.value[i]) {
                 return true;
             }
@@ -742,7 +737,7 @@ public class Update {
     }
 
     static boolean potion_cure_poison(OBJ_DATA potion) {
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             if (Skill.gsn_cure_poison.ordinal() == potion.value[i]) {
                 return true;
             }
@@ -751,7 +746,7 @@ public class Update {
     }
 
     static boolean potion_cure_disease(OBJ_DATA potion) {
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             if (Skill.gsn_cure_disease.ordinal() == potion.value[i]) {
                 return true;
             }
@@ -767,7 +762,7 @@ public class Update {
         DESCRIPTOR_DATA d;
         int diff;
 
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         if (++time_info.bmin == 2) {
             time_info.bmin = 0;
             time_info.hour++;
@@ -1092,7 +1087,7 @@ public class Update {
                     if (paf.type == gsn_strangle) {
                         ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_SLEEP);
                         do_wake(ch, "");
-                        AFFECT_DATA neck_af = new AFFECT_DATA();
+                        var neck_af = new AFFECT_DATA();
                         neck_af.type = gsn_neckguard;
                         neck_af.where = TO_AFFECTS;
                         neck_af.level = ch.level;
@@ -1104,7 +1099,7 @@ public class Update {
                     } else if (paf.type == gsn_blackjack) {
                         ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_SLEEP);
                         do_wake(ch, "");
-                        AFFECT_DATA head_af = new AFFECT_DATA();
+                        var head_af = new AFFECT_DATA();
                         head_af.type = gsn_headguard;
                         head_af.where = TO_AFFECTS;
                         head_af.level = ch.level;
@@ -1116,7 +1111,7 @@ public class Update {
                     } else if (paf.type == gsn_vampiric_touch) {
                         ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_SLEEP);
                         do_wake(ch, "");
-                        AFFECT_DATA b_af = new AFFECT_DATA();
+                        var b_af = new AFFECT_DATA();
                         b_af.type = gsn_blackguard;
                         b_af.where = TO_AFFECTS;
                         b_af.level = ch.level;
@@ -1163,7 +1158,7 @@ public class Update {
                 }
 
                 if (af.modifier > -16001) {
-                    AFFECT_DATA witch = new AFFECT_DATA();
+                    var witch = new AFFECT_DATA();
                     witch.where = af.where;
                     witch.type = af.type;
                     witch.level = af.level;
@@ -1215,7 +1210,7 @@ public class Update {
                 if (af.level == 1) {
                     continue;
                 }
-                AFFECT_DATA plague = new AFFECT_DATA();
+                var plague = new AFFECT_DATA();
                 plague.where = TO_AFFECTS;
                 plague.type = gsn_plague;
                 plague.level = (af.level - 1);
@@ -1244,7 +1239,7 @@ public class Update {
                 }
             } else if (IS_AFFECTED(ch, AFF_POISON) && ch != null
                     && !IS_AFFECTED(ch, AFF_SLOW)) {
-                AFFECT_DATA poison = affect_find(ch.affected, gsn_poison);
+                var poison = affect_find(ch.affected, gsn_poison);
 
                 if (poison != null) {
                     act("$n shivers and suffers.", ch, null, null, TO_ROOM);
@@ -1496,8 +1491,7 @@ public class Update {
             }
 
             obj_update_pit_count = ++obj_update_pit_count % 120; /* more or less an hour */
-            if (obj.pIndexData.vnum == OBJ_VNUM_PIT &&
-                    obj_update_pit_count == 121) {
+            if (obj.pIndexData.vnum == OBJ_VNUM_PIT && obj_update_pit_count == 121) {
                 for (t_obj = obj.contains; t_obj != null; t_obj = next_obj) {
                     next_obj = t_obj.next_content;
                     obj_from_obj(t_obj);
@@ -1634,7 +1628,7 @@ public class Update {
 
                 /* Mad mob attacks! */
                 if (ch.last_fought == wch) {
-                    String buf = ((is_affected(wch, gsn_doppelganger) &&
+                    var buf = ((is_affected(wch, gsn_doppelganger) &&
                             !IS_SET(ch.act, PLR_HOLYLIGHT)) ?
                             PERS(wch.doppel, ch) : PERS(wch, ch)) + "! Now you die!";
                     do_yell(ch, buf);
@@ -1900,7 +1894,7 @@ public class Update {
                     if (af.level == 1) {
                         af.level = 2;
                     }
-                    AFFECT_DATA plague = new AFFECT_DATA();
+                    var plague = new AFFECT_DATA();
                     plague.where = TO_AFFECTS;
                     plague.type = gsn_plague;
                     plague.level = (af.level - 1);
@@ -1940,7 +1934,7 @@ public class Update {
                         af.level = 2;
                     }
 
-                    AFFECT_DATA paf = new AFFECT_DATA();
+                    var paf = new AFFECT_DATA();
                     paf.where = TO_AFFECTS;
                     paf.type = gsn_poison;
                     paf.level = (af.level - 1);
@@ -1980,7 +1974,7 @@ public class Update {
                         af.level = 2;
                     }
 
-                    AFFECT_DATA paf = new AFFECT_DATA();
+                    var paf = new AFFECT_DATA();
                     paf.where = TO_AFFECTS;
                     paf.type = gsn_slow;
                     paf.level = (af.level - 1);
@@ -2019,7 +2013,7 @@ public class Update {
                     if (af.level == 1) {
                         af.level = 2;
                     }
-                    AFFECT_DATA paf = new AFFECT_DATA();
+                    var paf = new AFFECT_DATA();
                     paf.where = TO_AFFECTS;
                     paf.type = gsn_sleep;
                     paf.level = (af.level - 1);
@@ -2064,7 +2058,7 @@ public class Update {
                         af.level = 2;
                     }
 
-                    AFFECT_DATA paf = new AFFECT_DATA();
+                    var paf = new AFFECT_DATA();
                     paf.where = TO_AFFECTS;
                     paf.type = gsn_evil_spirit;
                     paf.level = af.level;
@@ -2150,7 +2144,7 @@ room.affected_by=                REMOVE_BIT(room.affected_by,AFF_ROOM_);
             case 5:
             case 10:
             case 15:
-                String buf = "\007***** REBOOT IN " + reboot_counter + " MINUTES *****\007\n";
+                var buf = "\007***** REBOOT IN " + reboot_counter + " MINUTES *****\007\n";
                 for (d = descriptor_list; d != null; d = d.next) {
                     write_to_buffer(d, buf);
                 }

@@ -207,7 +207,7 @@ class ActComm {
 
         if (ch.lines != PAGELEN) {
             if (ch.lines != 0) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You display %d lines of scroll.\n", ch.lines + 2);
                 send_to_char(buf, ch);
             } else {
@@ -231,8 +231,8 @@ class ActComm {
     }
 
     static void garble(StringBuilder garbled, String speech) {
-        for (int i = 0; i < speech.length(); i++) {
-            char c = speech.charAt(i);
+        for (var i = 0; i < speech.length(); i++) {
+            var c = speech.charAt(i);
             if (c >= 'a' && c <= 'z') {
                 garbled.append('a' + number_range(0, 25));
             } else if (c >= 'A' && c <= 'Z') {
@@ -327,7 +327,7 @@ class ActComm {
         String buf;
 
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf = buff.toString();
         } else {
@@ -336,7 +336,7 @@ class ActComm {
 
         for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
             if (!is_affected(vch, gsn_deafen)) {
-                String trans = translate(ch, vch, buf);
+                var trans = translate(ch, vch, buf);
                 act("{g$n says '$t'{x", ch, trans, vch, TO_VICT, POS_RESTING);
             }
         }
@@ -381,7 +381,7 @@ class ActComm {
 
         String buf;
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf = buff.toString();
         } else {
@@ -399,7 +399,7 @@ class ActComm {
                     d.character != ch &&
                     d.character.in_room.area == ch.in_room.area &&
                     !is_affected(d.character, gsn_deafen)) {
-                String trans = translate(ch, d.character, buf);
+                var trans = translate(ch, d.character, buf);
                 act("$n shouts '{G$t{x'", ch, trans, d.character, TO_VICT, POS_DEAD);
             }
         }
@@ -425,7 +425,7 @@ class ActComm {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
         if (arg.isEmpty() || argument.isEmpty()) {
@@ -445,7 +445,7 @@ class ActComm {
 
         if (victim.desc == null && !IS_NPC(victim)) {
             act("$N seems to have misplaced $S link...try again later.", ch, null, victim, TO_CHAR);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s tells you '%s'\n", upfirst(PERS(ch, victim)), argument);
             victim.pcdata.buffer.append(buf.getBuffer());
             return;
@@ -464,7 +464,7 @@ class ActComm {
 
         String buf;
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf = buff.toString();
         } else {
@@ -498,14 +498,14 @@ class ActComm {
         if (victim.desc == null && !IS_NPC(victim)) {
             String buf;
             if (is_affected(ch, gsn_garble)) {
-                StringBuilder buff = new StringBuilder();
+                var buff = new StringBuilder();
                 garble(buff, argument);
                 buf = buff.toString();
             } else {
                 buf = argument;
             }
             act("$N seems to have misplaced $S link...try again later.", ch, null, victim, TO_CHAR);
-            TextBuffer tbuf = new TextBuffer();
+            var tbuf = new TextBuffer();
             tbuf.sprintf("%s tells you '%s'\n", upfirst(PERS(ch, victim)), buf);
             victim.pcdata.buffer.append(tbuf.getBuffer());
             return;
@@ -548,10 +548,10 @@ class ActComm {
             send_to_char("Yell what?\n", ch);
             return;
         }
-        String argument = arg.toString();
+        var argument = arg.toString();
         String buf;
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf = buff.toString();
         } else {
@@ -568,7 +568,7 @@ class ActComm {
                     && d.character.in_room != null
                     && d.character.in_room.area == ch.in_room.area
                     && !is_affected(d.character, gsn_deafen)) {
-                String trans = translate(ch, d.character, buf);
+                var trans = translate(ch, d.character, buf);
                 act("$n yells '{y$t{x'", ch, trans, d.character, TO_VICT, POS_DEAD);
             }
         }
@@ -590,7 +590,7 @@ class ActComm {
 
         String buf;
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf = buff.toString();
         } else {
@@ -604,7 +604,7 @@ class ActComm {
 
     static void do_pmote(CHAR_DATA ch, String argument) {
         CHAR_DATA vch;
-        int matches = 0;
+        var matches = 0;
 
         if (!IS_NPC(ch) && IS_SET(ch.comm, COMM_NOEMOTE)) {
             send_to_char("You can't show your emotions.\n", ch);
@@ -623,19 +623,19 @@ class ActComm {
                 continue;
             }
 
-            int letter = argument.indexOf(vch.name);
+            var letter = argument.indexOf(vch.name);
             if (letter == -1) {
                 act("$N $t", vch, argument, ch, TO_CHAR);
                 continue;
             }
 
-            StringBuilder temp = new StringBuilder(argument);
-            StringBuilder last = new StringBuilder();
-            String name = vch.name;
-            int namePos = 0;
+            var temp = new StringBuilder(argument);
+            var last = new StringBuilder();
+            var name = vch.name;
+            var namePos = 0;
 
             for (; letter < argument.length(); letter++) {
-                char c = argument.charAt(letter);
+                var c = argument.charAt(letter);
                 if (c == '\'' && matches == vch.name.length()) {
                     temp.append("r");
                     continue;
@@ -678,11 +678,11 @@ class ActComm {
             return;
         }
 
-        ArrayList<Pose> poses = ch.clazz.poses;
-        int level = UMIN(ch.level, poses.size() - 1);
-        int poseIdx = number_range(0, level);
+        var poses = ch.clazz.poses;
+        var level = UMIN(ch.level, poses.size() - 1);
+        var poseIdx = number_range(0, level);
 
-        Pose pose = poses.get(poseIdx);
+        var pose = poses.get(poseIdx);
         act(pose.message_to_char, ch, null, null, TO_CHAR);
         act(pose.message_to_room, ch, null, null, TO_ROOM);
 
@@ -911,7 +911,7 @@ class ActComm {
     static void do_follow(CHAR_DATA ch, String argument) {
 /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -1044,8 +1044,8 @@ class ActComm {
         boolean found;
         boolean fAll;
 
-        StringBuilder arg = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg);
         one_argument(argument, arg2);
 
@@ -1095,7 +1095,7 @@ class ActComm {
                 if (!proper_order(och, argument)) {
                     continue;
                 }
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("$n orders you to '%s', you do.", argument);
                 act(buf.toString(), ch, null, och, TO_VICT);
                 interpret(och, argument, true);
@@ -1111,15 +1111,15 @@ class ActComm {
     }
 
     static boolean proper_order(CHAR_DATA ch, String argument) {
-        StringBuilder command = new StringBuilder();
+        var command = new StringBuilder();
         one_argument(argument, command);
 
-        int trust = get_trust(ch);
-        CmdType[] cmd_table = getCommandsTable();
+        var trust = get_trust(ch);
+        var cmd_table = getCommandsTable();
         CmdType cmd = null;
-        String commandStr = command.toString();
-        for (CmdType c : cmd_table) {
-            for (String name : c.names) {
+        var commandStr = command.toString();
+        for (var c : cmd_table) {
+            for (var name : c.names) {
                 if (commandStr.charAt(0) == name.charAt(0) && !str_prefix(commandStr, name) && c.level <= trust) {
                     cmd = c;
                     break;
@@ -1155,7 +1155,7 @@ class ActComm {
 
     static void do_group(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         one_argument(argument, arg);
 
@@ -1164,7 +1164,7 @@ class ActComm {
             CHAR_DATA leader;
 
             leader = (ch.leader != null) ? ch.leader : ch;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s's group:\n", PERS(leader, ch));
             send_to_char(buf.toString(), ch);
 
@@ -1285,8 +1285,8 @@ class ActComm {
         int share_gold, share_silver;
         int extra_gold, extra_silver;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -1345,7 +1345,7 @@ class ActComm {
         ch.gold -= amount_gold;
         ch.gold += share_gold + extra_gold;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
 
         if (share_silver > 0) {
             buf.sprintf(
@@ -1400,7 +1400,7 @@ class ActComm {
 
         String buf;
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf = buff.toString();
         } else {
@@ -1481,12 +1481,12 @@ class ActComm {
             send_to_char("You are not in a Cabal.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("[%s] $n: {y$t{x", cabal_table[ch.cabal].short_name);
 
         String buf2;
         if (is_affected(ch, gsn_garble)) {
-            StringBuilder buff = new StringBuilder();
+            var buff = new StringBuilder();
             garble(buff, argument);
             buf2 = buff.toString();
         } else {
@@ -1531,7 +1531,7 @@ class ActComm {
     }
 
     static char char_lang_lookup(char c) {
-        for (translation_type aTranslation_table : translation_table) {
+        for (var aTranslation_table : translation_table) {
             if (aTranslation_table.common == c) {
                 return aTranslation_table.language;
             }
@@ -1545,7 +1545,7 @@ class ActComm {
  */
 
     static String translate(CHAR_DATA ch, CHAR_DATA victim, String argument) {
-        TextBuffer trans = new TextBuffer();
+        var trans = new TextBuffer();
         if (argument.isEmpty()
                 || (ch == null) || (victim == null)
                 || IS_NPC(ch) || IS_NPC(victim)
@@ -1560,9 +1560,9 @@ class ActComm {
             return trans.toString();
         }
 
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < argument.length(); i++) {
-            char c = char_lang_lookup(argument.charAt(i));
+        var buf = new StringBuilder();
+        for (var i = 0; i < argument.length(); i++) {
+            var c = char_lang_lookup(argument.charAt(i));
             buf.append(c);
         }
 
@@ -1577,11 +1577,11 @@ class ActComm {
         if (IS_NPC(ch)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         one_argument(argument, arg);
         if (arg.isEmpty()) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You now speak %s.\n", language_table[ch.language].name);
             send_to_char(buf, ch);
             send_to_char("You can speak :\n", ch);
@@ -1602,7 +1602,7 @@ class ActComm {
         } else {
             ch.language = language;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Now you speak %s.\n", language_table[ch.language].name);
         send_to_char(buf, ch);
     }
@@ -1615,7 +1615,7 @@ class ActComm {
         if (skill_failure_check(ch, gsn_judge, true, 0, null)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         one_argument(argument, arg);
 
@@ -1640,7 +1640,7 @@ class ActComm {
             send_to_char("You do not have the power to judge Immortals.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("%s's ethos is %s and aligment is %s.\n",
                 victim.name,
                 upfirst(ethos_table[victim.ethos].name),
@@ -1690,11 +1690,11 @@ class ActComm {
             send_to_char("IN ADDITION, you will be able to wear two more rings.\n", ch);
             send_to_char("             You will have additional 10 trains.\n", ch);
 
-            String pbuf = ch.pcdata.pwd;
-            String remstr = nw_config.lib_player_dir + "/" + capitalize(ch.name);
+            var pbuf = ch.pcdata.pwd;
+            var remstr = nw_config.lib_player_dir + "/" + capitalize(ch.name);
 //        String  mkstr =  nw_config.lib_remort_dir +"/"+ capitalize( ch.name ) ;
-            String name = ch.name;
-            DESCRIPTOR_DATA d = ch.desc;
+            var name = ch.name;
+            var d = ch.desc;
             banks = ch.pcdata.bank_s;
             bankg = ch.pcdata.bank_g;
             qp = ch.pcdata.questpoints;

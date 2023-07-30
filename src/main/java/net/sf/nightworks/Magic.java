@@ -357,7 +357,7 @@ class Magic {
         if (slot <= 0) {
             return -1;
         }
-        for (Skill sn : Skill.skills) {
+        for (var sn : Skill.skills) {
             if (slot == sn.slot) {
                 return sn.ordinal();
             }
@@ -417,11 +417,11 @@ class Magic {
     };
 
     static void say_spell(CHAR_DATA ch, Skill sn) {
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         for (int pos = 0, length = 0; pos < sn.name.length(); pos += length) {
-            for (syl_type sylType : syl_table) {
-                String prefix = sylType._old;
-                int len = prefix.length();
+            for (var sylType : syl_table) {
+                var prefix = sylType._old;
+                var len = prefix.length();
                 if (sn.name.regionMatches(pos, prefix, 0, len)) {
                     buf.append(sylType._new);
                     length = len;
@@ -431,13 +431,13 @@ class Magic {
             assert (length > 0);
         }
 
-        TextBuffer buf2 = new TextBuffer();
+        var buf2 = new TextBuffer();
         buf.sprintf("$n utters the words, '%s'.", buf);
         buf.sprintf("$n utters the words, '%s'.", sn.name);
 
-        for (CHAR_DATA rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
+        for (var rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
             if (rch != ch) {
-                int skill = (get_skill(rch, gsn_spell_craft) * 9) / 10;
+                var skill = (get_skill(rch, gsn_spell_craft) * 9) / 10;
                 if (skill < number_percent()) {
                     act(buf2, ch, null, rch, TO_VICT);
                     check_improve(rch, gsn_spell_craft, true, 5);
@@ -454,7 +454,7 @@ class Magic {
      * Negative apply's make saving throw better.
      */
     static boolean saves_spell(int level, CHAR_DATA victim, int dam_type) {
-        int save = 40 + (victim.level - level) * 4 - (victim.saving_throw * 90) / UMAX(45, victim.level);
+        var save = 40 + (victim.level - level) * 4 - (victim.saving_throw * 90) / UMAX(45, victim.level);
         if (IS_AFFECTED(victim, AFF_BERSERK)) {
             save += victim.level / 5;
         }
@@ -484,7 +484,7 @@ class Magic {
             spell_level += 5;
         }
 
-        int save = 50 + (spell_level - dis_level) * 5;
+        var save = 50 + (spell_level - dis_level) * 5;
         save = URANGE(5, save, 95);
         return number_percent() < save;
     }
@@ -494,7 +494,7 @@ class Magic {
     static boolean check_dispel(int dis_level, CHAR_DATA victim, Skill sn) {
 
         if (is_affected(victim, sn)) {
-            for (AFFECT_DATA af = victim.affected; af != null; af = af.next) {
+            for (var af = victim.affected; af != null; af = af.next) {
                 if (af.type == sn) {
                     if (!saves_dispel(dis_level, af.level, af.duration)) {
                         affect_strip(victim, sn);
@@ -567,9 +567,9 @@ class Magic {
             return;
         }
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
-        String target_name = one_argument(argument, arg1);
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
+        var target_name = one_argument(argument, arg1);
         one_argument(target_name, arg2);
 
         if (arg1.isEmpty()) {
@@ -686,7 +686,7 @@ class Magic {
                     if (!can_see(victim, ch)) {
                         do_yell(victim, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                         do_yell(victim, buf.toString());
@@ -936,7 +936,7 @@ class Magic {
      */
     static void obj_cast_spell(Skill sn, int level, CHAR_DATA ch, CHAR_DATA victim, OBJ_DATA obj) {
         Object vo = null;
-        int target = TARGET_NONE;
+        var target = TARGET_NONE;
 
         if (sn == null) {
             return;
@@ -1104,7 +1104,7 @@ class Magic {
 */
 
     static void spell_acid_blast(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 18);
@@ -1116,7 +1116,7 @@ class Magic {
 
 
     static void spell_armor(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -1126,7 +1126,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1156,7 +1156,7 @@ class Magic {
 
             if (IS_OBJ_STAT(obj, ITEM_EVIL)) {
 
-                AFFECT_DATA paf = affect_find(obj.affected, gsn_curse);
+                var paf = affect_find(obj.affected, gsn_curse);
                 if (!saves_dispel(level, paf != null ? paf.level : obj.level, 0)) {
                     if (paf != null) {
                         affect_remove_obj(obj, paf);
@@ -1170,7 +1170,7 @@ class Magic {
                     return;
                 }
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_OBJECT;
             af.type = sn;
             af.level = level;
@@ -1196,7 +1196,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1217,14 +1217,14 @@ class Magic {
 
 
     static void spell_blindness(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_BLIND) ||
                 saves_spell(level, victim, DAM_OTHER)) {
             send_to_char("You failed.\n", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1239,7 +1239,7 @@ class Magic {
 
 
     static void spell_burning_hands(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 2) + 7;
@@ -1311,9 +1311,9 @@ class Magic {
 
     static void spell_calm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
-        int mlevel = 0;
-        int count = 0;
-        int high_level = 0;
+        var mlevel = 0;
+        var count = 0;
+        var high_level = 0;
         int chance;
 
         /* get sum of all mobile levels in the room */
@@ -1352,7 +1352,7 @@ class Magic {
                     stop_fighting(vch, false);
                 }
 
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 af.where = TO_AFFECTS;
                 af.type = sn;
                 af.level = level;
@@ -1373,8 +1373,8 @@ class Magic {
     }
 
     static void spell_cancellation(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
-        boolean found = false;
+        var victim = (CHAR_DATA) vo;
+        var found = false;
 
         level += 2;
 
@@ -1609,7 +1609,7 @@ class Magic {
     }
 
     static void spell_chain_lightning(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA tmp_vict, last_vict, next_vict;
         boolean found;
         int dam;
@@ -1636,7 +1636,7 @@ class Magic {
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help someone is attacking me!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Die, %s, you sorcerous dog!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 do_yell(victim, buf.toString());
@@ -1669,7 +1669,7 @@ class Magic {
                             if (!can_see(tmp_vict, ch)) {
                                 do_yell(tmp_vict, "Help someone is attacking me!");
                             } else {
-                                TextBuffer buf = new TextBuffer();
+                                var buf = new TextBuffer();
                                 buf.sprintf("Die, %s, you sorcerous dog!",
                                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ? ch.doppel.name : ch.name);
                                 do_yell(tmp_vict, buf.toString());
@@ -1725,7 +1725,7 @@ class Magic {
             send_to_char("This room has already been healed by light.\n", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_CONST;
         af.type = sn;
         af.level = level;
@@ -1735,7 +1735,7 @@ class Magic {
         af.bitvector = 0;
         affect_to_room(ch.in_room, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = level;
@@ -1750,7 +1750,7 @@ class Magic {
 
 
     static void spell_charm_person(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_safe(ch, victim)) {
             return;
@@ -1780,7 +1780,7 @@ class Magic {
         }
         add_follower(victim, ch);
         victim.leader = ch;
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -1803,13 +1803,13 @@ class Magic {
 
 
     static void spell_chill_touch(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = number_range(1, level);
         if (!saves_spell(level, victim, DAM_COLD)) {
             act("$n turns blue and shivers.", victim, null, null, TO_ROOM);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = level;
@@ -1827,7 +1827,7 @@ class Magic {
 
 
     static void spell_colour_spray(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 3) + 13;
@@ -1915,7 +1915,7 @@ class Magic {
 
 
     static void spell_create_water(int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int water;
 
         if (obj.item_type != ITEM_DRINK_CON) {
@@ -1937,7 +1937,7 @@ class Magic {
             obj.value[2] = LIQ_WATER;
             obj.value[1] += water;
             if (!is_name("water", obj.name)) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("%s water", obj.name);
                 obj.name = buf.toString();
             }
@@ -1948,7 +1948,7 @@ class Magic {
 
 
     static void spell_cure_blindness(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, gsn_blindness)) {
             if (victim == ch) {
@@ -1969,7 +1969,7 @@ class Magic {
 
 
     static void spell_cure_critical(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int heal;
 
         heal = dice(3, 8) + level / 2;
@@ -1984,7 +1984,7 @@ class Magic {
 /* RT added to cure plague */
 
     static void spell_cure_disease(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, gsn_plague)) {
             if (victim == ch) {
@@ -2005,7 +2005,7 @@ class Magic {
 
 
     static void spell_cure_light(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int heal;
 
         heal = dice(1, 8) + level / 4 + 5;
@@ -2019,7 +2019,7 @@ class Magic {
 
 
     static void spell_cure_poison(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (!is_affected(victim, gsn_poison)) {
             if (victim == ch) {
@@ -2039,7 +2039,7 @@ class Magic {
     }
 
     static void spell_cure_serious(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int heal;
 
         heal = dice(2, 8) + level / 3 + 10;
@@ -2071,7 +2071,7 @@ class Magic {
             }
 
             if (IS_OBJ_STAT(obj, ITEM_BLESS)) {
-                AFFECT_DATA paf = affect_find(obj.affected, Skill.gsn_bless);
+                var paf = affect_find(obj.affected, Skill.gsn_bless);
                 if (!saves_dispel(level, paf != null ? paf.level : obj.level, 0)) {
                     if (paf != null) {
                         affect_remove_obj(obj, paf);
@@ -2085,7 +2085,7 @@ class Magic {
                     return;
                 }
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_OBJECT;
             af.type = sn;
             af.level = level;
@@ -2105,7 +2105,7 @@ class Magic {
         if (IS_AFFECTED(victim, AFF_CURSE) || saves_spell(level, victim, DAM_NEGATIVE)) {
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2128,7 +2128,7 @@ class Magic {
 /* RT replacement demonfire spell */
 
     static void spell_demonfire(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (!IS_NPC(ch) && !IS_EVIL(ch)) {
@@ -2154,7 +2154,7 @@ class Magic {
 /* added by chronos */
 
     static void spell_bluefire(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (!IS_NPC(ch) && !IS_NEUTRAL(ch)) {
@@ -2179,7 +2179,7 @@ class Magic {
 
 
     static void spell_detect_evil(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_DETECT_EVIL)) {
             if (victim == ch) {
@@ -2189,7 +2189,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2206,7 +2206,7 @@ class Magic {
 
 
     static void spell_detect_good(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_DETECT_GOOD)) {
             if (victim == ch) {
@@ -2216,7 +2216,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2233,7 +2233,7 @@ class Magic {
 
 
     static void spell_detect_hidden(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
 
         if (IS_AFFECTED(victim, AFF_DETECT_HIDDEN)) {
@@ -2244,7 +2244,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2261,7 +2261,7 @@ class Magic {
 
 
     static void spell_detect_invis(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
 
         if (IS_AFFECTED(victim, AFF_DETECT_INVIS)) {
@@ -2272,7 +2272,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2289,7 +2289,7 @@ class Magic {
 
 
     static void spell_detect_magic(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_DETECT_MAGIC)) {
             if (victim == ch) {
@@ -2299,7 +2299,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2316,7 +2316,7 @@ class Magic {
 
 
     static void spell_detect_poison(CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
 
         if (obj.item_type == ITEM_DRINK_CON || obj.item_type == ITEM_FOOD) {
             if (obj.value[3] != 0) {
@@ -2332,7 +2332,7 @@ class Magic {
 
 
     static void spell_dispel_evil(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (!IS_NPC(ch) && IS_EVIL(ch)) {
@@ -2362,7 +2362,7 @@ class Magic {
 
 
     static void spell_dispel_good(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (!IS_NPC(ch) && IS_GOOD(ch)) {
@@ -2393,8 +2393,8 @@ class Magic {
 /* modified for enhanced use */
 
     static void spell_dispel_magic(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
-        boolean found = false;
+        var victim = (CHAR_DATA) vo;
+        var found = false;
 
         if (saves_spell(level, victim, DAM_OTHER)) {
             send_to_char("You feel a brief tingling sensation.\n", victim);
@@ -2667,11 +2667,11 @@ class Magic {
     }
 
     static void spell_enchant_armor(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
 
         int result, fail;
         int ac_bonus, added;
-        boolean ac_found = false;
+        var ac_found = false;
 
         if (obj.item_type != ITEM_ARMOR) {
             send_to_char("That isn't an armor.\n", ch);
@@ -2689,7 +2689,7 @@ class Magic {
         /* find the bonuses */
 
         if (!obj.enchanted) {
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 if (paf.location == APPLY_AC) {
                     ac_bonus = paf.modifier;
                     ac_found = true;
@@ -2700,7 +2700,7 @@ class Magic {
             }
         }
 
-        for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+        for (var paf = obj.affected; paf != null; paf = paf.next) {
             if (paf.location == APPLY_AC) {
                 ac_bonus = paf.modifier;
                 ac_found = true;
@@ -2758,8 +2758,8 @@ class Magic {
         if (!obj.enchanted) {
             obj.enchanted = true;
 
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
-                AFFECT_DATA af_new = new AFFECT_DATA();
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+                var af_new = new AFFECT_DATA();
 
                 af_new.next = obj.affected;
                 obj.affected = af_new;
@@ -2794,7 +2794,7 @@ class Magic {
         }
 
         if (ac_found) {
-            for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.affected; paf != null; paf = paf.next) {
                 if (paf.location == APPLY_AC) {
                     paf.type = sn;
                     paf.modifier += added;
@@ -2802,7 +2802,7 @@ class Magic {
                 }
             }
         } else /* add a new affect */ {
-            AFFECT_DATA paf = new AFFECT_DATA();
+            var paf = new AFFECT_DATA();
 
             paf.where = TO_OBJECT;
             paf.type = sn;
@@ -2819,7 +2819,7 @@ class Magic {
 
 
     static void spell_enchant_weapon(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int result, fail;
         int hit_bonus, dam_bonus, added;
         boolean hit_found = false, dam_found = false;
@@ -2840,7 +2840,7 @@ class Magic {
         /* find the bonuses */
 
         if (!obj.enchanted) {
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 if (paf.location == APPLY_HITROLL) {
                     hit_bonus = paf.modifier;
                     hit_found = true;
@@ -2855,7 +2855,7 @@ class Magic {
             }
         }
 
-        for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+        for (var paf = obj.affected; paf != null; paf = paf.next) {
             if (paf.location == APPLY_HITROLL) {
                 hit_bonus = paf.modifier;
                 hit_found = true;
@@ -2918,7 +2918,7 @@ class Magic {
             AFFECT_DATA af_new;
             obj.enchanted = true;
 
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 af_new = new AFFECT_DATA();
 
                 af_new.next = obj.affected;
@@ -2954,7 +2954,7 @@ class Magic {
         }
 
         if (dam_found) {
-            for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.affected; paf != null; paf = paf.next) {
                 if (paf.location == APPLY_DAMROLL) {
                     paf.type = sn;
                     paf.modifier += added;
@@ -2965,7 +2965,7 @@ class Magic {
                 }
             }
         } else /* add a new affect */ {
-            AFFECT_DATA paf = new AFFECT_DATA();
+            var paf = new AFFECT_DATA();
 
             paf.where = TO_OBJECT;
             paf.type = sn;
@@ -2979,7 +2979,7 @@ class Magic {
         }
 
         if (hit_found) {
-            for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.affected; paf != null; paf = paf.next) {
                 if (paf.location == APPLY_HITROLL) {
                     paf.type = sn;
                     paf.modifier += added;
@@ -2990,7 +2990,7 @@ class Magic {
                 }
             }
         } else /* add a new affect */ {
-            AFFECT_DATA paf = new AFFECT_DATA();
+            var paf = new AFFECT_DATA();
 
             paf.type = sn;
             paf.level = level;
@@ -3010,7 +3010,7 @@ class Magic {
 */
 
     static void spell_energy_drain(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (saves_spell(level, victim, DAM_NEGATIVE)) {
@@ -3036,7 +3036,7 @@ class Magic {
     }
 
     static void spell_hellfire(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 7);
@@ -3065,7 +3065,7 @@ class Magic {
                     if (!can_see(tmp_vict, ch)) {
                         do_yell(tmp_vict, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ? ch.doppel.name : ch.name);
                         do_yell(tmp_vict, buf.toString());
@@ -3102,7 +3102,7 @@ class Magic {
                     if (!can_see(tmp_vict, ch)) {
                         do_yell(tmp_vict, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ? ch.doppel.name : ch.name);
                         do_yell(tmp_vict, buf.toString());
@@ -3121,13 +3121,13 @@ class Magic {
 
 
     static void spell_fireproof(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
 
         if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
             act("$p is already protected from burning.", ch, obj, null, TO_CHAR);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_OBJECT;
         af.type = sn;
         af.level = level;
@@ -3144,7 +3144,7 @@ class Magic {
 
 
     static void spell_flamestrike(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 10);
@@ -3156,12 +3156,12 @@ class Magic {
 
 
     static void spell_faerie_fire(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_FAERIE_FIRE)) {
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3232,7 +3232,7 @@ class Magic {
 
 
     static void spell_fly(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_FLYING)) {
             if (victim == ch) {
@@ -3242,7 +3242,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3258,7 +3258,7 @@ class Magic {
 /* RT clerical berserking spell */
 
     static void spell_frenzy(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || IS_AFFECTED(victim, AFF_BERSERK)) {
             if (victim == ch) {
@@ -3286,7 +3286,7 @@ class Magic {
             act("Your god doesn't seem to like $N", ch, null, victim, TO_CHAR);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3354,7 +3354,7 @@ class Magic {
 
 
     static void spell_giant_strength(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -3364,7 +3364,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3379,7 +3379,7 @@ class Magic {
 
 
     static void spell_harm(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = UMAX(20, victim.hit - dice(1, 4));
@@ -3393,7 +3393,7 @@ class Magic {
 /* RT haste spell */
 
     static void spell_haste(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || IS_AFFECTED(victim, AFF_HASTE)
                 || IS_SET(victim.off_flags, OFF_FAST)) {
@@ -3417,7 +3417,7 @@ class Magic {
             act("$n is moving less slowly.", victim, null, null, TO_ROOM);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3439,7 +3439,7 @@ class Magic {
 
 
     static void spell_heal(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         victim.hit = UMIN(victim.hit + 100 + level / 10, victim.max_hit);
         update_pos(victim);
         send_to_char("A warm feeling fills your body.\n", victim);
@@ -3449,10 +3449,10 @@ class Magic {
     }
 
     static void spell_heat_metal(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         OBJ_DATA obj_lose, obj_next;
-        int dam = 0;
-        boolean fail = true;
+        var dam = 0;
+        var fail = true;
 
         if (!saves_spell(level + 2, victim, DAM_FIRE)
                 && !IS_SET(victim.imm_flags, IMM_FIRE)) {
@@ -3591,7 +3591,7 @@ class Magic {
                         if (!can_see(vch, ch)) {
                             do_yell(vch, "Help someone is attacking me!");
                         } else {
-                            TextBuffer buf = new TextBuffer();
+                            var buf = new TextBuffer();
                             buf.sprintf("Die, %s, you sorcerous dog!",
                                     (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(vch)) ? ch.doppel.name : ch.name);
                             do_yell(vch, buf.toString());
@@ -3611,7 +3611,7 @@ class Magic {
                         if (!can_see(vch, ch)) {
                             do_yell(vch, "Help someone is attacking me!");
                         } else {
-                            TextBuffer buf = new TextBuffer();
+                            var buf = new TextBuffer();
                             buf.sprintf("Die, %s, you sorcerous dog!",
                                     (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(vch)) ? ch.doppel.name : ch.name);
                             do_yell(vch, buf.toString());
@@ -3633,8 +3633,8 @@ class Magic {
     }
 
     static void spell_identify(CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
-        TextBuffer buf = new TextBuffer();
+        var obj = (OBJ_DATA) vo;
+        var buf = new TextBuffer();
         buf.sprintf("Object '%s' is type %s, extra flags %s.\nWeight is %d, value is %d, level is %d.\n",
                 obj.name,
                 item_type_name(obj),
@@ -3738,7 +3738,7 @@ class Magic {
         }
 
         if (!obj.enchanted) {
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 if (paf.location != APPLY_NONE && paf.modifier != 0) {
                     buf.sprintf("Affects %s by %d.\n", affect_loc_name(paf.location), paf.modifier);
                     send_to_char(buf, ch);
@@ -3757,7 +3757,7 @@ class Magic {
             }
         }
 
-        for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+        for (var paf = obj.affected; paf != null; paf = paf.next) {
             if (paf.location != APPLY_NONE && paf.modifier != 0) {
                 buf.sprintf("Affects %s by %d", affect_loc_name(paf.location), paf.modifier);
                 send_to_char(buf, ch);
@@ -3787,7 +3787,7 @@ class Magic {
 
 
     static void spell_infravision(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_INFRARED)) {
             if (victim == ch) {
@@ -3799,7 +3799,7 @@ class Magic {
         }
         act("$n's eyes glow red.\n", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3825,7 +3825,7 @@ class Magic {
                 return;
             }
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_OBJECT;
             af.type = sn;
             af.level = level;
@@ -3848,7 +3848,7 @@ class Magic {
 
         act("$n fades out of existence.", victim, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -3862,7 +3862,7 @@ class Magic {
 
 
     static void spell_know_alignment(CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         String msg;
 
         if (IS_GOOD(victim)) {
@@ -3891,7 +3891,7 @@ class Magic {
 
 
     static void spell_lightning_bolt(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (IS_AFFECTED(victim, AFF_GROUNDING)) {
@@ -3918,7 +3918,7 @@ class Magic {
         number = 0;
         max_found = IS_IMMORTAL(ch) ? 200 : 2 * level;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
 
         for (obj = object_list; obj != null; obj = obj.next) {
             if (!can_see_obj(ch, obj) || !is_name(target_name, obj.name) || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level || ch.level < obj.level) {
@@ -3973,7 +3973,7 @@ class Magic {
 
 
     static void spell_magic_missile(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
 
         int dam;
@@ -4054,7 +4054,7 @@ class Magic {
             act("$n slowly fades out of existence.", gch, null, null, TO_ROOM);
             send_to_char("You slowly fade out of existence.\n", gch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = sn;
             af.level = level / 2;
@@ -4075,7 +4075,7 @@ class Magic {
 
 
     static void spell_pass_door(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
 
         if (IS_AFFECTED(victim, AFF_PASS_DOOR)) {
@@ -4086,7 +4086,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4102,7 +4102,7 @@ class Magic {
 /* RT plague spell, very nasty */
 
     static void spell_plague(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (saves_spell(level, victim, DAM_DISEASE) ||
                 (IS_NPC(victim) && IS_SET(victim.act, ACT_UNDEAD))) {
@@ -4113,7 +4113,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level * 3 / 4;
@@ -4164,7 +4164,7 @@ class Magic {
                     act("$p is already envenomed.", ch, obj, null, TO_CHAR);
                     return;
                 }
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 af.where = TO_WEAPON;
                 af.type = sn;
                 af.level = level / 2;
@@ -4189,7 +4189,7 @@ class Magic {
             send_to_char("You feel momentarily ill, but it passes.\n", victim);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4204,7 +4204,7 @@ class Magic {
 
 
     static void spell_protection_evil(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECT_EVIL)
                 || IS_AFFECTED(victim, AFF_PROTECT_GOOD)) {
@@ -4215,7 +4215,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4231,7 +4231,7 @@ class Magic {
     }
 
     static void spell_protection_good(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_PROTECT_GOOD)
                 || IS_AFFECTED(victim, AFF_PROTECT_EVIL)) {
@@ -4242,7 +4242,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4260,7 +4260,7 @@ class Magic {
 
 
     static void spell_ray_of_truth(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam, align;
 
         if (IS_EVIL(ch)) {
@@ -4302,7 +4302,7 @@ class Magic {
 
 
     static void spell_recharge(int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int chance, percent;
 
         if (obj.item_type != ITEM_WAND && obj.item_type != ITEM_STAFF) {
@@ -4364,7 +4364,7 @@ class Magic {
     }
 
     static void spell_refresh(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         victim.move = UMIN(victim.move + level, victim.max_move);
         if (victim.max_move == victim.move) {
             send_to_char("You feel fully refreshed!\n", victim);
@@ -4379,7 +4379,7 @@ class Magic {
     static void spell_remove_curse(int level, CHAR_DATA ch, Object vo, int target) {
         CHAR_DATA victim;
         OBJ_DATA obj;
-        boolean found = false;
+        var found = false;
 
         /* do object cases first */
         if (target == TARGET_OBJ) {
@@ -4425,7 +4425,7 @@ class Magic {
     }
 
     static void spell_sanctuary(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_SANCTUARY)) {
             if (victim == ch) {
@@ -4435,7 +4435,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4450,7 +4450,7 @@ class Magic {
 
 
     static void spell_shield(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -4460,7 +4460,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4474,7 +4474,7 @@ class Magic {
     }
 
 
-    private static int[] dam_each_sg =
+    private static final int[] dam_each_sg =
             {
                     6,
                     8, 10, 12, 14, 16, 18, 20, 25, 29, 33,
@@ -4485,7 +4485,7 @@ class Magic {
             };
 
     static void spell_shocking_grasp(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
 
         int dam;
@@ -4505,7 +4505,7 @@ class Magic {
 
 
     static void spell_sleep(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_SLEEP)
                 || (IS_NPC(victim) && IS_SET(victim.act, ACT_UNDEAD))
@@ -4513,7 +4513,7 @@ class Magic {
                 || saves_spell(level - 4, victim, DAM_CHARM)) {
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4531,7 +4531,7 @@ class Magic {
     }
 
     static void spell_slow(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || IS_AFFECTED(victim, AFF_SLOW)) {
             if (victim == ch) {
@@ -4564,7 +4564,7 @@ class Magic {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4579,7 +4579,7 @@ class Magic {
 
 
     static void spell_stone_skin(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(ch, sn)) {
             if (victim == ch) {
@@ -4589,7 +4589,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4647,7 +4647,7 @@ class Magic {
 
 
     static void spell_teleport(int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         ROOM_INDEX_DATA pRoomIndex;
 
         if (!IS_NPC(ch)) {
@@ -4681,15 +4681,15 @@ class Magic {
     static void spell_ventriloquate(int level, CHAR_DATA ch) {
         CHAR_DATA vch;
 
-        StringBuilder speaker = new StringBuilder();
+        var speaker = new StringBuilder();
         target_name = one_argument(target_name, speaker);
-        TextBuffer buf1 = new TextBuffer();
-        TextBuffer buf2 = new TextBuffer();
+        var buf1 = new TextBuffer();
+        var buf2 = new TextBuffer();
         sprintf(buf1, "%s says '%s'.\n", speaker, target_name);
         sprintf(buf2, "Someone makes %s say '%s'.\n", speaker, target_name);
         buf1.upfirst();
 
-        String speakerName = speaker.toString();
+        var speakerName = speaker.toString();
         for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
             if (!is_name(speakerName, vch.name)) {
                 send_to_char(saves_spell(level, vch, DAM_OTHER) ? buf2 : buf1, vch);
@@ -4700,12 +4700,12 @@ class Magic {
 
 
     static void spell_weaken(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn) || saves_spell(level, victim, DAM_OTHER)) {
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -4721,7 +4721,7 @@ class Magic {
 /* RT recall spell is back */
 
     static void spell_word_of_recall(CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         ROOM_INDEX_DATA location;
         int to_room_vnum;
 
@@ -4789,7 +4789,7 @@ class Magic {
  */
 
     static void spell_acid_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam, hp_dam, dice_dam, hpch;
 
         act("$n spits acid at $N.", ch, null, victim, TO_NOTVICT);
@@ -4813,7 +4813,7 @@ class Magic {
 
 
     static void spell_fire_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA vch, vch_next;
         int dam, hp_dam, dice_dam;
         int hpch;
@@ -4862,7 +4862,7 @@ class Magic {
     }
 
     static void spell_frost_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         CHAR_DATA vch, vch_next;
         int dam, hp_dam, dice_dam, hpch;
 
@@ -4944,7 +4944,7 @@ class Magic {
                 if (!can_see(vch, ch)) {
                     do_yell(vch, "Help someone is attacking me!");
                 } else {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("Die, %s, you sorcerous dog!",
                             (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(vch)) ? ch.doppel.name : ch.name);
                     do_yell(vch, buf.toString());
@@ -4962,7 +4962,7 @@ class Magic {
     }
 
     static void spell_lightning_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam, hp_dam, dice_dam, hpch;
 
         act("$n breathes a bolt of lightning at $N.", ch, null, victim, TO_NOTVICT);
@@ -4995,7 +4995,7 @@ class Magic {
      * Spells for mega1.are from Glop/Erkenbrand.
      */
     static void spell_general_purpose(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = number_range(25, 100);
@@ -5006,7 +5006,7 @@ class Magic {
     }
 
     static void spell_high_explosive(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = number_range(30, 120);
@@ -5027,8 +5027,8 @@ class Magic {
         number = 0;
         max_found = IS_IMMORTAL(ch) ? 200 : 2 * level;
 
-        TextBuffer buf = new TextBuffer();
-        StringBuilder buffer = new StringBuilder();
+        var buf = new TextBuffer();
+        var buffer = new StringBuilder();
 
         for (obj = object_list; obj != null; obj = obj.next) {
             if (!can_see_obj(ch, obj) || !is_name(target_name, obj.name) || number_percent() > 2 * level || ch.level < obj.level) {
@@ -5070,7 +5070,7 @@ class Magic {
         }
 
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -5080,7 +5080,7 @@ class Magic {
         af.bitvector = AFF_ROOM_L_SHIELD;
         affect_to_room(ch.in_room, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = ch.level;
@@ -5106,7 +5106,7 @@ class Magic {
             send_to_char("This spell is used too recently.\n", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_ROOM_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -5116,7 +5116,7 @@ class Magic {
         af.bitvector = AFF_ROOM_SHOCKING;
         affect_to_room(ch.in_room, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_AFFECTS;
         af2.type = sn;
         af2.level = level;
@@ -5130,7 +5130,7 @@ class Magic {
     }
 
     static void spell_acid_arrow(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 12);
@@ -5143,7 +5143,7 @@ class Magic {
 /* energy spells */
 
     static void spell_etheral_fist(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 12);
@@ -5156,7 +5156,7 @@ class Magic {
     }
 
     static void spell_spectral_furor(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 8);
@@ -5169,7 +5169,7 @@ class Magic {
     }
 
     static void spell_disruption(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 9);
@@ -5183,7 +5183,7 @@ class Magic {
 
 
     static void spell_sonic_resonance(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 7);
@@ -5198,7 +5198,7 @@ class Magic {
 /* mental */
 
     static void spell_mind_wrack(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 7);
@@ -5211,7 +5211,7 @@ class Magic {
     }
 
     static void spell_mind_wrench(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 9);
@@ -5225,7 +5225,7 @@ class Magic {
 /* acid */
 
     static void spell_sulfurus_spray(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 7);
@@ -5238,7 +5238,7 @@ class Magic {
     }
 
     static void spell_caustic_font(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 9);
@@ -5251,7 +5251,7 @@ class Magic {
     }
 
     static void spell_acetum_primus(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 8);
@@ -5266,7 +5266,7 @@ class Magic {
 /*  Electrical  */
 
     static void spell_galvanic_whip(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 7);
@@ -5280,7 +5280,7 @@ class Magic {
 
 
     static void spell_magnetic_trust(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 8);
@@ -5293,7 +5293,7 @@ class Magic {
     }
 
     static void spell_quantum_spike(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 9);
@@ -5308,7 +5308,7 @@ class Magic {
 /* negative */
 
     static void spell_hand_of_undead(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if (saves_spell(level, victim, DAM_NEGATIVE)) {
@@ -5364,7 +5364,7 @@ class Magic {
         }
         gate_pet = ch.pet != null && ch.in_room == ch.pet.in_room;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         act("$n disappears in a flash of light!", ch, null, null, TO_ROOM);
         buf.sprintf("You travel via astral planes and go to %s.\n", victim.name);
         send_to_char(buf, ch);
@@ -5503,7 +5503,7 @@ class Magic {
 
 
     static void spell_corruption(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_CORRUPTION)) {
             act("$N is already corrupting.\n", ch, null, victim, TO_CHAR);
@@ -5519,7 +5519,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level * 3 / 4;
@@ -5567,7 +5567,7 @@ class Magic {
                 if (!can_see(vch, ch)) {
                     do_yell(vch, "Help someone is attacking me!");
                 } else {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("Die, %s, you sorcerous dog!",
                             (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(vch)) ? ch.doppel.name : ch.name);
                     do_yell(vch, buf.toString());
@@ -5602,7 +5602,7 @@ class Magic {
 
 
     static void spell_detect_undead(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (IS_AFFECTED(victim, AFF_DETECT_UNDEAD)) {
             if (victim == ch) {
@@ -5612,7 +5612,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5632,7 +5632,7 @@ class Magic {
         OBJ_DATA obj;
         OBJ_DATA in_obj;
         ROOM_INDEX_DATA room = null;
-        boolean found = false;
+        var found = false;
 
         if (IS_NPC(ch)
                 || ch.last_death_time == -1
@@ -5681,7 +5681,7 @@ class Magic {
 
 
     static void spell_firestream(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         act("$n throws a stream of searing flames.", ch, null, victim, TO_NOTVICT);
@@ -5702,7 +5702,7 @@ class Magic {
     static void spell_summon_earth_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another elemental right now.\n",
@@ -5758,7 +5758,7 @@ class Magic {
         char_to_room(elm, ch.in_room);
         send_to_char("You created an earth elemental!\n", ch);
         act("$n creates an earth elemental!", ch, null, null, TO_ROOM);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5774,7 +5774,7 @@ class Magic {
     }
 
     static void spell_frostbolt(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         dam = dice(level, 10);
@@ -5787,7 +5787,7 @@ class Magic {
     static void spell_summon_air_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another elemental right now.\n",
@@ -5844,7 +5844,7 @@ class Magic {
         send_to_char("You created an air elemental!\n", ch);
         act("$n creates an air elemental!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5862,7 +5862,7 @@ class Magic {
     static void spell_summon_water_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another elemental right now.\n",
@@ -5918,7 +5918,7 @@ class Magic {
         char_to_room(elm, ch.in_room);
         send_to_char("You created a water elemental!\n", ch);
         act("$n creates a water elemental!", ch, null, null, TO_ROOM);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5936,7 +5936,7 @@ class Magic {
     static void spell_summon_fire_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another elemental right now.\n",
@@ -5993,7 +5993,7 @@ class Magic {
         send_to_char("You created a fire elemental!\n", ch);
         act("$n creates a fire elemental!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -6011,7 +6011,7 @@ class Magic {
     static void spell_summon_light_elm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA gch;
         CHAR_DATA elm;
-        int i = 0;
+        var i = 0;
 
         if (is_affected(ch, sn)) {
             send_to_char("You lack the power to create another elemental right now.\n",
@@ -6068,7 +6068,7 @@ class Magic {
         send_to_char("You created a lightning elemental!\n", ch);
         act("$n creates a lightning elemental!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -6105,7 +6105,7 @@ class Magic {
                     if (!can_see(tmp_vict, ch)) {
                         do_yell(tmp_vict, "Help someone is attacking me!");
                     } else {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("Die, %s, you sorcerous dog!",
                                 (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(tmp_vict)) ? ch.doppel.name : ch.name);
                         do_yell(tmp_vict, buf.toString());
@@ -6133,7 +6133,7 @@ class Magic {
     }
 
     static void spell_grounding(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             if (victim == ch) {
@@ -6143,7 +6143,7 @@ class Magic {
             }
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -6159,7 +6159,7 @@ class Magic {
     }
 
     static void spell_tsunami(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
         if ((ch.in_room.sector_type != SECT_WATER_SWIM)
@@ -6178,7 +6178,7 @@ class Magic {
     }
 
     static void spell_disenchant_armor(int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int result, fail;
 
         if (obj.wear_loc != -1) {
@@ -6234,7 +6234,7 @@ class Magic {
     }
 
     static void spell_disenchant_weapon(int level, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int result, fail;
 
         if (obj.item_type != ITEM_WEAPON) {
@@ -6300,7 +6300,7 @@ class Magic {
             send_to_char("You are already absorbing magic surrounding you.\n", ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_absorb;
         af.level = level;
@@ -6318,7 +6318,7 @@ class Magic {
 
     static void spell_animate_object(Skill sn, int level, CHAR_DATA ch, Object vo) {
         CHAR_DATA mob;
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int i;
 
         if (!(obj.item_type == ITEM_WEAPON ||
@@ -6362,7 +6362,7 @@ class Magic {
             mob = create_mobile(get_mob_index(MOB_VNUM_ARMOR));
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("animate %s", obj.name);
         mob.name = buf.toString();
 
@@ -6415,7 +6415,7 @@ class Magic {
         mob.master = mob.leader = ch;
         mob.affected_by = SET_BIT(mob.affected_by, AFF_CHARM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = ch.level;
@@ -6462,7 +6462,7 @@ class Magic {
                 if (!can_see(vch, ch)) {
                     do_yell(vch, "Help someone is attacking me!");
                 } else {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("Die, %s, you sorcerous dog!",
                             (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(vch)) ?
                                     ch.doppel.name : ch.name);
@@ -6516,7 +6516,7 @@ class Magic {
 
         act("$n fades into earth.", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -6529,10 +6529,10 @@ class Magic {
     }
 
     static void spell_earthmaw(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         int dam;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You tremble the earth underneath the %s.\n", victim.name);
         send_to_char(buf, ch);
         act("$n trembles the earth underneath you!.", ch, null, victim, TO_VICT);
@@ -6545,7 +6545,7 @@ class Magic {
     }
 
     static void spell_drain(Skill sn, CHAR_DATA ch, Object vo) {
-        OBJ_DATA obj = (OBJ_DATA) vo;
+        var obj = (OBJ_DATA) vo;
         int drain;
 
         if (!IS_SET(obj.extra_flags, ITEM_MAGIC)) {
@@ -6584,7 +6584,7 @@ class Magic {
                 break;
         }
 
-        for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+        for (var paf = obj.affected; paf != null; paf = paf.next) {
             drain += 5;
         }
 
@@ -6604,13 +6604,13 @@ class Magic {
     }
 
     static void spell_soften(Skill sn, int level, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
 
         if (is_affected(victim, sn)) {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -6635,7 +6635,7 @@ class Magic {
 
 
     static void spell_fumble(Skill sn, int level, CHAR_DATA ch, Object vo) {
-        CHAR_DATA victim = (CHAR_DATA) vo;
+        var victim = (CHAR_DATA) vo;
         OBJ_DATA obj;
 
         if (is_affected(victim, sn)) {
@@ -6670,7 +6670,7 @@ class Magic {
             return;
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;

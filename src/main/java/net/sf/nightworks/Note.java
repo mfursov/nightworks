@@ -55,8 +55,8 @@ class Note {
     private static NOTE_DATA changes_list = null;
 
     static int count_spool(CHAR_DATA ch, NOTE_DATA spool) {
-        int count = 0;
-        for (NOTE_DATA pnote = spool; pnote != null; pnote = pnote.next) {
+        var count = 0;
+        for (var pnote = spool; pnote != null; pnote = pnote.next) {
             if (!hide_note(ch, pnote)) {
                 count++;
             }
@@ -67,7 +67,7 @@ class Note {
 
     static void do_unread(CHAR_DATA ch, String argument) {
         int count;
-        boolean found = false;
+        var found = false;
 
         if (IS_NPC(ch)) {
             return;
@@ -149,10 +149,10 @@ class Note {
             }
         }
         try {
-            BufferedWriter fw = new BufferedWriter(new FileWriter(name));
+            var fw = new BufferedWriter(new FileWriter(name));
             try (fw) {
-                Formatter fp = new Formatter(fw);
-                for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
+                var fp = new Formatter(fw);
+                for (var pnote = list; pnote != null; pnote = pnote.next) {
                     prepareNote(fp, pnote);
                 }
             }
@@ -179,12 +179,12 @@ class Note {
     }
 
     static NOTE_DATA load_thread(String name, int type, int free_time) {
-        File file = new File(name);
+        var file = new File(name);
         if (!file.exists()) {
             return null;
         }
         try {
-            DikuTextFile fp = new DikuTextFile(name);
+            var fp = new DikuTextFile(name);
             NOTE_DATA pnotelast = null, list = null;
             for (; ; ) {
                 char letter;
@@ -199,7 +199,7 @@ class Note {
                 }
                 fp.ungetc();
 
-                NOTE_DATA pnote = new NOTE_DATA();
+                var pnote = new NOTE_DATA();
 
                 if (str_cmp(fp.fread_word(), "sender")) {
                     break;
@@ -283,9 +283,9 @@ class Note {
         }
 
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(name, true));
+            var bw = new BufferedWriter(new FileWriter(name, true));
             try (bw) {
-                Formatter fp = new Formatter(bw);
+                var fp = new Formatter(bw);
                 prepareNote(fp, pnote);
             }
         } catch (IOException e) {
@@ -298,7 +298,7 @@ class Note {
         if (note_list == null) {
             note_list = pnote;
         } else {
-            NOTE_DATA last = note_list;
+            var last = note_list;
             while (last.next != null) {
                 last = last.next;
             }
@@ -354,9 +354,9 @@ class Note {
 
         if (!delete) {
             /* make a new list */
-            StringBuilder to_new = new StringBuilder();
-            StringBuilder to_one = new StringBuilder();
-            String to_list = pnote.to_list;
+            var to_new = new StringBuilder();
+            var to_one = new StringBuilder();
+            var to_list = pnote.to_list;
             while (to_list != null && !to_list.isEmpty()) {
                 to_one.setLength(0);
                 to_list = one_argument(to_list, to_one);
@@ -493,7 +493,7 @@ class Note {
             }
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
         argument = smash_tilde(argument);
         int vnum;
@@ -507,9 +507,9 @@ class Note {
             } else if (argument.isEmpty() || !str_prefix(argument, "next"))
                 /* read next unread note */ {
                 vnum = 0;
-                for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
+                for (var pnote = list; pnote != null; pnote = pnote.next) {
                     if (!hide_note(ch, pnote)) {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("[%3d] %s: %s\n%s\nTo: %s\n",
                                 vnum,
                                 pnote.sender,
@@ -524,7 +524,7 @@ class Note {
                         vnum++;
                     }
                 }
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You have no unread %s.\n", list_name);
                 send_to_char(buf, ch);
                 return;
@@ -537,9 +537,9 @@ class Note {
             }
 
             vnum = 0;
-            for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
+            for (var pnote = list; pnote != null; pnote = pnote.next) {
                 if (is_note_to(ch, pnote) && (vnum++ == anum || fAll)) {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("[%3d] %s: %s\n%s\nTo: %s\n",
                             vnum - 1,
                             pnote.sender,
@@ -554,7 +554,7 @@ class Note {
                 }
             }
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("There aren't that many %s.\n", list_name);
             send_to_char(buf, ch);
             return;
@@ -562,8 +562,8 @@ class Note {
 
         if (!str_prefix(arg.toString(), "list")) {
             vnum = 0;
-            TextBuffer buf = new TextBuffer();
-            for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
+            var buf = new TextBuffer();
+            for (var pnote = list; pnote != null; pnote = pnote.next) {
                 if (is_note_to(ch, pnote)) {
                     buf.sprintf("[%3d%s] %s: %s\n",
                             vnum, hide_note(ch, pnote) ? " " : "N",
@@ -583,7 +583,7 @@ class Note {
 
             anum = atoi(argument);
             vnum = 0;
-            for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
+            for (var pnote = list; pnote != null; pnote = pnote.next) {
                 if (is_note_to(ch, pnote) && vnum++ == anum) {
                     note_remove(ch, pnote, false);
                     send_to_char("Ok.\n", ch);
@@ -591,7 +591,7 @@ class Note {
                 }
             }
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("There aren't that many %s.", list_name);
             send_to_char(buf, ch);
             return;
@@ -605,7 +605,7 @@ class Note {
 
             anum = atoi(argument);
             vnum = 0;
-            for (NOTE_DATA pnote = list; pnote != null; pnote = pnote.next) {
+            for (var pnote = list; pnote != null; pnote = pnote.next) {
                 if (is_note_to(ch, pnote) && vnum++ == anum) {
                     note_remove(ch, pnote, true);
                     send_to_char("Ok.\n", ch);
@@ -613,7 +613,7 @@ class Note {
                 }
             }
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("There aren't that many %s.", list_name);
             send_to_char(buf, ch);
             return;
@@ -633,7 +633,7 @@ class Note {
         /* below this point only certain people can edit notes */
         if ((type == NOTE_NEWS && !IS_TRUSTED(ch, ANGEL))
                 || (type == NOTE_CHANGES && !IS_TRUSTED(ch, CREATOR))) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You aren't high enough level to write %s.", list_name);
             return;
         }
@@ -651,7 +651,7 @@ class Note {
                 return;
             }
 
-            TextBuffer buffer = new TextBuffer();
+            var buffer = new TextBuffer();
             buffer.append(ch.pnote.text);
             buffer.append(argument);
             buffer.append("\n");
@@ -662,7 +662,7 @@ class Note {
 
         if (!str_cmp(arg.toString(), "-")) {
             int len;
-            boolean found = false;
+            var found = false;
 
             note_attach(ch, type);
             if (ch.pnote.type != type) {
@@ -674,7 +674,7 @@ class Note {
                 send_to_char("No lines left to remove.\n", ch);
                 return;
             }
-            String buf = ch.pnote.text;
+            var buf = ch.pnote.text;
             for (len = buf.length(); len > 0; len--) {
                 if (buf.charAt(len) == '\r') {
                     if (!found)  /* back it up */ {
@@ -739,7 +739,7 @@ class Note {
                 return;
             }
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s: %s\nTo: %s\n", ch.pnote.sender, ch.pnote.subject, ch.pnote.to_list);
             send_to_char(buf, ch);
             send_to_char(ch.pnote.text, ch);

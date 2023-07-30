@@ -616,7 +616,7 @@ class Handler {
      */
     static void room_record(String name, ROOM_INDEX_DATA room, int door) {
         ROOM_HISTORY_DATA rh;
-        int i = 0;
+        var i = 0;
 
         for (rh = room.history; i < 5 && rh != null; i++, rh = rh.next) ;
 
@@ -637,7 +637,7 @@ class Handler {
 
     static int count_users(OBJ_DATA obj) {
         CHAR_DATA fch;
-        int count = 0;
+        var count = 0;
 
         if (obj.in_room == null) {
             return 0;
@@ -820,7 +820,7 @@ class Handler {
     }
 
     static int floating_time(OBJ_DATA obj) {
-        int ftime = 0;
+        var ftime = 0;
         switch (obj.item_type) {
             default -> {
             }
@@ -841,7 +841,7 @@ class Handler {
     }
 
     static int attack_lookup(String name) {
-        for (int att = 0; att < attack_table.length; att++) {
+        for (var att = 0; att < attack_table.length; att++) {
             if (!str_prefix(name, attack_table[att].name)) {
                 return att;
             }
@@ -871,8 +871,8 @@ class Handler {
      */
     static int check_immune(CHAR_DATA ch, int dam_type) {
 
-        int immune = -1;
-        int def = IS_NORMAL;
+        var immune = -1;
+        var def = IS_NORMAL;
 
         if (dam_type == DAM_NONE) {
             return immune;
@@ -1060,7 +1060,7 @@ class Handler {
     static Skill get_weapon_sn(CHAR_DATA ch, boolean second) {
         Skill sn;
 
-        OBJ_DATA wield = get_wield_char(ch, second);
+        var wield = get_wield_char(ch, second);
 
         if (wield == null || wield.item_type != ITEM_WEAPON) {
             sn = gsn_hand_to_hand;
@@ -1276,8 +1276,8 @@ class Handler {
      * See if a string is one of the names of an object.
      */
     static boolean is_name(String str, String nameList) {
-        String wholeString = str;
-        StringBuilder part = new StringBuilder();
+        var wholeString = str;
+        var part = new StringBuilder();
         /* we need ALL parts of wholeString to match part of namelist */
         for (; ; )  /* start parsing wholeString */ {
             part.setLength(0);
@@ -1288,9 +1288,9 @@ class Handler {
             }
 
             /* check to see if this is part of namelist */
-            String subStr = part.toString();
+            var subStr = part.toString();
 
-            String list = nameList;
+            var list = nameList;
             for (; ; )  /* start parsing namelist */ {
                 part.setLength(0);
                 list = one_argument(list, part);
@@ -1298,7 +1298,7 @@ class Handler {
                     return false;
                 }
 
-                String nameStr = part.toString();
+                var nameStr = part.toString();
                 if (!str_prefix(wholeString, nameStr)) {
                     return true; /* full pattern match */
                 }
@@ -1615,7 +1615,7 @@ class Handler {
     //TODO: avoid copying?
 
     static void affect_to_char(CHAR_DATA ch, AFFECT_DATA paf) {
-        AFFECT_DATA paf_new = new AFFECT_DATA();
+        var paf_new = new AFFECT_DATA();
 
         paf_new.assignValuesFrom(paf);
         paf_new.next = ch.affected;
@@ -1627,7 +1627,7 @@ class Handler {
 /* give an affect to an object */
 
     static void affect_to_obj(OBJ_DATA obj, AFFECT_DATA paf) {
-        AFFECT_DATA paf_new = new AFFECT_DATA();
+        var paf_new = new AFFECT_DATA();
 
         paf_new.assignValuesFrom(paf);
         paf_new.next = obj.affected;
@@ -1657,8 +1657,8 @@ class Handler {
         }
 
         affect_modify(ch, paf, false);
-        int where = paf.where;
-        long vector = paf.bitvector;
+        var where = paf.where;
+        var vector = paf.bitvector;
 
         if (paf == ch.affected) {
             ch.affected = paf.next;
@@ -1691,8 +1691,8 @@ class Handler {
             affect_modify(obj.carried_by, paf, false);
         }
 
-        int where = paf.where;
-        long vector = paf.bitvector;
+        var where = paf.where;
+        var vector = paf.bitvector;
 
         /* remove flags from the object if needed */
         if (paf.bitvector != 0) {
@@ -1785,7 +1785,7 @@ class Handler {
 */
 
     static void char_from_room(CHAR_DATA ch) {
-        ROOM_INDEX_DATA prev_room = ch.in_room;
+        var prev_room = ch.in_room;
 
         if (ch.in_room == null) {
             bug("Char_from_room: null.");
@@ -1796,7 +1796,7 @@ class Handler {
             --ch.in_room.area.nplayer;
         }
 
-        OBJ_DATA obj = get_light_char(ch);
+        var obj = get_light_char(ch);
         if (obj != null
 /*
     &&   obj.item_type == ITEM_LIGHT
@@ -1873,7 +1873,7 @@ class Handler {
             }
             ++ch.in_room.area.nplayer;
         }
-        OBJ_DATA obj = get_light_char(ch);
+        var obj = get_light_char(ch);
         if (obj != null) // &&   obj.item_type == ITEM_LIGHT &&   obj.value[2] != 0 )
         {
             ++ch.in_room.light;
@@ -1893,7 +1893,7 @@ class Handler {
                 ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_PLAGUE);
             } else {
                 if (af.level != 1) {
-                    AFFECT_DATA plague = new AFFECT_DATA();
+                    var plague = new AFFECT_DATA();
                     plague.where = TO_AFFECTS;
                     plague.type = gsn_plague;
                     plague.level = af.level - 1;
@@ -2559,9 +2559,9 @@ class Handler {
         int count;
         int ugly;
 
-        StringBuilder argB = new StringBuilder();
+        var argB = new StringBuilder();
         number = number_argument(argument, argB);
-        String arg = argB.toString();
+        var arg = argB.toString();
         count = 0;
         ugly = 0;
         if (!str_cmp(arg, "self")) {
@@ -2651,9 +2651,9 @@ class Handler {
             return wch;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
-        String argstr = arg.toString();
+        var argstr = arg.toString();
         count = 0;
         for (wch = char_list; wch != null; wch = wch.next) {
             if (wch.in_room == null || !can_see(ch, wch)
@@ -2695,9 +2695,9 @@ class Handler {
         int number;
         int count;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
-        String argstr = arg.toString();
+        var argstr = arg.toString();
         count = 0;
         for (obj = list; obj != null; obj = obj.next_content) {
             if (can_see_obj(ch, obj) && is_name(argstr, obj.name)) {
@@ -2719,9 +2719,9 @@ class Handler {
         int number;
         int count;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
-        String argstr = arg.toString();
+        var argstr = arg.toString();
         count = 0;
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (obj.wear_loc == WEAR_NONE && can_see_obj(ch, obj) && is_name(argstr, obj.name)) {
@@ -2743,9 +2743,9 @@ class Handler {
         int number;
         int count;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
-        String argstr = arg.toString();
+        var argstr = arg.toString();
         count = 0;
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (obj.wear_loc != WEAR_NONE
@@ -2796,9 +2796,9 @@ class Handler {
             return obj;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
-        String argstr = arg.toString();
+        var argstr = arg.toString();
         count = 0;
         for (obj = object_list; obj != null; obj = obj.next) {
             if (can_see_obj(ch, obj) && is_name(argstr, obj.name)) {
@@ -2855,7 +2855,7 @@ class Handler {
             obj = create_object(get_obj_index(OBJ_VNUM_GOLD_ONE), 0);
         } else if (silver == 0) {
             obj = create_object(get_obj_index(OBJ_VNUM_GOLD_SOME), 0);
-            Formatter f = new Formatter();
+            var f = new Formatter();
             f.format(obj.short_descr, gold);
             obj.short_descr = f.toString();
             obj.value[1] = gold;
@@ -2863,7 +2863,7 @@ class Handler {
             obj.weight = gold / 5;
         } else if (gold == 0) {
             obj = create_object(get_obj_index(OBJ_VNUM_SILVER_SOME), 0);
-            Formatter f = new Formatter();
+            var f = new Formatter();
             f.format(obj.short_descr, silver);
             obj.short_descr = f.toString();
             obj.value[0] = silver;
@@ -2871,7 +2871,7 @@ class Handler {
             obj.weight = silver / 20;
         } else {
             obj = create_object(get_obj_index(OBJ_VNUM_COINS), 0);
-            Formatter f = new Formatter();
+            var f = new Formatter();
             f.format(obj.short_descr, silver, gold);
             obj.short_descr = f.toString();
             obj.value[0] = silver;
@@ -2909,7 +2909,7 @@ class Handler {
     }
 
     static int get_obj_realnumber(OBJ_DATA obj) {
-        int number = 1;
+        var number = 1;
 
         for (obj = obj.contains; obj != null; obj = obj.next_content) {
             number += get_obj_number(obj);
@@ -2950,7 +2950,7 @@ class Handler {
  */
 
     static boolean room_is_dark(CHAR_DATA ch) {
-        ROOM_INDEX_DATA pRoomIndex = ch.in_room;
+        var pRoomIndex = ch.in_room;
 
         if (IS_VAMPIRE(ch)) {
             return false;
@@ -3383,7 +3383,7 @@ class Handler {
     /*
     * Return ascii name of an affect bit vector.
     */
-    private static StringBuilder stat_buf = new StringBuilder();
+    private static final StringBuilder stat_buf = new StringBuilder();
 
     static String affect_bit_name(long vector) {
         stat_buf.setLength(0);
@@ -4303,7 +4303,7 @@ class Handler {
             return true;
         }
 
-        int r = skill_failure_nomessage(ch, skill, npcOffFlag);
+        var r = skill_failure_nomessage(ch, skill, npcOffFlag);
         if (r != 0) {
             if (r == 2) {
                 send_to_char("You cannot find the Cabal Power within you.\n", ch);
@@ -4413,8 +4413,8 @@ class Handler {
         }
 
         affect_modify_room(room, paf, false);
-        int where = paf.where;
-        long vector = paf.bitvector;
+        var where = paf.where;
+        var vector = paf.bitvector;
 
         if (paf == room.affected) {
             room.affected = paf.next;
@@ -4605,7 +4605,7 @@ class Handler {
         AFFECT_DATA paf;
 
         if (IS_ROOM_AFFECTED(room, AFF_ROOM_L_SHIELD)) {
-            Skill sn = Skill.gsn_lightning_shield;
+            var sn = Skill.gsn_lightning_shield;
             CHAR_DATA vch;
 
             for (vch = room.people; vch != null; vch = vch.next_in_room) {
@@ -4643,7 +4643,7 @@ class Handler {
         }
 
         if (IS_ROOM_AFFECTED(room, AFF_ROOM_SHOCKING)) {
-            Skill sn = Skill.gsn_shocking_trap;
+            var sn = Skill.gsn_shocking_trap;
             send_to_char("The shocking waves of room shocks you.\n", ch);
 
             if ((paf = affect_find(room.affected, sn)) == null) {
@@ -4788,7 +4788,7 @@ class Handler {
 
     static int count_charmed(CHAR_DATA ch) {
         CHAR_DATA gch;
-        int count = 0;
+        var count = 0;
 
         for (gch = char_list; gch != null; gch = gch.next) {
             if (IS_AFFECTED(gch, AFF_CHARM)
@@ -4822,15 +4822,15 @@ class Handler {
     }
 
     static void remove_mind(CHAR_DATA ch, String str) {
-        String mind = ch.in_mind;
+        var mind = ch.in_mind;
 
         if (!IS_NPC(ch) || ch.in_room == null
                 || mind == null || !is_name(str, mind)) {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
-        StringBuilder buf = new StringBuilder();
+        var arg = new StringBuilder();
+        var buf = new StringBuilder();
         do {
             arg.setLength(0);
             mind = one_argument(mind, arg);
@@ -4869,7 +4869,7 @@ class Handler {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(ch.in_mind, arg);
         if ((location = find_location(ch, arg.toString())) == null) {
             bug("Mob cannot return to reset place", 0);
@@ -4887,7 +4887,7 @@ class Handler {
         }
     }
 
-    private static int[] _n = new int[1];
+    private static final int[] _n = new int[1];
 
     static CHAR_DATA find_char(CHAR_DATA ch, String argument, int door, int range) {
         EXIT_DATA pExit, bExit;
@@ -4895,7 +4895,7 @@ class Handler {
         CHAR_DATA target;
         int opdoor;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         _n[0] = number_argument(argument, arg);
         dest_room = ch.in_room;
         if ((target = get_char_room2(ch, dest_room, arg.toString(), _n)) != null) {
@@ -4926,7 +4926,7 @@ class Handler {
     }
 
     static int check_exit(String arg) {
-        int door = -1;
+        var door = -1;
 
         if (!str_cmp(arg, "n") || !str_cmp(arg, "north")) {
             door = 0;
@@ -4950,8 +4950,8 @@ class Handler {
  */
 
     static CHAR_DATA get_char_spell(CHAR_DATA ch, String argument, int[] door, int range) {
-        int i = argument.indexOf('.');
-        String buf = i >= 0 ? argument.substring(0, i) : argument;
+        var i = argument.indexOf('.');
+        var buf = i >= 0 ? argument.substring(0, i) : argument;
         if (i == 0 || (door[0] = check_exit(buf)) == -1) {
             return get_char_room(ch, argument);
         }
@@ -4963,7 +4963,7 @@ class Handler {
         ROOM_INDEX_DATA temp;
         EXIT_DATA pExit;
         int opdoor;
-        int range = 0;
+        var range = 0;
         int i;
 
         ch.last_fight_time = current_time;

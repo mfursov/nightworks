@@ -187,7 +187,7 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class ObjProg {
     static void oprog_set(OBJ_INDEX_DATA objindex, String progtype, String name) throws NoSuchMethodException {
-        boolean found = true;
+        var found = true;
         try {
             if (!str_cmp(progtype, "wear_prog")) {
                 objindex.oprogs.wear_prog = create_wear_prog(name);
@@ -369,7 +369,7 @@ class ObjProg {
     }
 
     private static OPROG_FUN_SPEECH create_speech_prog(String name) throws NoSuchMethodException {
-        final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class, String.class);
+        final var m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class, String.class);
         return (obj, ch, speech) -> {
             try {
                 m.invoke(null, obj, ch);
@@ -380,7 +380,7 @@ class ObjProg {
     }
 
     private static OPROG_FUN_AREA create_area_prog(String name) throws NoSuchMethodException {
-        final Method m = resolveMethod(name, OBJ_DATA.class);
+        final var m = resolveMethod(name, OBJ_DATA.class);
         return obj -> {
             try {
                 m.invoke(null, obj);
@@ -391,7 +391,7 @@ class ObjProg {
     }
 
     private static OPROG_FUN_WEAR create_wear_prog(String name) throws NoSuchMethodException {
-        final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
+        final var m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
         return (obj, ch) -> {
             try {
                 m.invoke(null, obj, ch);
@@ -427,7 +427,7 @@ class ObjProg {
         if (!is_affected(ch, gsn_haste)) {
             send_to_char("As you slide your arms into these bracers, they mold to your skin.\n", ch);
             send_to_char("Your hands and arms feel incredibly light.\n", ch);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_haste;
             af.duration = -2;
@@ -637,7 +637,7 @@ class ObjProg {
 
             obj_to_obj(obj, container);
             obj_to_room(container, get_room_index(cabal_table[i].room_vnum));
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You see %s forming again slowly.\n", container.short_descr);
             if (get_room_index(cabal_table[i].room_vnum).people != null) {
                 act(buf.toString(), get_room_index(cabal_table[i].room_vnum).people, null, null, TO_CHAR);
@@ -669,30 +669,24 @@ class ObjProg {
     static void fight_prog_chaos_blade(OBJ_DATA obj, CHAR_DATA ch) {
         if (is_wielded_char(ch, obj)) {
             switch (number_bits(7)) {
-                case 0:
-
+                case 0 -> {
                     act("The chaotic blade trembles violently!", ch, null, null, TO_ROOM);
                     send_to_char("Your chaotic blade trembles violently!\n", ch);
                     obj_cast_spell(gsn_mirror, ch.level, ch, ch, obj);
                     WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
-                    break;
-
-                case 1:
-
+                }
+                case 1 -> {
                     act("The chaotic blade shakes a bit.", ch, null, null, TO_ROOM);
                     send_to_char("Your chaotic blade shakes a bit.\n", ch);
                     obj_cast_spell(gsn_garble, ch.level, ch, ch.fighting, obj);
                     WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
-                    break;
-
-                case 2:
-
+                }
+                case 2 -> {
                     act("The chaotic blade shivers uncontrollably!", ch, null, null, TO_ROOM);
                     send_to_char("Your chaotic blade shivers uncontrollably!\n", ch);
                     obj_cast_spell(gsn_confuse, ch.level, ch, ch.fighting, obj);
                     WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
-                    break;
-
+                }
             }
         }
     }
@@ -708,16 +702,15 @@ class ObjProg {
 
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
-                case 1:
+                case 0, 1 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     do_yell(ch, "Ever dance with good....");
                     spell_holy_word(Skill.gsn_holy_word, ch.level, ch);
-                    break;
+                }
             }
         }
     }
@@ -726,13 +719,11 @@ class ObjProg {
     static void fight_prog_tattoo_zeus(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
-                case 1:
-                case 2:
+                case 0, 1, 2 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_critical, ch.level, ch, ch, obj);
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     if (IS_AFFECTED(ch, AFF_PLAGUE)) {
                         spell_cure_disease(100, ch, ch);
@@ -740,7 +731,7 @@ class ObjProg {
                     if (IS_AFFECTED(ch, AFF_POISON)) {
                         spell_cure_poison(100, ch, ch);
                     }
-                    break;
+                }
             }
         }
     }
@@ -748,14 +739,14 @@ class ObjProg {
     static void fight_prog_tattoo_siebele(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
+                case 0 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     spell_bluefire(gsn_dispel_good, ch.level, ch, ch.fighting);
-                    break;
+                }
             }
         }
     }
@@ -763,14 +754,14 @@ class ObjProg {
     static void fight_prog_tattoo_ahrumazda(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
+                case 0 -> {
                     act("{bThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_demonfire, ch.level, ch, ch.fighting, obj);
-                    break;
+                }
             }
         }
     }
@@ -778,16 +769,15 @@ class ObjProg {
     static void fight_prog_tattoo_hephaestus(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
-                case 1:
+                case 0, 1 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     do_yell(ch, "And justice for all!....");
                     spell_scream(gsn_scream, ch.level, ch);
-                    break;
+                }
             }
         }
     }
@@ -795,18 +785,18 @@ class ObjProg {
     static void fight_prog_tattoo_ehrumen(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
+                case 0 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_light, ch.level, ch, ch.fighting, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     spell_dispel_evil(gsn_dispel_evil, ch.level, ch, ch.fighting);
-                    break;
+                }
             }
         }
     }
@@ -814,20 +804,18 @@ class ObjProg {
     static void fight_prog_tattoo_venus(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(7)) {
-                case 0:
-                case 1:
-                case 2:
+                case 0, 1, 2 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_light, ch.level, ch, ch, obj);
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_plague, ch.level, ch, ch.fighting, obj);
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_bless, ch.level, ch, ch, obj);
-                    break;
+                }
             }
         }
     }
@@ -835,14 +823,14 @@ class ObjProg {
     static void fight_prog_tattoo_ares(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(5)) {
-                case 0:
+                case 0 -> {
                     act("{bThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_dragon_strength, ch.level, ch, ch, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("{rThe tattoo on your shoulder glows RED.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_dragon_breath, ch.level, ch, ch.fighting, obj);
-                    break;
+                }
             }
         }
     }
@@ -851,14 +839,14 @@ class ObjProg {
     static void fight_prog_tattoo_odin(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(5)) {
-                case 0:
+                case 0 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_critical, ch.level, ch, ch, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_faerie_fire, ch.level, ch, ch.fighting, obj);
-                    break;
+                }
             }
         }
     }
@@ -866,14 +854,14 @@ class ObjProg {
     static void fight_prog_tattoo_phobos(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
+                case 0 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(Skill.gsn_colour_spray, ch.level, ch, ch.fighting, obj);
-                    break;
+                }
             }
         }
     }
@@ -881,22 +869,22 @@ class ObjProg {
     static void fight_prog_tattoo_mars(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(7)) {
-                case 0:
+                case 0 -> {
                     obj_cast_spell(gsn_blindness, ch.level, ch, ch.fighting, obj);
                     send_to_char("You send out a cloud of confusion!\n", ch);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     obj_cast_spell(gsn_poison, ch.level, ch, ch.fighting, obj);
                     send_to_char("Some of your insanity rubs off on your opponent.\n", ch);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     obj_cast_spell(gsn_haste, ch.level, ch, ch, obj);
                     send_to_char("You suddenly feel more hyperactive!\n", ch);
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     obj_cast_spell(gsn_shield, ch.level, ch, ch, obj);
                     send_to_char("You feel even more paranoid!\n", ch);
-                    break;
+                }
             }
         }
     }
@@ -904,58 +892,45 @@ class ObjProg {
     static void fight_prog_tattoo_athena(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             if (number_percent() < 50) {
-                switch (number_bits(4)) {
-                    case 0:
-                        if (IS_AFFECTED(ch, AFF_BERSERK) || is_affected(ch, gsn_berserk)
-                                || is_affected(ch, Skill.gsn_frenzy)) {
-                            send_to_char("You get a little madder.\n", ch);
-                            return;
-                        }
+                if (number_bits(4) == 0) {
+                    if (IS_AFFECTED(ch, AFF_BERSERK) || is_affected(ch, gsn_berserk)
+                            || is_affected(ch, Skill.gsn_frenzy)) {
+                        send_to_char("You get a little madder.\n", ch);
+                        return;
+                    }
 
-                        AFFECT_DATA af = new AFFECT_DATA();
-                        af.where = TO_AFFECTS;
-                        af.type = gsn_berserk;
-                        af.level = ch.level;
-                        af.duration = ch.level / 3;
-                        af.modifier = ch.level / 5;
-                        af.bitvector = AFF_BERSERK;
+                    var af = new AFFECT_DATA();
+                    af.where = TO_AFFECTS;
+                    af.type = gsn_berserk;
+                    af.level = ch.level;
+                    af.duration = ch.level / 3;
+                    af.modifier = ch.level / 5;
+                    af.bitvector = AFF_BERSERK;
 
-                        af.location = APPLY_HITROLL;
-                        affect_to_char(ch, af);
+                    af.location = APPLY_HITROLL;
+                    affect_to_char(ch, af);
 
-                        af.location = APPLY_DAMROLL;
-                        affect_to_char(ch, af);
+                    af.location = APPLY_DAMROLL;
+                    affect_to_char(ch, af);
 
-                        af.modifier = 10 * (ch.level / 10);
-                        af.location = APPLY_AC;
-                        affect_to_char(ch, af);
+                    af.modifier = 10 * (ch.level / 10);
+                    af.location = APPLY_AC;
+                    affect_to_char(ch, af);
 
-                        ch.hit += ch.level * 2;
-                        ch.hit = UMIN(ch.hit, ch.max_hit);
+                    ch.hit += ch.level * 2;
+                    ch.hit = UMIN(ch.hit, ch.max_hit);
 
-                        send_to_char("Your pulse races as you are consumned by rage!\n",
-                                ch);
-                        act("$n gets a wild look in $s eyes.", ch, null, null, TO_ROOM);
-
-                        break;
+                    send_to_char("Your pulse races as you are consumned by rage!\n",
+                            ch);
+                    act("$n gets a wild look in $s eyes.", ch, null, null, TO_ROOM);
                 }
             } else {
                 switch (number_bits(4)) {
-                    case 0:
-                        do_yell(ch, "Cry Havoc and Let Loose the Dogs of War!");
-                        break;
-                    case 1:
-                        do_yell(ch, "No Mercy!");
-                        break;
-                    case 2:
-                        do_yell(ch, "Los Valdar Cuebiyari!");
-                        break;
-                    case 3:
-                        do_yell(ch, "Carai an Caldazar! Carai an Ellisande! Al Ellisande!");
-                        break;
-                    case 4:
-                        do_yell(ch, "Siempre Vive el Riesgo!");
-                        break;
+                    case 0 -> do_yell(ch, "Cry Havoc and Let Loose the Dogs of War!");
+                    case 1 -> do_yell(ch, "No Mercy!");
+                    case 2 -> do_yell(ch, "Los Valdar Cuebiyari!");
+                    case 3 -> do_yell(ch, "Carai an Caldazar! Carai an Ellisande! Al Ellisande!");
+                    case 4 -> do_yell(ch, "Siempre Vive el Riesgo!");
                 }
             }
         }
@@ -988,16 +963,15 @@ class ObjProg {
         Skill sn;
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(6)) {
-                case 0:
-                case 1:
+                case 0, 1 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_serious, ch.level, ch, ch, obj);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     act("{rThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     sn = Skill.gsn_web;
                     spell_web(sn, ch.level, ch, ch.fighting);
-                    break;
+                }
             }
         }
     }
@@ -1007,21 +981,20 @@ class ObjProg {
         Skill sn;
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(5)) {
-                case 0:
-                case 1:
+                case 0, 1 -> {
                     if ((sn = Skill.gsn_heal) == null) {
                         break;
                     }
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(sn, ch.level, ch, ch, obj);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     if ((sn = Skill.gsn_mass_healing) == null) {
                         break;
                     }
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(sn, ch.level, ch, ch, obj);
-                    break;
+                }
             }
         }
     }
@@ -1071,18 +1044,18 @@ class ObjProg {
     static void fight_prog_snake(OBJ_DATA obj, CHAR_DATA ch) {
         if (is_wielded_char(ch, obj)) {
             switch (number_bits(7)) {
-                case 0:
+                case 0 -> {
                     act("One of the snake heads on your whip bites $N!", ch, null, ch.fighting, TO_CHAR);
                     act("A snake from $n's whip strikes out and bites you!", ch, null, ch.fighting, TO_VICT);
                     act("One of the snakes from $n's whip strikes at $N!", ch, null, ch.fighting, TO_NOTVICT);
                     obj_cast_spell(gsn_poison, ch.level, ch, ch.fighting, obj);
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     act("One of the snake heads on your whip bites $N!", ch, null, ch.fighting, TO_CHAR);
                     act("A snake from $n's whip strikes out and bites you!", ch, null, ch.fighting, TO_VICT);
                     act("One of the snakes from $n's whip strikes at $N!", ch, null, ch.fighting, TO_NOTVICT);
                     obj_cast_spell(gsn_weaken, ch.level, ch, ch.fighting, obj);
-                    break;
+                }
             }
         }
     }
@@ -1090,12 +1063,11 @@ class ObjProg {
     static void fight_prog_tattoo_prometheus(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(5)) {
-                case 0:
+                case 0 -> {
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     obj_cast_spell(gsn_cure_critical, ch.level, ch, ch, obj);
-                    break;
-                case 1:
-                case 2:
+                }
+                case 1, 2 -> {
                     act("{cThe tattoo on your shoulder glows red.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     if (IS_EVIL(ch.fighting)) {
                         spell_dispel_evil(gsn_dispel_evil, (int) (1.2 * ch.level), ch, ch.fighting);
@@ -1104,7 +1076,7 @@ class ObjProg {
                     } else {
                         spell_lightning_bolt(Skill.gsn_lightning_bolt, (int) (1.2 * ch.level), ch, ch.fighting);
                     }
-                    break;
+                }
             }
         }
     }
@@ -1112,13 +1084,11 @@ class ObjProg {
 
     static void fight_prog_shockwave(OBJ_DATA obj, CHAR_DATA ch) {
         if (is_wielded_char(ch, obj)) {
-            switch (number_bits(5)) {
-                case 0:
-                    act("A bolt of lightning arcs out from your bolt, hitting $N!", ch, null, ch.fighting, TO_CHAR);
-                    act("A bolt of lightning crackles along $n's bolt and arcs towards you!", ch, null, ch.fighting, TO_VICT);
-                    act("A bolt of lightning shoots out from $n's bolt, arcing towards $N!", ch, null, ch.fighting, TO_NOTVICT);
-                    obj_cast_spell(gsn_lightning_bolt, ch.level, ch, ch.fighting, null);
-                    break;
+            if (number_bits(5) == 0) {
+                act("A bolt of lightning arcs out from your bolt, hitting $N!", ch, null, ch.fighting, TO_CHAR);
+                act("A bolt of lightning crackles along $n's bolt and arcs towards you!", ch, null, ch.fighting, TO_VICT);
+                act("A bolt of lightning shoots out from $n's bolt, arcing towards $N!", ch, null, ch.fighting, TO_NOTVICT);
+                obj_cast_spell(gsn_lightning_bolt, ch.level, ch, ch.fighting, null);
             }
         }
     }
@@ -1294,7 +1264,7 @@ class ObjProg {
         if (!is_affected(ch, gsn_fly)) {
             send_to_char("As you wear wind boots on your feet, they hold you up.\n", ch);
             send_to_char("You start to fly.\n", ch);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_fly;
             af.duration = -2;
@@ -1319,7 +1289,7 @@ class ObjProg {
         if (!is_affected(ch, gsn_fly)) {
             send_to_char("As you wear boots of flying on your feet, they hold you up.\n", ch);
             send_to_char("You start to fly.\n", ch);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_fly;
             af.duration = -2;
@@ -1346,7 +1316,7 @@ class ObjProg {
             send_to_char("As you wear your arms these plates, You feel your self getting stronger.\n", ch);
             send_to_char("Your muscles seems incredibly huge.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_giant_strength;
             af.duration = -2;
@@ -1371,7 +1341,7 @@ class ObjProg {
             send_to_char("As you wear this girdle, You feel your self getting stronger.\n", ch);
             send_to_char("Your muscles seems incredibly huge.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_giant_strength;
             af.duration = -2;
@@ -1396,7 +1366,7 @@ class ObjProg {
             send_to_char("As you wear breastplate of strength, You feel yourself getting stronger.\n", ch);
             send_to_char("Your muscles seems incredibly huge.\n", ch);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_giant_strength;
             af.duration = -2;
@@ -1522,12 +1492,11 @@ class ObjProg {
     static void fight_prog_tattoo_goktengri(OBJ_DATA obj, CHAR_DATA ch) {
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(4)) {
-                case 0:
-                case 1:
+                case 0, 1 -> {
                     act("{WThe tattoo on your shoulder glows white.{x", ch, null, null, TO_CHAR, POS_DEAD);
                     do_say(ch, "My honour is my life.");
                     one_hit(ch, ch.fighting, null, false);
-                    break;
+                }
             }
         }
     }
@@ -1570,7 +1539,7 @@ class ObjProg {
             if (!is_affected(ch, gsn_fire_shield)) {
                 send_to_char("As you wear shield, you become resistive to cold.\n", ch);
 
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 af.where = TO_RESIST;
                 af.type = gsn_fire_shield;
                 af.duration = -2;
@@ -1583,7 +1552,7 @@ class ObjProg {
         } else {
             if (!is_affected(ch, gsn_fire_shield)) {
                 send_to_char("As you wear shield, you become resistive to fire.\n", ch);
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 af.where = TO_RESIST;
                 af.type = gsn_fire_shield;
                 af.duration = -2;
@@ -1718,7 +1687,7 @@ class ObjProg {
     static void wear_prog_neckguard(OBJ_DATA obj, CHAR_DATA ch) {
 
         if (!is_affected(ch, gsn_neckguard)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_neckguard;
             af.duration = -2;
@@ -1739,7 +1708,7 @@ class ObjProg {
     static void wear_prog_headguard(OBJ_DATA obj, CHAR_DATA ch) {
 
         if (!is_affected(ch, gsn_headguard)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_headguard;
             af.duration = -2;
@@ -1759,7 +1728,7 @@ class ObjProg {
 
     static void wear_prog_blackguard(OBJ_DATA obj, CHAR_DATA ch) {
         if (!is_affected(ch, gsn_blackguard)) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_blackguard;
             af.duration = -2;

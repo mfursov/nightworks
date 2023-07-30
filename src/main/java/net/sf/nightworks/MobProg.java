@@ -118,7 +118,7 @@ class MobProg {
 
 
     static void mprog_set(MOB_INDEX_DATA mobindex, String progtype, String name) {
-        boolean found = true;
+        var found = true;
         try {
             if (!str_cmp(progtype, "bribe_prog")) {
                 mobindex.mprogs.bribe_prog = create_bribe_prog(name);
@@ -346,7 +346,7 @@ class MobProg {
         }
 
         if (ch.cabal == CABAL_RULER) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("bow %s", ch.name);
             interpret(mob, buf.toString(), false);
             return;
@@ -366,7 +366,7 @@ class MobProg {
         mob.off_flags = SET_BIT(mob.off_flags, OFF_AREA_ATTACK);
 
         if (ch.cabal == CABAL_RULER) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("bow %s", ch.name);
             interpret(mob, buf.toString(), false);
             return;
@@ -490,7 +490,7 @@ class MobProg {
             act("$n sneers at you.", mob, null, ch, TO_VICT);
             act("You sneer at $N.", mob, null, ch, TO_CHAR);
             act("$n sneers at $N.", mob, null, ch, TO_NOTVICT);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("papers %s", ch.name);
             do_give(mob, buf.toString());
             do_close(mob, "box");
@@ -543,7 +543,7 @@ class MobProg {
             kassandra = create_object(get_obj_index(89), 0);
             kassandra.timer = 500;
             obj_to_char(kassandra, mob);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("kassandra %s", ch.name);
             do_give(mob, buf.toString());
             do_say(mob, "This stone has some special powers, use it well.");
@@ -554,7 +554,7 @@ class MobProg {
 
     static boolean death_prog_stalker(CHAR_DATA mob) {
         mob.cabal = CABAL_RULER;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("I have failed trying to kill %s, I gasp my last breath.", mob.last_fought.name);
         do_cb(mob, buf.toString());
         return false;
@@ -615,8 +615,8 @@ class MobProg {
     }
 
     static void speech_prog_templeman(CHAR_DATA mob, CHAR_DATA ch, String speech) {
-        int chosen = 0;
-        boolean correct = true;
+        var chosen = 0;
+        var correct = true;
 
         if (!str_cmp(speech, "religion")) {
             mob.status = GIVE_HELP_RELIGION;
@@ -627,7 +627,7 @@ class MobProg {
         }
         if (mob.status == RELIG_CHOSEN) {
             if ((ch.religion > 0) && (ch.religion < MAX_RELIGION)) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You are already in the way of %s", religion_table[ch.religion].leader);
                 do_say(mob, buf.toString());
                 return;
@@ -686,7 +686,7 @@ class MobProg {
             }
 
             ch.religion = chosen;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("From now on and forever, you are in the way of %s", religion_table[ch.religion].leader);
             do_say(mob, buf.toString());
             return;
@@ -703,7 +703,7 @@ class MobProg {
         if (!can_see(mob, ch) || IS_NPC(ch) || IS_IMMORTAL(ch)) {
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         sprintf(buf, "smile %s", ch.name);
         interpret(mob, buf.toString(), false);
     }
@@ -807,7 +807,7 @@ class MobProg {
             eyed.altar = hometown_table[ch.hometown].altar[i];
             eyed.pit = hometown_table[ch.hometown].pit[i];
             eyed.level = ch.level;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf(eyed.short_descr, ch.name);
             eyed.short_descr = buf.toString();
 
@@ -906,7 +906,7 @@ class MobProg {
         if (number_percent() < 25) {
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Help guards. %s is fighting with me.", ch.name);
         do_yell(mob, buf.toString());
         for (ach = char_list; ach != null; ach = ach_next) {
@@ -940,7 +940,7 @@ class MobProg {
     }
 
     static void speech_prog_wiseman(CHAR_DATA mob, CHAR_DATA ch, String speech) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(speech, arg);
         if (arg.length() == 0) {
             return;
@@ -956,7 +956,7 @@ class MobProg {
             return;
         }
         interpret(mob, "smile", false);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Welcome to my Armoury, %s",
                 str_cmp(mob.in_room.area.name, hometown_table[ch.hometown].name) ? "traveler" : ch.name);
         do_say(mob, buf.toString());
@@ -971,7 +971,7 @@ class MobProg {
             return;
         }
         interpret(mob, "smile", false);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Welcome to my Bakery, %s",
                 str_cmp(mob.in_room.area.name, hometown_table[ch.hometown].name) ? "traveler" : ch.name);
         do_say(mob, buf.toString());
@@ -982,7 +982,7 @@ class MobProg {
         if (!can_see(mob, ch) || IS_NPC(ch) || IS_IMMORTAL(ch)) {
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Beg %s", str_cmp(mob.in_room.area.name, hometown_table[ch.hometown].name) ? "traveler" : ch.name);
         do_say(mob, buf.toString());
         do_say(mob, "Spare some gold?");
@@ -1002,7 +1002,7 @@ class MobProg {
         if (!can_see(mob, ch) || IS_NPC(ch) || IS_IMMORTAL(ch)) {
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Welcome to my Store, %s",
                 str_cmp(mob.in_room.area.name, hometown_table[ch.hometown].name) ? "traveler" : ch.name);
         do_say(mob, buf.toString());
@@ -1011,19 +1011,19 @@ class MobProg {
 
     static void bribe_prog_beggar(CHAR_DATA mob, CHAR_DATA ch, Integer _amount) {
         if (_amount < 10) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("thank %s",
                     str_cmp(mob.in_room.area.name, hometown_table[ch.hometown].name) ? "traveler" : ch.name);
             interpret(mob, buf.toString(), false);
         } else if (_amount < 100) {
             do_say(mob, "Wow! Thank you! Thank you!");
         } else if (_amount < 500) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             do_say(mob, "Oh my God! Thank you! Thank you!");
             buf.sprintf("french %s", ch.name);
             interpret(mob, buf.toString(), false);
         } else {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("dance %s", ch.name);
             interpret(mob, buf.toString(), false);
             buf.sprintf("french %s", ch.name);
@@ -1061,7 +1061,7 @@ class MobProg {
 
 
     static void speech_prog_crier(CHAR_DATA mob, CHAR_DATA ch, String speech) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(speech, arg);
         if (is_name(arg.toString(), "what")) {
             do_say(mob, "My girlfriend left me.");
@@ -1131,8 +1131,8 @@ class MobProg {
             return;
         }
 
-        boolean matched = false;
-        TextBuffer buf = new TextBuffer();
+        var matched = false;
+        var buf = new TextBuffer();
         for (obj = object_list; obj != null; obj = obj.next) {
             if (obj.pIndexData.vnum != OBJ_VNUM_EYED_SWORD ||
                     !obj.short_descr.contains(ch.name)) {
@@ -1236,7 +1236,7 @@ class MobProg {
         if (master.fighting == null) {
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (master.fighting.fighting == master) {
             buf.sprintf("%s", master.name);
             do_rescue(mob, buf.toString());

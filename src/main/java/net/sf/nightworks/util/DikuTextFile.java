@@ -28,12 +28,12 @@ public class DikuTextFile {
 
     public DikuTextFile(File file) throws IOException {
         this.file = file;
-        int len = (int) file.length();
+        var len = (int) file.length();
         data = new char[len];
-        try (FileReader reader = new FileReader(file)) {
-            int pos = 0;
+        try (var reader = new FileReader(file)) {
+            var pos = 0;
             do {
-                int dpos = reader.read(data, pos, len - pos);
+                var dpos = reader.read(data, pos, len - pos);
                 assert (dpos >= 0);
                 pos += dpos;
             } while (pos != len);
@@ -43,7 +43,7 @@ public class DikuTextFile {
 
     public int fread_flag() {
         int number;
-        boolean negative = false;
+        var negative = false;
 
         int c;
         do {
@@ -87,7 +87,7 @@ public class DikuTextFile {
     }
 
     public int flag_convert(char letter) {
-        int bitsum = 0;
+        var bitsum = 0;
         char i;
 
         if ('A' <= letter && letter <= 'Z') {
@@ -138,10 +138,10 @@ public class DikuTextFile {
     }
 
     public String buildCurrentStateInfo() {
-        int line = 0;
-        String lineStr = "";
+        var line = 0;
+        var lineStr = "";
         if (data.length > 0) {
-            int pos = currentPos;
+            var pos = currentPos;
             currentPos = 0;
             int end;
             while (true) {
@@ -158,7 +158,7 @@ public class DikuTextFile {
             }
             lineStr = new String(data, currentPos, end - currentPos);
         }
-        Formatter f = new Formatter();
+        var f = new Formatter();
         f.format("FILE: %s LINE: %d TEXT:%s", file.getAbsolutePath(), line, lineStr);
         return f.toString();
     }
@@ -169,7 +169,7 @@ public class DikuTextFile {
         do {
             c = read();
         } while (isSpace(c));
-        int pos = currentPos - 1;
+        var pos = currentPos - 1;
         fread_to_eol();
         return new String(data, pos, currentPos - pos).trim();
     }
@@ -203,7 +203,7 @@ public class DikuTextFile {
         }
 
         while (tmpBuf.length() < MAX_WORD_LENGTH) {
-            char c = read();
+            var c = read();
             if (c == END_OF_STREAM_CHAR || (cEnd == ' ' ? isSpace(c) : (c == cEnd))) {
 //                System.err.println("Word '"+word+"'");
                 if (isSpace(c)) {
@@ -221,7 +221,7 @@ public class DikuTextFile {
 
     public char fread_letter() {
         while (!feof()) {
-            char c = read();
+            var c = read();
             if (!isSpace(c)) {
                 return c;
             }
@@ -239,8 +239,8 @@ public class DikuTextFile {
             c = read();
         } while (isSpace(c));
 
-        int number = 0;
-        boolean sign = false;
+        var number = 0;
+        var sign = false;
         if (c == '+') {
             c = read();
         } else if (c == '-') {
@@ -318,7 +318,7 @@ public class DikuTextFile {
             return defaultValue;
         }
         fMatch = true;
-        String str = multiFlag ? fread_string() : fread_word();
+        var str = multiFlag ? fread_string() : fread_word();
         long val;
         if (is_number(str)) {
             val = Integer.parseInt(str);

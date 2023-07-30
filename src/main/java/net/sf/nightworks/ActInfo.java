@@ -351,7 +351,7 @@ class ActInfo {
     static boolean show_vwear_to_char(CHAR_DATA ch, OBJ_DATA obj) {
 
         if (can_see_obj(ch, obj)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf(where_name[obj.wear_loc], ' ');
             send_to_char(buf, ch);
             send_to_char(format_obj_to_char(obj, ch, true), ch);
@@ -363,7 +363,7 @@ class ActInfo {
 
 
     static boolean show_cwear_to_char(CHAR_DATA ch, OBJ_DATA obj) {
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if ((obj.wear_loc == WEAR_LEFT && LEFT_HANDER(ch)) || (obj.wear_loc == WEAR_RIGHT && RIGHT_HANDER(ch))) {
             buf.sprintf(where_name[obj.wear_loc], '*');
         } else {
@@ -399,7 +399,7 @@ class ActInfo {
         }
 
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
 
         if (IS_OBJ_STAT(obj, ITEM_BURIED)) {
             buf.append("{W(Buried) ");
@@ -470,24 +470,24 @@ class ActInfo {
         /*
          * Alloc space for output lines.
          */
-        int count = 0;
+        var count = 0;
         OBJ_DATA obj;
         boolean fCombine;
 
         for (obj = list; obj != null; obj = obj.next_content) {
             count++;
         }
-        int nShow = 0;
+        var nShow = 0;
 
         /*
          * Format the list of objects.
          */
-        int[] prgnShow = new int[count];
-        String[] prgpstrShow = new String[count];
+        var prgnShow = new int[count];
+        var prgpstrShow = new String[count];
 
         for (obj = list; obj != null; obj = obj.next_content) {
             if (obj.wear_loc == WEAR_NONE && can_see_obj(ch, obj)) {
-                String pstrShow = format_obj_to_char(obj, ch, fShort);
+                var pstrShow = format_obj_to_char(obj, ch, fShort);
 
                 fCombine = false;
 
@@ -496,7 +496,7 @@ class ActInfo {
                     * Look for duplicates, case sensitive.
                     * Matches tend to be near end so run loop backwords.
                     */
-                    for (int iShow = nShow - 1; iShow >= 0; iShow--) {
+                    for (var iShow = nShow - 1; iShow >= 0; iShow--) {
                         if (prgpstrShow[iShow].equals(pstrShow)) {
                             prgnShow[iShow]++;
                             fCombine = true;
@@ -519,9 +519,9 @@ class ActInfo {
         /*
          * Output the formatted list.
          */
-        TextBuffer buf = new TextBuffer();
-        StringBuilder output = new StringBuilder();
-        for (int iShow = 0; iShow < nShow; iShow++) {
+        var buf = new TextBuffer();
+        var output = new StringBuilder();
+        for (var iShow = 0; iShow < nShow; iShow++) {
             if (prgpstrShow[iShow].isEmpty()) {
                 continue;
             }
@@ -550,7 +550,7 @@ class ActInfo {
 
 
     static void show_char_to_char_0(CHAR_DATA victim, CHAR_DATA ch) {
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         /*
         * Quest staff
         */
@@ -667,7 +667,7 @@ class ActInfo {
                 break;
             case POS_SLEEPING:
                 if (victim.on != null) {
-                    TextBuffer message = new TextBuffer();
+                    var message = new TextBuffer();
                     if (IS_SET(victim.on.value[2], SLEEP_AT)) {
                         message.sprintf(" is sleeping at %s.", victim.on.short_descr);
                         buf.append(message);
@@ -684,7 +684,7 @@ class ActInfo {
                 break;
             case POS_RESTING:
                 if (victim.on != null) {
-                    TextBuffer message = new TextBuffer();
+                    var message = new TextBuffer();
                     if (IS_SET(victim.on.value[2], REST_AT)) {
                         message.sprintf(" is resting at %s.", victim.on.short_descr);
                         buf.append(message);
@@ -701,7 +701,7 @@ class ActInfo {
                 break;
             case POS_SITTING:
                 if (victim.on != null) {
-                    TextBuffer message = new TextBuffer();
+                    var message = new TextBuffer();
                     if (IS_SET(victim.on.value[2], SIT_AT)) {
                         message.sprintf(" is sitting at %s.", victim.on.short_descr);
                         buf.append(message);
@@ -718,7 +718,7 @@ class ActInfo {
                 break;
             case POS_STANDING:
                 if (victim.on != null) {
-                    TextBuffer message = new TextBuffer();
+                    var message = new TextBuffer();
                     if (IS_SET(victim.on.value[2], STAND_AT)) {
                         message.sprintf(" is standing at %s.", victim.on.short_descr);
                         buf.append(message);
@@ -730,7 +730,7 @@ class ActInfo {
                         buf.append(message);
                     }
                 } else if (MOUNTED(victim) != null) {
-                    TextBuffer message = new TextBuffer();
+                    var message = new TextBuffer();
                     message.sprintf(" is here, riding %s.", PERS(MOUNTED(victim), ch));
                     buf.append(message);
                 } else {
@@ -782,7 +782,7 @@ class ActInfo {
             act("You see nothing special about $M.", ch, null, victim, TO_CHAR);
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (MOUNTED(victim) != null) {
             buf.sprintf("%s is riding %s.\n", PERS(victim, ch), PERS(MOUNTED(victim), ch));
             send_to_char(buf, ch);
@@ -863,7 +863,7 @@ class ActInfo {
 
     static void show_char_to_char(CHAR_DATA list, CHAR_DATA ch) {
         CHAR_DATA rch;
-        int life_count = 0;
+        var life_count = 0;
 
         for (rch = list; rch != null; rch = rch.next_in_room) {
             if (rch == ch) {
@@ -887,7 +887,7 @@ class ActInfo {
         }
 
         if (life_count != 0 && IS_AFFECTED(ch, AFF_DETECT_LIFE)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You feel %d more life %s in the room.\n", life_count, (life_count == 1) ? "form" : "forms");
             send_to_char(buf, ch);
         }
@@ -918,14 +918,14 @@ class ActInfo {
 
     static void do_scroll(CHAR_DATA ch, String argument) {
         int lines;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.length() == 0) {
             if (ch.lines == 0) {
                 send_to_char("You do not page long messages.\n", ch);
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You currently display %d lines per page.\n", ch.lines + 2);
                 send_to_char(buf, ch);
             }
@@ -949,7 +949,7 @@ class ActInfo {
             send_to_char("You must provide a reasonable number.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Scroll set to %d lines.\n", lines);
         send_to_char(buf, ch);
         ch.lines = lines - 2;
@@ -958,9 +958,9 @@ class ActInfo {
 /* RT does socials */
 
     static void do_socials(CHAR_DATA ch) {
-        int col = 0;
-        TextBuffer buf = new TextBuffer();
-        for (social_type soc : social_table) {
+        var col = 0;
+        var buf = new TextBuffer();
+        for (var soc : social_table) {
             buf.sprintf("%-12s", soc.name);
             send_to_char(buf, ch);
             if (++col % 6 == 0) {
@@ -1356,7 +1356,7 @@ class ActInfo {
         }
 
         ch.prompt = buf;
-        TextBuffer buf2 = new TextBuffer();
+        var buf2 = new TextBuffer();
         buf2.sprintf("Prompt set to %s\n", ch.prompt);
         send_to_char(buf2, ch);
     }
@@ -1456,21 +1456,21 @@ class ActInfo {
             return;
         }
 
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
-        StringBuilder arg3b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
+        var arg3b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         one_argument(argument, arg2b);
         number = number_argument(arg1b.toString(), arg3b);
         count = 0;
 
-        String arg1 = arg1b.toString();
+        var arg1 = arg1b.toString();
         if (arg1.isEmpty() || !str_cmp(arg1, "auto")) {
             /* 'look' or 'look auto' */
             send_to_char("{W" + ch.in_room.name + "{x", ch);
 
             if (IS_IMMORTAL(ch) && (IS_NPC(ch) || IS_SET(ch.act, PLR_HOLYLIGHT))) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf(" {x[Room %d]{x", ch.in_room.vnum);
                 send_to_char(buf, ch);
             }
@@ -1492,7 +1492,7 @@ class ActInfo {
             return;
         }
 
-        String arg2 = arg2b.toString();
+        var arg2 = arg2b.toString();
         if (!str_cmp(arg1, "i") || !str_cmp(arg1, "in") || !str_cmp(arg1, "on")) {
             /* 'look in' */
             if (arg2.isEmpty()) {
@@ -1516,7 +1516,7 @@ class ActInfo {
                         break;
                     }
                 {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("It's %sfilled with  a %s liquid.\n",
                             obj.value[1] < obj.value[0] / 4
                                     ? "less than half-" :
@@ -1559,7 +1559,7 @@ class ActInfo {
                 add_follower(ch, victim);
                 ch.leader = victim;
 
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 af.where = TO_AFFECTS;
                 af.type = gsn_charm_person;
                 af.level = ch.level;
@@ -1577,7 +1577,7 @@ class ActInfo {
             return;
         }
 
-        String arg3 = arg3b.toString();
+        var arg3 = arg3b.toString();
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (can_see_obj(ch, obj)) {  /* player can see object */
                 pdesc = get_extra_descr(arg3, obj.extra_descr);
@@ -1647,7 +1647,7 @@ class ActInfo {
         }
 
         if (count > 0 && count != number) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (count == 1) {
                 buf.sprintf("You only see one %s here.\n", arg3);
             } else {
@@ -1706,7 +1706,7 @@ class ActInfo {
     static void do_examine(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
 
         one_argument(argument, argb);
 
@@ -1714,11 +1714,11 @@ class ActInfo {
             send_to_char("Examine what?\n", ch);
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
         do_look(ch, arg);
 
         if ((obj = get_obj_here(ch, arg)) != null) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             switch (obj.item_type) {
                 default:
                     break;
@@ -1772,7 +1772,7 @@ class ActInfo {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (fAuto) {
             buf.append("{B[Exits:");
 
@@ -1841,7 +1841,7 @@ class ActInfo {
 
     static void do_worth(CHAR_DATA ch) {
         int total_played;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (IS_NPC(ch)) {
             buf.sprintf("You have %d gold and %d silver.\n", ch.gold, ch.silver);
             send_to_char(buf, ch);
@@ -1904,7 +1904,7 @@ class ActInfo {
 
     static void do_time(CHAR_DATA ch) {
         String suf;
-        int day = time_info.day + 1;
+        var day = time_info.day + 1;
         if (day > 4 && day < 20) {
             suf = "th";
         } else if (day % 10 == 1) {
@@ -1917,7 +1917,7 @@ class ActInfo {
             suf = "th";
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n",
                 (time_info.hour % 12 == 0) ? 12 : time_info.hour % 12,
                 time_info.hour >= 12 ? "pm" : "am",
@@ -1928,12 +1928,12 @@ class ActInfo {
         send_to_char(buf, ch);
 
         if (!IS_SET(ch.in_room.room_flags, ROOM_INDOORS) || IS_IMMORTAL(ch)) {
-            String time = (time_info.hour >= 5 && time_info.hour < 9) ? "dawn" :
+            var time = (time_info.hour >= 5 && time_info.hour < 9) ? "dawn" :
                     (time_info.hour >= 9 && time_info.hour < 12) ? "morning" :
                             (time_info.hour >= 12 && time_info.hour < 18) ? "mid-day" :
                                     (time_info.hour >= 18 && time_info.hour < 21) ? "evening" :
                                             "night";
-            String color = (time_info.hour >= 5 && time_info.hour < 9) ? COLOR_DAWN :
+            var color = (time_info.hour >= 5 && time_info.hour < 9) ? COLOR_DAWN :
                     (time_info.hour >= 9 && time_info.hour < 12) ? COLOR_MORNING :
                             (time_info.hour >= 12 && time_info.hour < 18) ? COLOR_DAY :
                                     (time_info.hour >= 18 && time_info.hour < 21) ? COLOR_EVENING :
@@ -1964,7 +1964,7 @@ class ActInfo {
             send_to_char("You can't see the weather indoors.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("The sky is %s and %s.\n",
                 sky_look[weather_info.sky],
                 weather_info.change >= 0
@@ -1982,8 +1982,8 @@ class ActInfo {
         }
 
         /* this parts handles help a b so that it returns help 'a b' */
-        StringBuilder argall = new StringBuilder();
-        StringBuilder argone = new StringBuilder();
+        var argall = new StringBuilder();
+        var argone = new StringBuilder();
         while (!argument.isEmpty()) {
             argone.setLength(0);
             argument = one_argument(argument, argone);
@@ -1993,8 +1993,8 @@ class ActInfo {
             argall.append(argone);
         }
 
-        String argallstr = argall.toString();
-        for (HELP_DATA pHelp = help_first; pHelp != null; pHelp = pHelp.next) {
+        var argallstr = argall.toString();
+        for (var pHelp = help_first; pHelp != null; pHelp = pHelp.next) {
             if (pHelp.level > get_trust(ch)) {
                 continue;
             }
@@ -2019,8 +2019,8 @@ class ActInfo {
 
     static void do_whois(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
-        boolean found = false;
-        StringBuilder arg = new StringBuilder();
+        var found = false;
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.length() == 0) {
@@ -2028,8 +2028,8 @@ class ActInfo {
             return;
         }
 
-        StringBuilder output = new StringBuilder();
-        TextBuffer buf = new TextBuffer();
+        var output = new StringBuilder();
+        var buf = new TextBuffer();
 
         for (d = descriptor_list; d != null; d = d.next) {
             CHAR_DATA wch;
@@ -2053,7 +2053,7 @@ class ActInfo {
 
                 /* work out the printing */
 
-                String clazz = wch.clazz.who_name;
+                var clazz = wch.clazz.who_name;
                 switch (wch.level) {
                     case MAX_LEVEL:
                         clazz = "IMP";
@@ -2091,7 +2091,7 @@ class ActInfo {
                   sprintf(cabalbuf, "[%s] ",cabal_table[wch.cabal].short_name);
                 else cabalbuf[0] = '\0';
                 */
-                String cabalbuf = "";
+                var cabalbuf = "";
                 if ((wch.cabal != 0 && ch.cabal == wch.cabal) || IS_IMMORTAL(ch)
                         || (IS_SET(wch.act, PLR_CANINDUCT) && wch.cabal == 1)
                         || wch.cabal == CABAL_HUNTER
@@ -2104,11 +2104,11 @@ class ActInfo {
                     cabalbuf = "";
                 }
 
-                String pk_buf = "";
+                var pk_buf = "";
                 if (!((ch == wch && ch.level < PK_MIN_LEVEL) || is_safe_nomessage(ch, wch))) {
                     pk_buf = "{r(PK){x";
                 }
-                String act_buf = IS_SET(wch.act, PLR_WANTED) ? "{W(WANTED) {x" : "";
+                var act_buf = IS_SET(wch.act, PLR_WANTED) ? "{W(WANTED) {x" : "";
 
                 String titlebuf;
                 if (IS_NPC(wch)) {
@@ -2119,9 +2119,9 @@ class ActInfo {
                 /*
                 * Format it up.
                 */
-                TextBuffer level_buf = new TextBuffer();
+                var level_buf = new TextBuffer();
                 level_buf.sprintf("{c%2d{x", wch.level);
-                String classbuf = "{Y" + clazz + "{x";
+                var classbuf = "{Y" + clazz + "{x";
                 /* a little formatting */
                 if (IS_TRUSTED(ch, LEVEL_IMMORTAL) || ch == wch || wch.level >= LEVEL_HERO) {
                     buf.sprintf("[%2d %s %s] %s%s%s%s%s\n",
@@ -2173,7 +2173,7 @@ class ActInfo {
         }
 
         max_on = UMAX(count, max_on);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (max_on == count) {
             buf.sprintf("There are %d characters on, the most so far today.\n", count);
         } else {
@@ -2227,8 +2227,8 @@ class ActInfo {
         int value2;
         String msg;
 
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         one_argument(argument, arg2b);
         if (arg1b.length() == 0) {
@@ -2236,7 +2236,7 @@ class ActInfo {
             return;
         }
 
-        String arg1 = arg1b.toString();
+        var arg1 = arg1b.toString();
         if ((obj1 = get_obj_carry(ch, arg1)) == null) {
             send_to_char("You do not have that item.\n", ch);
             return;
@@ -2318,9 +2318,9 @@ class ActInfo {
         CHAR_DATA victim;
         DESCRIPTOR_DATA d;
         boolean found;
-        boolean fPKonly = false;
+        var fPKonly = false;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
 
         if (!check_blind(ch)) {
@@ -2331,7 +2331,7 @@ class ActInfo {
             send_to_char("It's too dark to see.\n", ch);
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (!str_cmp(arg, "protector")) {
             if (IS_SET(ch.in_room.area.area_flag, AREA_PROTECTED)) {
                 send_to_char("This area is protected by Rulers!\n", ch);
@@ -2345,9 +2345,9 @@ class ActInfo {
             fPKonly = true;
         }
 
-        String pkbuf = "{r(PK){x ";
+        var pkbuf = "{r(PK){x ";
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (arg.isEmpty() || fPKonly) {
             send_to_char("Players near you:\n", ch);
             found = false;
@@ -2407,7 +2407,7 @@ class ActInfo {
         String align;
         int diff;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
 
         if (argb.length() == 0) {
@@ -2415,7 +2415,7 @@ class ActInfo {
             return;
         }
 
-        String arg = argb.toString();
+        var arg = argb.toString();
         if ((victim = get_char_room(ch, arg)) == null) {
             send_to_char("They're not here.\n", ch);
             return;
@@ -2473,7 +2473,7 @@ class ActInfo {
             return;
         }
 
-        char c = title.charAt(0);
+        var c = title.charAt(0);
         if (c == '.' || c == ',' || c == '!' || c == '?') {
             title = " " + title.substring(1);
         }
@@ -2511,13 +2511,13 @@ class ActInfo {
 
     static void do_description(CHAR_DATA ch, String argument) {
 
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         if (!argument.isEmpty()) {
             argument = smash_tilde(argument);
 
             if (argument.charAt(0) == '-') {
                 int len;
-                boolean found = false;
+                var found = false;
 
                 if (ch.description == null || ch.description.isEmpty()) {
                     send_to_char("No lines left to remove.\n", ch);
@@ -2564,7 +2564,7 @@ class ActInfo {
 
 
     static void do_report(CHAR_DATA ch) {
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("I have %d/%d hp %d/%d mana %d/%d mv",
                 ch.hit, ch.max_hit,
                 ch.mana, ch.max_mana,
@@ -2579,13 +2579,13 @@ class ActInfo {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
-        StringBuilder buf2 = new StringBuilder();
+        var buf = new TextBuffer();
+        var buf2 = new StringBuilder();
         if (argument.isEmpty()) {
             int col;
 
             col = 0;
-            for (Skill sn : Skill.skills) {
+            for (var sn : Skill.skills) {
                 if (sn.name == null) {
                     break;
                 }
@@ -2636,7 +2636,7 @@ class ActInfo {
                 send_to_char("You have no practice sessions left.\n", ch);
                 return;
             }
-            Skill sn = find_spell(ch, argument);
+            var sn = find_spell(ch, argument);
             if (sn == null || skill_failure_nomessage(ch, sn, 0) != 0) {
                 send_to_char("You can't practice that.\n", ch);
                 return;
@@ -2683,7 +2683,7 @@ class ActInfo {
 
     static void do_wimpy(CHAR_DATA ch, String argument) {
         int wimpy;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
 
@@ -2712,7 +2712,7 @@ class ActInfo {
         }
 
         ch.wimpy = wimpy;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Wimpy set to %d hit points.\n", wimpy);
         send_to_char(buf, ch);
     }
@@ -2727,18 +2727,18 @@ class ActInfo {
          * Can't use one_argument here because it smashes case.
          * So we just steal all its code.  Bleagh.
          */
-        StringBuilder arg_first = new StringBuilder();
+        var arg_first = new StringBuilder();
         argument = trimSpaces(argument, 0);
-        int len = argument.length();
-        char cEnd = len != 0 ? argument.charAt(0) : ' ';
+        var len = argument.length();
+        var cEnd = len != 0 ? argument.charAt(0) : ' ';
         if (cEnd != '\'' && cEnd != '"') {
             arg_first.append(cEnd);
             cEnd = ' ';
         }
 
-        int pos = 1;
+        var pos = 1;
         for (; pos < len; pos++) {
-            char c = argument.charAt(pos);
+            var c = argument.charAt(pos);
             if (c == cEnd) {
                 pos++;
                 break;
@@ -2747,8 +2747,8 @@ class ActInfo {
         }
         argument = trimSpaces(argument, pos);
 
-        String arg1 = arg_first.toString();
-        String arg2 = argument;
+        var arg1 = arg_first.toString();
+        var arg2 = argument;
         if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Syntax: password <old> <new>.\n", ch);
             return;
@@ -2768,7 +2768,7 @@ class ActInfo {
         /*
          * No tilde allowed because of player file format.
          */
-        String pwdnew = crypt(arg2, ch.name);
+        var pwdnew = crypt(arg2, ch.name);
         if (pwdnew.contains("~")) {
             send_to_char("New password not acceptable, try again.\n", ch);
             return;
@@ -2792,10 +2792,10 @@ class ActInfo {
         CHAR_DATA person;
         int numpeople;
 
-        StringBuilder dir = new StringBuilder();
+        var dir = new StringBuilder();
         one_argument(argument, dir);
 
-        if (dir.length() == 0)
+        if (dir.isEmpty())
 
         {
             do_scan2(ch);
@@ -2803,41 +2803,36 @@ class ActInfo {
         }
 
         switch (dir.charAt(0)) {
-            case 'N':
-            case 'n':
+            case 'N', 'n' -> {
                 door = 0;
                 dir2 = "north";
-                break;
-            case 'E':
-            case 'e':
+            }
+            case 'E', 'e' -> {
                 door = 1;
                 dir2 = "east";
-                break;
-            case 'S':
-            case 's':
+            }
+            case 'S', 's' -> {
                 door = 2;
                 dir2 = "south";
-                break;
-            case 'W':
-            case 'w':
+            }
+            case 'W', 'w' -> {
                 door = 3;
                 dir2 = "west";
-                break;
-            case 'U':
-            case 'u':
+            }
+            case 'U', 'u' -> {
                 door = 4;
                 dir2 = "up";
-                break;
-            case 'D':
-            case 'd':
+            }
+            case 'D', 'd' -> {
                 door = 5;
                 dir2 = "down";
-                break;
-            default:
+            }
+            default -> {
                 send_to_char("That's not a direction.\n", ch);
                 return;
+            }
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You scan %s.\n", dir2);
         send_to_char(buf, ch);
         buf.sprintf("$n scans %s.", dir2);
@@ -2882,8 +2877,8 @@ class ActInfo {
             return;
         }
 
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         one_argument(argument, arg2b);
 
@@ -2896,8 +2891,8 @@ class ActInfo {
             return;
         }
 
-        String arg2 = arg2b.toString();
-        CHAR_DATA victim = get_char_room(ch, arg2);
+        var arg2 = arg2b.toString();
+        var victim = get_char_room(ch, arg2);
         if (victim == null) {
             send_to_char("They aren't here.\n", ch);
             return;
@@ -2926,8 +2921,8 @@ class ActInfo {
             do_say(victim, "In good time, my child");
             return;
         }
-        String arg1 = arg1b.toString();
-        OBJ_DATA obj = get_obj_carry(victim, arg1);
+        var arg1 = arg1b.toString();
+        var obj = get_obj_carry(victim, arg1);
         if ((obj == null && (obj = get_obj_wear(victim, arg1)) == null) || IS_SET(obj.extra_flags, ITEM_INVENTORY)) {
             do_say(victim, "Sorry, I don't have that.");
             return;
@@ -2987,7 +2982,7 @@ class ActInfo {
         act("You feel grateful for the trust of $N.", ch, null, victim, TO_CHAR);
         send_to_char("and for the goodness you have seen in the world.\n", ch);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.type = gsn_reserved;
         af.where = TO_AFFECTS;
         af.level = ch.level;
@@ -3008,7 +3003,7 @@ class ActInfo {
             return;
         }
 
-        Race race = ORG_RACE(ch);
+        var race = ORG_RACE(ch);
         if (race == Race.STORM_GIANT || race == Race.CLOUD_GIANT || race == Race.FIRE_GIANT || race == Race.FROST_GIANT) {
             send_to_char("Your hometown is permanently Titan Valley!\n", ch);
             return;
@@ -3028,7 +3023,7 @@ class ActInfo {
         amount = (ch.level * ch.level * 250) + 1000;
 
         if (argument.isEmpty()) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("It will cost you %d gold.\n", amount);
             send_to_char(buf, ch);
             return;
@@ -3109,7 +3104,7 @@ class ActInfo {
                     ch);
             return;
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_detect_hidden;
         af.level = ch.level;
@@ -3214,7 +3209,7 @@ class ActInfo {
         char_to_room(bear2, ch.in_room);
         send_to_char("Two bears come to your rescue!\n", ch);
         act("Two bears come to $n's rescue!", ch, null, null, TO_ROOM);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_bear_call;
         af.level = ch.level;
@@ -3265,7 +3260,7 @@ class ActInfo {
 
 
     static void do_score(CHAR_DATA ch) {
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You are {Y%s{x%s, level {Y%d{x, {W%d{x years old (%d hours).\n",
                 ch.name, IS_NPC(ch) ? "" : ch.pcdata.title, ch.level, get_age(ch),
                 (ch.played + (int) (current_time - ch.logon)) / 3600);
@@ -3326,7 +3321,7 @@ class ActInfo {
         buf.sprintf("You have scored {m%d{x exp, and have {B%s%s%s{x.\n",
                 ch.exp, ch.gold + ch.silver == 0 ? "no money" : ch.gold != 0 ? "%d gold " : "",
                 ch.silver != 0 ? "%d silver " : "", ch.gold + ch.silver != 0 ? ch.gold + ch.silver == 1 ? "coin" : "coins" : "");
-        TextBuffer buf2 = new TextBuffer();
+        var buf2 = new TextBuffer();
         if (ch.gold != 0) {
             buf2.sprintf(buf.toString(), ch.gold, ch.silver);
         } else {
@@ -3441,8 +3436,8 @@ class ActInfo {
             send_to_char(buf, ch);
         }
 
-        TextBuffer temp = new TextBuffer();
-        for (int i = 0; i < 4; i++) {
+        var temp = new TextBuffer();
+        for (var i = 0; i < 4; i++) {
             switch (i) {
                 case (AC_PIERCE):
                     temp.sprintf("{rpiercing{x");
@@ -3542,7 +3537,7 @@ class ActInfo {
         }
         if (ch.affected != null && IS_SET(ch.comm, COMM_SHOW_AFFECTS)) {
             send_to_char("You are affected by:\n", ch);
-            for (AFFECT_DATA paf = ch.affected; paf != null; paf = paf.next) {
+            for (var paf = ch.affected; paf != null; paf = paf.next) {
                 buf.sprintf("{rSpell{x: '{Y%s{x'", paf.type.name);
                 send_to_char(buf, ch);
 
@@ -3565,7 +3560,7 @@ class ActInfo {
     static void do_affects(CHAR_DATA ch) {
         if (ch.affected != null) {
             send_to_char("You are affected by the following spells:\n", ch);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             for (AFFECT_DATA paf = ch.affected, paf_last = null; paf != null; paf = paf.next) {
                 if (paf_last != null && paf.type == paf_last.type) {
                     if (ch.level >= 20) {
@@ -3688,7 +3683,7 @@ class ActInfo {
         send_to_char("Two lions come to your rescue!\n", ch);
         act("Two bears come to $n's rescue!", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_lion_call;
         af.level = ch.level;
@@ -3729,7 +3724,7 @@ class ActInfo {
 
     static void do_raffects(CHAR_DATA ch) {
         if (ch.in_room.affected != null) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             send_to_char("The room is affected by the following spells:\n", ch);
             for (AFFECT_DATA paf = ch.in_room.affected, paf_last = null; paf != null; paf = paf.next) {
                 if (paf_last != null && paf.type == paf_last.type) {
@@ -3777,9 +3772,9 @@ class ActInfo {
             int col;
 
             col = 0;
-            StringBuilder buf2 = new StringBuilder();
-            TextBuffer buf = new TextBuffer();
-            for (Skill sn : Skill.skills) {
+            var buf2 = new StringBuilder();
+            var buf = new TextBuffer();
+            for (var sn : Skill.skills) {
                 if (sn.name == null) {
                     break;
                 }
@@ -3814,7 +3809,7 @@ class ActInfo {
                 send_to_char("You have no practice sessions left.\n", ch);
                 return;
             }
-            Skill sn = find_spell(ch, argument);
+            var sn = find_spell(ch, argument);
             if (sn == null || skill_failure_nomessage(ch, sn, 0) != 0) {
                 send_to_char("You can't practice that.\n", ch);
                 return;
@@ -3854,7 +3849,7 @@ class ActInfo {
             adept = IS_NPC(ch) ? 100 : ch.clazz.skill_adept;
 
             if (ch.pcdata.learned[sn.ordinal()] >= adept) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You are already learned at %s.\n", sn.name);
                 send_to_char(buf, ch);
             } else {
@@ -3881,37 +3876,37 @@ class ActInfo {
 
     static void do_who(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
-        int iLevelLower = 0;
-        int iLevelUpper = MAX_LEVEL;
-        boolean fClassRestrict = false;
-        boolean fRaceRestrict = false;
-        boolean fImmortalOnly = false;
-        boolean fPKRestrict = false;
-        boolean fRulerRestrict = false;
-        boolean fChaosRestrict = false;
-        boolean fShalafiRestrict = false;
-        boolean fInvaderRestrict = false;
-        boolean fBattleRestrict = false;
-        boolean fKnightRestrict = false;
-        boolean fLionsRestrict = false;
-        boolean fTattoo = false;
+        var iLevelLower = 0;
+        var iLevelUpper = MAX_LEVEL;
+        var fClassRestrict = false;
+        var fRaceRestrict = false;
+        var fImmortalOnly = false;
+        var fPKRestrict = false;
+        var fRulerRestrict = false;
+        var fChaosRestrict = false;
+        var fShalafiRestrict = false;
+        var fInvaderRestrict = false;
+        var fBattleRestrict = false;
+        var fKnightRestrict = false;
+        var fLionsRestrict = false;
+        var fTattoo = false;
 
-        boolean[] rgfClass = new boolean[MAX_CLASS];
+        var rgfClass = new boolean[MAX_CLASS];
         Set<Race> rgfRaces = null;
 
         /*
         * Parse arguments.
         */
-        int nNumber = 0;
-        int vnum = 0;
+        var nNumber = 0;
+        var vnum = 0;
         for (; ; ) {
-            StringBuilder argb = new StringBuilder();
+            var argb = new StringBuilder();
             argument = one_argument(argument, argb);
             if (argb.length() == 0) {
                 break;
             }
 
-            String arg = argb.toString();
+            var arg = argb.toString();
             if (!str_cmp(arg, "pk")) {
                 fPKRestrict = true;
                 break;
@@ -4013,9 +4008,9 @@ class ActInfo {
                 if (arg.charAt(0) == 'i') {
                     fImmortalOnly = true;
                 } else {
-                    Clazz iClass = Clazz.lookupClass(arg, false);
+                    var iClass = Clazz.lookupClass(arg, false);
                     if (iClass == null || !IS_IMMORTAL(ch)) {
-                        Race race = Race.lookupRace(arg);
+                        var race = Race.lookupRace(arg);
                         if (race == null || race.pcRace == null) {
                             send_to_char("That's not a valid race.\n", ch);
                             return;
@@ -4037,9 +4032,9 @@ class ActInfo {
         /*
          * Now show matching chars.
          */
-        int nMatch = 0;
-        TextBuffer buf = new TextBuffer();
-        StringBuilder output = new StringBuilder();
+        var nMatch = 0;
+        var buf = new TextBuffer();
+        var output = new StringBuilder();
         for (d = descriptor_list; d != null; d = d.next) {
             CHAR_DATA wch;
 
@@ -4121,7 +4116,7 @@ class ActInfo {
                        IS_TRUSTED(ch,LEVEL_IMMORTAL))) ||
                                    wch.level >= LEVEL_HERO)
             */
-            String cabalbuf = "";
+            var cabalbuf = "";
             if ((wch.cabal != 0 && ch.cabal == wch.cabal) || IS_IMMORTAL(ch)
                     || (IS_SET(wch.act, PLR_CANINDUCT) && wch.cabal == 1)
                     || wch.cabal == CABAL_HUNTER
@@ -4133,19 +4128,19 @@ class ActInfo {
                 cabalbuf = "";
             }
 
-            String pk_buf = "";
+            var pk_buf = "";
             if (!((ch == wch && ch.level < PK_MIN_LEVEL) || is_safe_nomessage(ch, wch))) {
                 pk_buf = "{r(PK){x";
             }
 
-            String act_buf = IS_SET(ch.act, PLR_WANTED) ? "{W(WANTED){x " : "";
-            String titlebuf = IS_NPC(wch) ? "Believer of Chronos." : wch.pcdata.title;
+            var act_buf = IS_SET(ch.act, PLR_WANTED) ? "{W(WANTED){x " : "";
+            var titlebuf = IS_NPC(wch) ? "Believer of Chronos." : wch.pcdata.title;
             /*
             * Format it up.
             */
-            TextBuffer level_buf = new TextBuffer();
+            var level_buf = new TextBuffer();
             level_buf.sprintf("{c%2d{x", wch.level);
-            String classbuf = "{Y" + clazz + "{x";
+            var classbuf = "{Y" + clazz + "{x";
 
             if (IS_TRUSTED(ch, LEVEL_IMMORTAL) || ch == wch || wch.level >= LEVEL_HERO)
 
@@ -4175,7 +4170,7 @@ class ActInfo {
             output.append(buf);
         }
 
-        int count = 0;
+        var count = 0;
         for (d = descriptor_list; d != null; d = d.next) {
             if (d.connected == CON_PLAYING) {
                 count++;
@@ -4230,7 +4225,7 @@ class ActInfo {
         send_to_char("You succeeded to make your camp.\n", ch);
         act("$n succeeded to make $s camp.", ch, null, null, TO_ROOM);
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_camp;
         af.level = ch.level;
@@ -4240,7 +4235,7 @@ class ActInfo {
         af.location = APPLY_NONE;
         affect_to_char(ch, af);
 
-        AFFECT_DATA af2 = new AFFECT_DATA();
+        var af2 = new AFFECT_DATA();
         af2.where = TO_ROOM_CONST;
         af2.type = gsn_camp;
         af2.level = ch.level;
@@ -4259,8 +4254,8 @@ class ActInfo {
 
     static void do_demand(CHAR_DATA ch, String argument) {
         int chance;
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         one_argument(argument, arg2b);
 
@@ -4276,8 +4271,8 @@ class ActInfo {
             send_to_char("Demand what from whom?\n", ch);
             return;
         }
-        String arg2 = arg2b.toString();
-        CHAR_DATA victim = get_char_room(ch, arg2);
+        var arg2 = arg2b.toString();
+        var victim = get_char_room(ch, arg2);
         if (victim == null) {
             send_to_char("They aren't here.\n", ch);
             return;
@@ -4304,7 +4299,7 @@ class ActInfo {
             return;
         }
 
-        String arg1 = arg1b.toString();
+        var arg1 = arg1b.toString();
         OBJ_DATA obj;
         if (((obj = get_obj_carry(victim, arg1)) == null
                 && (obj = get_obj_wear(victim, arg1)) == null)
@@ -4362,7 +4357,7 @@ class ActInfo {
     static void do_control(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_control_animal, true, 0, null)) {
@@ -4430,13 +4425,13 @@ class ActInfo {
 
 
     static void do_nscore(CHAR_DATA ch) {
-        int ekle = 0;
-        TextBuffer buf = new TextBuffer();
-        String buf2 = "";
+        var ekle = 0;
+        var buf = new TextBuffer();
+        var buf2 = "";
         buf.sprintf("{G\n\n      /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/~~\\\n");
 
         send_to_char(buf, ch);
-        String titlebuf = IS_NPC(ch) ? "Believer of Chronos." : ch.pcdata.title;
+        var titlebuf = IS_NPC(ch) ? "Believer of Chronos." : ch.pcdata.title;
 
         buf.sprintf("     {G|   {R%-12s{w%-33s {y%3d{x years old   {G|{g____|{G\n", ch.name, titlebuf, get_age(ch));
         send_to_char(buf, ch);
@@ -4615,12 +4610,12 @@ class ActInfo {
             return;
         }
 
-        int mana = gsn_make_arrow.min_mana;
-        int wait = gsn_make_arrow.beats;
+        var mana = gsn_make_arrow.min_mana;
+        var wait = gsn_make_arrow.beats;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
         Skill color;
         if (arg.isEmpty()) {
             color = null;
@@ -4651,8 +4646,8 @@ class ActInfo {
 
         send_to_char("You start to make arrows!\n", ch);
         act("$n starts to make arrows!", ch, null, null, TO_ROOM);
-        TextBuffer buf = new TextBuffer();
-        for (int count = 0; count < (ch.level / 5); count++) {
+        var buf = new TextBuffer();
+        for (var count = 0; count < (ch.level / 5); count++) {
             if (number_percent() > get_skill(ch, gsn_make_arrow)) {
                 send_to_char("You failed to make the arrow, and broke it.\n", ch);
                 check_improve(ch, gsn_make_arrow, false, 3);
@@ -4666,7 +4661,7 @@ class ActInfo {
             arrow.value[1] = ch.level / 10;
             arrow.value[2] = ch.level / 10;
 
-            AFFECT_DATA tohit = new AFFECT_DATA();
+            var tohit = new AFFECT_DATA();
             tohit.where = TO_OBJECT;
             tohit.type = gsn_make_arrow;
             tohit.level = ch.level;
@@ -4676,7 +4671,7 @@ class ActInfo {
             tohit.bitvector = 0;
             affect_to_obj(arrow, tohit);
 
-            AFFECT_DATA todam = new AFFECT_DATA();
+            var todam = new AFFECT_DATA();
             todam.where = TO_OBJECT;
             todam.type = gsn_make_arrow;
             todam.level = ch.level;
@@ -4768,7 +4763,7 @@ class ActInfo {
         bow.value[1] = 3 + ch.level / 12;
         bow.value[2] = 4 + ch.level / 12;
 
-        AFFECT_DATA tohit = new AFFECT_DATA();
+        var tohit = new AFFECT_DATA();
         tohit.where = TO_OBJECT;
         tohit.type = gsn_make_arrow;
         tohit.level = ch.level;
@@ -4778,7 +4773,7 @@ class ActInfo {
         tohit.bitvector = 0;
         affect_to_obj(bow, tohit);
 
-        AFFECT_DATA todam = new AFFECT_DATA();
+        var todam = new AFFECT_DATA();
         todam.where = TO_OBJECT;
         todam.type = gsn_make_arrow;
         todam.level = ch.level;
@@ -4793,14 +4788,14 @@ class ActInfo {
 
 
     static void do_make(CHAR_DATA ch, String argument) {
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
         if (argb.length() == 0) {
             send_to_char("You can make either bow or arrow.\n", ch);
             return;
         }
 
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (!str_prefix(arg, "arrow")) {
             do_make_arrow(ch, argument);
         } else if (!str_prefix(arg, "bow")) {

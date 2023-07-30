@@ -122,7 +122,7 @@ class PCRace {
     Race race;
     String who_name;
     int points;       /* cost in exp of the race */
-    private Map<Clazz, RaceToClassModifier> rclass = new HashMap<>();/* race affect to class*/
+    private final Map<Clazz, RaceToClassModifier> rclass = new HashMap<>();/* race affect to class*/
     Skill[] skills = new Skill[0];  /* bonus skills for the race */
     int[] stats = new int[MAX_STATS];   /* starting stats   */
     int[] max_stats = new int[MAX_STATS];  /* maximum stats    */

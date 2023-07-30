@@ -34,13 +34,13 @@ class Quest {
         OBJ_DATA obj = null, obj_next;
         OBJ_INDEX_DATA questinfoobj;
         MOB_INDEX_DATA questinfo;
-        StringBuilder bufvampire = new StringBuilder();
-        StringBuilder bufsamurai = new StringBuilder();
+        var bufvampire = new StringBuilder();
+        var bufsamurai = new StringBuilder();
         int trouble_vnum = 0, trouble_n;
         Skill sn;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -48,7 +48,7 @@ class Quest {
             return;
         }
 
-        String arg1Str = arg1.toString();
+        var arg1Str = arg1.toString();
         if (!str_prefix(arg1Str, "info")) {
             if (IS_SET(ch.act, PLR_QUESTOR)) {
                 if (ch.pcdata.questmob == -1) {
@@ -141,7 +141,7 @@ class Quest {
                         append("   100qp.........Second katana quest(sharp)\n").
                         append("    50qp.........Decrease number of death (death)\n");
             }
-            String buf = "Current Quest Items available for Purchase:\n"
+            var buf = "Current Quest Items available for Purchase:\n"
                     + "5000qp.........the silk-adamantite backpack (backpack)\n"
                     + "1000qp.........the Girth of Real Heroism (girth)\n"
                     + "1000qp.........the Ring of Real Heroism (ring)\n"
@@ -320,7 +320,7 @@ class Quest {
 
                 if (ch.pcdata.questpoints >= 100) {
                     ch.pcdata.questpoints -= 100;
-                    AFFECT_DATA af = new AFFECT_DATA();
+                    var af = new AFFECT_DATA();
                     af.where = TO_WEAPON;
                     af.type = gsn_reserved;
                     af.level = 100;
@@ -354,7 +354,7 @@ class Quest {
 
                 if (ch.pcdata.questpoints >= 100) {
                     ch.pcdata.questpoints -= 100;
-                    AFFECT_DATA af = new AFFECT_DATA();
+                    var af = new AFFECT_DATA();
                     af.where = TO_WEAPON;
                     af.type = gsn_reserved;
                     af.level = 100;
@@ -447,7 +447,7 @@ class Quest {
             if (obj != null) {
                 if (obj.pIndexData.vnum == QUEST_ITEM4
                         || obj.pIndexData.vnum == QUEST_ITEM5) {
-                    Formatter f = new Formatter();
+                    var f = new Formatter();
                     f.format(obj.pIndexData.extra_descr.description, ch.name);
                     obj.extra_descr = new EXTRA_DESCR_DATA();
                     obj.extra_descr.keyword = obj.pIndexData.extra_descr.keyword;
@@ -457,7 +457,7 @@ class Quest {
                 if (obj.pIndexData.vnum == QUEST_ITEM1
                         || obj.pIndexData.vnum == QUEST_ITEM2
                         || obj.pIndexData.vnum == QUEST_ITEM3) {
-                    Formatter f = new Formatter();
+                    var f = new Formatter();
                     f.format(obj.short_descr, IS_GOOD(ch) ? "holy" : IS_NEUTRAL(ch) ? "blue-green" : "evil", ch.name);
                     obj.short_descr = f.toString();
                 }
@@ -526,7 +526,7 @@ class Quest {
 
                     return;
                 } else if (ch.pcdata.questobj > 0 && ch.pcdata.countdown > 0) {
-                    boolean obj_found = false;
+                    var obj_found = false;
 
                     for (obj = ch.carrying; obj != null; obj = obj_next) {
                         obj_next = obj.next_content;
@@ -681,7 +681,7 @@ class Quest {
             obj = create_object(get_obj_index(trouble_vnum), ch.level);
             if (obj.pIndexData.vnum == QUEST_ITEM4
                     || obj.pIndexData.vnum == QUEST_ITEM5) {
-                Formatter f = new Formatter();
+                var f = new Formatter();
                 f.format(obj.pIndexData.extra_descr.description, ch.name);
                 obj.extra_descr = new EXTRA_DESCR_DATA();
                 obj.extra_descr.keyword = obj.pIndexData.extra_descr.keyword;
@@ -689,7 +689,7 @@ class Quest {
                 obj.extra_descr.next = null;
             }
             if (obj.pIndexData.vnum == QUEST_ITEM1 || obj.pIndexData.vnum == QUEST_ITEM2 || obj.pIndexData.vnum == QUEST_ITEM3) {
-                Formatter f = new Formatter();
+                var f = new Formatter();
                 f.format(obj.short_descr, IS_GOOD(ch) ? "holy" : IS_NEUTRAL(ch) ? "blue-green" : "evil", ch.name);
                 obj.short_descr = f.toString();
             }
@@ -717,7 +717,7 @@ class Quest {
         int found;
 
         //room	=	new ROOM_INDEX_DATA();
-        int[] mob_buf = new int[300];
+        var mob_buf = new int[300];
 
         mob_count = 0;
         for (i = 0; i < MAX_KEY_HASH; i++) {
@@ -743,7 +743,7 @@ class Quest {
         }
 
         if (chance(40)) {
-            int objvnum = 0;
+            var objvnum = 0;
 
             if (mob_count > 0) {
                 found = number_range(0, mob_count - 1);
@@ -799,11 +799,11 @@ class Quest {
             eyed.pit = hometown_table[ch.hometown].pit[i];
             eyed.level = ch.level;
 
-            Formatter f1 = new Formatter();
+            var f1 = new Formatter();
             f1.format(eyed.description, ch.name);
             eyed.description = f1.toString();
 
-            Formatter f2 = new Formatter();
+            var f2 = new Formatter();
             f2.format(eyed.pIndexData.extra_descr.description, ch.name);
             eyed.extra_descr = new EXTRA_DESCR_DATA();
             eyed.extra_descr.keyword = eyed.pIndexData.extra_descr.keyword;
@@ -919,7 +919,7 @@ class Quest {
     }
 
     static CHAR_DATA get_quest_world(CHAR_DATA ch, MOB_INDEX_DATA victim) {
-        for (CHAR_DATA wch = char_list; wch != null; wch = wch.next) {
+        for (var wch = char_list; wch != null; wch = wch.next) {
             if (wch.in_room == null || wch.pIndexData != victim) {
                 continue;
             }

@@ -809,7 +809,7 @@ class Fight {
         int dam;
         int diceroll;
 
-        int dam_type = -1;
+        var dam_type = -1;
         boolean counter;
         boolean result;
         OBJ_DATA corpse;
@@ -875,8 +875,8 @@ class Fight {
         }
 
         /* get the weapon skill */
-        Skill sn = get_weapon_sn(ch, secondary);
-        int skill = 20 + get_weapon_skill(ch, sn);
+        var sn = get_weapon_sn(ch, secondary);
+        var skill = 20 + get_weapon_skill(ch, sn);
 
         /*
         * Calculate to-hit-armor-class-0 versus armor.
@@ -1057,7 +1057,7 @@ class Fight {
         /*
         * Bonuses.
         */
-        int skillLevel = get_skill(ch, gsn_enhanced_damage);
+        var skillLevel = get_skill(ch, gsn_enhanced_damage);
         if (skillLevel > 0) {
             diceroll = number_percent();
             if (diceroll <= get_skill(ch, gsn_enhanced_damage)) {
@@ -1080,7 +1080,7 @@ class Fight {
                         if (katana.cost > 249) {
                             paf = affect_find(katana.affected, gsn_katana);
                             if (paf != null) {
-                                int old_mod = paf.modifier;
+                                var old_mod = paf.modifier;
                                 paf.modifier = UMIN((paf.modifier + 1), (ch.level / 3));
                                 ch.hitroll += paf.modifier - old_mod;
                                 if (paf.next != null) {
@@ -1102,7 +1102,7 @@ class Fight {
                         if (katana.cost > 249) {
                             paf = affect_find(katana.affected, gsn_katana);
                             if (paf != null) {
-                                int old_mod = paf.modifier;
+                                var old_mod = paf.modifier;
                                 paf.modifier = UMIN((paf.modifier + 1), (ch.level / 3));
                                 ch.hitroll += paf.modifier - old_mod;
                                 if (paf.next != null) {
@@ -1290,7 +1290,7 @@ class Fight {
                     act("$n is poisoned by the venom on $p.",
                             victim, wield, null, TO_ROOM);
 
-                    AFFECT_DATA af = new AFFECT_DATA();
+                    var af = new AFFECT_DATA();
                     af.where = TO_AFFECTS;
                     af.type = gsn_poison;
                     af.level = level * 3 / 4;
@@ -1362,7 +1362,7 @@ class Fight {
         * Stop up any residual loopholes.
         */
         if (dam > 1000 && !IS_IMMORTAL(ch)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s:Damage more than 1000 points :%d", ch.name, dam);
             bug(buf);
             if (IS_NPC(ch) && !IS_NPC(ch)) {
@@ -1696,7 +1696,7 @@ class Fight {
                                 victim.last_fight_time = -1;
                                 victim.hit = 1;
                                 victim.position = POS_STANDING;
-                                String strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
+                                var strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
                                 wiznet("$N is deleted due to 10 deaths limit of Samurai.", ch, null, 0, 0, 0);
                                 do_quit_count(victim);
                                 //noinspection ResultOfMethodCallIgnored
@@ -1712,7 +1712,7 @@ class Fight {
                             victim.last_fight_time = -1;
                             victim.hit = 1;
                             victim.position = POS_STANDING;
-                            String strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
+                            var strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
                             wiznet("$N is deleted due to lack of CON.", ch, null, 0, 0, 0);
                             do_quit_count(victim);
                             //noinspection ResultOfMethodCallIgnored
@@ -2349,7 +2349,7 @@ class Fight {
 
         corpse.level = ch.level;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf(corpse.short_descr, name);
         corpse.short_descr = buf.toString();
 
@@ -2462,7 +2462,7 @@ class Fight {
             obj = create_object(get_obj_index(vnum), 0);
             obj.timer = number_range(4, 7);
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf(obj.short_descr, name);
             obj.short_descr = buf.toString();
 
@@ -2670,7 +2670,7 @@ class Fight {
 
 
             xp = xp_compute(gch, victim, group_levels, members);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You receive %d experience points.\n", xp);
             send_to_char(buf, gch);
             gain_exp(gch, xp);
@@ -2820,7 +2820,7 @@ class Fight {
 
         if (neg_cha != 0) {
             if ((gch.pcdata.anti_killed % 100) == 99) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You have killed %d %s up to now.\n", gch.pcdata.anti_killed,
                         IS_GOOD(gch) ? "goods" :
                                 IS_NEUTRAL(gch) ? "neutrals" :
@@ -2833,7 +2833,7 @@ class Fight {
             }
         } else if (pos_cha != 0) {
             if ((gch.pcdata.has_killed % 200) == 199) {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You have killed %d %s up to now.\n",
                         gch.pcdata.anti_killed,
                         IS_GOOD(gch) ? "anti-goods" :
@@ -2945,9 +2945,9 @@ class Fight {
             punct = (dam <= 75) ? '.' : '!';
         }
 
-        TextBuffer buf1 = new TextBuffer();
-        TextBuffer buf2 = new TextBuffer();
-        TextBuffer buf3 = new TextBuffer();
+        var buf1 = new TextBuffer();
+        var buf2 = new TextBuffer();
+        var buf3 = new TextBuffer();
         if ((dt == gsn_x_hit) || (dt == gsn_x_hunger)) {
             if (ch == victim) {
                 if (dam_type == DAM_HUNGER) {
@@ -3019,7 +3019,7 @@ class Fight {
         CHAR_DATA victim;
         OBJ_DATA wield;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -3071,7 +3071,7 @@ class Fight {
         if (skill_failure_nomessage(ch, gsn_mortal_strike, 0) == 0
                 && (wield = get_wield_char(ch, false)) != null
                 && wield.level > (victim.level - 5)) {
-            int chance = 1 + get_skill(ch, gsn_mortal_strike) / 30;
+            var chance = 1 + get_skill(ch, gsn_mortal_strike) / 30;
             chance += (ch.level - victim.level) / 2;
             if (number_percent() < chance) {
                 act("{rYour flash strike instantly slays $N!{x", ch, null, victim, TO_CHAR, POS_RESTING);
@@ -3098,7 +3098,7 @@ class Fight {
         CHAR_DATA victim;
         OBJ_DATA wield;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -3138,7 +3138,7 @@ class Fight {
         if (!can_see(victim, ch)) {
             do_yell(victim, "Help! I am being attacked by someone!");
         } else {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (IS_NPC(ch)) {
                 buf.sprintf("Help! I am being attacked by %s!", ch.short_descr);
             } else {
@@ -3151,7 +3151,7 @@ class Fight {
         if (skill_failure_nomessage(ch, gsn_mortal_strike, 0) == 0
                 && (wield = get_wield_char(ch, false)) != null
                 && wield.level > (victim.level - 5)) {
-            int chance = 1 + get_skill(ch, gsn_mortal_strike) / 30;
+            var chance = 1 + get_skill(ch, gsn_mortal_strike) / 30;
             chance += (ch.level - victim.level) / 2;
             if (number_percent() < chance) {
                 act("{rYour flash strike instantly slays $N!{x", ch, null, victim, TO_CHAR, POS_RESTING);
@@ -3248,7 +3248,7 @@ class Fight {
 
     static void do_slay(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("Slay whom?\n", ch);
@@ -3393,7 +3393,7 @@ class Fight {
 
             if (!IS_NPC(ch)) {
                 send_to_char("You dishonored yourself and flee from combat.\n", ch);
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("You lose %d exps.\n", ch.level);
                 send_to_char(buf, ch);
                 gain_exp(ch, -(ch.level));

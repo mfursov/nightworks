@@ -4,9 +4,7 @@ import net.sf.nightworks.util.TextBuffer;
 
 import java.util.Formatter;
 
-import static net.sf.nightworks.ActComm.cabal_area_check;
-import static net.sf.nightworks.ActComm.do_yell;
-import static net.sf.nightworks.ActComm.is_at_cabal_area;
+import static net.sf.nightworks.ActComm.*;
 import static net.sf.nightworks.ActHera.find_path;
 import static net.sf.nightworks.ActInfo.do_look;
 import static net.sf.nightworks.ActSkill.check_improve;
@@ -14,266 +12,15 @@ import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Const.hometown_table;
 import static net.sf.nightworks.Const.str_app;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.weather_info;
-import static net.sf.nightworks.Effects.cold_effect;
-import static net.sf.nightworks.Effects.fire_effect;
-import static net.sf.nightworks.Effects.shock_effect;
-import static net.sf.nightworks.Fight.check_obj_dodge;
-import static net.sf.nightworks.Fight.damage;
-import static net.sf.nightworks.Fight.is_safe;
-import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Fight.one_hit;
-import static net.sf.nightworks.Fight.stop_fighting;
-import static net.sf.nightworks.Fight.update_pos;
-import static net.sf.nightworks.Handler.add_mind;
-import static net.sf.nightworks.Handler.affect_check_obj;
-import static net.sf.nightworks.Handler.affect_find;
-import static net.sf.nightworks.Handler.affect_join;
-import static net.sf.nightworks.Handler.affect_strip;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.can_see_obj;
-import static net.sf.nightworks.Handler.can_see_room;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.count_users;
-import static net.sf.nightworks.Handler.equip_char;
-import static net.sf.nightworks.Handler.find_char;
-import static net.sf.nightworks.Handler.get_char_room;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_max_train2;
-import static net.sf.nightworks.Handler.get_obj_here;
-import static net.sf.nightworks.Handler.get_obj_list;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_trust;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.path_to_track;
-import static net.sf.nightworks.Handler.room_dark;
-import static net.sf.nightworks.Handler.room_is_private;
-import static net.sf.nightworks.Handler.room_record;
-import static net.sf.nightworks.Handler.skill_failure_check;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Effects.*;
+import static net.sf.nightworks.Fight.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Magic.saves_spell;
-import static net.sf.nightworks.Nightworks.ACT_AGGRESSIVE;
-import static net.sf.nightworks.Nightworks.ACT_GAIN;
-import static net.sf.nightworks.Nightworks.ACT_NOTRACK;
-import static net.sf.nightworks.Nightworks.ACT_PET;
-import static net.sf.nightworks.Nightworks.ACT_PRACTICE;
-import static net.sf.nightworks.Nightworks.ACT_RIDEABLE;
-import static net.sf.nightworks.Nightworks.ACT_TRAIN;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_BERSERK;
-import static net.sf.nightworks.Nightworks.AFF_CAMOUFLAGE;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_CORRUPTION;
-import static net.sf.nightworks.Nightworks.AFF_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_EARTHFADE;
-import static net.sf.nightworks.Nightworks.AFF_FADE;
-import static net.sf.nightworks.Nightworks.AFF_FAERIE_FIRE;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_HIDE;
-import static net.sf.nightworks.Nightworks.AFF_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_INFRARED;
-import static net.sf.nightworks.Nightworks.AFF_INVISIBLE;
-import static net.sf.nightworks.Nightworks.AFF_PASS_DOOR;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_RANDOMIZER;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_WEB;
-import static net.sf.nightworks.Nightworks.ANGEL;
-import static net.sf.nightworks.Nightworks.APPLY_DAMROLL;
-import static net.sf.nightworks.Nightworks.APPLY_DEX;
-import static net.sf.nightworks.Nightworks.APPLY_HITROLL;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_SIZE;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.CONT_CLOSEABLE;
-import static net.sf.nightworks.Nightworks.CONT_CLOSED;
-import static net.sf.nightworks.Nightworks.CONT_LOCKED;
-import static net.sf.nightworks.Nightworks.CONT_PICKPROOF;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.DAM_NONE;
-import static net.sf.nightworks.Nightworks.DAM_PIERCE;
-import static net.sf.nightworks.Nightworks.DAM_POISON;
-import static net.sf.nightworks.Nightworks.DIR_DOWN;
-import static net.sf.nightworks.Nightworks.DIR_EAST;
-import static net.sf.nightworks.Nightworks.DIR_NORTH;
-import static net.sf.nightworks.Nightworks.DIR_SOUTH;
-import static net.sf.nightworks.Nightworks.DIR_UP;
-import static net.sf.nightworks.Nightworks.DIR_WEST;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.EX_ISDOOR;
-import static net.sf.nightworks.Nightworks.EX_LOCKED;
-import static net.sf.nightworks.Nightworks.EX_NOCLOSE;
-import static net.sf.nightworks.Nightworks.EX_NOFLEE;
-import static net.sf.nightworks.Nightworks.EX_NOLOCK;
-import static net.sf.nightworks.Nightworks.EX_NOPASS;
-import static net.sf.nightworks.Nightworks.EX_PICKPROOF;
-import static net.sf.nightworks.Nightworks.FIGHT_DELAY_TIME;
-import static net.sf.nightworks.Nightworks.GET_HITROLL;
-import static net.sf.nightworks.Nightworks.IMM_NEGATIVE;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_BLINK_ON;
-import static net.sf.nightworks.Nightworks.IS_DRUNK;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_HARA_KIRI;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_RAFFECTED;
-import static net.sf.nightworks.Nightworks.IS_ROOM_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_TRUSTED;
-import static net.sf.nightworks.Nightworks.IS_VAMPIRE;
-import static net.sf.nightworks.Nightworks.IS_WATER;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.ITEM_BOAT;
-import static net.sf.nightworks.Nightworks.ITEM_CONTAINER;
-import static net.sf.nightworks.Nightworks.ITEM_FURNITURE;
-import static net.sf.nightworks.Nightworks.ITEM_PORTAL;
-import static net.sf.nightworks.Nightworks.LEVEL_HERO;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.MPROG_ENTRY;
-import static net.sf.nightworks.Nightworks.MPROG_GREET;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OFF_BASH;
-import static net.sf.nightworks.Nightworks.OPROG_ENTRY;
-import static net.sf.nightworks.Nightworks.OPROG_GREET;
-import static net.sf.nightworks.Nightworks.PERS;
-import static net.sf.nightworks.Nightworks.PLR_BLINK_ON;
-import static net.sf.nightworks.Nightworks.PLR_CHANGED_AFF;
-import static net.sf.nightworks.Nightworks.PLR_HARA_KIRI;
-import static net.sf.nightworks.Nightworks.PLR_HOLYLIGHT;
-import static net.sf.nightworks.Nightworks.PLR_VAMPIRE;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SITTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.POS_STUNNED;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.REST_AT;
-import static net.sf.nightworks.Nightworks.REST_IN;
-import static net.sf.nightworks.Nightworks.REST_ON;
-import static net.sf.nightworks.Nightworks.RIDDEN;
-import static net.sf.nightworks.Nightworks.ROOM_HISTORY_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_LAW;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MOB;
-import static net.sf.nightworks.Nightworks.ROOM_NO_RECALL;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_BATTLE;
-import static net.sf.nightworks.Nightworks.SECT_AIR;
-import static net.sf.nightworks.Nightworks.SECT_CITY;
-import static net.sf.nightworks.Nightworks.SECT_DESERT;
-import static net.sf.nightworks.Nightworks.SECT_FIELD;
-import static net.sf.nightworks.Nightworks.SECT_FOREST;
-import static net.sf.nightworks.Nightworks.SECT_HILLS;
-import static net.sf.nightworks.Nightworks.SECT_INSIDE;
-import static net.sf.nightworks.Nightworks.SECT_MAX;
-import static net.sf.nightworks.Nightworks.SECT_MOUNTAIN;
-import static net.sf.nightworks.Nightworks.SECT_WATER_NOSWIM;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SEX_FEMALE;
-import static net.sf.nightworks.Nightworks.SEX_MALE;
-import static net.sf.nightworks.Nightworks.SIT_AT;
-import static net.sf.nightworks.Nightworks.SIT_IN;
-import static net.sf.nightworks.Nightworks.SIT_ON;
-import static net.sf.nightworks.Nightworks.SLEEP_AT;
-import static net.sf.nightworks.Nightworks.SLEEP_IN;
-import static net.sf.nightworks.Nightworks.SLEEP_ON;
-import static net.sf.nightworks.Nightworks.STAND_AT;
-import static net.sf.nightworks.Nightworks.STAND_IN;
-import static net.sf.nightworks.Nightworks.STAND_ON;
-import static net.sf.nightworks.Nightworks.STAT_CHA;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.STAT_WIS;
-import static net.sf.nightworks.Nightworks.SUN_LIGHT;
-import static net.sf.nightworks.Nightworks.SUN_RISE;
-import static net.sf.nightworks.Nightworks.TARGET_CHAR;
-import static net.sf.nightworks.Nightworks.TO_ACT_FLAG;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_ALL;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_IMMUNE;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_ARROW;
-import static net.sf.nightworks.Nightworks.WEAPON_BOW;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAMING;
-import static net.sf.nightworks.Nightworks.WEAPON_FROST;
-import static net.sf.nightworks.Nightworks.WEAPON_POISON;
-import static net.sf.nightworks.Nightworks.WEAPON_SHOCKING;
-import static net.sf.nightworks.Nightworks.WEAPON_SPEAR;
-import static net.sf.nightworks.Nightworks.WEAR_BOTH;
-import static net.sf.nightworks.Nightworks.WEAR_LEFT;
-import static net.sf.nightworks.Nightworks.WEAR_RIGHT;
-import static net.sf.nightworks.Nightworks.WEAR_STUCK_IN;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.get_carry_weight;
-import static net.sf.nightworks.Skill.gsn_arrow;
-import static net.sf.nightworks.Skill.gsn_bash;
-import static net.sf.nightworks.Skill.gsn_bash_door;
-import static net.sf.nightworks.Skill.gsn_blackguard;
-import static net.sf.nightworks.Skill.gsn_blink;
-import static net.sf.nightworks.Skill.gsn_bow;
-import static net.sf.nightworks.Skill.gsn_cabal_recall;
-import static net.sf.nightworks.Skill.gsn_camouflage;
-import static net.sf.nightworks.Skill.gsn_detect_sneak;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_earthfade;
-import static net.sf.nightworks.Skill.gsn_escape;
-import static net.sf.nightworks.Skill.gsn_fade;
-import static net.sf.nightworks.Skill.gsn_fly;
-import static net.sf.nightworks.Skill.gsn_hide;
-import static net.sf.nightworks.Skill.gsn_imp_invis;
-import static net.sf.nightworks.Skill.gsn_invis;
-import static net.sf.nightworks.Skill.gsn_kick;
-import static net.sf.nightworks.Skill.gsn_lay_hands;
-import static net.sf.nightworks.Skill.gsn_mass_invis;
-import static net.sf.nightworks.Skill.gsn_move_camf;
-import static net.sf.nightworks.Skill.gsn_pick_lock;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_push;
-import static net.sf.nightworks.Skill.gsn_quiet_movement;
-import static net.sf.nightworks.Skill.gsn_recall;
-import static net.sf.nightworks.Skill.gsn_riding;
-import static net.sf.nightworks.Skill.gsn_sneak;
-import static net.sf.nightworks.Skill.gsn_spear;
-import static net.sf.nightworks.Skill.gsn_track;
-import static net.sf.nightworks.Skill.gsn_vampire;
-import static net.sf.nightworks.Skill.gsn_vampiric_bite;
-import static net.sf.nightworks.Skill.gsn_vampiric_touch;
-import static net.sf.nightworks.Skill.gsn_vanish;
-import static net.sf.nightworks.Skill.gsn_web;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Update.gain_exp;
-import static net.sf.nightworks.util.TextUtils.capitalize;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
+import static net.sf.nightworks.util.TextUtils.*;
 
 class ActMove {
 
@@ -296,7 +43,7 @@ class ActMove {
             return;
         }
 
-        CHAR_DATA mount = MOUNTED(ch);
+        var mount = MOUNTED(ch);
         if (IS_AFFECTED(ch, AFF_WEB) || (mount != null && IS_AFFECTED(ch.mount, AFF_WEB))) {
             WAIT_STATE(ch, PULSE_VIOLENCE);
             if (number_percent() < str_app[IS_NPC(ch) ? 20 : get_curr_stat(ch, STAT_STR)].tohit * 5) {
@@ -341,17 +88,17 @@ class ActMove {
         }
 
         in_room = ch.in_room;
-        EXIT_DATA exit = in_room.exit[door];
-        ROOM_INDEX_DATA to_room = exit == null ? null : exit.to_room;
+        var exit = in_room.exit[door];
+        var to_room = exit == null ? null : exit.to_room;
         if (to_room == null || !can_see_room(ch, exit.to_room)) {
             send_to_char("Alas, you cannot go that way.\n", ch);
             return;
         }
 
         if (IS_ROOM_AFFECTED(in_room, AFF_ROOM_RANDOMIZER)) {
-            for (int i = 0; i < 1000; i++) {
-                int d0 = number_range(0, 5);
-                EXIT_DATA newExit = in_room.exit[d0];
+            for (var i = 0; i < 1000; i++) {
+                var d0 = number_range(0, 5);
+                var newExit = in_room.exit[d0];
                 if (newExit == null || newExit.to_room == null || !can_see_room(ch, newExit.to_room)) {
                     continue;
                 }
@@ -377,7 +124,7 @@ class ActMove {
             return;
         }
 
-/*    if ( !is_room_owner(ch,to_room) && room_is_private( to_room ) )   */
+        /*    if ( !is_room_owner(ch,to_room) && room_is_private( to_room ) )   */
         if (room_is_private(to_room)) {
             send_to_char("That room is private right now.\n", ch);
             return;
@@ -397,7 +144,7 @@ class ActMove {
         if (!IS_NPC(ch)) {
             int move;
 
-            for (Clazz c : Clazz.getClasses()) {
+            for (var c : Clazz.getClasses()) {
                 for (int gvnum : c.guildVnums) {
                     if (to_room.vnum == gvnum && !IS_IMMORTAL(ch)) {
                         if (c != ch.clazz) {
@@ -431,9 +178,9 @@ class ActMove {
 
             if ((in_room.sector_type == SECT_WATER_NOSWIM || to_room.sector_type == SECT_WATER_NOSWIM) && (mount == null && !IS_AFFECTED(ch, AFF_FLYING))) {
                 /*
-                * Look for a boat.
-                */
-                boolean found = IS_IMMORTAL(ch);
+                 * Look for a boat.
+                 */
+                var found = IS_IMMORTAL(ch);
                 for (obj = ch.carrying; obj != null; obj = obj.next_content) {
                     if (obj.item_type == ITEM_BOAT) {
                         found = true;
@@ -475,7 +222,7 @@ class ActMove {
         }
 
         if (!IS_AFFECTED(ch, AFF_SNEAK) && !IS_AFFECTED(ch, AFF_CAMOUFLAGE) && ch.invis_level < LEVEL_HERO) {
-            Formatter buf = new Formatter();
+            var buf = new Formatter();
             if (!IS_NPC(ch) && ch.in_room.sector_type != SECT_INSIDE &&
                     ch.in_room.sector_type != SECT_CITY &&
                     number_percent() < get_skill(ch, gsn_quiet_movement)) {
@@ -645,25 +392,21 @@ class ActMove {
     }
 
     static void do_run(CHAR_DATA ch, String argument) {
-        //TODO:
-        /*StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
-        argument = one_argument( argument, arg1 );
-        one_argument( argument, arg1 );
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
+        argument = one_argument(argument, arg1);
+        one_argument(argument, arg2);
 
-        if ( arg1.length()==0 || arg2.length() == 0)
-        {
-        send_to_char("run <direction> <count>\n", ch);
-        return;
+        if (arg1.isEmpty() || arg2.isEmpty()) {
+            send_to_char("run <direction> <count>\n", ch);
+            return;
         }
-
         if (find_exit(ch, arg1.toString()) < -1) {
             return;
         }
-        if ( Integer.valueOf(arg2) < 1 )
-        {
-        send_to_char("Count should be larger than 0.\n", ch);
-        }*/
+        if (Integer.parseInt(arg2.toString()) < 1) {
+            send_to_char("Count should be larger than 0.\n", ch);
+        }
     }
 
 
@@ -733,7 +476,7 @@ class ActMove {
         return door;
     }
 
-/* scan.c */
+    /* scan.c */
 
     static final String[] distance = {"right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."};
 
@@ -741,8 +484,8 @@ class ActMove {
         act("$n looks all around.", ch, null, null, TO_ROOM);
         send_to_char("Looking around you see:\n", ch);
         scan_list(ch.in_room, ch, 0, -1);
-        for (int door = 0; door < 6; door++) {
-            EXIT_DATA pExit = ch.in_room.exit[door];
+        for (var door = 0; door < 6; door++) {
+            var pExit = ch.in_room.exit[door];
             if (pExit == null || pExit.to_room == null || IS_SET(pExit.exit_info, EX_CLOSED)) {
                 continue;
             }
@@ -754,7 +497,7 @@ class ActMove {
         if (scan_room == null) {
             return;
         }
-        for (CHAR_DATA rch = scan_room.people; rch != null; rch = rch.next_in_room) {
+        for (var rch = scan_room.people; rch != null; rch = rch.next_in_room) {
             if (rch == ch) {
                 continue;
             }
@@ -768,14 +511,16 @@ class ActMove {
     }
 
     static void scan_char(CHAR_DATA victim, CHAR_DATA ch, int depth, int door) {
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.append((is_affected(victim, gsn_doppelganger) && !IS_SET(ch.act, PLR_HOLYLIGHT))
                 ? PERS(victim.doppel, ch) : PERS(victim, ch));
         buf.append(", ");
-
-        buf.sprintf(distance[depth], dir_name[door]);
+        if (depth == 0) {
+            buf.sprintf(distance[depth]);
+        } else {
+            buf.sprintf(distance[depth], dir_name[door]);
+        }
         buf.append("\n");
-
         send_to_char(buf, ch);
     }
 
@@ -783,7 +528,7 @@ class ActMove {
         OBJ_DATA obj;
         int door;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -877,7 +622,7 @@ class ActMove {
     static void do_close(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int door;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -957,9 +702,9 @@ class ActMove {
         }
     }
 
-/*
-* Added can_see check. Kio.
-*/
+    /*
+     * Added can_see check. Kio.
+     */
 
     static boolean has_key(CHAR_DATA ch, int key) {
         OBJ_DATA obj;
@@ -995,7 +740,7 @@ class ActMove {
         int door;
         CHAR_DATA rch;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -1110,7 +855,7 @@ class ActMove {
         OBJ_DATA obj;
         int door;
         CHAR_DATA rch;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -1228,7 +973,7 @@ class ActMove {
         OBJ_DATA obj;
         int door;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -1718,7 +1463,7 @@ class ActMove {
     static void do_wake(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             do_stand(ch, argument);
@@ -1771,7 +1516,7 @@ class ActMove {
 
         if (number_percent() < get_skill(ch, gsn_sneak)) {
             check_improve(ch, gsn_sneak, true, 3);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
 
             af.where = TO_AFFECTS;
             af.type = gsn_sneak;
@@ -1865,9 +1610,9 @@ class ActMove {
 
     }
 
-/*
- * Contributed by Alander
- */
+    /*
+     * Contributed by Alander
+     */
 
     static void do_visible(CHAR_DATA ch) {
         if (IS_SET(ch.affected_by, AFF_HIDE)) {
@@ -1987,7 +1732,7 @@ class ActMove {
             lose = 25;
             gain_exp(ch, -lose);
             check_improve(ch, gsn_recall, true, 4);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You recall from combat!  You lose %d exps.\n", lose);
             send_to_char(buf, ch);
             stop_fighting(ch, true);
@@ -2011,10 +1756,8 @@ class ActMove {
 
     static void do_train(CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
-        int stat = -1;
+        var stat = -1;
         String pOutput = null;
-        int cost;
-
         if (IS_NPC(ch)) {
             return;
         }
@@ -2036,49 +1779,31 @@ class ActMove {
 
 
         if (argument.isEmpty()) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
 
             buf.sprintf("You have %d training sessions.\n", ch.train);
             send_to_char(buf, ch);
             argument = "foo";
         }
 
-        cost = 1;
+        var cost = 1;
 
         if (!str_cmp(argument, "str")) {
-            if (ch.clazz.attr_prime == STAT_STR) {
-                cost = 1;
-            }
             stat = STAT_STR;
             pOutput = "strength";
         } else if (!str_cmp(argument, "int")) {
-            if (ch.clazz.attr_prime == STAT_INT) {
-                cost = 1;
-            }
             stat = STAT_INT;
             pOutput = "intelligence";
         } else if (!str_cmp(argument, "wis")) {
-            if (ch.clazz.attr_prime == STAT_WIS) {
-                cost = 1;
-            }
             stat = STAT_WIS;
             pOutput = "wisdom";
         } else if (!str_cmp(argument, "dex")) {
-            if (ch.clazz.attr_prime == STAT_DEX) {
-                cost = 1;
-            }
             stat = STAT_DEX;
             pOutput = "dexterity";
         } else if (!str_cmp(argument, "con")) {
-            if (ch.clazz.attr_prime == STAT_CON) {
-                cost = 1;
-            }
             stat = STAT_CON;
             pOutput = "constitution";
         } else if (!str_cmp(argument, "cha")) {
-            if (ch.clazz.attr_prime == STAT_CHA) {
-                cost = 1;
-            }
             stat = STAT_CHA;
             pOutput = "charisma";
 /*
@@ -2087,12 +1812,8 @@ class ActMove {
     send_to_char( buf, ch );
     return;
 */
-        } else if (!str_cmp(argument, "hp")) {
-            cost = 1;
-        } else if (!str_cmp(argument, "mana")) {
-            cost = 1;
-        } else {
-            StringBuilder buf = new StringBuilder("You can train:");
+        } else if (str_cmp(argument, "hp") && str_cmp(argument, "mana")) {
+            var buf = new StringBuilder("You can train:");
             if (ch.perm_stat[STAT_STR] < get_max_train2(ch, STAT_STR)) {
                 buf.append(" str");
             }
@@ -2118,8 +1839,8 @@ class ActMove {
                 send_to_char(buf, ch);
             } else {
                 /*
-                * This message dedicated to Jordan ... you big stud!
-                */
+                 * This message dedicated to Jordan ... you big stud!
+                 */
                 act("You have nothing left to train, you $T!",
                         ch, null,
                         ch.sex == SEX_MALE ? "big stud" : ch.sex == SEX_FEMALE ? "hot babe" : "wild thing", TO_CHAR);
@@ -2203,7 +1924,7 @@ class ActMove {
                     if ((d = rh.went) == -1) {
                         continue;
                     }
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("%s's tracks lead %s.\n", capitalize(rh.name), door[d]);
                     send_to_char(buf, ch);
                     if ((pexit = ch.in_room.exit[d]) != null && IS_SET(pexit.exit_info, EX_ISDOOR) && pexit.keyword != null) {
@@ -2255,8 +1976,8 @@ class ActMove {
         duration = level / 10;
         duration += 5;
 
-/* haste */
-        AFFECT_DATA af = new AFFECT_DATA();
+        /* haste */
+        var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = gsn_vampire;
         af.level = level;
@@ -2266,7 +1987,7 @@ class ActMove {
         af.bitvector = AFF_HASTE;
         affect_to_char(ch, af);
 
-/* giant strength + infrared */
+        /* giant strength + infrared */
         af.where = TO_AFFECTS;
         af.type = gsn_vampire;
         af.level = level;
@@ -2276,7 +1997,7 @@ class ActMove {
         af.bitvector = AFF_INFRARED;
         affect_to_char(ch, af);
 
-/* size */
+        /* size */
         af.where = TO_AFFECTS;
         af.type = gsn_vampire;
         af.level = level;
@@ -2286,7 +2007,7 @@ class ActMove {
         af.bitvector = AFF_SNEAK;
         affect_to_char(ch, af);
 
-/* damroll */
+        /* damroll */
         af.where = TO_AFFECTS;
         af.type = gsn_vampire;
         af.level = level;
@@ -2296,7 +2017,7 @@ class ActMove {
         af.bitvector = AFF_BERSERK;
         affect_to_char(ch, af);
 
-/* negative immunity */
+        /* negative immunity */
         af.where = TO_IMMUNE;
         af.type = gsn_vampire;
         af.duration = duration;
@@ -2306,7 +2027,7 @@ class ActMove {
         af.bitvector = IMM_NEGATIVE;
         affect_to_char(ch, af);
 
-/* vampire flag */
+        /* vampire flag */
         af.where = TO_ACT_FLAG;
         af.type = gsn_vampire;
         af.level = level;
@@ -2323,7 +2044,7 @@ class ActMove {
     static void do_vbite(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_vampiric_bite, false, 0, "You don't know how to bite creatures.\n")) {
@@ -2405,10 +2126,10 @@ class ActMove {
 
     static void do_bash_door(CHAR_DATA ch, String argument) {
         CHAR_DATA gch;
-        int chance = 0;
+        var chance = 0;
         int damage_bash, door;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_bash_door, false, OFF_BASH, "Bashing? What's that?\n")) {
@@ -2534,14 +2255,14 @@ class ActMove {
     }
 
     static void do_blink(CHAR_DATA ch, String argument) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_blink, false, 0, null)) {
             return;
         }
         if (arg.isEmpty()) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("Your current blink status : %s.\n", IS_BLINK_ON(ch) ? "ON" : "OFF");
             send_to_char(buf, ch);
             return;
@@ -2559,7 +2280,7 @@ class ActMove {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("What is that?.Is %s a status?\n", arg);
         send_to_char(buf, ch);
     }
@@ -2637,7 +2358,7 @@ class ActMove {
                 send_to_char("You can already detect sneaking.\n", ch);
             }
         }
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
 
         af.where = TO_AFFECTS;
         af.type = gsn_detect_sneak;
@@ -2729,7 +2450,7 @@ class ActMove {
                     ch, null, victim, TO_NOTVICT);
             check_improve(ch, gsn_vampiric_touch, true, 1);
 
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
 
             af.type = gsn_vampiric_touch;
             af.where = TO_AFFECTS;
@@ -2750,14 +2471,14 @@ class ActMove {
             if (!can_see(victim, ch)) {
                 do_yell(victim, "Help! I'm being strangled by someone!");
             } else {
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("Help! I'm being attacked by %s!",
                         (is_affected(ch, gsn_doppelganger) && !IS_IMMORTAL(victim)) ? ch.doppel.name : ch.name);
                 if (!IS_NPC(victim)) {
                     do_yell(victim, buf.toString());
                 }
             }
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.type = gsn_blackguard;
             af.where = TO_AFFECTS;
             af.level = victim.level;
@@ -2775,7 +2496,7 @@ class ActMove {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (!str_cmp(arg.toString(), "up")) {
             if (IS_AFFECTED(ch, AFF_FLYING)) {
@@ -2818,8 +2539,8 @@ class ActMove {
             return;
         }
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -2893,14 +2614,14 @@ class ActMove {
             percent = number_percent() + (IS_AWAKE(victim) ? 10 : -50);
             percent += can_see(victim, ch) ? -10 : 0;
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
 
             if ( /* ch.level + 5 < victim.level || */
                     victim.position == POS_FIGHTING
                             || (!IS_NPC(ch) && percent > get_skill(ch, gsn_push))) {
                 /*
-                * Failure.
-                */
+                 * Failure.
+                 */
 
                 send_to_char("Oops.\n", ch);
                 if (!IS_AFFECTED(victim, AFF_SLEEP)) {
@@ -2940,7 +2661,7 @@ class ActMove {
 
     static void do_crecall(CHAR_DATA ch) {
         ROOM_INDEX_DATA location;
-        int point = ROOM_VNUM_BATTLE;
+        var point = ROOM_VNUM_BATTLE;
 
         if (skill_failure_check(ch, gsn_cabal_recall, false, 0, null)) {
             return;
@@ -2999,7 +2720,7 @@ class ActMove {
             do_look(ch.pet, "auto");
         }
 
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.type = gsn_cabal_recall;
         af.level = ch.level;
         af.duration = ch.level / 6 + 15;
@@ -3028,7 +2749,7 @@ class ActMove {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -3104,7 +2825,7 @@ class ActMove {
             return;
         }
         WAIT_STATE(ch, gsn_lay_hands.beats);
-        AFFECT_DATA af = new AFFECT_DATA();
+        var af = new AFFECT_DATA();
         af.type = gsn_lay_hands;
         af.where = TO_AFFECTS;
         af.level = ch.level;
@@ -3174,19 +2895,19 @@ class ActMove {
 
                 damage(mount, ch, number_range(1, mount.level), gsn_kick, DAM_BASH, true);
 
-/*      multi_hit( mount, ch, TYPE_UNDEFINED ); */
+                /*      multi_hit( mount, ch, TYPE_UNDEFINED ); */
             }
         }
         return false;
     }
 
-/*
- * It is not finished yet to implement all.
- */
+    /*
+     * It is not finished yet to implement all.
+     */
 
     static void do_mount(CHAR_DATA ch, String argument) {
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_riding, true, 0, "You don't know how to ride!\n")) {
@@ -3198,7 +2919,7 @@ class ActMove {
             return;
         }
 
-        CHAR_DATA mount = get_char_room(ch, arg.toString());
+        var mount = get_char_room(ch, arg.toString());
         if (mount == null) {
             send_to_char("You don't see that here.\n", ch);
             return;
@@ -3217,7 +2938,7 @@ class ActMove {
         }
 
         if ((mount.mount != null) && (!mount.riding) && (mount.mount != ch)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s belongs to %s, not you.\n", mount.short_descr, mount.mount.name);
             send_to_char(buf, ch);
             return;
@@ -3262,7 +2983,7 @@ class ActMove {
     }
 
     static void do_dismount(CHAR_DATA ch) {
-        CHAR_DATA mount = MOUNTED(ch);
+        var mount = MOUNTED(ch);
         if (mount != null) {
             act("You dismount from $N.", ch, null, mount, TO_CHAR);
             act("$n dismounts from $N.", ch, null, mount, TO_NOTVICT);
@@ -3280,9 +3001,9 @@ class ActMove {
         ROOM_INDEX_DATA dest_room;
         int damroll = 0, hitroll = 0;
         int i;
-        Skill sn = arrow.value[0] == WEAPON_SPEAR ? gsn_spear : gsn_arrow;
+        var sn = arrow.value[0] == WEAPON_SPEAR ? gsn_spear : gsn_arrow;
 
-        for (AFFECT_DATA paf = arrow.affected; paf != null; paf = paf.next) {
+        for (var paf = arrow.affected; paf != null; paf = paf.next) {
             if (paf.location == APPLY_DAMROLL) {
                 damroll += paf.modifier;
             }
@@ -3325,7 +3046,7 @@ class ActMove {
 
                         if (IS_WEAPON_STAT(arrow, WEAPON_POISON)) {
                             int level;
-                            AFFECT_DATA poison = affect_find(arrow.affected, gsn_poison);
+                            var poison = affect_find(arrow.affected, gsn_poison);
 
                             if (poison == null) {
                                 level = arrow.level;
@@ -3338,7 +3059,7 @@ class ActMove {
                                 act("$n is poisoned by the venom on $p.",
                                         victim, arrow, null, TO_ROOM);
 
-                                AFFECT_DATA af = new AFFECT_DATA();
+                                var af = new AFFECT_DATA();
                                 af.where = TO_AFFECTS;
                                 af.type = gsn_poison;
                                 af.level = level * 3 / 4;
@@ -3369,7 +3090,7 @@ class ActMove {
 
                         if (dam > victim.max_hit / 10
                                 && number_percent() < 50) {
-                            AFFECT_DATA af = new AFFECT_DATA();
+                            var af = new AFFECT_DATA();
                             af.where = TO_AFFECTS;
                             af.type = sn;
                             af.level = ch.level;
@@ -3407,7 +3128,7 @@ class ActMove {
             } else {
                 dest_room = pExit.to_room;
                 if (dest_room.people != null) {
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("$p sails into the room from the %s!", dir_name[rev_dir[door]]);
                     act(buf.toString(), dest_room.people, arrow, null, TO_ALL);
                 }
@@ -3422,14 +3143,14 @@ class ActMove {
         OBJ_DATA wield;
         OBJ_DATA arrow;
         int chance, direction;
-        int range = (ch.level / 10) + 1;
+        var range = (ch.level / 10) + 1;
 
         if (skill_failure_check(ch, gsn_bow, false, 0, "You don't know how to shoot.\n")) {
             return;
         }
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -3470,7 +3191,7 @@ class ActMove {
         }
 
         if (is_safe(ch, victim)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("Gods protect %s.\n", victim.name);
             send_to_char(buf, ch);
             return;
@@ -3500,7 +3221,7 @@ class ActMove {
         }
         chance += GET_HITROLL(ch);
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You shoot $p to %s.", dir_name[direction]);
         act(buf.toString(), ch, arrow, null, TO_CHAR);
         buf.sprintf("$n shoots $p to %s.", dir_name[direction]);
@@ -3517,7 +3238,7 @@ class ActMove {
         EXIT_DATA pExit;
         int i;
 
-        StringBuilder buf = new StringBuilder("Find: ");
+        var buf = new StringBuilder("Find: ");
         for (i = 0; i < 65535; i++) {
             if ((rend == rstart)) {
                 return buf.toString();
@@ -3564,14 +3285,14 @@ class ActMove {
         CHAR_DATA victim;
         OBJ_DATA spear;
         int chance, direction;
-        int range = (ch.level / 10) + 1;
+        var range = (ch.level / 10) + 1;
 
         if (skill_failure_check(ch, gsn_spear, true, 0, "You don't know how to throw a spear.\n")) {
             return;
         }
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -3613,7 +3334,7 @@ class ActMove {
         }
 
         if (is_safe(ch, victim)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("Gods protect %s.\n", victim.name);
             send_to_char(buf, ch);
             return;
@@ -3638,7 +3359,7 @@ class ActMove {
             chance -= 40;
         }
         chance += GET_HITROLL(ch);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You throw $p to %s.", dir_name[direction]);
         act(buf.toString(), ch, spear, null, TO_CHAR);
         buf.sprintf("$n throws $p to %s.", dir_name[direction]);

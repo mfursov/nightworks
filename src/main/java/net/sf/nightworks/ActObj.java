@@ -315,7 +315,7 @@ import static net.sf.nightworks.util.TextUtils.str_prefix;
 class ActObj {
 /* RT part of the corpse looting code */
 
-    private static boolean _loot = true;
+    private static final boolean _loot = true;
 
     static boolean can_loot(CHAR_DATA ch, OBJ_DATA obj) {
         CHAR_DATA owner, wch;
@@ -485,13 +485,13 @@ class ActObj {
         OBJ_DATA container;
         boolean found;
 
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         argument = one_argument(argument, arg2b);
 
-        String arg1 = arg1b.toString();
-        String arg2 = arg2b.toString();
+        var arg1 = arg1b.toString();
+        var arg2 = arg2b.toString();
         if (!str_cmp(arg2, "from")) {
             one_argument(argument, arg2b);
         }
@@ -648,7 +648,7 @@ class ActObj {
             }
 
             if (IS_SET(ch.act, PLR_AUTOSPLIT)) { /* AUTOSPLIT code */
-                int members = 0;
+                var members = 0;
                 CHAR_DATA gch;
 
                 for (gch = ch.in_room.people; gch != null; gch = gch.next_in_room) {
@@ -775,11 +775,11 @@ class ActObj {
         OBJ_DATA obj_next;
         OBJ_DATA objc;
         int pcount;
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         argument = one_argument(argument, arg2b);
-        String arg2 = arg2b.toString();
+        var arg2 = arg2b.toString();
 
         if (!str_cmp(arg2, "in") || !str_cmp(arg2, "on")) {
             one_argument(argument, arg2b);
@@ -789,7 +789,7 @@ class ActObj {
             send_to_char("Put what in what?\n", ch);
             return;
         }
-        String arg1 = arg1b.toString();
+        var arg1 = arg1b.toString();
         arg2 = arg2b.toString();
 
         if (!str_cmp(arg2, "all") || !str_prefix("all.", arg2)) {
@@ -971,14 +971,14 @@ class ActObj {
         OBJ_DATA obj_next;
         boolean found;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
         if (argb.isEmpty()) {
             send_to_char("Drop what?\n", ch);
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (is_number(arg)) {
             /* 'drop NNNN coins' */
@@ -1180,8 +1180,8 @@ class ActObj {
         int direction;
 
 
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         one_argument(argument, arg2b);
 
@@ -1191,8 +1191,8 @@ class ActObj {
             return;
         }
 
-        String arg1 = arg1b.toString();
-        String arg2 = arg2b.toString();
+        var arg1 = arg1b.toString();
+        var arg2 = arg2b.toString();
         if (!str_cmp(arg1, "all") || !str_prefix("all.", arg1)) {
             send_to_char("You can't do that.\n", ch);
             return;
@@ -1251,7 +1251,7 @@ class ActObj {
             send_to_char("Alas, you cannot go that way.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You grab $p to drag towards %s.", dir_name[direction]);
         act(buf.toString(), ch, obj, null, TO_CHAR);
         if (!IS_AFFECTED(ch, AFF_SNEAK)) {
@@ -1293,8 +1293,8 @@ class ActObj {
         CHAR_DATA victim;
         OBJ_DATA obj;
 
-        StringBuilder arg1b = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1b = new StringBuilder();
+        var arg2b = new StringBuilder();
         argument = one_argument(argument, arg1b);
         argument = one_argument(argument, arg2b);
 
@@ -1302,8 +1302,8 @@ class ActObj {
             send_to_char("Give what to whom?\n", ch);
             return;
         }
-        String arg1 = arg1b.toString();
-        String arg2 = arg2b.toString();
+        var arg1 = arg1b.toString();
+        var arg2 = arg2b.toString();
 
         if (is_number(arg1)) {
             /* 'give NNNN coins victim' */
@@ -1357,7 +1357,7 @@ class ActObj {
                 ch.gold -= amount;
                 victim.gold += amount;
             }
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("$n gives you %d %s.", amount, silver ? "silver" : "gold");
             act(buf.toString(), ch, null, victim, TO_VICT);
             act("$n gives $N some coins.", ch, null, victim, TO_NOTVICT);
@@ -1499,7 +1499,7 @@ class ActObj {
         String bufp;
         OBJ_DATA obj, shovel, stone;
         int move;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         one_argument(argument, arg);
 
@@ -1559,11 +1559,11 @@ class ActObj {
 
         obj.timer = -1;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         bufp = obj.short_descr;
         while (!bufp.isEmpty()) {
             bufp = one_argument(bufp, arg);
-            String argstr = arg.toString();
+            var argstr = arg.toString();
             if (!(!str_cmp(argstr, "The") || !str_cmp(argstr, "undead")
                     || !str_cmp(argstr, "body") || !str_cmp(argstr, "corpse")
                     || !str_cmp(argstr, "of"))) {
@@ -1602,7 +1602,7 @@ class ActObj {
     static void do_dig(CHAR_DATA ch, String argument) {
         OBJ_DATA obj, shovel, corpse;
         int move;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -1729,7 +1729,7 @@ class ActObj {
 
             percent = number_percent();
             if (percent < skill) {
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 af.where = TO_WEAPON;
                 af.type = gsn_poison;
                 af.level = ch.level * percent / 100;
@@ -1762,7 +1762,7 @@ class ActObj {
         OBJ_DATA fountain;
         boolean found;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -1803,7 +1803,7 @@ class ActObj {
             send_to_char("Your container is full.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("You fill $p with %s from $P.",
                 liq_table[fountain.value[2]].liq_name);
         act(buf.toString(), ch, obj, fountain, TO_CHAR);
@@ -1819,7 +1819,7 @@ class ActObj {
         OBJ_DATA out, in;
         CHAR_DATA vch = null;
         int amount;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
         if (arg.isEmpty() || argument.isEmpty()) {
@@ -1846,7 +1846,7 @@ class ActObj {
 
             out.value[1] = 0;
             out.value[3] = 0;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (!IS_WATER(ch.in_room)) {
                 buf.sprintf("You invert $p, spilling %s all over the ground.",
                         liq_table[out.value[2]].liq_name);
@@ -1914,7 +1914,7 @@ class ActObj {
         out.value[1] -= amount;
         in.value[2] = out.value[2];
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
 
         if (vch == null) {
             buf.sprintf("You pour %s from $p into $P.",
@@ -1941,7 +1941,7 @@ class ActObj {
         OBJ_DATA obj;
         int amount;
         int liquid;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -2030,7 +2030,7 @@ class ActObj {
 
             act("$n chokes and gags.", ch, null, null, TO_ROOM);
             send_to_char("You choke and gag.\n", ch);
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_poison;
             af.level = number_fuzzy(amount);
@@ -2050,7 +2050,7 @@ class ActObj {
     static void do_eat(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("Eat what?\n", ch);
@@ -2100,7 +2100,7 @@ class ActObj {
 
                     act("$n chokes and gags.", ch, 0, 0, TO_ROOM);
                     send_to_char("You choke and gag.\n", ch);
-                    AFFECT_DATA af = new AFFECT_DATA();
+                    var af = new AFFECT_DATA();
                     af.where = TO_AFFECTS;
                     af.type = gsn_poison;
                     af.level = number_fuzzy(obj.value[0]);
@@ -2234,7 +2234,7 @@ class ActObj {
         }
 
         if (wear_level < obj.level) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You must be level %d to use this object.\n", obj.level);
             send_to_char(buf, ch);
             act("$n tries to use $p, but is too inexperienced.",
@@ -2427,7 +2427,7 @@ class ActObj {
 
     static void do_wear(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
 
         one_argument(argument, arg);
 
@@ -2459,7 +2459,7 @@ class ActObj {
 
     static void do_remove(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -2501,9 +2501,9 @@ class ActObj {
         CHAR_DATA gch;
         int members;
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (arg.isEmpty() || !str_cmp(arg, ch.name)) {
             act("$n offers $mself to gods, who graciously declines.",
@@ -2536,7 +2536,7 @@ class ActObj {
             silver = UMIN(silver, obj.cost);
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (silver == 1) {
             send_to_char("Gods give you one silver coin for your sacrifice.\n", ch);
         } else {
@@ -2573,7 +2573,7 @@ class ActObj {
         if ((obj.item_type == ITEM_CORPSE_NPC) ||
                 (obj.item_type == ITEM_CORPSE_PC)) {
             iScatter = 0;
-            OBJ_DATA[] two_objs = new OBJ_DATA[2];
+            var two_objs = new OBJ_DATA[2];
             for (obj_content = obj.contains; obj_content != null; obj_content = obj_next) {
                 obj_next = obj_content.next_content;
                 two_objs[iScatter < 1 ? 0 : 1] = obj_content;
@@ -2590,7 +2590,7 @@ class ActObj {
                 act("$p and $P are revealed by $n's sacrifice.", ch, two_objs[0], two_objs[1], TO_ROOM);
             }
             buf.sprintf("As you sacrifice the corpse, ");
-            StringBuilder buf2 = new StringBuilder("As $n sacrifices the corpse, ");
+            var buf2 = new StringBuilder("As $n sacrifices the corpse, ");
             if (iScatter < 3) {
                 fScatter = false;
             } else if (iScatter < 5) {
@@ -2644,7 +2644,7 @@ class ActObj {
 
     static void do_quaff(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (ch.cabal == CABAL_BATTLE && !IS_IMMORTAL(ch)) {
@@ -2707,8 +2707,8 @@ class ActObj {
             return;
         }
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -2788,7 +2788,7 @@ class ActObj {
             bug("Do_brandish: bad sn %s.", sn);
             return;
         }
-        Skill skill = Skill.skills[sn];
+        var skill = Skill.skills[sn];
 
         WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
 
@@ -2856,7 +2856,7 @@ class ActObj {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty() && ch.fighting == null) {
             send_to_char("Zap whom or what?\n", ch);
@@ -2929,8 +2929,8 @@ class ActObj {
         OBJ_DATA obj_inve;
         int percent, number;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -2982,7 +2982,7 @@ class ActObj {
                 ((victim.level - ch.level) * 2) : 0;
 
         obj = null;
-        String arg1str = arg1.toString();
+        var arg1str = arg1.toString();
         if (str_cmp(arg1str, "coin")
                 && str_cmp(arg1str, "coins")
                 && str_cmp(arg1str, "silver")
@@ -3031,7 +3031,7 @@ class ActObj {
             }
             act("$n tried to steal from $N.\n", ch, null, victim, TO_NOTVICT);
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             switch (number_range(0, 3)) {
                 case 0 -> buf.sprintf("%s is a lousy thief!", tmp_ch.name);
                 case 1 -> buf.sprintf("%s couldn't rob %s way out of a paper bag!",
@@ -3056,8 +3056,8 @@ class ActObj {
                 || !str_cmp(arg1str, "coins")
                 || !str_cmp(arg1str, "silver")
                 || !str_cmp(arg1str, "gold")) {
-            int amount_s = 0;
-            int amount_g = 0;
+            var amount_s = 0;
+            var amount_g = 0;
             if (!str_cmp(arg1str, "silver") ||
                     !str_cmp(arg1str, "coin") ||
                     !str_cmp(arg1str, "coins")) {
@@ -3075,7 +3075,7 @@ class ActObj {
             victim.gold -= amount_g;
             ch.silver += amount_s;
             victim.silver -= amount_s;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("Bingo!  You got %d %s coins.\n",
                     amount_s != 0 ? amount_s : amount_g,
                     amount_s != 0 ? "silver" : "gold");
@@ -3145,7 +3145,7 @@ class ActObj {
         if (IS_SET(keeper.in_room.area.area_flag, AREA_HOMETOWN)
                 && !IS_NPC(ch) && IS_SET(ch.act, PLR_WANTED)) {
             do_say(keeper, "Criminals are not welcome!");
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%s the CRIMINAL is over here!\n", ch.name);
             do_yell(keeper, buf.toString());
             return null;
@@ -3216,7 +3216,7 @@ class ActObj {
         OBJ_DATA obj;
         int number;
         int count;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         number = number_argument(argument, arg);
         count = 0;
         for (obj = keeper.carrying; obj != null; obj = obj.next_content) {
@@ -3314,7 +3314,7 @@ class ActObj {
                 return;
             }
 
-            StringBuilder arg = new StringBuilder();
+            var arg = new StringBuilder();
             argument = one_argument(argument, arg);
 
             /* hack to make new thalos pets work */
@@ -3386,7 +3386,7 @@ class ActObj {
             }
 
             /* haggle */
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             roll = number_percent();
             if (roll < get_skill(ch, gsn_haggle)) {
                 cost -= cost / 2 * roll / 100;
@@ -3426,7 +3426,7 @@ class ActObj {
                 return;
             }
 
-            StringBuilder arg = new StringBuilder();
+            var arg = new StringBuilder();
             number = multiply_argument(argument, arg);
             if (number < -1 || number > 100) {
                 act("$n tells you 'Get real!", keeper, null, ch, TO_VICT);
@@ -3516,7 +3516,7 @@ class ActObj {
                 check_improve(ch, gsn_haggle, true, 4);
             }
 
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (number > 1) {
                 buf.sprintf("$n buys $p[%d].", number);
                 act(buf, ch, obj, null, TO_ROOM);
@@ -3575,7 +3575,7 @@ class ActObj {
             }
 
             found = false;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             for (pet = pRoomIndexNext.people; pet != null; pet = pet.next_in_room) {
                 if (!IS_NPC(pet)) {
                     continue;     /* :) */
@@ -3604,12 +3604,12 @@ class ActObj {
             if ((keeper = find_keeper(ch)) == null) {
                 return;
             }
-            StringBuilder arg = new StringBuilder();
+            var arg = new StringBuilder();
 
             one_argument(argument, arg);
 
             found = false;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
 
             for (obj = keeper.carrying; obj != null; obj = obj.next_content) {
                 if (obj.wear_loc == WEAR_NONE
@@ -3655,7 +3655,7 @@ class ActObj {
         OBJ_DATA obj;
         int cost, roll;
         int gold, silver;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -3709,8 +3709,8 @@ class ActObj {
         silver = cost - (cost / 100) * 100;
         gold = cost / 100;
 
-        TextBuffer buf = new TextBuffer();
-        TextBuffer buf2 = new TextBuffer();
+        var buf = new TextBuffer();
+        var buf2 = new TextBuffer();
         buf2.sprintf("You sell $p for %s %s%spiece%s.",
                 silver != 0 ? "%d silver" : "",                         /* silvers  */
                 (silver != 0 && gold != 0) ? "and " : "",       /*   and    */
@@ -3749,7 +3749,7 @@ class ActObj {
         OBJ_DATA obj;
         int cost;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -3783,7 +3783,7 @@ class ActObj {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$n tells you 'I'll give you %d silver and %d gold coins for $p'.",
                 cost - (cost / 100) * 100, cost / 100);
         act(buf.toString(), keeper, obj, ch, TO_VICT);
@@ -3798,8 +3798,8 @@ class ActObj {
             return;
         }
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
@@ -3855,7 +3855,7 @@ class ActObj {
     static void do_herbs(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (skill_failure_check(ch, gsn_herbs, false, 0, null)) {
@@ -3879,7 +3879,7 @@ class ActObj {
         if (ch.in_room.sector_type != SECT_INSIDE &&
                 ch.in_room.sector_type != SECT_CITY &&
                 (IS_NPC(ch) || number_percent() < get_skill(ch, gsn_herbs))) {
-            AFFECT_DATA af = new AFFECT_DATA();
+            var af = new AFFECT_DATA();
             af.where = TO_AFFECTS;
             af.type = gsn_herbs;
             af.level = ch.level;
@@ -3918,14 +3918,14 @@ class ActObj {
         }
     }
 
-    private static boolean orig_lore = true;
+    private static final boolean orig_lore = true;
 
     static void do_lore(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int chance;
         int value0, value1, value2, value3;
 
-        StringBuilder arg1 = new StringBuilder();
+        var arg1 = new StringBuilder();
         one_argument(argument, arg1);
 
         if (skill_failure_check(ch, gsn_lore, true, 0, "The meaning of this object escapes you for the moment.\n")) {
@@ -3945,7 +3945,7 @@ class ActObj {
         /* a random lore */
         chance = number_percent();
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (get_skill(ch, gsn_lore) < 20) {
             buf.sprintf("Object '%s'.\n", obj.name);
             send_to_char(buf, ch);
@@ -4215,7 +4215,7 @@ class ActObj {
         }
 
         if (!obj.enchanted) {
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 if (paf.location != APPLY_NONE && paf.modifier != 0) {
                     buf.sprintf("Affects %s by %d.\n", affect_loc_name(paf.location), paf.modifier);
                     send_to_char(buf, ch);
@@ -4223,7 +4223,7 @@ class ActObj {
             }
         }
 
-        for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+        for (var paf = obj.affected; paf != null; paf = paf.next) {
             if (paf.location != APPLY_NONE && paf.modifier != 0) {
                 buf.sprintf("Affects %s by %d.\n", affect_loc_name(paf.location), paf.modifier);
                 send_to_char(buf, ch);
@@ -4242,7 +4242,7 @@ class ActObj {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -4280,7 +4280,7 @@ class ActObj {
             OBJ_DATA steak;
 
             numsteaks = number_bits(2) + 1;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (numsteaks > 1) {
                 buf.sprintf("$n butchers $p and creates %i steaks.", numsteaks);
                 act(buf, ch, obj, null, TO_ROOM);
@@ -4339,8 +4339,8 @@ class ActObj {
 
         bank_g = ch.pcdata.bank_g;
         bank_s = ch.pcdata.bank_s;
-        TextBuffer buf = new TextBuffer();
-        TextBuffer buf2 = new TextBuffer();
+        var buf = new TextBuffer();
+        var buf2 = new TextBuffer();
         buf.sprintf("You have %s%s%s coin%s in the bank.\n",
                 bank_g != 0 ? "%d gold" : "",
                 (bank_g != 0) && (bank_s != 0) ? " and " : "",
@@ -4371,7 +4371,7 @@ class ActObj {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("Withdraw how much?\n", ch);
@@ -4411,7 +4411,7 @@ class ActObj {
         ch.pcdata.bank_s -= amount_s;
         ch.gold += 0.98 * amount_g;
         ch.silver += 0.90 * amount_s;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (amount_s > 0 && amount_s < 10) {
             if (amount_s == 1) {
                 buf.sprintf("One coin??? You cheapskate!\n");
@@ -4444,7 +4444,7 @@ class ActObj {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("Deposit how much?\n", ch);
@@ -4479,7 +4479,7 @@ class ActObj {
         ch.pcdata.bank_g += amount_g;
         ch.gold -= amount_g;
         ch.silver -= amount_s;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (amount_s == 1) {
             buf.sprintf("Oh boy! One gold coin!\n");
         } else {
@@ -4522,7 +4522,7 @@ class ActObj {
         }
 
         if (wear_level < obj.level) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("You must be level %d to be able to enchant this object.\n",
                     obj.level);
             send_to_char(buf, ch);
@@ -4694,7 +4694,7 @@ class ActObj {
             equip_char(ch, obj, iWear);
         } else if (fReplace) {
             OBJ_DATA w;
-            boolean not_worn = true;
+            var not_worn = true;
 
             for (w = ch.carrying; w != null; w = w.next_content) {
                 if (w.wear_loc == iWear

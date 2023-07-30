@@ -68,7 +68,7 @@ class ActSkill {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -117,26 +117,26 @@ class ActSkill {
             return;
         }
 
-        StringBuilder[] spell_list = new StringBuilder[LEVEL_HERO];
-        char[] spell_columns = new char[LEVEL_HERO];
-        boolean found = false;
-        StringBuilder buf = new StringBuilder();
-        Formatter f = new Formatter(buf);
-        Skill[] skills = Skill.skills;
-        for (Skill sn : skills) {
+        var spell_list = new StringBuilder[LEVEL_HERO];
+        var spell_columns = new char[LEVEL_HERO];
+        var found = false;
+        var buf = new StringBuilder();
+        var f = new Formatter(buf);
+        var skills = Skill.skills;
+        for (var sn : skills) {
             if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && sn.isSpell() && RACE_OK(ch, sn) &&
                     (sn.cabal == ch.cabal || sn.cabal == CABAL_NONE)
                     ) {
                 buf.setLength(0);
                 found = true;
-                int lev = sn.skill_level[ch.clazz.id];
+                var lev = sn.skill_level[ch.clazz.id];
                 if (ch.level < lev) {
                     f.format("%-18s  n/a      ", sn.name);
                 } else {
-                    int mana = UMAX(sn.min_mana, 100 / (2 + ch.level - lev));
+                    var mana = UMAX(sn.min_mana, 100 / (2 + ch.level - lev));
                     f.format("%-18s  %3d mana  ", sn.name, mana);
                 }
-                StringBuilder sb = spell_list[lev];
+                var sb = spell_list[lev];
                 if (sb == null) {
                     sb = new StringBuilder();
                     spell_list[lev] = sb;
@@ -159,9 +159,9 @@ class ActSkill {
             return;
         }
 
-        StringBuilder output = new StringBuilder();
-        for (int lev = 0; lev < LEVEL_HERO; lev++) {
-            StringBuilder sb = spell_list[lev];
+        var output = new StringBuilder();
+        for (var lev = 0; lev < LEVEL_HERO; lev++) {
+            var sb = spell_list[lev];
             if (sb != null) {
                 output.append(sb);
             }
@@ -176,24 +176,24 @@ class ActSkill {
             return;
         }
 
-        StringBuilder[] skill_list = new StringBuilder[LEVEL_HERO];
-        char[] skill_columns = new char[LEVEL_HERO];
-        StringBuilder buf = new StringBuilder();
-        Formatter f = new Formatter(buf);
-        boolean found = false;
-        Skill[] skills = Skill.skills;
-        for (Skill sn : skills) {
+        var skill_list = new StringBuilder[LEVEL_HERO];
+        var skill_columns = new char[LEVEL_HERO];
+        var buf = new StringBuilder();
+        var f = new Formatter(buf);
+        var found = false;
+        var skills = Skill.skills;
+        for (var sn : skills) {
             if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && !sn.isSpell() && RACE_OK(ch, sn) &&
                     (sn.cabal == ch.cabal || sn.cabal == CABAL_NONE)) {
                 found = true;
-                int lev = sn.skill_level[ch.clazz.id];
+                var lev = sn.skill_level[ch.clazz.id];
                 if (ch.level < lev) {
                     f.format("%-18s n/a      ", sn.name);
                 } else {
                     f.format("%-18s %3d%%      ", sn.name, ch.pcdata.learned[sn.ordinal()]);
                 }
 
-                StringBuilder sb = skill_list[lev];
+                var sb = skill_list[lev];
                 if (sb == null) {
                     sb = new StringBuilder();
                     skill_list[lev] = sb;
@@ -217,9 +217,9 @@ class ActSkill {
             return;
         }
 
-        StringBuilder output = new StringBuilder();
-        for (int lev = 0; lev < LEVEL_HERO; lev++) {
-            StringBuilder sb = skill_list[lev];
+        var output = new StringBuilder();
+        for (var lev = 0; lev < LEVEL_HERO; lev++) {
+            var sb = skill_list[lev];
             if (sb != null) {
                 output.append(sb);
             }
@@ -233,17 +233,17 @@ class ActSkill {
         if (IS_NPC(ch)) {
             return 1500;
         }
-        int expl = 1000 + ORG_RACE(ch).pcRace.points + ch.clazz.points;
+        var expl = 1000 + ORG_RACE(ch).pcRace.points + ch.clazz.points;
         return (expl * ORG_RACE(ch).pcRace.getClassModifier(ch.clazz).expMult / 100);
     }
 
     static int exp_to_level(CHAR_DATA ch, int points) {
-        int base = base_exp(ch, points);
+        var base = base_exp(ch, points);
         return (base - exp_this_level(ch, ch.level, points));
     }
 
     static int exp_this_level(CHAR_DATA ch, int level, int points) {
-        int base = base_exp(ch, points);
+        var base = base_exp(ch, points);
         return (ch.exp - (ch.level * base));
     }
 
@@ -252,7 +252,7 @@ class ActSkill {
         if (IS_NPC(ch)) {
             return 1000;
         }
-        int expl = 1000 + ORG_RACE(ch).pcRace.points + ch.clazz.points;
+        var expl = 1000 + ORG_RACE(ch).pcRace.points + ch.clazz.points;
         return expl * ORG_RACE(ch).pcRace.getClassModifier(ch.clazz).expMult / 100;
     }
 
@@ -307,9 +307,9 @@ class ActSkill {
         if (IS_NPC(ch)) /* NPCs do not have skills */ {
             return;
         }
-        Skill[] skills = Skill.skills;
-        for (int i = 0; i < skills.length; i++) {
-            Skill sn = skills[i];
+        var skills = Skill.skills;
+        for (var i = 0; i < skills.length; i++) {
+            var sn = skills[i];
             if (sn.cabal == 0 && RACE_OK(ch, sn) && ch.pcdata.learned[i] < 1 && sn.skill_level[ch.clazz.id] < LEVEL_IMMORTAL) {
                 ch.pcdata.learned[i] = 1;
             }
@@ -322,30 +322,30 @@ class ActSkill {
         if (IS_NPC(ch)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("syntax: slist <class name>.\n", ch);
             return;
         }
-        Clazz clazz = Clazz.lookupClass(arg.toString(), false);
+        var clazz = Clazz.lookupClass(arg.toString(), false);
         if (clazz == null) {
             send_to_char("That is not a valid class.\n", ch);
             return;
         }
-        StringBuilder[] skill_list = new StringBuilder[LEVEL_HERO];
-        char[] skill_columns = new char[LEVEL_HERO];
-        StringBuilder buf = new StringBuilder();
-        Formatter f = new Formatter(buf);
-        boolean found = false;
-        Skill[] skills = Skill.skills;
-        for (Skill sn : skills) {
+        var skill_list = new StringBuilder[LEVEL_HERO];
+        var skill_columns = new char[LEVEL_HERO];
+        var buf = new StringBuilder();
+        var f = new Formatter(buf);
+        var found = false;
+        var skills = Skill.skills;
+        for (var sn : skills) {
 
             if (sn.skill_level[clazz.id] < LEVEL_HERO && sn.cabal == CABAL_NONE && sn.race == null) {
                 found = true;
-                int lev = sn.skill_level[clazz.id];
+                var lev = sn.skill_level[clazz.id];
                 f.format("%-18s          ", sn.name);
-                StringBuilder sb = skill_list[lev];
+                var sb = skill_list[lev];
                 if (sb == null) {
                     sb = new StringBuilder();
                     skill_list[lev] = sb;
@@ -370,9 +370,9 @@ class ActSkill {
             return;
         }
 
-        StringBuilder output = new StringBuilder();
-        for (int lev = 0; lev < LEVEL_HERO; lev++) {
-            StringBuilder sb = skill_list[lev];
+        var output = new StringBuilder();
+        for (var lev = 0; lev < LEVEL_HERO; lev++) {
+            var sb = skill_list[lev];
             if (sb != null) {
                 output.append(sb);
             }
@@ -398,7 +398,7 @@ class ActSkill {
     static void do_glist(CHAR_DATA ch, String argument) {
         int group;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -412,10 +412,10 @@ class ActSkill {
         }
 
         send_to_char("Now listing group " + prac_table[group].sh_name + " :\n", ch);
-        StringBuilder buf = new StringBuilder();
-        Formatter f = new Formatter(buf);
-        Skill[] skills = Skill.skills;
-        for (Skill sn : skills) {
+        var buf = new StringBuilder();
+        var f = new Formatter(buf);
+        var skills = Skill.skills;
+        for (var sn : skills) {
             if ((group == GROUP_NONE && !CLEVEL_OK(ch, sn) && sn.group == GROUP_NONE) ||
                     (group != sn.group) || !CABAL_OK(ch, sn)) {
                 continue;
@@ -432,7 +432,7 @@ class ActSkill {
     }
 
     static void do_slook(CHAR_DATA ch, String argument) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             send_to_char("Syntax : slook <skill or spell name>.\n", ch);
@@ -447,7 +447,7 @@ class ActSkill {
 
     }
 
-    private static int PC_PRACTICER = 123;
+    private static final int PC_PRACTICER = 123;
 
     static void do_learn(CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
@@ -472,7 +472,7 @@ class ActSkill {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
         Skill sn;

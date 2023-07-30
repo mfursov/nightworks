@@ -127,10 +127,10 @@ class Interp {
         * Special parsing so ' can be a command,
         * also no spaces needed after punctuation.
         */
-        String logLine = argument;
-        StringBuilder command = new StringBuilder();
-        int pos = 0;
-        char c0 = argument.charAt(0);
+        var logLine = argument;
+        var command = new StringBuilder();
+        var pos = 0;
+        var c0 = argument.charAt(0);
         if (!Character.isLetter(c0) && !isDigit(c0)) {
             command.append(c0);
             pos++;
@@ -142,12 +142,12 @@ class Interp {
         /*
         * Look for command in command table.
         */
-        int trust = get_trust(ch);
+        var trust = get_trust(ch);
 
-        CmdType[] commandsTable = getCommandsTable();
+        var commandsTable = getCommandsTable();
         CmdType cmd = null;
-        String commandStr = command.toString();
-        for (CmdType c : commandsTable) {
+        var commandStr = command.toString();
+        for (var c : commandsTable) {
             if (!matches(commandStr, c.names) || c.level > trust) {
                 continue;
             }
@@ -202,7 +202,7 @@ class Interp {
 
         if (((!IS_NPC(ch) && IS_SET(ch.act, PLR_LOG)) || fLogAll
                 || (cmd != null && cmd.log == LOG_ALWAYS) && !logLine.isEmpty() && logLine.charAt(0) != '\n')) {
-            String log_buf = "Log " + ch.name + ": " + logLine;
+            var log_buf = "Log " + ch.name + ": " + logLine;
             wiznet(log_buf, ch, null, WIZ_SECURE, 0, get_trust(ch));
             log_string(log_buf);
         }
@@ -287,7 +287,7 @@ class Interp {
     }
 
     private static boolean matches(String command, String[] names) {
-        for (String name : names) {
+        for (var name : names) {
             if (!str_prefix(command, name)) {
                 return true;
             }
@@ -296,7 +296,7 @@ class Interp {
     }
 
     static social_type lookup_social(String name) {
-        for (social_type soc : social_table) {
+        for (var soc : social_table) {
             if (!str_prefix(name, soc.name)) {
                 return soc;
             }
@@ -306,7 +306,7 @@ class Interp {
 
     static boolean interpret_social(CHAR_DATA ch, String argument, social_type soc) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
             act(soc.noarg_room, ch, null, null, TO_ROOM);
@@ -354,8 +354,8 @@ class Interp {
     }
 
     static int int_argument(String argument, StringBuilder arg, char c) {
-        int dot = argument.indexOf(c);
-        int number = 1;
+        var dot = argument.indexOf(c);
+        var number = 1;
         if (dot > 0) {
             try {
                 number = Integer.parseInt(argument.substring(0, dot));
@@ -373,18 +373,18 @@ class Interp {
     }
 
     private static void showAvailableCommands(CHAR_DATA ch, Function<CmdType, Boolean> cmdCheckFn) {
-        CmdType[] cmd_table = getCommandsTable();
+        var cmd_table = getCommandsTable();
         List<String> names = new ArrayList<>();
-        for (CmdType cmd : cmd_table) {
+        for (var cmd : cmd_table) {
             if (cmdCheckFn.apply(cmd) && cmd.level <= get_trust(ch)) {
                 names.add(cmd.names[0]);
             }
         }
         names.sort(String::compareTo);
-        StringBuilder buf = new StringBuilder();
-        Formatter f = new Formatter(buf);
-        int col = 0;
-        for (String name : names) {
+        var buf = new StringBuilder();
+        var f = new Formatter(buf);
+        var col = 0;
+        for (var name : names) {
             f.format("%-12s", name);
             if (++col % 6 == 0) {
                 buf.append("\n");
@@ -407,7 +407,7 @@ class Interp {
      */
     static void substitute_alias(DESCRIPTOR_DATA d, String argument) {
         int alias;
-        CHAR_DATA ch = d.original != null ? d.original : d.character;
+        var ch = d.original != null ? d.original : d.character;
 
         /* check for prefix */
         if (!ch.prefix.isEmpty() && str_prefix("prefix", argument)) {
@@ -425,7 +425,7 @@ class Interp {
             return;
         }
 
-        StringBuilder buf = new StringBuilder(argument);
+        var buf = new StringBuilder(argument);
 
         /* go through the aliases */
         for (alias = 0; alias < nw_config.max_alias; alias++) {
@@ -434,8 +434,8 @@ class Interp {
             }
 
             if (!str_prefix(ch.pcdata.alias[alias], argument)) {
-                StringBuilder name = new StringBuilder();
-                String point = one_argument(argument, name);
+                var name = new StringBuilder();
+                var point = one_argument(argument, name);
                 if (ch.pcdata.alias[alias].matches(name.toString())) {
                     buf.setLength(0);
                     buf.append(ch.pcdata.alias_sub[alias]);
@@ -472,7 +472,7 @@ class Interp {
             return;
         }
 
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
 
@@ -490,12 +490,12 @@ class Interp {
                     break;
                 }
 
-                String buf = "    " + rch.pcdata.alias[pos] + ":  " + rch.pcdata.alias_sub[pos] + "\n";
+                var buf = "    " + rch.pcdata.alias[pos] + ":  " + rch.pcdata.alias_sub[pos] + "\n";
                 send_to_char(buf, ch);
             }
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (!str_prefix("una", arg) || !str_cmp("alias", arg)) {
             send_to_char("Sorry, that word is reserved.\n", ch);
@@ -510,7 +510,7 @@ class Interp {
                 }
 
                 if (!str_cmp(arg, rch.pcdata.alias[pos])) {
-                    String buf = rch.pcdata.alias[pos] + " aliases to '" + rch.pcdata.alias_sub[pos] + "'.\n";
+                    var buf = rch.pcdata.alias[pos] + " aliases to '" + rch.pcdata.alias_sub[pos] + "'.\n";
                     send_to_char(buf, ch);
                     return;
                 }
@@ -552,7 +552,7 @@ class Interp {
     static void do_unalias(CHAR_DATA ch, String argument) {
 
         int pos;
-        boolean found = false;
+        var found = false;
         CHAR_DATA rch;
         if (ch.desc == null) {
             rch = ch;
@@ -564,7 +564,7 @@ class Interp {
             return;
         }
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {

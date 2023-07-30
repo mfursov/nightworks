@@ -266,7 +266,7 @@ class Comm {
         selector = SelectorProvider.provider().openSelector();
         serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
-        InetSocketAddress isa = new InetSocketAddress(port);
+        var isa = new InetSocketAddress(port);
         serverChannel.socket().bind(isa);
     }
 
@@ -285,7 +285,7 @@ class Comm {
             while (!nw_down) {
                 Set<SelectionKey> readyKeys;
                 Iterator<SelectionKey> it;
-                int nKeys = selector.selectNow();
+                var nKeys = selector.selectNow();
                 if (nKeys > 0) {
                     System.out.println("Selector returned " + nKeys + " ready for IO operations");
                     readyKeys = selector.selectedKeys();
@@ -293,11 +293,11 @@ class Comm {
                     // accept new connections
                     it = readyKeys.iterator();
                     while (it.hasNext()) {
-                        SelectionKey key = it.next();
+                        var key = it.next();
                         if (key.isAcceptable()) {
                             it.remove();
-                            ServerSocketChannel nextReady = (ServerSocketChannel) key.channel();
-                            SocketChannel channel = nextReady.accept();
+                            var nextReady = (ServerSocketChannel) key.channel();
+                            var channel = nextReady.accept();
                             init_descriptor(channel);
                         }
                     }
@@ -305,10 +305,10 @@ class Comm {
                     // process input from all connections
                     it = readyKeys.iterator();
                     while (it.hasNext()) {
-                        SelectionKey key = it.next();
+                        var key = it.next();
                         if (key.isReadable()) {
                             it.remove();
-                            boolean connectionOk = read_from_descriptor((DESCRIPTOR_DATA) key.attachment());
+                            var connectionOk = read_from_descriptor((DESCRIPTOR_DATA) key.attachment());
                             if (!connectionOk) {
                                 key.channel().close();
                             }
@@ -349,7 +349,7 @@ class Comm {
                 // process output
                 for (DESCRIPTOR_DATA d = descriptor_list, d_next; d != null; d = d_next) {
                     d_next = d.next;
-                    boolean close = !d.descriptor.isConnected();
+                    var close = !d.descriptor.isConnected();
                     if (!close && (d.fcommand || !d.outbuf.isEmpty())) {
                         if (!process_output(d, true)) {
                             close = true;
@@ -380,10 +380,10 @@ class Comm {
     static void init_descriptor(SocketChannel channel) throws IOException {
 
         channel.configureBlocking(false);
-        SelectionKey readKey = channel.register(selector, SelectionKey.OP_READ);
+        var readKey = channel.register(selector, SelectionKey.OP_READ);
 
         //Cons a new descriptor.
-        DESCRIPTOR_DATA dnew = new DESCRIPTOR_DATA();
+        var dnew = new DESCRIPTOR_DATA();
 
         dnew.descriptor = channel;
         dnew.connected = CON_GET_NAME;
@@ -430,7 +430,7 @@ class Comm {
             write_to_buffer(dclose.snoop_by, "Your victim has left the game.\n");
         }
 
-        for (DESCRIPTOR_DATA d = descriptor_list; d != null; d = d.next) {
+        for (var d = descriptor_list; d != null; d = d.next) {
             if (d.snoop_by == dclose) {
                 d.snoop_by = null;
             }
@@ -487,7 +487,7 @@ class Comm {
     static boolean read_from_descriptor(DESCRIPTOR_DATA d) {
         try {
             byteBuffer.clear();
-            int nbytes = d.descriptor.read(byteBuffer);
+            var nbytes = d.descriptor.read(byteBuffer);
             if (nbytes == -1) {
                 return false;
             }
@@ -502,7 +502,7 @@ class Comm {
             }
             byteBuffer.flip();
             while (byteBuffer.remaining() > 0) {
-                byte c = byteBuffer.get();
+                var c = byteBuffer.get();
                 if (c > 0) {
                     if (c == IAC) { //Interpret As Command
                         if (byteBuffer.remaining() == 0) {
@@ -549,7 +549,7 @@ class Comm {
         /*
         * Look for at least one new line.
         */
-        int lineEnd = d.inbuf.indexOf("\n");
+        var lineEnd = d.inbuf.indexOf("\n");
         if (lineEnd == -1) {
             return;
         }
@@ -574,7 +574,7 @@ class Comm {
                 if (++d.repeat >= 25)    /* corrected by chronos */ {
                     log_string(d.host + " input spamming!");
                     if (d.character != null) {
-                        TextBuffer buf = new TextBuffer();
+                        var buf = new TextBuffer();
                         buf.sprintf("SPAM SPAM SPAM %s spamming, and OUT!", d.character.name);
                         wiznet(buf, d.character, null, WIZ_SPAM, 0, get_trust(d.character));
                         buf.sprintf("[%s]'s  Inlast:[%s] Incomm:[%s]!", d.character.name, d.inlast, d.incomm);
@@ -674,7 +674,7 @@ class Comm {
             write_to_buffer(d.snoop_by, "> ");
             write_to_buffer(d.snoop_by, d.outbuf);
         }
-        for (Object o : d.outbuf) {
+        for (var o : d.outbuf) {
             if (!write_to_descriptor(d.descriptor, o)) {
                 break;
             }
@@ -690,7 +690,7 @@ class Comm {
      * Bust a prompt (player settable prompt) coded by Morgenes for Aldara Mud
      */
     static void bust_a_prompt(CHAR_DATA ch) {
-        String str = ch.prompt;
+        var str = ch.prompt;
 
         if (str == null || str.length() == 0) {
             send_to_char("<" + ch.hit + "hp " + ch.mana + "m " + ch.move + "mv> " + ch.prefix, ch);
@@ -698,10 +698,10 @@ class Comm {
         }
 
 
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         String i;
-        for (int p = 0; p < str.length(); p++) {
-            char c = str.charAt(p);
+        for (var p = 0; p < str.length(); p++) {
+            var c = str.charAt(p);
             if (c != '%') {
                 buf.append(c);
                 continue;
@@ -709,13 +709,11 @@ class Comm {
             p++;
             c = p < str.length() ? str.charAt(p) : 0;
             switch (c) {
-                default:
-                    i = " ";
-                    break;
-                case 'e':
-                    StringBuilder doors = new StringBuilder();
-                    for (int door = 0; door < 6; door++) {
-                        EXIT_DATA pexit = ch.in_room.exit[door];
+                default -> i = " ";
+                case 'e' -> {
+                    var doors = new StringBuilder();
+                    for (var door = 0; door < 6; door++) {
+                        var pexit = ch.in_room.exit[door];
                         if (pexit != null
                                 && pexit.to_room != null
                                 && (can_see_room(ch, pexit.to_room)
@@ -725,27 +723,22 @@ class Comm {
                             doors.append(dir_name_char[door]);
                         }
                     }
-                    i = doors.length() == 0 ? "none" : doors.toString();
-                    break;
-                case 'c':
-                    i = "\n";
-                    break;
+                    i = doors.isEmpty() ? "none" : doors.toString();
+                }
+                case 'c' -> i = "\n";
+
 /** added from here by KIO   **/
-                case 'n':
-                    i = ch.name;
-                    break;
-                case 'S':
-                    i = (ch.sex == SEX_MALE ? "Male" : (ch.sex == 0 ? "None" : "Female"));
-                    break;
-                case 'y':
+                case 'n' -> i = ch.name;
+                case 'S' -> i = (ch.sex == SEX_MALE ? "Male" : (ch.sex == 0 ? "None" : "Female"));
+                case 'y' -> {
                     if (ch.hit >= 0) {
                         i = ((100 * ch.hit) / UMAX(1, ch.max_hit)) + "%%";
                     } else {
                         i = "BAD!!";
                     }
-                    break;
-                case 'o':
-                    CHAR_DATA victim = ch.fighting;
+                }
+                case 'o' -> {
+                    var victim = ch.fighting;
                     if (victim != null) {
                         if (victim.hit >= 0) {
                             i = "{Y" + ((100 * victim.hit) / UMAX(1, victim.max_hit)) + "%{x";
@@ -755,72 +748,46 @@ class Comm {
                     } else {
                         i = "None";
                     }
-
-                    break;
+                }
 /***** FInished ****/
 
-/* Thanx to zihni:  T for time */
-                case 'T':
-                    i = ((time_info.hour % 12 == 0) ? 12 : time_info.hour % 12) + " " + (time_info.hour >= 12 ? "pm" : "am");
-                    break;
-                case 'h':
-                    i = String.valueOf(ch.hit);
-                    break;
-                case 'H':
-                    i = String.valueOf(ch.max_hit);
-                    break;
-                case 'm':
-                    i = String.valueOf(ch.mana);
-                    break;
-                case 'M':
-                    i = String.valueOf(ch.max_mana);
-                    break;
-                case 'v':
-                    i = String.valueOf(ch.move);
-                    break;
-                case 'V':
-                    i = String.valueOf(ch.max_move);
-                    break;
-                case 'x':
-                    i = String.valueOf(ch.exp);
-                    break;
-                case 'X':
-                    i = "" + (IS_NPC(ch) ? 0 : exp_to_level(ch, ch.pcdata.points));
-                    break;
-                case 'g':
-                    i = String.valueOf(ch.gold);
-                    break;
-                case 's':
-                    i = String.valueOf(ch.silver);
-                    break;
-                case 'a':
-                    i = IS_GOOD(ch) ? "good" : IS_EVIL(ch) ? "evil" : "neutral";
-                    break;
-                case 'r':
+                /* Thanx to zihni:  T for time */
+                case 'T' ->
+                        i = ((time_info.hour % 12 == 0) ? 12 : time_info.hour % 12) + " " + (time_info.hour >= 12 ? "pm" : "am");
+                case 'h' -> i = String.valueOf(ch.hit);
+                case 'H' -> i = String.valueOf(ch.max_hit);
+                case 'm' -> i = String.valueOf(ch.mana);
+                case 'M' -> i = String.valueOf(ch.max_mana);
+                case 'v' -> i = String.valueOf(ch.move);
+                case 'V' -> i = String.valueOf(ch.max_move);
+                case 'x' -> i = String.valueOf(ch.exp);
+                case 'X' -> i = "" + (IS_NPC(ch) ? 0 : exp_to_level(ch, ch.pcdata.points));
+                case 'g' -> i = String.valueOf(ch.gold);
+                case 's' -> i = String.valueOf(ch.silver);
+                case 'a' -> i = IS_GOOD(ch) ? "good" : IS_EVIL(ch) ? "evil" : "neutral";
+                case 'r' -> {
                     if (ch.in_room != null) {
                         i = ((!IS_NPC(ch) && IS_SET(ch.act, PLR_HOLYLIGHT))
                                 || (!IS_AFFECTED(ch, AFF_BLIND) && !room_is_dark(ch))) ? ch.in_room.name : "darkness";
                     } else {
                         i = " ";
                     }
-                    break;
-                case 'R':
+                }
+                case 'R' -> {
                     if (IS_IMMORTAL(ch) && ch.in_room != null) {
                         i = String.valueOf(ch.in_room.vnum);
                     } else {
                         i = " ";
                     }
-                    break;
-                case 'z':
+                }
+                case 'z' -> {
                     if (IS_IMMORTAL(ch) && ch.in_room != null) {
                         i = ch.in_room.area.name;
                     } else {
                         i = " ";
                     }
-                    break;
-                case '%':
-                    i = "%%";
-                    break;
+                }
+                case '%' -> i = "%%";
             }
             buf.append(i);
         }
@@ -872,17 +839,17 @@ class Comm {
         try {
             ByteBuffer buf;
             if (data instanceof CharSequence) {
-                String text = data.toString();
-                for (int i = 0; i < text.length(); i++) {
-                    char c = text.charAt(i);
+                var text = data.toString();
+                for (var i = 0; i < text.length(); i++) {
+                    var c = text.charAt(i);
                     if (c == '{') {
                         i++;
                         if (i < text.length()) {
-                            char c2 = text.charAt(i);
+                            var c2 = text.charAt(i);
                             if (c2 == '{') {
                                 outBuf.append("{");
                             } else {
-                                String colorMask = Telnet.toColor(c2);
+                                var colorMask = Telnet.toColor(c2);
                                 outBuf.append(colorMask);
                             }
                         }
@@ -929,7 +896,7 @@ class Comm {
 
 
     static boolean check_name_connected(DESCRIPTOR_DATA inp, String argument) {
-        for (DESCRIPTOR_DATA d = descriptor_list; d != null; d = d.next) {
+        for (var d = descriptor_list; d != null; d = d.next) {
             if (inp != d && d.character != null && inp.character != null) {
                 if (argument.equals(d.character.name)) {
                     return true;
@@ -947,8 +914,8 @@ class Comm {
         boolean fOld;
         argument = argument.trim();
 
-        CHAR_DATA ch = d.character;
-        StringBuilder arg = new StringBuilder();
+        var ch = d.character;
+        var arg = new StringBuilder();
         Clazz iClass;
 
         switch (d.connected) {
@@ -998,7 +965,7 @@ class Comm {
 
                     if (!IS_IMMORTAL(ch) && !IS_SET(ch.act, PLR_CANINDUCT)) {
                         if (iNumPlayers >= max_oldies && fOld) {
-                            String buf = "\nThere are currently " + iNumPlayers
+                            var buf = "\nThere are currently " + iNumPlayers
                                     + " players mudding out of a maximum of " + max_oldies + ".\n" +
                                     "Please try again soon.\n";
                             write_to_buffer(d, buf);
@@ -1007,7 +974,7 @@ class Comm {
                         }
 
                         if (iNumPlayers >= max_newbies && !fOld) {
-                            String buf = "\nThere are currently " + iNumPlayers + " players mudding."
+                            var buf = "\nThere are currently " + iNumPlayers + " players mudding."
                                     + "New player creation is limited to \n"
                                     + "when there are less than " + max_newbies + " players. Please try again soon.\n";
                             write_to_buffer(d, buf);
@@ -1085,12 +1052,12 @@ class Comm {
                 }
 
                 /* Count objects in loaded player file */
-                int obj_count = 0;
-                for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
+                var obj_count = 0;
+                for (var obj = ch.carrying; obj != null; obj = obj.next_content) {
                     obj_count += get_obj_realnumber(obj);
                 }
 
-                String buf = ch.name;
+                var buf = ch.name;
 
                 free_char(ch);
                 fOld = load_char_obj(d, buf);
@@ -1104,8 +1071,8 @@ class Comm {
                 }
 
                 /* Count objects in refreshed player file */
-                int obj_count2 = 0;
-                for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
+                var obj_count2 = 0;
+                for (var obj = ch.carrying; obj != null; obj = obj.next_content) {
                     obj_count2 += get_obj_realnumber(obj);
                 }
 
@@ -1135,7 +1102,7 @@ class Comm {
                 switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
                     case 'y':
                     case 'Y':
-                        for (DESCRIPTOR_DATA d_old = descriptor_list; d_old != null; d_old = d_next) {
+                        for (var d_old = descriptor_list; d_old != null; d_old = d_next) {
                             d_next = d_old.next;
                             if (d_old == d || d_old.character == null) {
                                 continue;
@@ -1204,7 +1171,7 @@ class Comm {
                     return;
                 }
 
-                String pwdnew = crypt(argument, ch.name);
+                var pwdnew = crypt(argument, ch.name);
                 if (pwdnew.indexOf('~') != -1) {
                     write_to_buffer(d, "New password not acceptable, try again.\nPassword: ");
                     return;
@@ -1256,13 +1223,13 @@ class Comm {
                     break;
                 }
 
-                Race race = Race.lookupRaceByPrefix(argument);
+                var race = Race.lookupRaceByPrefix(argument);
 
                 if (race == null || race.pcRace == null) {
                     write_to_buffer(d, "That is not a valid race.\n");
                     write_to_buffer(d, "The following races are available:\n  ");
-                    ArrayList<Race> races = Race.listRaces();
-                    for (int i = 0; i < races.size(); i++) {
+                    var races = Race.listRaces();
+                    for (var i = 0; i < races.size(); i++) {
                         race = races.get(i);
                         if (race.pcRace == null) {
                             break;
@@ -1282,7 +1249,7 @@ class Comm {
 
                 SET_ORG_RACE(ch, race);
                 ch.race = race;
-                for (int i = 0; i < MAX_STATS; i++) {
+                for (var i = 0; i < MAX_STATS; i++) {
                     ch.mod_stat[i] = 0;
                 }
 
@@ -1291,7 +1258,7 @@ class Comm {
           ch.mod_stat[i] += pc_race_table[race].stats[i];    */
 
                 /* Add race modifiers */
-                PCRace pc_race = race.pcRace;
+                var pc_race = race.pcRace;
                 ch.max_hit += pc_race.hp_bonus;
                 ch.hit = ch.max_hit;
                 ch.max_mana += pc_race.mana_bonus;
@@ -1306,8 +1273,8 @@ class Comm {
                 ch.parts = race.parts;
 
                 /* add skills */
-                for (Skill skill : pc_race.skills) {
-                    int sn = skill.ordinal();
+                for (var skill : pc_race.skills) {
+                    var sn = skill.ordinal();
                     ch.pcdata.learned[sn] = 100;
                 }
                 /* add cost */
@@ -1340,11 +1307,11 @@ class Comm {
 
                 do_help(ch, "class help");
 
-                StringBuilder bbuf = new StringBuilder("Select a class:\n[ ");
-                StringBuilder buf1 = new StringBuilder("(Continuing:)  ");
-                ArrayList<Clazz> classes = Clazz.getClasses();
-                for (int i = 0; i < classes.size(); i++) {
-                    Clazz c = classes.get(i);
+                var bbuf = new StringBuilder("Select a class:\n[ ");
+                var buf1 = new StringBuilder("(Continuing:)  ");
+                var classes = Clazz.getClasses();
+                for (var i = 0; i < classes.size(); i++) {
+                    var c = classes.get(i);
                     if (class_ok(ch, c)) {
                         if (i < 7) {
                             bbuf.append(c.name).append(" ");
@@ -1388,12 +1355,12 @@ class Comm {
                 ch.pcdata.points += iClass.points;
                 write_to_buffer(d, "You are now " + iClass.name + ".\n");
 
-                for (int i = 0; i < MAX_STATS; i++) {
+                for (var i = 0; i < MAX_STATS; i++) {
                     ch.perm_stat[i] = number_range(10, (20 + ORG_RACE(ch).pcRace.stats[i] + ch.clazz.stats[i]));
                     ch.perm_stat[i] = UMIN(25, ch.perm_stat[i]);
                 }
             {
-                Formatter statsf = new Formatter();
+                var statsf = new Formatter();
                 statsf.format("Str:%s  Int:%s  Wis:%s  Dex:%s  Con:%s Cha:%s \n Accept (Y/N)? ",
                         get_stat_alias(ch, STAT_STR),
                         get_stat_alias(ch, STAT_INT),
@@ -1420,7 +1387,7 @@ class Comm {
                         break;
                     case 'y':
                     case 'Y':
-                        for (int i = 0; i < MAX_STATS; i++) {
+                        for (var i = 0; i < MAX_STATS; i++) {
                             ch.mod_stat[i] = 0;
                         }
                         write_to_buffer(d, "\n");
@@ -1438,12 +1405,12 @@ class Comm {
                     case 'n':
                     case 'N':
 
-                        for (int i = 0; i < MAX_STATS; i++) {
+                        for (var i = 0; i < MAX_STATS; i++) {
                             ch.perm_stat[i] = number_range(10, (20 + ORG_RACE(ch).pcRace.stats[i] + ch.clazz.stats[i]));
                             ch.perm_stat[i] = UMIN(25, ch.perm_stat[i]);
                         }
                     {
-                        Formatter statsf = new Formatter();
+                        var statsf = new Formatter();
                         statsf.format("Str:%s  Int:%s  Wis:%s  Dex:%s  Con:%s Cha:%s \n Accept (Y/N)? ",
                                 get_stat_alias(ch, STAT_STR),
                                 get_stat_alias(ch, STAT_INT),
@@ -1574,8 +1541,8 @@ class Comm {
                     }
                 } else {
                     ch.endur = 0;
-                    DESCRIPTOR_DATA d1 = ch.desc;
-                    boolean chooseEthos = true;
+                    var d1 = ch.desc;
+                    var chooseEthos = true;
                     if (ch.clazz.ethos != ETHOS_ANY) {
                         ch.ethos = ch.clazz.ethos;
                         write_to_buffer(d1, "You are " + upfirst(ethos_table[ch.ethos].name) + ".\n");
@@ -1682,7 +1649,7 @@ class Comm {
                 do_outfit(ch);
             } else if (ch.in_room != null) {
                 if (cabal_area_check(ch)) {
-                    int i = 1;
+                    var i = 1;
 
                     if (IS_GOOD(ch)) {
                         i = 0;
@@ -1725,7 +1692,7 @@ class Comm {
                 ch.act = REMOVE_BIT(ch.act, PLR_CHANGED_AFF);
             }
 
-            for (int i = 0; i < MAX_STATS; i++) {
+            for (var i = 0; i < MAX_STATS; i++) {
                 if (ch.perm_stat[i] > (20 + ORG_RACE(ch).pcRace.stats[i] + ch.clazz.stats[i])) {
                     ch.train += (ch.perm_stat[i] - (20 + ORG_RACE(ch).pcRace.stats[i] + ch.clazz.stats[i]));
                     ch.perm_stat[i] = (20 + ORG_RACE(ch).pcRace.stats[i] + ch.clazz.stats[i]);
@@ -1795,9 +1762,9 @@ class Comm {
         * Alphanumerics only.
         */
         {
-            int total_caps = 0;
-            for (int i = 0; i < name.length(); i++) {
-                char c = name.charAt(i);
+            var total_caps = 0;
+            for (var i = 0; i < name.length(); i++) {
+                var c = name.charAt(i);
                 if (!Character.isLetter(c)) {
                     return false;
                 }
@@ -1837,7 +1804,7 @@ class Comm {
 */
 
     static boolean check_reconnect(DESCRIPTOR_DATA d, String name, boolean fConn) {
-        for (CHAR_DATA ch = char_list; ch != null; ch = ch.next) {
+        for (var ch = char_list; ch != null; ch = ch.next) {
             if (!IS_NPC(ch) && (!fConn || ch.desc == null) && !str_cmp(d.character.name, ch.name)) {
                 if (!fConn) {
                     d.character.pcdata.pwd = ch.pcdata.pwd;
@@ -1870,7 +1837,7 @@ class Comm {
 */
 
     static boolean check_playing(DESCRIPTOR_DATA d, String name) {
-        for (DESCRIPTOR_DATA dold = descriptor_list; dold != null; dold = dold.next) {
+        for (var dold = descriptor_list; dold != null; dold = dold.next) {
             if (dold != d && dold.character != null && dold.connected != CON_GET_NAME
                     && dold.connected != CON_GET_OLD_PASSWORD
                     && !str_cmp(name, dold.original != null ? dold.original.name : dold.character.name)) {
@@ -1929,9 +1896,9 @@ class Comm {
 /* string pager */
 
     static void show_string(DESCRIPTOR_DATA d, String input) {
-        StringBuilder buf = new StringBuilder();
+        var buf = new StringBuilder();
         one_argument(input, buf);
-        if (buf.length() > 0) {
+        if (!buf.isEmpty()) {
             d.showstr_head = null;
             d.showstr_point = 0;
             return;
@@ -1944,7 +1911,7 @@ class Comm {
         }
 
         int toggle = 1, lines = 0;
-        StringBuilder buffer = new StringBuilder();
+        var buffer = new StringBuilder();
         for (; ; d.showstr_point++) {
             char c;
             if (d.showstr_head.length() == d.showstr_point) {
@@ -1958,7 +1925,7 @@ class Comm {
             }
             if (c == 0 || (show_lines > 0 && lines >= show_lines)) {
                 write_to_buffer(d, buffer);
-                int chk = d.showstr_point;
+                var chk = d.showstr_point;
                 while (chk < d.showstr_head.length() && isSpace(d.showstr_head.charAt(chk))) {
                     chk++;
                 }
@@ -2002,8 +1969,8 @@ class Comm {
             return;
         }
 
-        CHAR_DATA vch = arg2 instanceof CHAR_DATA ? (CHAR_DATA) arg2 : null;
-        CHAR_DATA to = ch.in_room.people;
+        var vch = arg2 instanceof CHAR_DATA ? (CHAR_DATA) arg2 : null;
+        var to = ch.in_room.people;
         if (type == TO_VICT) {
             if (vch == null) {
                 bug("Act: null vch with TO_VICT.");
@@ -2015,8 +1982,8 @@ class Comm {
             to = vch.in_room.people;
         }
 
-        StringBuilder buf = new StringBuilder();
-        StringBuilder fname = new StringBuilder();
+        var buf = new StringBuilder();
+        var fname = new StringBuilder();
         for (; to != null; to = to.next_in_room) {
             buf.setLength(0);
             if (to.desc == null || to.position < min_pos) {
@@ -2036,8 +2003,8 @@ class Comm {
                 continue;
             }
 
-            for (int ii = 0; ii < actStr.length(); ii++) {
-                char c = actStr.charAt(ii);
+            for (var ii = 0; ii < actStr.length(); ii++) {
+                var c = actStr.charAt(ii);
                 if (c != '$') {
                     buf.append(c);
                     continue;
@@ -2091,7 +2058,7 @@ class Comm {
             buf.append("\n");
             /* fix for color prefix and capitalization */
             if (buf.charAt(0) == 0x1B) {
-                int n = buf.indexOf("m", 1);
+                var n = buf.indexOf("m", 1);
                 buf.setCharAt(n + 1, UPPER(buf.charAt(n + 1)));
             } else {
                 buf.setCharAt(0, UPPER(buf.charAt(0)));
@@ -2112,14 +2079,14 @@ class Comm {
 
     static int log_area_popularity() {
         AREA_DATA area;
-        File file = new File("area_stat.txt");
+        var file = new File("area_stat.txt");
         if (file.exists()) {
             //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
         try {
-            try (FileWriter fp = new FileWriter(nw_config.var_astat_file, true)) {
-                Formatter f = new Formatter(fp);
+            try (var fp = new FileWriter(nw_config.var_astat_file, true)) {
+                var f = new Formatter(fp);
                 f.format("\nBooted %s Area popularity statistics (in String  ticks)\n", new Date(boot_time));
                 for (area = area_first; area != null; area = area.next) {
                     if (area.count >= 5000000) {
@@ -2265,7 +2232,7 @@ class Comm {
     }
 
     static int align_restrict(CHAR_DATA ch) {
-        DESCRIPTOR_DATA d = ch.desc;
+        var d = ch.desc;
 
         if (IS_SET(ORG_RACE(ch).pcRace.align, CR_GOOD) || IS_SET(ch.clazz.align, CR_GOOD)) {
             write_to_buffer(d, "Your character has good tendencies.\n");
@@ -2288,7 +2255,7 @@ class Comm {
     }
 
     static boolean hometown_check(CHAR_DATA ch) {
-        DESCRIPTOR_DATA d = ch.desc;
+        var d = ch.desc;
 
         if (ch.clazz == Clazz.NECROMANCER || ch.clazz == Clazz.VAMPIRE) {
             write_to_buffer(d, "\n");
@@ -2298,7 +2265,7 @@ class Comm {
             return true;
         }
 
-        Race race = ORG_RACE(ch);
+        var race = ORG_RACE(ch);
         if (race == Race.STORM_GIANT || race == Race.CLOUD_GIANT || race == Race.FIRE_GIANT || race == Race.FROST_GIANT) {
             write_to_buffer(d, "\n");
             write_to_buffer(d, "Your hometown is Valley of Titans, permanently.\n");

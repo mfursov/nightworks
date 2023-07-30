@@ -67,7 +67,7 @@ import static net.sf.nightworks.Update.gain_condition;
 class Effects {
     static void acid_effect(Object vo, int level, int dam, int target) {
         if (target == TARGET_ROOM) /* nail objects on the floor */ {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             for (obj = room.contents; obj != null; obj = obj_next) {
@@ -78,7 +78,7 @@ class Effects {
         }
 
         if (target == TARGET_CHAR)  /* do the effect on a victim */ {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             /* let's toast some gear */
@@ -90,7 +90,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ) /* toast an object */ {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             OBJ_DATA t_obj, n_obj;
             int chance;
 
@@ -148,7 +148,7 @@ class Effects {
 
             if (obj.item_type == ITEM_ARMOR)  /* etch it */ {
                 AFFECT_DATA paf;
-                boolean af_found = false;
+                var af_found = false;
                 int i;
 
                 affect_enchant(obj);
@@ -210,7 +210,7 @@ class Effects {
 
     static void cold_effect(Object vo, int level, int dam, int target) {
         if (target == TARGET_ROOM) /* nail objects on the floor */ {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             for (obj = room.contents; obj != null; obj = obj_next) {
@@ -221,12 +221,12 @@ class Effects {
         }
 
         if (target == TARGET_CHAR) /* whack a character */ {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             /* chill touch effect */
             if (!saves_spell(level / 4 + dam / 20, victim, DAM_COLD)) {
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
 
                 act("$n turns blue and shivers.", victim, null, null, TO_ROOM);
                 act("A chill sinks deep into your bones.", victim, null, null, TO_CHAR);
@@ -254,7 +254,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ) /* toast an object */ {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             int chance;
 
             if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
@@ -314,7 +314,7 @@ class Effects {
     static void fire_effect(Object vo, int level, int dam, int target) {
 
         if (target == TARGET_ROOM)  /* nail objects on the floor */ {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
             for (obj = room.contents; obj != null; obj = obj_next) {
                 obj_next = obj.next_content;
@@ -324,13 +324,13 @@ class Effects {
         }
 
         if (target == TARGET_CHAR)   /* do the effect on a victim */ {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             /* chance of blindness */
             if (!IS_AFFECTED(victim, AFF_BLIND)
                     && !saves_spell(level / 4 + dam / 20, victim, DAM_FIRE)) {
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 act("$n is blinded by smoke!", victim, null, null, TO_ROOM);
                 act("Your eyes tear up from smoke...you can't see a thing!",
                         victim, null, null, TO_CHAR);
@@ -361,7 +361,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ)  /* toast an object */ {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             OBJ_DATA t_obj, n_obj;
             int chance;
 
@@ -450,7 +450,7 @@ class Effects {
 
     static void poison_effect(Object vo, int level, int dam, int target) {
         if (target == TARGET_ROOM)  /* nail objects on the floor */ {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             for (obj = room.contents; obj != null; obj = obj_next) {
@@ -461,12 +461,12 @@ class Effects {
         }
 
         if (target == TARGET_CHAR)   /* do the effect on a victim */ {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             /* chance of poisoning */
             if (!saves_spell(level / 4 + dam / 20, victim, DAM_POISON)) {
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
 
                 send_to_char("You feel poison coursing through your veins.\n", victim);
                 act("$n looks very ill.", victim, null, null, TO_ROOM);
@@ -490,7 +490,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ)  /* do some poisoning */ {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             int chance;
 
 
@@ -537,7 +537,7 @@ class Effects {
 
     static void shock_effect(Object vo, int level, int dam, int target) {
         if (target == TARGET_ROOM) {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             for (obj = room.contents; obj != null; obj = obj_next) {
@@ -548,7 +548,7 @@ class Effects {
         }
 
         if (target == TARGET_CHAR) {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             /* daze and confused? */
@@ -566,7 +566,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ) {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             int chance;
 
             if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
@@ -624,7 +624,7 @@ class Effects {
 
     static void sand_effect(Object vo, int level, int dam, int target) {
         if (target == TARGET_ROOM) /* nail objects on the floor */ {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             for (obj = room.contents; obj != null; obj = obj_next) {
@@ -635,12 +635,12 @@ class Effects {
         }
 
         if (target == TARGET_CHAR)  /* do the effect on a victim */ {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             if (!IS_AFFECTED(victim, AFF_BLIND)
                     && !saves_spell(level / 4 + dam / 20, victim, DAM_COLD)) {
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 act("$n is blinded by flying sands!", victim, null, null, TO_ROOM);
                 act("Your eyes tear up from sands...you can't see a thing!",
                         victim, null, null, TO_CHAR);
@@ -665,7 +665,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ) /* toast an object */ {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             OBJ_DATA t_obj, n_obj;
             int chance;
 
@@ -733,7 +733,7 @@ class Effects {
 
             if (obj.item_type == ITEM_ARMOR)  /* etch it */ {
                 AFFECT_DATA paf;
-                boolean af_found = false;
+                var af_found = false;
                 int i;
 
                 affect_enchant(obj);
@@ -795,7 +795,7 @@ class Effects {
     static void scream_effect(Object vo, int level, int dam, int target) {
 
         if (target == TARGET_ROOM)  /* nail objects on the floor */ {
-            ROOM_INDEX_DATA room = (ROOM_INDEX_DATA) vo;
+            var room = (ROOM_INDEX_DATA) vo;
             OBJ_DATA obj, obj_next;
             for (obj = room.contents; obj != null; obj = obj_next) {
                 obj_next = obj.next_content;
@@ -805,11 +805,11 @@ class Effects {
         }
 
         if (target == TARGET_CHAR)   /* do the effect on a victim */ {
-            CHAR_DATA victim = (CHAR_DATA) vo;
+            var victim = (CHAR_DATA) vo;
             OBJ_DATA obj, obj_next;
 
             if (!saves_spell(level / 4 + dam / 20, victim, DAM_SOUND)) {
-                AFFECT_DATA af = new AFFECT_DATA();
+                var af = new AFFECT_DATA();
                 act("$n can't hear anything!", victim, null, null, TO_ROOM);
                 act("You can't hear a thing!", victim, null, null, TO_CHAR);
 
@@ -845,7 +845,7 @@ class Effects {
         }
 
         if (target == TARGET_OBJ)  /* toast an object */ {
-            OBJ_DATA obj = (OBJ_DATA) vo;
+            var obj = (OBJ_DATA) vo;
             OBJ_DATA t_obj, n_obj;
             int chance;
 

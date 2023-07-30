@@ -58,7 +58,7 @@ class Healer {
             send_to_char("You are BattleRager, not a filthy magician.\n", ch);
             return;
         }
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
 
         if (argb.isEmpty()) {
@@ -79,8 +79,8 @@ class Healer {
             send_to_char(" Type heal <type> to be healed.\n", ch);
             return;
         }
-        int expl = 0;
-        String arg = argb.toString();
+        var expl = 0;
+        var arg = argb.toString();
         if (!str_prefix(arg, "light")) {
             sn = Skill.gsn_cure_light;
             words = "judicandus dies";

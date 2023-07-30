@@ -222,7 +222,7 @@ public class Tables {
         }
 
         public static String getFlagName(int bit, flag_type[] table) {
-            for (flag_type flag : table) {
+            for (var flag : table) {
                 if (flag.bit == bit) {
                     return flag.name;
                 }
@@ -233,9 +233,9 @@ public class Tables {
         public static long parseFlagsValue(String flags, flag_type[] table) {
             long res = 0;
             while (!flags.isEmpty()) {
-                StringBuilder nextFlag = new StringBuilder();
+                var nextFlag = new StringBuilder();
                 flags = one_argument(flags, nextFlag);
-                long flag = getFlagValue(nextFlag.toString(), table);
+                var flag = getFlagValue(nextFlag.toString(), table);
                 res = res | flag;
             }
             return res;
@@ -243,7 +243,7 @@ public class Tables {
 
 
         private static long getFlagValue(String oneFlagName, flag_type[] table) {
-            for (flag_type flag : table) {
+            for (var flag : table) {
                 if (oneFlagName.equals(flag.name)) {
                     return flag.bit;
                 }
@@ -263,8 +263,8 @@ public class Tables {
         }
 
         public static int getIndexInTable(String short_name) {
-            for (int i = 0; i < position_table.length; i++) {
-                position_type position_type = position_table[i];
+            for (var i = 0; i < position_table.length; i++) {
+                var position_type = position_table[i];
                 if (position_type.short_name.equals(short_name)) {
                     return i;
                 }

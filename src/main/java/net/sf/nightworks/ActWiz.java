@@ -306,8 +306,8 @@ class ActWiz {
             send_to_char("You are not a cabal member yet.\n", ch);
             return;
         }
-        TextBuffer buf1 = new TextBuffer();
-        TextBuffer buf2 = new TextBuffer();
+        var buf1 = new TextBuffer();
+        var buf2 = new TextBuffer();
         for (i = 1; i < MAX_CABAL; i++) {
             if (IS_IMMORTAL(ch) || ch.cabal == i) {
                 show = 1;
@@ -345,8 +345,8 @@ class ActWiz {
     static void do_objlist(CHAR_DATA ch) {
         OBJ_DATA obj;
         try {
-            try (FileWriter fp = new FileWriter("objlist.txt")) {
-                Formatter ff = new Formatter(fp);
+            try (var fp = new FileWriter("objlist.txt")) {
+                var ff = new Formatter(fp);
                 for (obj = object_list; obj != null; obj = obj.next) {
                     if (CAN_WEAR(obj, ITEM_WIELD) && (obj.level < 25 && obj.level > 15)) {
                         ff.format("\n#Obj: %s (Vnum : %d) \n", obj.short_descr, obj.pIndexData.vnum);
@@ -361,57 +361,41 @@ class ActWiz {
                         );
 
                         switch (obj.item_type) {
-                            case ITEM_SCROLL:
-                            case ITEM_POTION:
-                            case ITEM_PILL:
+                            case ITEM_SCROLL, ITEM_POTION, ITEM_PILL -> {
                                 ff.format("Level %d spells of:", obj.value[0]);
-
                                 if (obj.value[1] >= 0 && obj.value[1] < MAX_SKILL) {
                                     ff.format(" '%s'", Skill.skills[obj.value[1]].name);
                                 }
-
                                 if (obj.value[2] >= 0 && obj.value[2] < MAX_SKILL) {
                                     ff.format(" '%s'", Skill.skills[obj.value[2]].name);
                                 }
-
                                 if (obj.value[3] >= 0 && obj.value[3] < MAX_SKILL) {
                                     ff.format(" '%s'", Skill.skills[obj.value[3]].name);
                                 }
-
                                 if (obj.value[4] >= 0 && obj.value[4] < MAX_SKILL) {
                                     ff.format(" '%s'", Skill.skills[obj.value[4]].name);
                                 }
-
                                 ff.format(".\n");
-                                break;
-
-                            case ITEM_WAND:
-                            case ITEM_STAFF:
+                            }
+                            case ITEM_WAND, ITEM_STAFF -> {
                                 ff.format("Has %d charges of level %d", obj.value[2], obj.value[0]);
-
                                 if (obj.value[3] >= 0 && obj.value[3] < MAX_SKILL) {
                                     ff.format(" '%s'", Skill.skills[obj.value[3]].name);
                                 }
-
                                 ff.format(".\n");
-                                break;
-
-                            case ITEM_DRINK_CON:
-                                ff.format("It holds %s-colored %s.\n",
-                                        liq_table[obj.value[2]].liq_color,
-                                        liq_table[obj.value[2]].liq_name);
-                                break;
-
-                            case ITEM_CONTAINER:
+                            }
+                            case ITEM_DRINK_CON -> ff.format("It holds %s-colored %s.\n",
+                                    liq_table[obj.value[2]].liq_color,
+                                    liq_table[obj.value[2]].liq_name);
+                            case ITEM_CONTAINER -> {
                                 ff.format("Capacity: %d#  Maximum weight: %d#  flags: %s\n",
                                         obj.value[0], obj.value[3], cont_bit_name(obj.value[1]));
                                 if (obj.value[4] != 100) {
                                     ff.format("Weight multiplier: %d%%\n",
                                             obj.value[4]);
                                 }
-                                break;
-
-                            case ITEM_WEAPON:
+                            }
+                            case ITEM_WEAPON -> {
                                 ff.format("Weapon type is ");
                                 switch (obj.value[0]) {
                                     case (WEAPON_EXOTIC):
@@ -466,35 +450,26 @@ class ActWiz {
                                 if (obj.value[4] != 0)  /* weapon flags */ {
                                     ff.format("Weapons flags: %s\n", weapon_bit_name(obj.value[4]));
                                 }
-                                break;
-
-                            case ITEM_ARMOR:
-                                ff.format("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n",
-                                        obj.value[0], obj.value[1], obj.value[2], obj.value[3]);
-                                break;
+                            }
+                            case ITEM_ARMOR ->
+                                    ff.format("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n",
+                                            obj.value[0], obj.value[1], obj.value[2], obj.value[3]);
                         }
-                        for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+                        for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                             ff.format("  Affects %s by %d.\n", affect_loc_name(paf.location), paf.modifier);
                             if (paf.bitvector != 0) {
                                 switch (paf.where) {
-                                    case TO_AFFECTS:
-                                        ff.format("   Adds %s affect.\n", affect_bit_name(paf.bitvector));
-                                        break;
-                                    case TO_OBJECT:
-                                        ff.format("   Adds %s object flag.\n", extra_bit_name(paf.bitvector));
-                                        break;
-                                    case TO_IMMUNE:
-                                        ff.format("   Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
-                                        break;
-                                    case TO_RESIST:
-                                        ff.format("   Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
-                                        break;
-                                    case TO_VULN:
-                                        ff.format("   Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
-                                        break;
-                                    default:
-                                        ff.format("   Unknown bit %d: %d\n", paf.where, paf.bitvector);
-                                        break;
+                                    case TO_AFFECTS ->
+                                            ff.format("   Adds %s affect.\n", affect_bit_name(paf.bitvector));
+                                    case TO_OBJECT ->
+                                            ff.format("   Adds %s object flag.\n", extra_bit_name(paf.bitvector));
+                                    case TO_IMMUNE ->
+                                            ff.format("   Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
+                                    case TO_RESIST ->
+                                            ff.format("   Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
+                                    case TO_VULN ->
+                                            ff.format("   Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
+                                    default -> ff.format("   Unknown bit %d: %d\n", paf.where, paf.bitvector);
                                 }
                             }
                         }
@@ -511,12 +486,12 @@ class ActWiz {
     static void do_limited(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_INDEX_DATA obj_index;
-        int lCount = 0;
+        var lCount = 0;
         int ingameCount;
         int vnum;
         int nMatch;
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (!argument.isEmpty()) {
             obj_index = get_obj_index(atoi(argument));
             if (obj_index == null) {
@@ -557,7 +532,7 @@ class ActWiz {
         }
 
         nMatch = 0;
-        TextBuffer output = new TextBuffer();
+        var output = new TextBuffer();
         for (vnum = 0; nMatch < top_obj_index; vnum++) {
             if ((obj_index = get_obj_index(vnum)) != null) {
                 nMatch++;
@@ -603,7 +578,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
 
         /* show wiznet status */
         if (!str_prefix(argument, "status")) {
@@ -611,7 +586,7 @@ class ActWiz {
                 buf.append("off ");
             }
 
-            for (int flag = 0; wiznet_table[flag].name != null; flag++) {
+            for (var flag = 0; wiznet_table[flag].name != null; flag++) {
                 if (IS_SET(ch.wiznet, wiznet_table[flag].flag)) {
                     buf.append(wiznet_table[flag].name);
                     buf.append(" ");
@@ -629,7 +604,7 @@ class ActWiz {
             /* list of all wiznet options */ {
             buf.clear();
 
-            for (int flag = 0; wiznet_table[flag].name != null; flag++) {
+            for (var flag = 0; wiznet_table[flag].name != null; flag++) {
                 if (wiznet_table[flag].level <= get_trust(ch)) {
                     buf.append(wiznet_table[flag].name);
                     buf.append(" ");
@@ -643,7 +618,7 @@ class ActWiz {
             return;
         }
 
-        int flag = wiznet_lookup(argument);
+        var flag = wiznet_lookup(argument);
 
         if (flag == -1 || get_trust(ch) < wiznet_table[flag].level) {
             send_to_char("No such option.\n", ch);
@@ -691,9 +666,9 @@ class ActWiz {
     }
 
     static void do_tick(CHAR_DATA ch, String argument) {
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (arg.isEmpty()) {
             send_to_char("tick area : area update\n", ch);
             send_to_char("tick char : char update\n", ch);
@@ -793,10 +768,10 @@ class ActWiz {
 
     static void do_nochannels(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Nochannel whom?", ch);
             return;
         }
@@ -811,7 +786,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (IS_SET(victim.comm, COMM_NOCHANNELS)) {
             victim.comm = REMOVE_BIT(victim.comm, COMM_NOCHANNELS);
             send_to_char("The gods have restored your channel priviliges.\n",
@@ -833,7 +808,7 @@ class ActWiz {
 
     static void do_smote(CHAR_DATA ch, String argument) {
         CHAR_DATA vch;
-        int matches = 0;
+        var matches = 0;
 
         if (!IS_NPC(ch) && IS_SET(ch.comm, COMM_NOEMOTE)) {
             send_to_char("You can't show your emotions.\n", ch);
@@ -857,18 +832,18 @@ class ActWiz {
             if (vch.desc == null || vch == ch) {
                 continue;
             }
-            int letter = argument.indexOf(vch.name);
+            var letter = argument.indexOf(vch.name);
             if (letter == -1) {
                 send_to_char(argument, vch);
                 send_to_char("\n", vch);
                 continue;
             }
 
-            StringBuilder temp = new StringBuilder(argument.substring(0, letter));
-            int namePos = 0;
-            StringBuilder last = new StringBuilder();
+            var temp = new StringBuilder(argument.substring(0, letter));
+            var namePos = 0;
+            var last = new StringBuilder();
             for (; letter < argument.length(); letter++) {
-                char c = argument.charAt(letter);
+                var c = argument.charAt(letter);
                 if (c == '\'' && matches == vch.name.length()) {
                     temp.append("r");
                     continue;
@@ -912,7 +887,7 @@ class ActWiz {
 
         if (!IS_NPC(ch)) {
             argument = smash_tilde(argument);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (argument.isEmpty()) {
                 buf.sprintf("Your poofin is %s\n", ch.pcdata.bamfin);
                 send_to_char(buf, ch);
@@ -935,7 +910,7 @@ class ActWiz {
     static void do_bamfout(CHAR_DATA ch, String argument) {
 
         if (!IS_NPC(ch)) {
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             argument = smash_tilde(argument);
 
             if (argument.isEmpty()) {
@@ -959,9 +934,9 @@ class ActWiz {
 
     static void do_deny(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Deny whom?\n", ch);
             return;
         }
@@ -983,7 +958,7 @@ class ActWiz {
 
         victim.act = SET_BIT(victim.act, PLR_DENY);
         send_to_char("You are denied access!\n", victim);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N denies access to %s", victim.name);
         wiznet(buf, ch, null, WIZ_PENALTIES, WIZ_SECURE, 0);
         send_to_char("OK.\n", ch);
@@ -996,9 +971,9 @@ class ActWiz {
     static void do_disconnect(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d, d_next;
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Disconnect whom?\n", ch);
             return;
         }
@@ -1107,10 +1082,10 @@ class ActWiz {
 
     static void do_pecho(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (argument.isEmpty() || arg.length() == 0) {
+        if (argument.isEmpty() || arg.isEmpty()) {
             send_to_char("Personal echo what?\n", ch);
             return;
         }
@@ -1157,12 +1132,12 @@ class ActWiz {
         DESCRIPTOR_DATA d, d_next;
         CHAR_DATA victim;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0) {
+        if (arg1.isEmpty()) {
             send_to_char("Transfer whom (and where)?\n", ch);
             return;
         }
@@ -1183,7 +1158,7 @@ class ActWiz {
         /*
          * Thanks to Grodyn for the optional location parameter.
          */
-        if (arg2.length() == 0) {
+        if (arg2.isEmpty()) {
             location = ch.in_room;
         } else {
             if ((location = find_location(ch, arg2.toString())) == null) {
@@ -1230,10 +1205,10 @@ class ActWiz {
         OBJ_DATA on;
         CHAR_DATA wch, wch_next;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0 || argument.isEmpty()) {
+        if (arg.isEmpty() || argument.isEmpty()) {
             send_to_char("At where what?\n", ch);
             return;
         }
@@ -1386,9 +1361,9 @@ class ActWiz {
         OBJ_DATA obj;
         ROOM_INDEX_DATA location;
         CHAR_DATA victim;
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         string = one_argument(argument, argb);
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  stat <name>\n", ch);
             send_to_char("  stat obj <name>\n", ch);
@@ -1396,7 +1371,7 @@ class ActWiz {
             send_to_char("  stat room <number>\n", ch);
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (!str_cmp(arg, "room")) {
             do_rstat(ch, string);
@@ -1443,9 +1418,9 @@ class ActWiz {
         OBJ_DATA obj;
         CHAR_DATA rch;
         int door;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        location = (arg.length() == 0) ? ch.in_room : find_location(ch, arg.toString());
+        location = (arg.isEmpty()) ? ch.in_room : find_location(ch, arg.toString());
         if (location == null) {
             send_to_char("No such location.\n", ch);
             return;
@@ -1457,7 +1432,7 @@ class ActWiz {
             send_to_char("That room is private right now.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (ch.in_room.affected_by != 0) {
             buf.sprintf("Affected by %s\n", raffect_bit_name(ch.in_room.affected_by));
             send_to_char(buf, ch);
@@ -1549,10 +1524,10 @@ class ActWiz {
     static void do_ostat(CHAR_DATA ch, String argument) {
 
         OBJ_DATA obj;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Stat what?\n", ch);
             return;
         }
@@ -1561,7 +1536,7 @@ class ActWiz {
             send_to_char("Nothing like that in hell, earth, or heaven.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Name(s): %s\n",
                 obj.name);
         send_to_char(buf, ch);
@@ -1767,7 +1742,7 @@ class ActWiz {
             send_to_char("'\n", ch);
         }
 
-        for (AFFECT_DATA paf = obj.affected; paf != null; paf = paf.next) {
+        for (var paf = obj.affected; paf != null; paf = paf.next) {
             buf.sprintf("Affects %s by %d, level %d",
                     affect_loc_name(paf.location), paf.modifier, paf.level);
             send_to_char(buf, ch);
@@ -1807,7 +1782,7 @@ class ActWiz {
         }
 
         if (!obj.enchanted) {
-            for (AFFECT_DATA paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
+            for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                 buf.sprintf("Affects %s by %d, level %d.\n",
                         affect_loc_name(paf.location), paf.modifier, paf.level);
                 send_to_char(buf, ch);
@@ -1874,10 +1849,10 @@ class ActWiz {
 
     static void do_mstat(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Stat whom?\n", ch);
             return;
         }
@@ -1886,7 +1861,7 @@ class ActWiz {
             send_to_char("They aren't here.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("Name: [%s] Reset Zone: [%s] Logon: %s\r",
                 victim.name,
                 (IS_NPC(victim) && victim.zone != null) ? victim.zone.name : "?",
@@ -1933,7 +1908,7 @@ class ActWiz {
                 IS_NPC(ch) ? 0 : victim.practice);
         send_to_char(buf, ch);
 
-        TextBuffer buf2 = new TextBuffer();
+        var buf2 = new TextBuffer();
         if (IS_NPC(victim)) {
             sprintf(buf2, "%d", victim.alignment);
         } else {
@@ -2054,7 +2029,7 @@ class ActWiz {
             send_to_char(buf, ch);
         }
 
-        for (AFFECT_DATA paf = victim.affected; paf != null; paf = paf.next) {
+        for (var paf = victim.affected; paf != null; paf = paf.next) {
             buf.sprintf("Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n",
                     paf.type.name,
                     affect_loc_name(paf.location),
@@ -2127,16 +2102,16 @@ class ActWiz {
 
     static void do_vnum(CHAR_DATA ch, String argument) {
         String string;
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         string = one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  vnum obj <name>\n", ch);
             send_to_char("  vnum mob <name>\n", ch);
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (!str_cmp(arg, "obj")) {
             do_ofind(ch, string);
             return;
@@ -2160,9 +2135,9 @@ class ActWiz {
 //        boolean fAll;
         boolean found;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Find whom?\n", ch);
             return;
         }
@@ -2182,7 +2157,7 @@ class ActWiz {
                 nMatch++;
                 if ( /*fAll || */is_name(argument, pMobIndex.player_name)) {
                     found = true;
-                    TextBuffer buf = new TextBuffer();
+                    var buf = new TextBuffer();
                     buf.sprintf("[%5d] %s\n", pMobIndex.vnum, pMobIndex.short_descr);
                     send_to_char(buf, ch);
                 }
@@ -2203,9 +2178,9 @@ class ActWiz {
 //        boolean fAll;
         boolean found;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Find what?\n", ch);
             return;
         }
@@ -2220,7 +2195,7 @@ class ActWiz {
          * Do you?
          * -- Furey
          */
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         for (vnum = 0; nMatch < top_obj_index; vnum++) {
             if ((pObjIndex = get_obj_index(vnum)) != null) {
                 nMatch++;
@@ -2256,8 +2231,8 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
-        StringBuilder buffer = new StringBuilder();
+        var buf = new TextBuffer();
+        var buffer = new StringBuilder();
         for (obj = object_list; obj != null; obj = obj.next) {
             if (!can_see_obj(ch, obj) || !is_name(argument, obj.name)
                     || ch.level < obj.level) {
@@ -2302,10 +2277,10 @@ class ActWiz {
     static void do_mwhere(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         boolean found;
-        int count = 0;
+        var count = 0;
 
-        StringBuilder buffer = new StringBuilder();
-        TextBuffer buf = new TextBuffer();
+        var buffer = new StringBuilder();
+        var buf = new TextBuffer();
 
         if (argument.isEmpty()) {
             DESCRIPTOR_DATA d;
@@ -2367,7 +2342,7 @@ class ActWiz {
 
 
     static void do_shutdown(CHAR_DATA ch) {
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (ch.invis_level < LEVEL_HERO) {
             buf.sprintf("Shutdown by %s.", ch.name);
         }
@@ -2406,10 +2381,10 @@ class ActWiz {
     static void do_snoop(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Snoop whom?\n", ch);
             return;
         }
@@ -2462,7 +2437,7 @@ class ActWiz {
             }
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         victim.desc.snoop_by = ch.desc;
         buf.sprintf("$N starts snooping on %s",
                 (IS_NPC(ch) ? victim.short_descr : victim.name));
@@ -2474,10 +2449,10 @@ class ActWiz {
     static void do_switch(CHAR_DATA ch, String argument) {
 
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Switch into whom?\n", ch);
             return;
         }
@@ -2516,7 +2491,7 @@ class ActWiz {
             send_to_char("Character in use.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N switches into %s", victim.short_descr);
         wiznet(buf, ch, null, WIZ_SWITCHES, WIZ_SECURE, get_trust(ch));
 
@@ -2551,7 +2526,7 @@ class ActWiz {
         if (ch.prompt != null) {
             ch.prompt = null;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N returns from %s.", ch.short_descr);
         wiznet(buf, ch.desc.original, null, WIZ_SWITCHES, WIZ_SECURE, get_trust(ch));
         ch.desc.character = ch.desc.original;
@@ -2592,9 +2567,9 @@ class ActWiz {
         CHAR_DATA mob;
         OBJ_DATA obj;
 
-        StringBuilder argb = new StringBuilder();
-        String rest = one_argument(argument, argb);
-        String arg = argb.toString();
+        var argb = new StringBuilder();
+        var rest = one_argument(argument, argb);
+        var arg = argb.toString();
 
         if (arg.isEmpty()) {
             send_to_char("Clone what?\n", ch);
@@ -2681,7 +2656,7 @@ class ActWiz {
             char_to_room(clone, ch.in_room);
             act("$n has created $N.", ch, null, clone, TO_ROOM);
             act("You clone $N.", ch, null, clone, TO_CHAR);
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("$N clones %s.", clone.short_descr);
             wiznet(buf, ch, null, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
         }
@@ -2690,16 +2665,16 @@ class ActWiz {
 /* RT to replace the two load commands */
 
     static void do_load(CHAR_DATA ch, String argument) {
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  load mob <vnum>\n", ch);
             send_to_char("  load obj <vnum> <level>\n", ch);
             return;
         }
-        String arg = argb.toString();
+        var arg = argb.toString();
 
         if (!str_cmp(arg, "mob") || !str_cmp(arg, "char")) {
             do_mload(ch, argument);
@@ -2719,10 +2694,10 @@ class ActWiz {
         MOB_INDEX_DATA pMobIndex;
         CHAR_DATA victim;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0 || !is_number(arg)) {
+        if (arg.isEmpty() || !is_number(arg)) {
             send_to_char("Syntax: load mob <vnum>.\n", ch);
             return;
         }
@@ -2735,7 +2710,7 @@ class ActWiz {
         victim = create_mobile(pMobIndex);
         char_to_room(victim, ch.in_room);
         act("$n has created $N!", ch, null, victim, TO_ROOM);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N loads %s.", victim.short_descr);
         wiznet(buf, ch, null, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
         send_to_char("Ok.\n", ch);
@@ -2747,19 +2722,19 @@ class ActWiz {
         OBJ_DATA obj;
         int level;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || !is_number(arg1)) {
+        if (arg1.isEmpty() || !is_number(arg1)) {
             send_to_char("Syntax: load obj <vnum> <level>.\n", ch);
             return;
         }
 
         level = get_trust(ch); /* default */
 
-        if (arg2.length() != 0)  /* load with a level */ {
+        if (!arg2.isEmpty())  /* load with a level */ {
             if (!is_number(arg2)) {
                 send_to_char("Syntax: oload <vnum> <level>.\n", ch);
                 return;
@@ -2793,10 +2768,10 @@ class ActWiz {
         OBJ_DATA obj;
         DESCRIPTOR_DATA d;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             /* 'purge' */
             CHAR_DATA vnext;
             OBJ_DATA obj_next;
@@ -2835,7 +2810,7 @@ class ActWiz {
 
             if (get_trust(ch) <= get_trust(victim)) {
                 send_to_char("Maybe that wasn't a good idea...\n", ch);
-                TextBuffer buf = new TextBuffer();
+                var buf = new TextBuffer();
                 buf.sprintf("%s tried to purge you!\n", ch.name);
                 send_to_char(buf, victim);
                 return;
@@ -2862,12 +2837,12 @@ class ActWiz {
     static void do_trust(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int level;
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0 || !is_number(arg2)) {
+        if (arg1.isEmpty() || arg2.isEmpty() || !is_number(arg2)) {
             send_to_char("Syntax: trust <char> <level>.\n", ch);
             return;
         }
@@ -2895,9 +2870,9 @@ class ActWiz {
         CHAR_DATA victim;
         CHAR_DATA vch;
         DESCRIPTOR_DATA d;
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (arg.isEmpty() || !str_cmp(arg, "room")) {
             /* cure room */
 
@@ -2914,7 +2889,7 @@ class ActWiz {
                 update_pos(vch);
                 act("$n has restored you.", ch, null, vch, TO_VICT);
             }
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("$N restored room %d.", ch.in_room.vnum);
             wiznet(buf, ch, null, WIZ_RESTORE, WIZ_SECURE, get_trust(ch));
 
@@ -2966,7 +2941,7 @@ class ActWiz {
         victim.move = victim.max_move;
         update_pos(victim);
         act("$n has restored you.", ch, null, victim, TO_VICT);
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$N restored %s",
                 IS_NPC(victim) ? victim.short_descr : victim.name);
         wiznet(buf, ch, null, WIZ_RESTORE, WIZ_SECURE, get_trust(ch));
@@ -2976,10 +2951,10 @@ class ActWiz {
 
     static void do_freeze(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Freeze whom?\n", ch);
             return;
         }
@@ -2999,7 +2974,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (IS_SET(victim.act, PLR_FREEZE)) {
             victim.act = REMOVE_BIT(victim.act, PLR_FREEZE);
             send_to_char("You can play again.\n", victim);
@@ -3021,15 +2996,15 @@ class ActWiz {
 
     static void do_log(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Log whom?\n", ch);
             return;
         }
 
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (!str_cmp(arg, "all")) {
             if (fLogAll) {
                 fLogAll = false;
@@ -3067,10 +3042,10 @@ class ActWiz {
 
     static void do_noemote(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Noemote whom?\n", ch);
             return;
         }
@@ -3085,7 +3060,7 @@ class ActWiz {
             send_to_char("You failed.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (IS_SET(victim.comm, COMM_NOEMOTE)) {
             victim.comm = REMOVE_BIT(victim.comm, COMM_NOEMOTE);
             send_to_char("You can emote again.\n", victim);
@@ -3105,10 +3080,10 @@ class ActWiz {
 
     static void do_noshout(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Noshout whom?\n", ch);
             return;
         }
@@ -3128,7 +3103,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (IS_SET(victim.comm, COMM_NOSHOUT)) {
             victim.comm = REMOVE_BIT(victim.comm, COMM_NOSHOUT);
             send_to_char("You can shout again.\n", victim);
@@ -3149,10 +3124,10 @@ class ActWiz {
 
     static void do_notell(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Notell whom?", ch);
             return;
         }
@@ -3166,7 +3141,7 @@ class ActWiz {
             send_to_char("You failed.\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (IS_SET(victim.comm, COMM_NOTELL)) {
             victim.comm = REMOVE_BIT(victim.comm, COMM_NOTELL);
             send_to_char("You can tell again.\n", victim);
@@ -3230,15 +3205,15 @@ class ActWiz {
 
 
     static void do_slookup(CHAR_DATA ch, String argument) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Lookup which skill or spell?\n", ch);
             return;
         }
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (!str_cmp(arg.toString(), "all")) {
-            for (Skill sn : Skill.skills) {
+            for (var sn : Skill.skills) {
                 if (sn.name == null) {
                     break;
                 }
@@ -3246,7 +3221,7 @@ class ActWiz {
                 send_to_char(buf, ch);
             }
         } else {
-            Skill sn = Skill.lookupSkill(arg.toString());
+            var sn = Skill.lookupSkill(arg.toString());
             if (sn == null) {
                 send_to_char("No such skill or spell.\n", ch);
                 return;
@@ -3261,10 +3236,10 @@ class ActWiz {
 /* RT set replaces sset, mset, oset, and rset */
 
     static void do_set(CHAR_DATA ch, String argument) {
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set mob   <name> <field> <value>\n", ch);
             send_to_char("  set obj   <name> <field> <value>\n", ch);
@@ -3273,7 +3248,7 @@ class ActWiz {
             return;
         }
 
-        String arg = argb.toString();
+        var arg = argb.toString();
         if (!str_prefix(arg, "mobile") || !str_prefix(arg, "character")) {
             do_mset(ch, argument);
             return;
@@ -3304,14 +3279,14 @@ class ActWiz {
         int value;
         boolean fAll;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
-        StringBuilder arg3 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
+        var arg3 = new StringBuilder();
         argument = one_argument(argument, arg1);
         argument = one_argument(argument, arg2);
         one_argument(argument, arg3);
 
-        if (arg1.length() == 0 || arg2.length() == 0 || arg3.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty() || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set skill <name> <spell or skill> <value>\n", ch);
             send_to_char("  set skill <name> all <value>\n", ch);
@@ -3351,7 +3326,7 @@ class ActWiz {
         }
 
         if (fAll) {
-            for (Skill s : Skill.skills) {
+            for (var s : Skill.skills) {
                 if ((s.name != null) && ((victim.cabal == s.cabal) || (s.cabal == CABAL_NONE)) && (RACE_OK(victim, s))) {
                     victim.pcdata.learned[s.ordinal()] = value;
                 }
@@ -3367,18 +3342,18 @@ class ActWiz {
         CHAR_DATA victim;
         OBJ_DATA obj;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
-        StringBuilder typeb = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2b = new StringBuilder();
+        var typeb = new StringBuilder();
         argument = smash_tilde(argument);
         argument = one_argument(argument, typeb);
         argument = one_argument(argument, arg1);
         argument = one_argument(argument, arg2b);
-        String arg3 = argument;
-        String type = typeb.toString();
+        var arg3 = argument;
+        var type = typeb.toString();
 
 
-        if (type.isEmpty() || arg1.length() == 0 || arg2b.length() == 0 || arg3.isEmpty()) {
+        if (type.isEmpty() || arg1.isEmpty() || arg2b.isEmpty() || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  string char <name> <field> <string>\n", ch);
             send_to_char("    fields: name int long desc title spec\n", ch);
@@ -3387,7 +3362,7 @@ class ActWiz {
             return;
         }
 
-        String arg2 = arg2b.toString();
+        var arg2 = arg2b.toString();
 
         if (!str_prefix(type, "character") || !str_prefix(type, "mobile")) {
             if ((victim = get_char_world(ch, arg1.toString())) == null) {
@@ -3485,7 +3460,7 @@ class ActWiz {
 
                 argument += "\n";
 
-                EXTRA_DESCR_DATA ed = new EXTRA_DESCR_DATA();
+                var ed = new EXTRA_DESCR_DATA();
 
                 ed.keyword = arg3;
                 ed.description = argument;
@@ -3503,15 +3478,15 @@ class ActWiz {
     static void do_oset(CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int value;
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2b = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2b = new StringBuilder();
 
         argument = smash_tilde(argument);
         argument = one_argument(argument, arg1);
         argument = one_argument(argument, arg2b);
-        String arg3 = argument;
+        var arg3 = argument;
 
-        if (arg1.length() == 0 || arg2b.length() == 0 || arg3.isEmpty()) {
+        if (arg1.isEmpty() || arg2b.isEmpty() || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set obj <object> <field> <value>\n", ch);
             send_to_char("  Field being one of:\n", ch);
@@ -3533,7 +3508,7 @@ class ActWiz {
         /*
          * Set something.
          */
-        String arg2 = arg2b.toString();
+        var arg2 = arg2b.toString();
         if (!str_cmp(arg2, "value0") || !str_cmp(arg2, "v0")) {
             obj.value[0] = UMIN(50, value);
             return;
@@ -3599,14 +3574,14 @@ class ActWiz {
     static void do_rset(CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         int value;
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = smash_tilde(argument);
         argument = one_argument(argument, arg1);
         argument = one_argument(argument, arg2);
-        String arg3 = argument;
+        var arg3 = argument;
 
-        if (arg1.length() == 0 || arg2.length() == 0 || arg3.isEmpty()) {
+        if (arg1.isEmpty() || arg2.isEmpty() || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set room <location> <field> <value>\n", ch);
             send_to_char("  Field being one of:\n", ch);
@@ -3660,10 +3635,10 @@ class ActWiz {
         int count;
 
         count = 0;
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         one_argument(argument, argb);
-        String arg = argb.toString();
-        TextBuffer buf = new TextBuffer();
+        var arg = argb.toString();
+        var buf = new TextBuffer();
         for (d = descriptor_list; d != null; d = d.next) {
             if (d.character != null && can_see(ch, d.character)
                     && (arg.isEmpty() || is_name(arg, d.character.name)
@@ -3692,15 +3667,15 @@ class ActWiz {
 */
 
     static void do_force(CHAR_DATA ch, String argument) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0 || argument.isEmpty()) {
+        if (arg.isEmpty() || argument.isEmpty()) {
             send_to_char("Force whom to do what?\n", ch);
             return;
         }
 
-        StringBuilder arg2 = new StringBuilder();
+        var arg2 = new StringBuilder();
         one_argument(argument, arg2);
 
         if (!str_cmp(arg2.toString(), "delete")) {
@@ -3708,7 +3683,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$n forces you to '%s'.", argument);
 
         if (!str_cmp(arg.toString(), "all")) {
@@ -3809,10 +3784,10 @@ class ActWiz {
         int level;
 
         /* RT code for taking a level argument */
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0)
+        if (arg.isEmpty())
             /* take the default path */
 
         {
@@ -3845,10 +3820,10 @@ class ActWiz {
         int level;
 
         /* RT code for taking a level argument */
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0)
+        if (arg.isEmpty())
             /* take the default path */
 
         {
@@ -3911,7 +3886,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         if (!ch.prefix.isEmpty()) {
             buf.sprintf("Prefix changed to %s.\n", argument);
         } else {
@@ -3928,10 +3903,10 @@ class ActWiz {
     static void do_grant(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Grant whom induct privileges?", ch);
             return;
         }
@@ -3958,12 +3933,12 @@ class ActWiz {
         int level;
         int iLevel;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.length() == 0 || arg2.length() == 0 || !is_number(arg2)) {
+        if (arg1.isEmpty() || arg2.isEmpty() || !is_number(arg2)) {
             send_to_char("Syntax: advance <char> <level>.\n", ch);
             return;
         }
@@ -4043,14 +4018,14 @@ class ActWiz {
     static void do_mset(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int value;
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
         argument = smash_tilde(argument);
         argument = one_argument(argument, arg1);
         argument = one_argument(argument, arg2);
-        String arg3 = argument;
+        var arg3 = argument;
 
-        if (arg1.length() == 0 || arg2.length() == 0 || arg3.isEmpty()) {
+        if (arg1.isEmpty() || arg2.isEmpty() || arg3.isEmpty()) {
             send_to_char("Syntax:\n", ch);
             send_to_char("  set char <name> <field> <value>\n", ch);
             send_to_char("  Field being one of:\n", ch);
@@ -4077,8 +4052,8 @@ class ActWiz {
         /*
          * Set something.
          */
-        TextBuffer buf = new TextBuffer();
-        String arg2str = arg2.toString();
+        var buf = new TextBuffer();
+        var arg2str = arg2.toString();
         if (!str_cmp(arg2str, "str")) {
             if (value < 3 || value > get_max_train(victim, STAT_STR)) {
                 buf.sprintf("Strength range is 3 to %d\n.", get_max_train(victim, STAT_STR));
@@ -4199,12 +4174,12 @@ class ActWiz {
                 return;
             }
 
-            Clazz clazz = Clazz.lookupClass(arg3);
+            var clazz = Clazz.lookupClass(arg3);
             if (clazz == null) {
                 buf.sprintf("Possible classes are: ");
-                ArrayList<Clazz> classes = Clazz.getClasses();
-                for (int i = 0; i < classes.size(); i++) {
-                    Clazz c = classes.get(i);
+                var classes = Clazz.getClasses();
+                for (var i = 0; i < classes.size(); i++) {
+                    var c = classes.get(i);
                     if (i > 0) {
                         buf.append(" ");
                     }
@@ -4420,7 +4395,7 @@ class ActWiz {
         }
 
         if (!str_prefix(arg2str, "race")) {
-            Race race = Race.lookupRace(arg3);
+            var race = Race.lookupRace(arg3);
 
             if (race == null) {
                 send_to_char("That is not a valid race.\n", ch);
@@ -4433,7 +4408,7 @@ class ActWiz {
             }
 
             if (!IS_NPC(victim)) {
-                for (Skill sn : Skill.skills) {
+                for (var sn : Skill.skills) {
                     if ((sn.name != null) && !RACE_OK(victim, sn)) {
                         victim.pcdata.learned[sn.ordinal()] = 0;
                     }
@@ -4464,11 +4439,11 @@ class ActWiz {
         CHAR_DATA victim;
         int i, prev_cabal;
 
-        StringBuilder arg1 = new StringBuilder();
+        var arg1 = new StringBuilder();
         argument = one_argument(argument, arg1);
-        String arg2 = argument;
+        var arg2 = argument;
 
-        if (arg1.length() == 0 || arg2.isEmpty()) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Usage: induct <player> <cabal>\n", ch);
             return;
         }
@@ -4519,7 +4494,7 @@ class ActWiz {
         }
 
         /* set cabal skills to 70, remove other cabal skills */
-        for (Skill sn : Skill.skills) {
+        for (var sn : Skill.skills) {
             if ((victim.cabal != 0) && (sn.cabal == victim.cabal)) {
                 victim.pcdata.learned[sn.ordinal()] = 70;
             } else if (sn.cabal != CABAL_NONE) {
@@ -4527,7 +4502,7 @@ class ActWiz {
             }
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("$n has been inducted into %s.", cabal);
         act(buf, victim, null, null, TO_NOTVICT);
         buf.sprintf("You have been inducted into %s.", cabal);
@@ -4538,7 +4513,7 @@ class ActWiz {
             send_to_char(buf, ch);
         }
         if (victim.cabal == CABAL_NONE && prev_cabal != CABAL_NONE) {
-            TextBuffer name = new TextBuffer();
+            var name = new TextBuffer();
             switch (prev_cabal) {
                 default:
                     return;
@@ -4567,7 +4542,7 @@ class ActWiz {
     static void do_desocket(CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d, d_next;
         int socket;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (!is_number(arg)) {
@@ -4575,7 +4550,7 @@ class ActWiz {
             return;
         }
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Disconnect which socket?\n", ch);
             return;
         }
@@ -4641,7 +4616,7 @@ class ActWiz {
     static void do_popularity(CHAR_DATA ch) {
         AREA_DATA area;
         int i;
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
 
         buf.sprintf("Area popularity statistics (in String  ticks)\n");
 
@@ -4661,10 +4636,10 @@ class ActWiz {
 
     static void do_ititle(CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Change whose title to what?\n", ch);
             return;
         }
@@ -4697,12 +4672,12 @@ class ActWiz {
     static void do_rename(CHAR_DATA ch, String argument) {
 
         CHAR_DATA victim;
-        StringBuilder old_name = new StringBuilder();
-        StringBuilder new_name = new StringBuilder();
+        var old_name = new StringBuilder();
+        var new_name = new StringBuilder();
         argument = one_argument(argument, old_name);
         one_argument(argument, new_name);
 
-        if (old_name.length() == 0) {
+        if (old_name.isEmpty()) {
             send_to_char("Rename who?\n", ch);
             return;
         }
@@ -4729,7 +4704,7 @@ class ActWiz {
             return;
         }
 
-        if (new_name.length() == 0) {
+        if (new_name.isEmpty()) {
             send_to_char("Rename to what new name?\n", ch);
             return;
         }
@@ -4748,7 +4723,7 @@ class ActWiz {
             return;
         }
 
-        String strsave = nw_config.lib_player_dir + "/" + capitalize(new_name.toString());
+        var strsave = nw_config.lib_player_dir + "/" + capitalize(new_name.toString());
         if (new File(strsave).exists()) {
             send_to_char("A player with that name already exists!\n", ch);
             return;
@@ -4782,10 +4757,10 @@ class ActWiz {
         if (!IS_IMMORTAL(ch)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Usage:\n  notitle <player>\n", ch);
             return;
         }
@@ -4813,11 +4788,11 @@ class ActWiz {
         if (!IS_IMMORTAL(ch)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Usage:\n  noaffect <player>\n", ch);
             return;
         }
@@ -4845,7 +4820,7 @@ class ActWiz {
     static void do_affrooms(CHAR_DATA ch) {
         ROOM_INDEX_DATA room;
         ROOM_INDEX_DATA room_next;
-        int count = 0;
+        var count = 0;
 
         if (top_affected_room == null) {
             send_to_char("No affected room.\n", ch);
@@ -4853,7 +4828,7 @@ class ActWiz {
         for (room = top_affected_room; room != null; room = room_next) {
             room_next = room.aff_next;
             count++;
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("%d) [Vnum : %5d] %s\n",
                     count, room.vnum, room.name);
             send_to_char(buf, ch);
@@ -4862,9 +4837,9 @@ class ActWiz {
 
     static void do_find(CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Ok. But what I should find?\n", ch);
             return;
         }
@@ -4874,7 +4849,7 @@ class ActWiz {
             return;
         }
 
-        TextBuffer buf = new TextBuffer();
+        var buf = new TextBuffer();
         buf.sprintf("%s.\n", find_way(ch, ch.in_room, location));
         send_to_char(buf, ch);
         buf.sprintf("From %d to %d: %s", ch.in_room.vnum, location.vnum, buf);
@@ -4883,10 +4858,10 @@ class ActWiz {
 
 
     static void do_reboot(CHAR_DATA ch, String argument) {
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Usage: reboot now\n", ch);
             send_to_char("Usage: reboot <ticks to reboot>\n", ch);
             send_to_char("Usage: reboot cancel\n", ch);
@@ -4914,7 +4889,7 @@ class ActWiz {
                 send_to_char("Time synchronization is activated.\n", ch);
                 return;
             }
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             if (reboot_counter == -1) {
                 buf.sprintf("Only time synchronization reboot is activated.\n");
             } else {
@@ -4930,7 +4905,7 @@ class ActWiz {
                 return;
             }
             reboot_counter = atoi(arg.toString());
-            TextBuffer buf = new TextBuffer();
+            var buf = new TextBuffer();
             buf.sprintf("Nightworks will reboot in %i ticks.\n", reboot_counter);
             send_to_char(buf, ch);
             return;
@@ -4975,10 +4950,10 @@ class ActWiz {
         if (!IS_IMMORTAL(ch)) {
             return;
         }
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
-        if (arg.length() == 0) {
+        if (arg.isEmpty()) {
             send_to_char("Usage:\n  premort <player>\n", ch);
             return;
         }
@@ -5004,10 +4979,10 @@ class ActWiz {
     }
 
     static void do_maximum(CHAR_DATA ch, String argument) {
-        StringBuilder argb = new StringBuilder();
+        var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
-        if (argb.length() == 0) {
+        if (argb.isEmpty()) {
             send_to_char("Usage: maximum status\n", ch);
             send_to_char("Usage: maximum reset\n", ch);
             send_to_char("Usage: maximum newbies <number of newbies>\n", ch);
@@ -5015,8 +4990,8 @@ class ActWiz {
             return;
         }
 
-        String arg = argb.toString();
-        TextBuffer buf = new TextBuffer();
+        var arg = argb.toString();
+        var buf = new TextBuffer();
 
         if (is_name(arg, "status")) {
             buf.sprintf("Maximum oldies allowed: %d.\n", max_oldies);

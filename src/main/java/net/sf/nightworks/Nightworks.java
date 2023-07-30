@@ -672,7 +672,7 @@ final class Nightworks {
         Object objModifier;
         long bitvector;
 
-        final void assignValuesFrom(AFFECT_DATA source) {
+        void assignValuesFrom(AFFECT_DATA source) {
             next = source.next;
             valid = source.valid;
             where = source.where;
@@ -2612,7 +2612,7 @@ final class Nightworks {
     }
 
     static void perror(String msg) {
-        System.err.println("PERROR" + msg);
+        System.err.println("PERROR: " + msg);
     }
 
 

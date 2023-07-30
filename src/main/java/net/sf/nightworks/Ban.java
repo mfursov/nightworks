@@ -35,13 +35,13 @@ class Ban {
 
     static void save_bans() {
         BAN_DATA pban;
-        boolean found = false;
-        StringBuilder buf = new StringBuilder();
+        var found = false;
+        var buf = new StringBuilder();
         RandomAccessFile fp;
         try {
             fp = new RandomAccessFile(nw_config.var_ban_file, "w");
             try {
-                Formatter f = new Formatter(buf);
+                var f = new Formatter(buf);
                 for (pban = ban_list; pban != null; pban = pban.next) {
                     if (IS_SET(pban.ban_flags, BAN_PERMANENT)) {
                         found = true;
@@ -68,10 +68,10 @@ class Ban {
 
     static void load_bans() {
         try {
-            DikuTextFile fp = new DikuTextFile(nw_config.var_ban_file);
+            var fp = new DikuTextFile(nw_config.var_ban_file);
             BAN_DATA ban_last = null;
             while (!fp.feof()) {
-                BAN_DATA pban = new BAN_DATA();
+                var pban = new BAN_DATA();
                 pban.name = fp.fread_word();
                 pban.level = fp.fread_number();
                 pban.ban_flags = fp.fread_flag();
@@ -91,8 +91,8 @@ class Ban {
     }
 
     static boolean check_ban(String site, int type) {
-        String host = site.toLowerCase();
-        for (BAN_DATA pban = ban_list; pban != null; pban = pban.next) {
+        var host = site.toLowerCase();
+        for (var pban = ban_list; pban != null; pban = pban.next) {
             if (!IS_SET(pban.ban_flags, type)) {
                 continue;
             }
@@ -119,7 +119,7 @@ class Ban {
         boolean prefix, suffix = false;
         int type;
 
-        StringBuilder arg1 = new StringBuilder();
+        var arg1 = new StringBuilder();
         argument = one_argument(argument, arg1);
 
         if (arg1.isEmpty()) {
@@ -127,10 +127,10 @@ class Ban {
                 send_to_char("No sites banned at this time.\n", ch);
                 return;
             }
-            StringBuilder buffer = new StringBuilder("Banned sites  level  type     status\n");
-            StringBuilder buf2 = new StringBuilder();
-            StringBuilder buf = new StringBuilder();
-            Formatter f = new Formatter(buf);
+            var buffer = new StringBuilder("Banned sites  level  type     status\n");
+            var buf2 = new StringBuilder();
+            var buf = new StringBuilder();
+            var f = new Formatter(buf);
             for (pban = ban_list; pban != null; pban = pban.next) {
                 buf2.delete(0, buf2.length());
                 buf2.append(IS_SET(pban.ban_flags, BAN_PREFIX) ? "*" : "").append(pban.name).append(IS_SET(pban.ban_flags, BAN_SUFFIX) ? "*" : "");
@@ -147,11 +147,11 @@ class Ban {
             return;
         }
 
-        StringBuilder arg2 = new StringBuilder();
+        var arg2 = new StringBuilder();
         one_argument(argument, arg2);
 
         /* find out what type of ban */
-        String arg2Str = arg2.toString();
+        var arg2Str = arg2.toString();
         if (arg2.isEmpty() || !str_prefix(arg2Str, "all")) {
             type = BAN_ALL;
         } else if (!str_prefix(arg2Str, "newbies")) {
@@ -165,7 +165,7 @@ class Ban {
             return;
         }
 
-        String name = arg1.charAt(0) == '*' ? arg1.substring(1) : arg1.toString();
+        var name = arg1.charAt(0) == '*' ? arg1.substring(1) : arg1.toString();
         prefix = name.length() < arg1.length();
         if (name.charAt(name.length() - 1) == '*') {
             suffix = true;
@@ -227,7 +227,7 @@ class Ban {
     static void do_allow(CHAR_DATA ch, String argument) {
         BAN_DATA prev;
         BAN_DATA curr;
-        StringBuilder arg = new StringBuilder();
+        var arg = new StringBuilder();
         one_argument(argument, arg);
 
         if (arg.isEmpty()) {
@@ -236,7 +236,7 @@ class Ban {
         }
 
         prev = null;
-        String argStr = arg.toString();
+        var argStr = arg.toString();
         for (curr = ban_list; curr != null; prev = curr, curr = curr.next) {
             if (!str_cmp(argStr, curr.name)) {
                 if (curr.level > get_trust(ch)) {

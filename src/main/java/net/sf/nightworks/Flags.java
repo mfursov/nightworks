@@ -25,15 +25,15 @@ class Flags {
         CHAR_DATA victim;
         flag_type[] flag_table;
 
-        StringBuilder arg1 = new StringBuilder();
-        StringBuilder arg2 = new StringBuilder();
-        StringBuilder arg3 = new StringBuilder();
+        var arg1 = new StringBuilder();
+        var arg2 = new StringBuilder();
+        var arg3 = new StringBuilder();
         argument = one_argument(argument, arg1);
         argument = one_argument(argument, arg2);
         argument = one_argument(argument, arg3);
 
-        char type = argument.charAt(0);
-        StringBuilder word = new StringBuilder();
+        var type = argument.charAt(0);
+        var word = new StringBuilder();
         if (type == '=' || type == '-' || type == '+') {
             argument = one_argument(argument, word);
         }
@@ -68,19 +68,19 @@ class Flags {
             return;
         }
 
-        String arg1Str = arg1.toString();
+        var arg1Str = arg1.toString();
 
         if (str_prefix(arg1Str, "mob") && str_prefix(arg1Str, "char")) {
             return;
         }
 
-        String arg2Str = arg2.toString();
+        var arg2Str = arg2.toString();
         victim = get_char_world(ch, arg2Str);
         if (victim == null) {
             send_to_char("You can't find them.\n", ch);
             return;
         }
-        String arg3Str = arg3.toString();
+        var arg3Str = arg3.toString();
         /* select a flag to set */
         long flag;
         if (!str_prefix(arg3Str, "act")) {
@@ -137,7 +137,7 @@ class Flags {
             return;
         }
 
-        long old = flag;
+        var old = flag;
         long newFlag = 0, marked = 0;
         victim.zone = null;
 
@@ -152,7 +152,7 @@ class Flags {
                 break;
             }
 
-            int pos = flag_lookup(word.toString(), flag_table);
+            var pos = flag_lookup(word.toString(), flag_table);
             if (pos == 0) {
                 send_to_char("That flag doesn't exist!\n", ch);
                 return;
@@ -161,7 +161,7 @@ class Flags {
             }
         }
 
-        for (int pos = 0; flag_table[pos].name != null; pos++) {
+        for (var pos = 0; flag_table[pos].name != null; pos++) {
             if (!flag_table[pos].settable && IS_SET(old, flag_table[pos].bit)) {
                 newFlag = SET_BIT(newFlag, flag_table[pos].bit);
                 continue;

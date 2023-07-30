@@ -18,7 +18,7 @@ class Recycle {
 
 
     static CHAR_DATA new_char() {
-        CHAR_DATA ch = new CHAR_DATA();
+        var ch = new CHAR_DATA();
         ch.name = "";
         ch.short_descr = "";
         ch.long_descr = "";
@@ -27,7 +27,7 @@ class Recycle {
         ch.prefix = "";
         ch.logon = current_time;
         ch.lines = PAGELEN;
-        for (int i = 0; i < 4; i++) {
+        for (var i = 0; i < 4; i++) {
             ch.armor[i] = 100;
         }
         ch.position = POS_STANDING;
@@ -46,7 +46,7 @@ class Recycle {
         ch.doppel = null;
         ch.language = LANG_COMMON;
 
-        for (int i = 0; i < MAX_STATS; i++) {
+        for (var i = 0; i < MAX_STATS; i++) {
             ch.perm_stat[i] = 13;
             ch.mod_stat[i] = 0;
         }
@@ -87,7 +87,7 @@ class Recycle {
     private static int last_mob_id;
 
     static int get_pc_id() {
-        int val = (current_time <= last_pc_id) ? last_pc_id + 1 : current_time;
+        var val = (current_time <= last_pc_id) ? last_pc_id + 1 : current_time;
         last_pc_id = val;
         return val;
     }
