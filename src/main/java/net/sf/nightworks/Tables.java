@@ -648,5 +648,4 @@ public class Tables {
             new flag_type("mothertongue", MAX_LANGUAGE, true),
 
     };
-
 }

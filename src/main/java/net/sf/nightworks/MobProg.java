@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.lang.reflect.Method;
@@ -108,6 +109,7 @@ import static net.sf.nightworks.Nightworks.exit;
 import static net.sf.nightworks.Nightworks.object_list;
 import static net.sf.nightworks.Nightworks.sprintf;
 import static net.sf.nightworks.Skill.lookupSkill;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
@@ -148,7 +150,7 @@ class MobProg {
                 found = false;
             }
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            logError(e);
         } finally {
             if (!found) {
                 bug("Load_mprogs: 'M': invalid program type for vnum %d", mobindex.vnum);
@@ -165,11 +167,11 @@ class MobProg {
         return new MPROG_FUN_BRIBE() {
             final Method m = resolveMethod(name, CHAR_DATA.class, CHAR_DATA.class, Integer.class);
 
-            public void run(CHAR_DATA mob, CHAR_DATA ch, int amount) {
+            public void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, int amount) {
                 try {
                     m.invoke(null, mob, ch, amount);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -179,11 +181,11 @@ class MobProg {
         return new MPROG_FUN_ENTRY() {
             final Method m = resolveMethod(name, String.class);
 
-            public void run(CHAR_DATA mob) {
+            public void run(@NotNull CHAR_DATA mob) {
                 try {
                     m.invoke(null, mob);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -193,11 +195,11 @@ class MobProg {
         return new MPROG_FUN_GREET() {
             final Method m = resolveMethod(name, CHAR_DATA.class, CHAR_DATA.class);
 
-            public void run(CHAR_DATA mob, CHAR_DATA ch) {
+            public void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch) {
                 try {
                     m.invoke(null, mob, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -207,11 +209,11 @@ class MobProg {
         return new MPROG_FUN_FIGHT() {
             final Method m = resolveMethod(name, CHAR_DATA.class, CHAR_DATA.class);
 
-            public void run(CHAR_DATA mob, CHAR_DATA victim) {
+            public void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA victim) {
                 try {
                     m.invoke(null, mob, victim);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -221,11 +223,11 @@ class MobProg {
         return new MPROG_FUN_DEATH() {
             final Method m = resolveMethod(name, CHAR_DATA.class);
 
-            public boolean run(CHAR_DATA mob) {
+            public boolean run(@NotNull CHAR_DATA mob) {
                 try {
                     return (Boolean) m.invoke(null, mob);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                     return false;
                 }
             }
@@ -236,11 +238,11 @@ class MobProg {
         return new MPROG_FUN_AREA() {
             final Method m = resolveMethod(name, CHAR_DATA.class);
 
-            public void run(CHAR_DATA mob) {
+            public void run(@NotNull CHAR_DATA mob) {
                 try {
                     m.invoke(null, mob);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -250,11 +252,11 @@ class MobProg {
         return new MPROG_FUN_SPEECH() {
             final Method m = resolveMethod(name, CHAR_DATA.class, CHAR_DATA.class, String.class);
 
-            public void run(CHAR_DATA mob, CHAR_DATA ch, String speech) {
+            public void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, @NotNull String speech) {
                 try {
                     m.invoke(null, mob, ch, speech);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -264,17 +266,17 @@ class MobProg {
         return new MPROG_FUN_GIVE() {
             final Method m = resolveMethod(name, CHAR_DATA.class, CHAR_DATA.class, OBJ_DATA.class);
 
-            public void run(CHAR_DATA mob, CHAR_DATA ch, OBJ_DATA obj) {
+            public void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, @NotNull OBJ_DATA obj) {
                 try {
                     m.invoke(null, mob, ch, obj);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
     }
 
-    static void bribe_prog_cityguard(CHAR_DATA mob, CHAR_DATA ch, Integer amount) {
+    static void bribe_prog_cityguard(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, Integer amount) {
         if (amount < 100) {
             do_say(mob, "You cheapskate!!!");
             do_murder(mob, ch.name);

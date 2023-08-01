@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import java.util.Formatter;
 
 import static net.sf.nightworks.ActComm.do_say;
@@ -46,7 +48,7 @@ import static net.sf.nightworks.util.TextUtils.str_prefix;
 class ActSkill {
 /* used to converter of prac and train */
 
-    static void do_gain(CHAR_DATA ch, String argument) {
+    static void do_gain(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA trainer;
 
         if (IS_NPC(ch)) {
@@ -112,7 +114,7 @@ class ActSkill {
 
 /* RT spells and skills show the players spells (or skills) */
 
-    static void do_spells(CHAR_DATA ch) {
+    static void do_spells(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -170,7 +172,7 @@ class ActSkill {
         page_to_char(output.toString(), ch);
     }
 
-    static void do_skills(CHAR_DATA ch) {
+    static void do_skills(@NotNull CHAR_DATA ch) {
 
         if (IS_NPC(ch)) {
             return;
@@ -229,7 +231,7 @@ class ActSkill {
     }
 
 
-    static int base_exp(CHAR_DATA ch, int points) {
+    static int base_exp(@NotNull CHAR_DATA ch, int points) {
         if (IS_NPC(ch)) {
             return 1500;
         }
@@ -237,18 +239,18 @@ class ActSkill {
         return (expl * ORG_RACE(ch).pcRace.getClassModifier(ch.clazz).expMult / 100);
     }
 
-    static int exp_to_level(CHAR_DATA ch, int points) {
+    static int exp_to_level(@NotNull CHAR_DATA ch, int points) {
         var base = base_exp(ch, points);
         return (base - exp_this_level(ch, ch.level, points));
     }
 
-    static int exp_this_level(CHAR_DATA ch, int level, int points) {
+    static int exp_this_level(@NotNull CHAR_DATA ch, int level, int points) {
         var base = base_exp(ch, points);
         return (ch.exp - (ch.level * base));
     }
 
 
-    static int exp_per_level(CHAR_DATA ch, int points) {
+    static int exp_per_level(@NotNull CHAR_DATA ch, int points) {
         if (IS_NPC(ch)) {
             return 1000;
         }
@@ -258,7 +260,7 @@ class ActSkill {
 
 /* checks for skill improvement */
 
-    static void check_improve(CHAR_DATA ch, Skill sn, boolean success, int multiplier) {
+    static void check_improve(@NotNull CHAR_DATA ch, Skill sn, boolean success, int multiplier) {
         int chance;
 
         if (IS_NPC(ch)) {
@@ -303,7 +305,7 @@ class ActSkill {
 
 /* use for adding all skills available for that ch  */
 
-    static void group_add(CHAR_DATA ch) {
+    static void group_add(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) /* NPCs do not have skills */ {
             return;
         }
@@ -318,7 +320,7 @@ class ActSkill {
     }
 
 
-    static void do_slist(CHAR_DATA ch, String argument) {
+    static void do_slist(@NotNull CHAR_DATA ch, String argument) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -395,7 +397,7 @@ class ActSkill {
         return -1;
     }
 
-    static void do_glist(CHAR_DATA ch, String argument) {
+    static void do_glist(@NotNull CHAR_DATA ch, String argument) {
         int group;
 
         var arg = new StringBuilder();
@@ -431,7 +433,7 @@ class ActSkill {
 
     }
 
-    static void do_slook(CHAR_DATA ch, String argument) {
+    static void do_slook(@NotNull CHAR_DATA ch, String argument) {
         var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
@@ -449,7 +451,7 @@ class ActSkill {
 
     private static final int PC_PRACTICER = 123;
 
-    static void do_learn(CHAR_DATA ch, String argument) {
+    static void do_learn(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         int adept;
 
@@ -537,7 +539,7 @@ class ActSkill {
     }
 
 
-    static void do_teach(CHAR_DATA ch) {
+    static void do_teach(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch) || ch.level != LEVEL_HERO) {
             send_to_char("You must be a hero.\n", ch);
             return;

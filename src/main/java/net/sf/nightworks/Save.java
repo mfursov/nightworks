@@ -1,7 +1,9 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.DikuTextFile;
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
+import net.sf.nightworks.util.TextUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -50,7 +52,7 @@ class Save {
 *   some of the infrastructure is provided.
 */
 
-    static void save_char_obj(CHAR_DATA ch) {
+    static void save_char_obj(@NotNull CHAR_DATA ch) {
 
         if (IS_NPC(ch) || (ch.level < 2 && !IS_SET(ch.act, PLR_REMORTED))) {
             return;
@@ -62,7 +64,7 @@ class Save {
 
         /* create god log */
         if (IS_IMMORTAL(ch) || ch.level >= LEVEL_IMMORTAL) {
-            String strsave = nw_config.lib_god_dir + "/" + capitalize(ch.name);
+            String strsave = nw_config.lib_god_dir + "/" + TextUtils.capitalize(ch.name);
             try {
                 try (FileWriter f = new FileWriter(strsave)) {
                     Formatter fp = new Formatter(f);
@@ -86,7 +88,7 @@ class Save {
 
         fp.append("#END\n");
 
-        String fileName = nw_config.lib_player_dir + "/" + capitalize(ch.name);
+        String fileName = nw_config.lib_player_dir + "/" + TextUtils.capitalize(ch.name);
         try {
             try (FileWriter f = new FileWriter(fileName)) {
                 f.write(fp.toString());
@@ -104,7 +106,7 @@ class Save {
 */
 
 
-    static void fwrite_char(CHAR_DATA ch, TextBuffer fp) {
+    static void fwrite_char(@NotNull CHAR_DATA ch, TextBuffer fp) {
         AFFECT_DATA paf;
         int pos;
 
@@ -416,7 +418,7 @@ class Save {
  * Write an object and its contents.
  */
 
-    static void fwrite_obj(CHAR_DATA ch, OBJ_DATA obj, TextBuffer fp, int iNest) {
+    static void fwrite_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj, TextBuffer fp, int iNest) {
         EXTRA_DESCR_DATA ed;
         AFFECT_DATA paf;
         int i;
@@ -565,7 +567,7 @@ class Save {
 * Load a char and inventory into a new ch structure.
 */
 
-    static boolean load_char_obj(DESCRIPTOR_DATA d, String name) {
+    static boolean load_char_obj(@NotNull DESCRIPTOR_DATA d, @NotNull String name) {
         CHAR_DATA ch;
         boolean found;
         int stat;
@@ -639,7 +641,7 @@ class Save {
 
         found = false;
 
-        String strsave = nw_config.lib_player_dir + "/" + capitalize(name);
+        String strsave = nw_config.lib_player_dir + "/" + TextUtils.capitalize(name);
         try {
             DikuTextFile fp = new DikuTextFile(strsave);
             Arrays.fill(rgObjNest, null);
@@ -648,9 +650,9 @@ class Save {
                 char letter;
                 String word;
 
-                letter = fp.fread_letter();
+                letter = fp.read_letter();
                 if (letter == '*') {
-                    fp.fread_to_eol();
+                    fp.read_to_eol();
                     continue;
                 }
 
@@ -659,7 +661,7 @@ class Save {
                     break;
                 }
 
-                word = fp.fread_word();
+                word = fp.read_word();
                 if (!str_cmp(word, "PLAYER")) {
                     fread_char(ch, fp);
                 } else if (!str_cmp(word, "OBJECT")) {
@@ -729,7 +731,7 @@ class Save {
 */
 
 
-    static void fread_char(CHAR_DATA ch, DikuTextFile fp) {
+    static void fread_char(@NotNull CHAR_DATA ch, DikuTextFile fp) {
         String word;
         boolean fPlayLog = false;
         int count = 0;
@@ -743,7 +745,7 @@ class Save {
         ch.pcdata.bank_g = 0;
 
         for (; ; ) {
-            word = fp.fread_word();
+            word = fp.read_word();
             if (word == null) {
                 word = "End";
             }
@@ -751,7 +753,7 @@ class Save {
             switch (UPPER(word.charAt(0))) {
                 case '*' -> {
                     fp.fMatch = true;
-                    fp.fread_to_eol();
+                    fp.read_to_eol();
                 }
                 case 'A' -> {
                     ch.act = fp.FLAG64_OLD("Act", word, ch.act);
@@ -762,56 +764,56 @@ class Save {
                     ch.pcdata.anti_killed = fp.NKEY("AntKilled", word, ch.pcdata.anti_killed);
                     if (!str_cmp(word, "Alia")) {
                         if (count >= nw_config.max_alias) {
-                            fp.fread_to_eol();
+                            fp.read_to_eol();
                             fp.fMatch = true;
                             break;
                         }
 
-                        ch.pcdata.alias[count] = fp.fread_word();
-                        ch.pcdata.alias_sub[count] = fp.fread_word();
+                        ch.pcdata.alias[count] = fp.read_word();
+                        ch.pcdata.alias_sub[count] = fp.read_word();
                         count++;
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "Alias")) {
                         if (count >= nw_config.max_alias) {
-                            fp.fread_to_eol();
+                            fp.read_to_eol();
                             fp.fMatch = true;
                             break;
                         }
 
-                        ch.pcdata.alias[count] = fp.fread_word();
-                        ch.pcdata.alias_sub[count] = fp.fread_string();
+                        ch.pcdata.alias[count] = fp.read_word();
+                        ch.pcdata.alias_sub[count] = fp.read_string();
                         count++;
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "AC") || !str_cmp(word, "Armor")) {
-                        fp.fread_to_eol();
+                        fp.read_to_eol();
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "ACs")) {
                         for (int i = 0; i < 4; i++) {
-                            ch.armor[i] = fp.fread_number();
+                            ch.armor[i] = fp.read_number();
                         }
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "AffD")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
-                        Skill sn = lookupSkill(fp.fread_word());
+                        Skill sn = lookupSkill(fp.read_word());
                         if (sn == null) {
                             bug("Fread_char: unknown skill.");
                         } else {
                             paf.type = sn;
                         }
 
-                        paf.level = fp.fread_number();
-                        paf.duration = fp.fread_number();
-                        paf.modifier = fp.fread_number();
-                        paf.location = fp.fread_number();
-                        paf.bitvector = fp.fread_number();
+                        paf.level = fp.read_number();
+                        paf.duration = fp.read_number();
+                        paf.modifier = fp.read_number();
+                        paf.location = fp.read_number();
+                        paf.bitvector = fp.read_number();
                         paf.next = ch.affected;
                         ch.affected = paf;
                         fp.fMatch = true;
@@ -819,19 +821,19 @@ class Save {
                     }
                     if (!str_cmp(word, "Affc")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
-                        Skill sn = lookupSkill(fp.fread_word());
+                        Skill sn = lookupSkill(fp.read_word());
                         if (sn == null) {
                             bug("Fread_char: unknown skill.");
                         } else {
                             paf.type = sn;
                         }
 
-                        paf.where = fp.fread_number();
-                        paf.level = fp.fread_number();
-                        paf.duration = fp.fread_number();
-                        paf.modifier = fp.fread_number();
-                        paf.location = fp.fread_number();
-                        paf.bitvector = fp.fread_number();
+                        paf.where = fp.read_number();
+                        paf.level = fp.read_number();
+                        paf.duration = fp.read_number();
+                        paf.modifier = fp.read_number();
+                        paf.location = fp.read_number();
+                        paf.bitvector = fp.read_number();
                         paf.next = ch.affected;
                         ch.affected = paf;
                         fp.fMatch = true;
@@ -840,7 +842,7 @@ class Save {
                     if (!str_cmp(word, "AttrMod") || !str_cmp(word, "AMod")) {
                         int stat;
                         for (stat = 0; stat < MAX_STATS; stat++) {
-                            fp.fread_number();
+                            fp.read_number();
                         }
                         fp.fMatch = true;
                         break;
@@ -849,7 +851,7 @@ class Save {
                         int stat;
 
                         for (stat = 0; stat < MAX_STATS; stat++) {
-                            ch.perm_stat[stat] = fp.fread_number();
+                            ch.perm_stat[stat] = fp.read_number();
                         }
                         fp.fMatch = true;
                     }
@@ -865,7 +867,7 @@ class Save {
                 case 'C' -> {
                     if (!str_prefix(word, "Cla")) {
                         fp.fMatch = true;
-                        String className = fp.fread_word();
+                        String className = fp.read_word();
                         ch.clazz = Clazz.lookupClass(className);
                         if (ch.clazz == null) {
                             throw new RuntimeException("Class is not found:" + className);
@@ -874,27 +876,27 @@ class Save {
                         ch.cabal = fp.NKEY("Cab", word, ch.cabal);
                     }
                     if (!str_cmp(word, "Condition") || !str_cmp(word, "Cond")) {
-                        ch.pcdata.condition[0] = fp.fread_number();
-                        ch.pcdata.condition[1] = fp.fread_number();
-                        ch.pcdata.condition[2] = fp.fread_number();
+                        ch.pcdata.condition[0] = fp.read_number();
+                        ch.pcdata.condition[1] = fp.read_number();
+                        ch.pcdata.condition[2] = fp.read_number();
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "CndC")) {
-                        ch.pcdata.condition[0] = fp.fread_number();
-                        ch.pcdata.condition[1] = fp.fread_number();
-                        ch.pcdata.condition[2] = fp.fread_number();
-                        ch.pcdata.condition[3] = fp.fread_number();
-                        ch.pcdata.condition[4] = fp.fread_number();
-                        ch.pcdata.condition[5] = fp.fread_number();
+                        ch.pcdata.condition[0] = fp.read_number();
+                        ch.pcdata.condition[1] = fp.read_number();
+                        ch.pcdata.condition[2] = fp.read_number();
+                        ch.pcdata.condition[3] = fp.read_number();
+                        ch.pcdata.condition[4] = fp.read_number();
+                        ch.pcdata.condition[5] = fp.read_number();
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "Cnd")) {
-                        ch.pcdata.condition[0] = fp.fread_number();
-                        ch.pcdata.condition[1] = fp.fread_number();
-                        ch.pcdata.condition[2] = fp.fread_number();
-                        ch.pcdata.condition[3] = fp.fread_number();
+                        ch.pcdata.condition[0] = fp.read_number();
+                        ch.pcdata.condition[1] = fp.read_number();
+                        ch.pcdata.condition[2] = fp.read_number();
+                        ch.pcdata.condition[3] = fp.read_number();
                         fp.fMatch = true;
                         break;
                     }
@@ -939,7 +941,7 @@ class Save {
                 case 'G' -> {
                     ch.gold = fp.NKEY("Gold", word, ch.gold);
                     if (!str_cmp(word, "Group") || !str_cmp(word, "Gr")) {
-                        fp.fread_word();
+                        fp.read_word();
                         fp.fMatch = true;
                     }
                 }
@@ -949,16 +951,16 @@ class Save {
                     ch.hometown = fp.NKEY("Home", word, ch.hometown);
                     ch.pcdata.has_killed = fp.NKEY("Haskilled", word, ch.pcdata.has_killed);
                     if (!str_cmp(word, "HpManaMove") || !str_cmp(word, "HMV")) {
-                        ch.hit = fp.fread_number();
-                        ch.mana = fp.fread_number();
-                        ch.move = fp.fread_number();
+                        ch.hit = fp.read_number();
+                        ch.mana = fp.read_number();
+                        ch.move = fp.read_number();
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "HpManaMovePerm") || !str_cmp(word, "HMVP")) {
-                        ch.pcdata.perm_hit = fp.fread_number();
-                        ch.pcdata.perm_mana = fp.fread_number();
-                        ch.pcdata.perm_move = fp.fread_number();
+                        ch.pcdata.perm_hit = fp.read_number();
+                        ch.pcdata.perm_mana = fp.read_number();
+                        ch.pcdata.perm_move = fp.read_number();
                         fp.fMatch = true;
                     }
                 }
@@ -982,11 +984,11 @@ class Save {
                     ch.name = fp.SKEY("Name", word, ch.name);
                     ch.pcdata.last_note = fp.NKEY("Note", word, ch.pcdata.last_note);
                     if (!str_cmp(word, "Not")) {
-                        ch.pcdata.last_note = fp.fread_number();
-                        ch.pcdata.last_idea = fp.fread_number();
-                        ch.pcdata.last_penalty = fp.fread_number();
-                        ch.pcdata.last_news = fp.fread_number();
-                        ch.pcdata.last_changes = fp.fread_number();
+                        ch.pcdata.last_note = fp.read_number();
+                        ch.pcdata.last_idea = fp.read_number();
+                        ch.pcdata.last_penalty = fp.read_number();
+                        ch.pcdata.last_news = fp.read_number();
+                        ch.pcdata.last_changes = fp.read_number();
                         fp.fMatch = true;
                     }
                 }
@@ -1013,13 +1015,13 @@ class Save {
                             ch.pcdata.log_time[l] = 0;
                         }
 
-                        fp.fread_number();   /* read the version */
+                        fp.read_number();   /* read the version */
 
-                        while (!fp.feof()) {
-                            if ((d = fp.fread_number()) < 0) {
+                        while (!fp.is_eof()) {
+                            if ((d = fp.read_number()) < 0) {
                                 break;
                             }
-                            t = fp.fread_number();
+                            t = fp.read_number();
 
                             if (d >= d_start && d <= d_stop) {
                                 l = d_stop - d;
@@ -1044,13 +1046,13 @@ class Save {
 
                     /*      KEY( "Race",        ch.race,  Race.lookupRace(fp.fread_string()) ); */
                     if (!str_cmp(word, "Race")) {
-                        ch.race = Race.lookupRace(fp.fread_string());
+                        ch.race = Race.lookupRace(fp.read_string());
                         SET_ORG_RACE(ch, ch.race);
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "Room")) {
-                        ch.in_room = get_room_index(fp.fread_number());
+                        ch.in_room = get_room_index(fp.read_number());
                         if (ch.in_room == null) {
                             ch.in_room = get_room_index(ROOM_VNUM_LIMBO);
                         }
@@ -1069,8 +1071,8 @@ class Save {
                         int value;
                         String temp;
 
-                        value = fp.fread_number();
-                        temp = fp.fread_word();
+                        value = fp.read_number();
+                        temp = fp.read_word();
                         Skill sn = lookupSkill(temp);
                         /* sn    = lookupSkill( fread_word( fp ) ); */
                         if (sn == null) {
@@ -1089,7 +1091,7 @@ class Save {
                     ch.trust = fp.NKEY("Trust", word, ch.trust);
                     ch.trust = fp.NKEY("Tru", word, ch.trust);
                     if (!str_cmp(word, "Title") || !str_cmp(word, "Titl")) {
-                        ch.pcdata.title = fp.fread_string();
+                        ch.pcdata.title = fp.read_string();
                         if (ch.pcdata.title.charAt(0) != '.' && ch.pcdata.title.charAt(0) != ','
                                 && ch.pcdata.title.charAt(0) != '!' && ch.pcdata.title.charAt(0) != '?') {
                             ch.pcdata.title = " " + ch.pcdata.title;
@@ -1099,7 +1101,7 @@ class Save {
                 }
                 case 'V' -> {
                     if (!str_cmp(word, "Vnum")) {
-                        ch.pIndexData = get_mob_index(fp.fread_number());
+                        ch.pIndexData = get_mob_index(fp.read_number());
                         fp.fMatch = true;
                     }
                 }
@@ -1112,7 +1114,7 @@ class Save {
 
             if (!fp.fMatch) {
                 bug("Fread_char: no match.");
-                fp.fread_to_eol();
+                fp.read_to_eol();
             }
         }
     }
@@ -1120,18 +1122,18 @@ class Save {
 /* load a pet from the forgotten reaches */
 
 
-    static void fread_pet(CHAR_DATA ch, DikuTextFile fp) {
+    static void fread_pet(@NotNull CHAR_DATA ch, DikuTextFile fp) {
         String word;
         CHAR_DATA pet;
         int lastlogoff = current_time;
         int percent;
 
         /* first entry had BETTER be the vnum or we barf */
-        word = fp.feof() ? "END" : fp.fread_word();
+        word = fp.is_eof() ? "END" : fp.read_word();
         if (!str_cmp(word, "Vnum")) {
             int vnum;
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (get_mob_index(vnum) == null) {
                 bug("Fread_pet: bad vnum %d.", vnum);
                 pet = create_mobile(get_mob_index(MOB_VNUM_FIDO));
@@ -1144,13 +1146,13 @@ class Save {
         }
 
         for (; ; ) {
-            word = fp.feof() ? "END" : fp.fread_word();
+            word = fp.is_eof() ? "END" : fp.read_word();
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
                 case '*' -> {
                     fp.fMatch = true;
-                    fp.fread_to_eol();
+                    fp.read_to_eol();
                 }
                 case 'A' -> {
                     pet.act = fp.FLAG64_OLD("Act", word, pet.act);
@@ -1158,25 +1160,25 @@ class Save {
                     pet.alignment = fp.NKEY("Alig", word, pet.alignment);
                     if (!str_cmp(word, "ACs")) {
                         for (int i = 0; i < 4; i++) {
-                            pet.armor[i] = fp.fread_number();
+                            pet.armor[i] = fp.read_number();
                         }
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "AffD")) {
                         AFFECT_DATA paf = new AFFECT_DATA();
-                        Skill sn = lookupSkill(fp.fread_word());
+                        Skill sn = lookupSkill(fp.read_word());
                         if (sn == null) {
                             bug("Fread_char: unknown skill.");
                         } else {
                             paf.type = sn;
                         }
 
-                        paf.level = fp.fread_number();
-                        paf.duration = fp.fread_number();
-                        paf.modifier = fp.fread_number();
-                        paf.location = fp.fread_number();
-                        paf.bitvector = fp.fread_number();
+                        paf.level = fp.read_number();
+                        paf.duration = fp.read_number();
+                        paf.modifier = fp.read_number();
+                        paf.location = fp.read_number();
+                        paf.bitvector = fp.read_number();
                         paf.next = pet.affected;
                         pet.affected = paf;
                         fp.fMatch = true;
@@ -1187,19 +1189,19 @@ class Save {
 
                         AFFECT_DATA paf = new AFFECT_DATA();
 
-                        Skill sn = lookupSkill(fp.fread_word());
+                        Skill sn = lookupSkill(fp.read_word());
                         if (sn == null) {
                             bug("Fread_char: unknown skill.");
                         } else {
                             paf.type = sn;
                         }
 
-                        paf.where = fp.fread_number();
-                        paf.level = fp.fread_number();
-                        paf.duration = fp.fread_number();
-                        paf.modifier = fp.fread_number();
-                        paf.location = fp.fread_number();
-                        paf.bitvector = fp.fread_number();
+                        paf.where = fp.read_number();
+                        paf.level = fp.read_number();
+                        paf.duration = fp.read_number();
+                        paf.modifier = fp.read_number();
+                        paf.location = fp.read_number();
+                        paf.bitvector = fp.read_number();
                         paf.next = pet.affected;
                         pet.affected = paf;
                         fp.fMatch = true;
@@ -1209,7 +1211,7 @@ class Save {
                         int stat;
 
                         for (stat = 0; stat < MAX_STATS; stat++) {
-                            pet.mod_stat[stat] = fp.fread_number();
+                            pet.mod_stat[stat] = fp.read_number();
                         }
                         fp.fMatch = true;
                         break;
@@ -1218,7 +1220,7 @@ class Save {
                         int stat;
 
                         for (stat = 0; stat < MAX_STATS; stat++) {
-                            pet.perm_stat[stat] = fp.fread_number();
+                            pet.perm_stat[stat] = fp.read_number();
                         }
                         fp.fMatch = true;
                     }
@@ -1254,12 +1256,12 @@ class Save {
                 case 'H' -> {
                     pet.hitroll = fp.NKEY("Hit", word, pet.hitroll);
                     if (!str_cmp(word, "HMV")) {
-                        pet.hit = fp.fread_number();
-                        pet.max_hit = fp.fread_number();
-                        pet.mana = fp.fread_number();
-                        pet.max_mana = fp.fread_number();
-                        pet.move = fp.fread_number();
-                        pet.max_move = fp.fread_number();
+                        pet.hit = fp.read_number();
+                        pet.max_hit = fp.read_number();
+                        pet.mana = fp.read_number();
+                        pet.max_mana = fp.read_number();
+                        pet.move = fp.read_number();
+                        pet.max_move = fp.read_number();
                         fp.fMatch = true;
                     }
                 }
@@ -1272,7 +1274,7 @@ class Save {
                 case 'P' -> pet.position = fp.NKEY("Pos", word, pet.position);
                 case 'R' -> {
                     if (!str_cmp(word, "Race")) {
-                        pet.race = Race.lookupRace(fp.fread_string());
+                        pet.race = Race.lookupRace(fp.read_string());
                         SET_ORG_RACE(pet, pet.race);
                         fp.fMatch = true;
                     }
@@ -1286,14 +1288,14 @@ class Save {
             }
             if (!fp.fMatch) {
                 bug("Fread_pet: no match.");
-                fp.fread_to_eol();
+                fp.read_to_eol();
             }
 
         }
     }
 
 
-    static void fread_obj(CHAR_DATA ch, DikuTextFile fp) {
+    static void fread_obj(@NotNull CHAR_DATA ch, DikuTextFile fp) {
         OBJ_DATA obj;
         String word;
         int iNest;
@@ -1308,12 +1310,12 @@ class Save {
         new_format = false;
         make_new = false;
 
-        word = fp.feof() ? "End" : fp.fread_word();
+        word = fp.is_eof() ? "End" : fp.read_word();
         if (!str_cmp(word, "Vnum")) {
             int vnum;
             first = false;  /* fp will be in right place */
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (get_obj_index(vnum) == null) {
                 bug("Fread_obj: bad vnum %d.", vnum);
             } else {
@@ -1338,32 +1340,32 @@ class Save {
             if (first) {
                 first = false;
             } else {
-                word = fp.feof() ? "End" : fp.fread_word();
+                word = fp.is_eof() ? "End" : fp.read_word();
             }
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
                 case '*' -> {
                     fp.fMatch = true;
-                    fp.fread_to_eol();
+                    fp.read_to_eol();
                 }
                 case 'A' -> {
                     if (!str_cmp(word, "AffD")) {
 
                         AFFECT_DATA paf = new AFFECT_DATA();
 
-                        Skill sn = lookupSkill(fp.fread_word());
+                        Skill sn = lookupSkill(fp.read_word());
                         if (sn == null) {
                             bug("Fread_obj: unknown skill.");
                         } else {
                             paf.type = sn;
                         }
 
-                        paf.level = fp.fread_number();
-                        paf.duration = fp.fread_number();
-                        paf.modifier = fp.fread_number();
-                        paf.location = fp.fread_number();
-                        paf.bitvector = fp.fread_number();
+                        paf.level = fp.read_number();
+                        paf.duration = fp.read_number();
+                        paf.modifier = fp.read_number();
+                        paf.location = fp.read_number();
+                        paf.bitvector = fp.read_number();
                         paf.next = obj.affected;
                         obj.affected = paf;
                         fp.fMatch = true;
@@ -1373,19 +1375,19 @@ class Save {
 
                         AFFECT_DATA paf = new AFFECT_DATA();
 
-                        Skill sn = lookupSkill(fp.fread_word());
+                        Skill sn = lookupSkill(fp.read_word());
                         if (sn == null) {
                             bug("Fread_obj: unknown skill.");
                         } else {
                             paf.type = sn;
                         }
 
-                        paf.where = fp.fread_number();
-                        paf.level = fp.fread_number();
-                        paf.duration = fp.fread_number();
-                        paf.modifier = fp.fread_number();
-                        paf.location = fp.fread_number();
-                        paf.bitvector = fp.fread_number();
+                        paf.where = fp.read_number();
+                        paf.level = fp.read_number();
+                        paf.duration = fp.read_number();
+                        paf.modifier = fp.read_number();
+                        paf.location = fp.read_number();
+                        paf.bitvector = fp.read_number();
                         paf.next = obj.affected;
                         obj.affected = paf;
                         fp.fMatch = true;
@@ -1393,7 +1395,7 @@ class Save {
                 }
                 case 'C' -> {
                     if (!str_cmp(word, "Cond")) {
-                        obj.condition = fp.fread_number();
+                        obj.condition = fp.read_number();
                         if (obj.condition < 1) {
                             obj.condition = 100;
                         }
@@ -1417,8 +1419,8 @@ class Save {
                     if (!str_cmp(word, "ExtraDescr") || !str_cmp(word, "ExDe")) {
                         EXTRA_DESCR_DATA ed = new EXTRA_DESCR_DATA();
 
-                        ed.keyword = fp.fread_string();
-                        ed.description = fp.fread_string();
+                        ed.keyword = fp.read_string();
+                        ed.description = fp.read_string();
                         ed.next = obj.extra_descr;
                         obj.extra_descr = ed;
                         fp.fMatch = true;
@@ -1476,7 +1478,7 @@ class Save {
                 case 'N' -> {
                     obj.name = fp.SKEY("Name", word, obj.name);
                     if (!str_cmp(word, "Nest")) {
-                        iNest = fp.fread_number();
+                        iNest = fp.read_number();
                         if (iNest < 0 || iNest >= MAX_NEST) {
                             bug("Fread_obj: bad nest %d.", iNest);
                         } else {
@@ -1501,8 +1503,8 @@ class Save {
                     if (!str_cmp(word, "Spell")) {
                         int iValue;
 
-                        iValue = fp.fread_number();
-                        Skill sn = lookupSkill(fp.fread_word());
+                        iValue = fp.read_number();
+                        Skill sn = lookupSkill(fp.read_word());
                         if (iValue < 0 || iValue > 3) {
                             bug("Fread_obj: bad iValue %d.", iValue);
                         } else if (sn == null) {
@@ -1519,10 +1521,10 @@ class Save {
                 }
                 case 'V' -> {
                     if (!str_cmp(word, "Values") || !str_cmp(word, "Vals")) {
-                        obj.value[0] = fp.fread_number();
-                        obj.value[1] = fp.fread_number();
-                        obj.value[2] = fp.fread_number();
-                        obj.value[3] = fp.fread_number();
+                        obj.value[0] = fp.read_number();
+                        obj.value[1] = fp.read_number();
+                        obj.value[2] = fp.read_number();
+                        obj.value[3] = fp.read_number();
                         if (obj.item_type == ITEM_WEAPON && obj.value[0] == 0) {
                             obj.value[0] = obj.pIndexData.value[0];
                         }
@@ -1530,18 +1532,18 @@ class Save {
                         break;
                     }
                     if (!str_cmp(word, "Val")) {
-                        obj.value[0] = fp.fread_number();
-                        obj.value[1] = fp.fread_number();
-                        obj.value[2] = fp.fread_number();
-                        obj.value[3] = fp.fread_number();
-                        obj.value[4] = fp.fread_number();
+                        obj.value[0] = fp.read_number();
+                        obj.value[1] = fp.read_number();
+                        obj.value[2] = fp.read_number();
+                        obj.value[3] = fp.read_number();
+                        obj.value[4] = fp.read_number();
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "Vnum")) {
                         int vnum;
 
-                        vnum = fp.fread_number();
+                        vnum = fp.read_number();
                         if ((obj.pIndexData = get_obj_index(vnum)) == null) {
                             bug("Fread_obj: bad vnum %d.", vnum);
                         } else {
@@ -1557,12 +1559,12 @@ class Save {
                     obj.wear_loc = fp.NKEY("WLoc", word, obj.wear_loc);
                     obj.weight = fp.NKEY("Wt", word, obj.weight);
                     if (!str_cmp(word, "Wear")) {
-                        obj.wear_loc = wear_convert(fp.fread_number());
+                        obj.wear_loc = wear_convert(fp.read_number());
                         fp.fMatch = true;
                         break;
                     }
                     if (!str_cmp(word, "Wearloc")) {
-                        obj.wear_loc = wear_convert(fp.fread_number());
+                        obj.wear_loc = wear_convert(fp.read_number());
                         fp.fMatch = true;
                     }
                 }
@@ -1570,14 +1572,14 @@ class Save {
 
             if (!fp.fMatch) {
                 bug("Fread_obj: no match.");
-                fp.fread_to_eol();
+                fp.read_to_eol();
             }
         }
     }
 
 
     static int wear_convert(int oldwear) {
-        int iWear = switch (oldwear) {
+        return switch (oldwear) {
             case OWEAR_FINGER_L, OWEAR_FINGER_R -> WEAR_FINGER;
             case OWEAR_NECK_1, OWEAR_NECK_2 -> WEAR_NECK;
             case OWEAR_BODY -> WEAR_BODY;
@@ -1596,8 +1598,6 @@ class Save {
             case OWEAR_STUCK_IN -> WEAR_STUCK_IN;
             default -> WEAR_NONE;
         };
-
-        return iWear;
     }
 
 }

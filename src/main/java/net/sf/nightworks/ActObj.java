@@ -1,335 +1,35 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
-import static net.sf.nightworks.ActComm.add_follower;
-import static net.sf.nightworks.ActComm.do_say;
-import static net.sf.nightworks.ActComm.do_split;
-import static net.sf.nightworks.ActComm.do_yell;
-import static net.sf.nightworks.ActComm.is_same_group;
-import static net.sf.nightworks.ActMove.dir_name;
-import static net.sf.nightworks.ActMove.do_mount;
-import static net.sf.nightworks.ActMove.find_exit;
-import static net.sf.nightworks.ActMove.get_weapon_char;
-import static net.sf.nightworks.ActMove.move_char;
+import static net.sf.nightworks.ActComm.*;
+import static net.sf.nightworks.ActMove.*;
 import static net.sf.nightworks.ActSkill.check_improve;
 import static net.sf.nightworks.ActWiz.wiznet;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.Const.attack_table;
-import static net.sf.nightworks.Const.liq_table;
-import static net.sf.nightworks.Const.str_app;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.clone_object;
-import static net.sf.nightworks.DB.create_mobile;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_fuzzy;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.time_info;
+import static net.sf.nightworks.Const.*;
+import static net.sf.nightworks.DB.*;
 import static net.sf.nightworks.Fight.is_safe;
 import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Handler.affect_join;
-import static net.sf.nightworks.Handler.affect_loc_name;
-import static net.sf.nightworks.Handler.affect_strip;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.affect_to_obj;
-import static net.sf.nightworks.Handler.can_carry_n;
-import static net.sf.nightworks.Handler.can_carry_w;
-import static net.sf.nightworks.Handler.can_drop_obj;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.can_see_obj;
-import static net.sf.nightworks.Handler.can_see_room;
-import static net.sf.nightworks.Handler.cant_float;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.count_worn;
-import static net.sf.nightworks.Handler.create_money;
-import static net.sf.nightworks.Handler.deduct_cost;
-import static net.sf.nightworks.Handler.equip_char;
-import static net.sf.nightworks.Handler.extra_bit_name;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_char_room;
-import static net.sf.nightworks.Handler.get_char_world;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_hold_char;
-import static net.sf.nightworks.Handler.get_obj_carry;
-import static net.sf.nightworks.Handler.get_obj_here;
-import static net.sf.nightworks.Handler.get_obj_list;
-import static net.sf.nightworks.Handler.get_obj_number;
-import static net.sf.nightworks.Handler.get_obj_wear;
-import static net.sf.nightworks.Handler.get_obj_weight;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_true_weight;
-import static net.sf.nightworks.Handler.get_weapon_skill;
-import static net.sf.nightworks.Handler.get_weapon_sn;
-import static net.sf.nightworks.Handler.get_wield_char;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.item_type_name;
-import static net.sf.nightworks.Handler.max_can_wear;
-import static net.sf.nightworks.Handler.may_float;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_from_obj;
-import static net.sf.nightworks.Handler.obj_from_room;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_obj;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.skill_failure_check;
-import static net.sf.nightworks.Handler.unequip_char;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Interp.multiply_argument;
 import static net.sf.nightworks.Interp.number_argument;
-import static net.sf.nightworks.Magic.check_dispel;
-import static net.sf.nightworks.Magic.obj_cast_spell;
-import static net.sf.nightworks.Magic.spell_enchant_weapon;
-import static net.sf.nightworks.Nightworks.ACT_IS_CHANGER;
-import static net.sf.nightworks.Nightworks.ACT_PET;
-import static net.sf.nightworks.Nightworks.ACT_RIDEABLE;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SNEAK;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.AREA_HOMETOWN;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_KNIGHT;
-import static net.sf.nightworks.Nightworks.CAN_WEAR;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_NOCHANNELS;
-import static net.sf.nightworks.Nightworks.COMM_NOSHOUT;
-import static net.sf.nightworks.Nightworks.COMM_NOTELL;
-import static net.sf.nightworks.Nightworks.COND_DRUNK;
-import static net.sf.nightworks.Nightworks.COND_FULL;
-import static net.sf.nightworks.Nightworks.COND_HUNGER;
-import static net.sf.nightworks.Nightworks.COND_THIRST;
-import static net.sf.nightworks.Nightworks.CONT_CLOSED;
-import static net.sf.nightworks.Nightworks.CONT_PUT_ON;
-import static net.sf.nightworks.Nightworks.CONT_ST_LIMITED;
-import static net.sf.nightworks.Nightworks.CON_PLAYING;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.FIGHT_DELAY_TIME;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OBJ_STAT;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_WATER;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_EVIL;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_GOOD;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_NEUTRAL;
-import static net.sf.nightworks.Nightworks.ITEM_ARMOR;
-import static net.sf.nightworks.Nightworks.ITEM_BLESS;
-import static net.sf.nightworks.Nightworks.ITEM_BURIED;
-import static net.sf.nightworks.Nightworks.ITEM_BURN_PROOF;
-import static net.sf.nightworks.Nightworks.ITEM_CONTAINER;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_PC;
-import static net.sf.nightworks.Nightworks.ITEM_DRINK_CON;
-import static net.sf.nightworks.Nightworks.ITEM_FOOD;
-import static net.sf.nightworks.Nightworks.ITEM_FOUNTAIN;
-import static net.sf.nightworks.Nightworks.ITEM_HAD_TIMER;
-import static net.sf.nightworks.Nightworks.ITEM_HOLD;
-import static net.sf.nightworks.Nightworks.ITEM_INVENTORY;
-import static net.sf.nightworks.Nightworks.ITEM_LIGHT;
-import static net.sf.nightworks.Nightworks.ITEM_MELT_DROP;
-import static net.sf.nightworks.Nightworks.ITEM_MONEY;
-import static net.sf.nightworks.Nightworks.ITEM_NOREMOVE;
-import static net.sf.nightworks.Nightworks.ITEM_NOSELL;
-import static net.sf.nightworks.Nightworks.ITEM_NO_SAC;
-import static net.sf.nightworks.Nightworks.ITEM_PILL;
-import static net.sf.nightworks.Nightworks.ITEM_POTION;
-import static net.sf.nightworks.Nightworks.ITEM_SCROLL;
-import static net.sf.nightworks.Nightworks.ITEM_SELL_EXTRACT;
-import static net.sf.nightworks.Nightworks.ITEM_STAFF;
-import static net.sf.nightworks.Nightworks.ITEM_TAKE;
-import static net.sf.nightworks.Nightworks.ITEM_TATTOO;
-import static net.sf.nightworks.Nightworks.ITEM_TRASH;
-import static net.sf.nightworks.Nightworks.ITEM_WAND;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_ABOUT;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_ARMS;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_BODY;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FEET;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FINGER;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_HANDS;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_HEAD;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_LEGS;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_NECK;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_SHIELD;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_WAIST;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_WRIST;
-import static net.sf.nightworks.Nightworks.ITEM_WIELD;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MAX_LEVEL;
-import static net.sf.nightworks.Nightworks.MAX_SKILL;
-import static net.sf.nightworks.Nightworks.MAX_TRADE;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.MPROG_BRIBE;
-import static net.sf.nightworks.Nightworks.MPROG_GIVE;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_BATTLE_THRONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CHAOS_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_COINS;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GOLD_ONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GOLD_SOME;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GRAVE_STONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_HUNTER_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_INVADER_SKULL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_KNIGHT_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_LIONS_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_PIT;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_POTION_VIAL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_STAND;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SHALAFI_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SILVER_ONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SILVER_SOME;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_STEAK;
-import static net.sf.nightworks.Nightworks.OPROG_DROP;
-import static net.sf.nightworks.Nightworks.OPROG_GET;
-import static net.sf.nightworks.Nightworks.OPROG_GIVE;
-import static net.sf.nightworks.Nightworks.OPROG_SAC;
-import static net.sf.nightworks.Nightworks.PLR_AUTOSPLIT;
-import static net.sf.nightworks.Nightworks.PLR_CANLOOT;
-import static net.sf.nightworks.Nightworks.PLR_WANTED;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.ROOM_BANK;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_PET_SHOP;
-import static net.sf.nightworks.Nightworks.SECT_AIR;
-import static net.sf.nightworks.Nightworks.SECT_CITY;
-import static net.sf.nightworks.Nightworks.SECT_DESERT;
-import static net.sf.nightworks.Nightworks.SECT_FIELD;
-import static net.sf.nightworks.Nightworks.SECT_FOREST;
-import static net.sf.nightworks.Nightworks.SECT_INSIDE;
-import static net.sf.nightworks.Nightworks.SECT_WATER_NOSWIM;
-import static net.sf.nightworks.Nightworks.SECT_WATER_SWIM;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SHOP_DATA;
-import static net.sf.nightworks.Nightworks.SIZE_LARGE;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.TAR_CHAR_DEFENSIVE;
-import static net.sf.nightworks.Nightworks.TAR_CHAR_OFFENSIVE;
-import static net.sf.nightworks.Nightworks.TAR_CHAR_SELF;
-import static net.sf.nightworks.Nightworks.TAR_IGNORE;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_ALL;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.TO_WEAPON;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_ARROW;
-import static net.sf.nightworks.Nightworks.WEAPON_AXE;
-import static net.sf.nightworks.Nightworks.WEAPON_BOW;
-import static net.sf.nightworks.Nightworks.WEAPON_DAGGER;
-import static net.sf.nightworks.Nightworks.WEAPON_EXOTIC;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAIL;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAMING;
-import static net.sf.nightworks.Nightworks.WEAPON_FROST;
-import static net.sf.nightworks.Nightworks.WEAPON_HOLY;
-import static net.sf.nightworks.Nightworks.WEAPON_LANCE;
-import static net.sf.nightworks.Nightworks.WEAPON_MACE;
-import static net.sf.nightworks.Nightworks.WEAPON_POISON;
-import static net.sf.nightworks.Nightworks.WEAPON_POLEARM;
-import static net.sf.nightworks.Nightworks.WEAPON_SHARP;
-import static net.sf.nightworks.Nightworks.WEAPON_SHOCKING;
-import static net.sf.nightworks.Nightworks.WEAPON_SPEAR;
-import static net.sf.nightworks.Nightworks.WEAPON_SWORD;
-import static net.sf.nightworks.Nightworks.WEAPON_TWO_HANDS;
-import static net.sf.nightworks.Nightworks.WEAPON_VAMPIRIC;
-import static net.sf.nightworks.Nightworks.WEAPON_VORPAL;
-import static net.sf.nightworks.Nightworks.WEAPON_WHIP;
-import static net.sf.nightworks.Nightworks.WEAR_ABOUT;
-import static net.sf.nightworks.Nightworks.WEAR_ARMS;
-import static net.sf.nightworks.Nightworks.WEAR_BODY;
-import static net.sf.nightworks.Nightworks.WEAR_BOTH;
-import static net.sf.nightworks.Nightworks.WEAR_FEET;
-import static net.sf.nightworks.Nightworks.WEAR_FINGER;
-import static net.sf.nightworks.Nightworks.WEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.WEAR_HANDS;
-import static net.sf.nightworks.Nightworks.WEAR_HEAD;
-import static net.sf.nightworks.Nightworks.WEAR_LEFT;
-import static net.sf.nightworks.Nightworks.WEAR_LEGS;
-import static net.sf.nightworks.Nightworks.WEAR_NECK;
-import static net.sf.nightworks.Nightworks.WEAR_NONE;
-import static net.sf.nightworks.Nightworks.WEAR_RIGHT;
-import static net.sf.nightworks.Nightworks.WEAR_STUCK_IN;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.WEAR_WAIST;
-import static net.sf.nightworks.Nightworks.WEAR_WRIST;
-import static net.sf.nightworks.Nightworks.WEIGHT_MULT;
-import static net.sf.nightworks.Nightworks.WIZ_SACCING;
-import static net.sf.nightworks.Nightworks.atoi;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.descriptor_list;
-import static net.sf.nightworks.Nightworks.get_carry_weight;
-import static net.sf.nightworks.Skill.gsn_arrow;
-import static net.sf.nightworks.Skill.gsn_bury;
-import static net.sf.nightworks.Skill.gsn_butcher;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_enchant_sword;
-import static net.sf.nightworks.Skill.gsn_enchant_weapon;
-import static net.sf.nightworks.Skill.gsn_envenom;
-import static net.sf.nightworks.Skill.gsn_haggle;
-import static net.sf.nightworks.Skill.gsn_herbs;
-import static net.sf.nightworks.Skill.gsn_lore;
-import static net.sf.nightworks.Skill.gsn_plague;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_scrolls;
-import static net.sf.nightworks.Skill.gsn_spear;
-import static net.sf.nightworks.Skill.gsn_staves;
-import static net.sf.nightworks.Skill.gsn_steal;
-import static net.sf.nightworks.Skill.gsn_wands;
-import static net.sf.nightworks.Skill.gsn_wanted;
+import static net.sf.nightworks.Magic.*;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.Update.gain_condition;
-import static net.sf.nightworks.util.TextUtils.is_number;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.smash_tilde;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
+import static net.sf.nightworks.util.TextUtils.*;
 
 class ActObj {
-/* RT part of the corpse looting code */
-
-    private static final boolean _loot = true;
-
-    static boolean can_loot(CHAR_DATA ch, OBJ_DATA obj) {
+    /* RT part of the corpse looting code */
+    static boolean can_loot(@NotNull CHAR_DATA ch, @NotNull OBJ_DATA obj) {
         CHAR_DATA owner, wch;
-        if (_loot) {
-            return true;
-        }
         if (IS_IMMORTAL(ch)) {
             return true;
         }
-
-        if (obj.owner == null || obj.owner == null) {
-            return true;
-        }
-
         owner = null;
         for (wch = char_list; wch != null; wch = wch.next) {
             if (!str_cmp(wch.name, obj.owner)) {
@@ -355,7 +55,7 @@ class ActObj {
     }
 
 
-    static void get_obj(CHAR_DATA ch, OBJ_DATA obj, OBJ_DATA container) {
+    static void get_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj, OBJ_DATA container) {
         /* variables for AUTOSPLIT */
         CHAR_DATA gch;
         int members;
@@ -479,7 +179,7 @@ class ActObj {
     }
 
 
-    static void do_get(CHAR_DATA ch, String argument) {
+    static void do_get(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA obj_next;
         OBJ_DATA container;
@@ -769,7 +469,7 @@ class ActObj {
     }
 
 
-    static void do_put(CHAR_DATA ch, String argument) {
+    static void do_put(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA container;
         OBJ_DATA obj;
         OBJ_DATA obj_next;
@@ -966,7 +666,7 @@ class ActObj {
     }
 
 
-    static void do_drop(CHAR_DATA ch, String argument) {
+    static void do_drop(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA obj_next;
         boolean found;
@@ -1126,9 +826,7 @@ class ActObj {
                         if (!IS_SET(ch.in_room.sector_type, SECT_FOREST) &&
                                 !IS_SET(ch.in_room.sector_type, SECT_DESERT) &&
                                 !IS_SET(ch.in_room.sector_type, SECT_AIR) &&
-                                !IS_WATER(ch.in_room))
-
-                        {
+                                !IS_WATER(ch.in_room)) {
                             if (!IS_AFFECTED(ch, AFF_SNEAK)) {
                                 act("$p cracks and shaters into tiny pieces.", ch, obj, null, TO_ROOM);
                             }
@@ -1172,7 +870,7 @@ class ActObj {
     }
 
 
-    static void do_drag(CHAR_DATA ch, String argument) {
+    static void do_drag(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA gch;
         OBJ_DATA obj;
         EXIT_DATA pexit;
@@ -1289,7 +987,7 @@ class ActObj {
     }
 
 
-    static void do_give(CHAR_DATA ch, String argument) {
+    static void do_give(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA obj;
 
@@ -1495,7 +1193,7 @@ class ActObj {
     }
 
 
-    static void do_bury(CHAR_DATA ch, String argument) {
+    static void do_bury(@NotNull CHAR_DATA ch, String argument) {
         String bufp;
         OBJ_DATA obj, shovel, stone;
         int move;
@@ -1599,7 +1297,7 @@ class ActObj {
 
     }
 
-    static void do_dig(CHAR_DATA ch, String argument) {
+    static void do_dig(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj, shovel, corpse;
         int move;
         var arg = new StringBuilder();
@@ -1654,9 +1352,9 @@ class ActObj {
 
     }
 
-/* for poisoning weapons and food/drink */
+    /* for poisoning weapons and food/drink */
 
-    static void do_envenom(CHAR_DATA ch, String argument) {
+    static void do_envenom(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int percent, skill;
 
@@ -1757,7 +1455,7 @@ class ActObj {
         act("You can't poison $p.", ch, obj, null, TO_CHAR);
     }
 
-    static void do_fill(CHAR_DATA ch, String argument) {
+    static void do_fill(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA fountain;
         boolean found;
@@ -1815,7 +1513,7 @@ class ActObj {
 
     }
 
-    static void do_pour(CHAR_DATA ch, String argument) {
+    static void do_pour(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA out, in;
         CHAR_DATA vch = null;
         int amount;
@@ -1937,7 +1635,7 @@ class ActObj {
 
     }
 
-    static void do_drink(CHAR_DATA ch, String argument) {
+    static void do_drink(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int amount;
         int liquid;
@@ -2047,7 +1745,7 @@ class ActObj {
     }
 
 
-    static void do_eat(CHAR_DATA ch, String argument) {
+    static void do_eat(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
         var arg = new StringBuilder();
@@ -2121,11 +1819,11 @@ class ActObj {
         extract_obj(obj);
     }
 
-/*
-* Remove an object. Only for non-multi-wear locations
-*/
+    /*
+     * Remove an object. Only for non-multi-wear locations
+     */
 
-    static boolean remove_obj_loc(CHAR_DATA ch, int iWear, boolean fReplace) {
+    static boolean remove_obj_loc(@NotNull CHAR_DATA ch, int iWear, boolean fReplace) {
         OBJ_DATA obj;
 
         if ((obj = get_eq_char(ch, iWear)) == null) {
@@ -2170,11 +1868,11 @@ class ActObj {
         return true;
     }
 
-/*
- * Remove an object.
- */
+    /*
+     * Remove an object.
+     */
 
-    static boolean remove_obj(CHAR_DATA ch, OBJ_DATA obj, boolean fReplace) {
+    static boolean remove_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj, boolean fReplace) {
         if (obj == null) {
             return true;
         }
@@ -2217,13 +1915,13 @@ class ActObj {
         return true;
     }
 
-/*
-* Wear one object.
-* Optional replacement of existing objects.
-* Big repetitive code, ick.
-*/
+    /*
+     * Wear one object.
+     * Optional replacement of existing objects.
+     * Big repetitive code, ick.
+     */
 
-    static void wear_obj(CHAR_DATA ch, OBJ_DATA obj, boolean fReplace) {
+    static void wear_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj, boolean fReplace) {
         int wear_level;
 
         wear_level = ch.level;
@@ -2425,7 +2123,7 @@ class ActObj {
     }
 
 
-    static void do_wear(CHAR_DATA ch, String argument) {
+    static void do_wear(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         var arg = new StringBuilder();
 
@@ -2457,7 +2155,7 @@ class ActObj {
     }
 
 
-    static void do_remove(CHAR_DATA ch, String argument) {
+    static void do_remove(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -2489,7 +2187,7 @@ class ActObj {
     }
 
 
-    static void do_sacrifice(CHAR_DATA ch, String argument) {
+    static void do_sacrifice(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA obj_content;
         OBJ_DATA obj_next;
@@ -2642,7 +2340,7 @@ class ActObj {
     }
 
 
-    static void do_quaff(CHAR_DATA ch, String argument) {
+    static void do_quaff(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -2696,7 +2394,7 @@ class ActObj {
     }
 
 
-    static void do_recite(CHAR_DATA ch, String argument) {
+    static void do_recite(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA scroll;
         OBJ_DATA obj;
@@ -2763,7 +2461,7 @@ class ActObj {
     }
 
 
-    static void do_brandish(CHAR_DATA ch) {
+    static void do_brandish(@NotNull CHAR_DATA ch) {
         CHAR_DATA vch;
         CHAR_DATA vch_next;
         OBJ_DATA staff;
@@ -2846,7 +2544,7 @@ class ActObj {
     }
 
 
-    static void do_zap(CHAR_DATA ch, String argument) {
+    static void do_zap(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA wand;
         OBJ_DATA obj;
@@ -2922,10 +2620,9 @@ class ActObj {
     }
 
 
-    static void do_steal(CHAR_DATA ch, String argument) {
+    static void do_steal(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         CHAR_DATA tmp_ch;
-        OBJ_DATA obj;
         OBJ_DATA obj_inve;
         int percent, number;
 
@@ -2934,7 +2631,7 @@ class ActObj {
         argument = one_argument(argument, arg1);
         one_argument(argument, arg2);
 
-        if (arg1.isEmpty() || arg2.length() == 0) {
+        if (arg1.isEmpty() || arg2.isEmpty()) {
             send_to_char("Steal what from whom?\n", ch);
             return;
         }
@@ -2981,7 +2678,7 @@ class ActObj {
         percent -= (victim.level > ch.level) ?
                 ((victim.level - ch.level) * 2) : 0;
 
-        obj = null;
+        OBJ_DATA obj = null;
         var arg1str = arg1.toString();
         if (str_cmp(arg1str, "coin")
                 && str_cmp(arg1str, "coins")
@@ -3020,8 +2717,8 @@ class ActObj {
         if (victim.position == POS_FIGHTING
                 || number_percent() > percent) {
             /*
-            * Failure.
-            */
+             * Failure.
+             */
 
             send_to_char("Oops.\n", ch);
             if (!IS_AFFECTED(victim, AFF_SLEEP)) {
@@ -3124,11 +2821,11 @@ class ActObj {
 
     }
 
-/*
- * Shopping commands.
- */
+    /*
+     * Shopping commands.
+     */
 
-    static CHAR_DATA find_keeper(CHAR_DATA ch) {
+    static CHAR_DATA find_keeper(@NotNull CHAR_DATA ch) {
         CHAR_DATA keeper;
         SHOP_DATA pShop = null;
         for (keeper = ch.in_room.people; keeper != null; keeper = keeper.next_in_room) {
@@ -3175,7 +2872,7 @@ class ActObj {
         return keeper;
     }
 
-/* insert an object at the right spot for the keeper */
+    /* insert an object at the right spot for the keeper */
 
     static void obj_to_keeper(OBJ_DATA obj, CHAR_DATA ch) {
         OBJ_DATA t_obj, t_obj_next;
@@ -3210,9 +2907,9 @@ class ActObj {
         ch.carry_weight += get_obj_weight(obj);
     }
 
-/* get an object from a shopkeeper's list */
+    /* get an object from a shopkeeper's list */
 
-    static OBJ_DATA get_obj_keeper(CHAR_DATA ch, CHAR_DATA keeper, String argument) {
+    static OBJ_DATA get_obj_keeper(@NotNull CHAR_DATA ch, CHAR_DATA keeper, String argument) {
         OBJ_DATA obj;
         int number;
         int count;
@@ -3294,7 +2991,7 @@ class ActObj {
     }
 
 
-    static void do_buy(CHAR_DATA ch, String argument) {
+    static void do_buy(@NotNull CHAR_DATA ch, String argument) {
         int cost, roll;
 
         if (argument.isEmpty()) {
@@ -3419,7 +3116,7 @@ class ActObj {
             act("$n bought $N as a pet.", ch, null, pet, TO_ROOM);
         } else {
             CHAR_DATA keeper;
-            OBJ_DATA obj, t_obj;
+            OBJ_DATA t_obj;
             int number, count = 1;
 
             if ((keeper = find_keeper(ch)) == null) {
@@ -3434,7 +3131,7 @@ class ActObj {
                 return;
             }
 
-            obj = get_obj_keeper(ch, keeper, arg.toString());
+            OBJ_DATA obj = get_obj_keeper(ch, keeper, arg.toString());
             cost = get_cost(keeper, obj, true);
 
             if (cost <= 0 || !can_see_obj(ch, obj)) {
@@ -3553,7 +3250,7 @@ class ActObj {
     }
 
 
-    static void do_list(CHAR_DATA ch, String argument) {
+    static void do_list(@NotNull CHAR_DATA ch, String argument) {
 
         if (IS_SET(ch.in_room.room_flags, ROOM_PET_SHOP)) {
             ROOM_INDEX_DATA pRoomIndexNext;
@@ -3650,7 +3347,7 @@ class ActObj {
     }
 
 
-    static void do_sell(CHAR_DATA ch, String argument) {
+    static void do_sell(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA keeper;
         OBJ_DATA obj;
         int cost, roll;
@@ -3744,7 +3441,7 @@ class ActObj {
     }
 
 
-    static void do_value(CHAR_DATA ch, String argument) {
+    static void do_value(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA keeper;
         OBJ_DATA obj;
         int cost;
@@ -3791,7 +3488,7 @@ class ActObj {
 
     }
 
-    static void do_wanted(CHAR_DATA ch, String argument) {
+    static void do_wanted(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_wanted, false, 0, null)) {
@@ -3852,7 +3549,7 @@ class ActObj {
         }
     }
 
-    static void do_herbs(CHAR_DATA ch, String argument) {
+    static void do_herbs(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         var arg = new StringBuilder();
@@ -3920,7 +3617,7 @@ class ActObj {
 
     private static final boolean orig_lore = true;
 
-    static void do_lore(CHAR_DATA ch, String argument) {
+    static void do_lore(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int chance;
         int value0, value1, value2, value3;
@@ -4122,45 +3819,19 @@ class ActObj {
                     }
                 }
                 switch (value0) {
-                    case (WEAPON_EXOTIC):
-                        send_to_char("exotic.\n", ch);
-                        break;
-                    case (WEAPON_SWORD):
-                        send_to_char("sword.\n", ch);
-                        break;
-                    case (WEAPON_DAGGER):
-                        send_to_char("dagger.\n", ch);
-                        break;
-                    case (WEAPON_SPEAR):
-                        send_to_char("spear/staff.\n", ch);
-                        break;
-                    case (WEAPON_MACE):
-                        send_to_char("mace/club.\n", ch);
-                        break;
-                    case (WEAPON_AXE):
-                        send_to_char("axe.\n", ch);
-                        break;
-                    case (WEAPON_FLAIL):
-                        send_to_char("flail.\n", ch);
-                        break;
-                    case (WEAPON_WHIP):
-                        send_to_char("whip.\n", ch);
-                        break;
-                    case (WEAPON_POLEARM):
-                        send_to_char("polearm.\n", ch);
-                        break;
-                    case (WEAPON_BOW):
-                        send_to_char("bow.\n", ch);
-                        break;
-                    case (WEAPON_ARROW):
-                        send_to_char("arrow.\n", ch);
-                        break;
-                    case (WEAPON_LANCE):
-                        send_to_char("lance.\n", ch);
-                        break;
-                    default:
-                        send_to_char("unknown.\n", ch);
-                        break;
+                    case (WEAPON_EXOTIC) -> send_to_char("exotic.\n", ch);
+                    case (WEAPON_SWORD) -> send_to_char("sword.\n", ch);
+                    case (WEAPON_DAGGER) -> send_to_char("dagger.\n", ch);
+                    case (WEAPON_SPEAR) -> send_to_char("spear/staff.\n", ch);
+                    case (WEAPON_MACE) -> send_to_char("mace/club.\n", ch);
+                    case (WEAPON_AXE) -> send_to_char("axe.\n", ch);
+                    case (WEAPON_FLAIL) -> send_to_char("flail.\n", ch);
+                    case (WEAPON_WHIP) -> send_to_char("whip.\n", ch);
+                    case (WEAPON_POLEARM) -> send_to_char("polearm.\n", ch);
+                    case (WEAPON_BOW) -> send_to_char("bow.\n", ch);
+                    case (WEAPON_ARROW) -> send_to_char("arrow.\n", ch);
+                    case (WEAPON_LANCE) -> send_to_char("lance.\n", ch);
+                    default -> send_to_char("unknown.\n", ch);
                 }
                 if (obj.pIndexData.new_format) {
                     buf.sprintf("Damage is %dd%d (average %d).\n",
@@ -4233,7 +3904,7 @@ class ActObj {
     }
 
 
-    static void do_butcher(CHAR_DATA ch, String argument) {
+    static void do_butcher(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA tmp_obj;
         OBJ_DATA tmp_next;
@@ -4317,7 +3988,7 @@ class ActObj {
     }
 
 
-    static void do_balance(CHAR_DATA ch) {
+    static void do_balance(@NotNull CHAR_DATA ch) {
         long bank_g;
         long bank_s;
 
@@ -4356,7 +4027,7 @@ class ActObj {
         send_to_char(buf2, ch);
     }
 
-    static void do_withdraw(CHAR_DATA ch, String argument) {
+    static void do_withdraw(@NotNull CHAR_DATA ch, String argument) {
         int amount_s;
         int amount_g;
         int weight;
@@ -4430,7 +4101,7 @@ class ActObj {
         act("$n steps up to the teller window.", ch, null, null, TO_ROOM);
     }
 
-    static void do_deposit(CHAR_DATA ch, String argument) {
+    static void do_deposit(@NotNull CHAR_DATA ch, String argument) {
         long amount_s;
         long amount_g;
 
@@ -4493,7 +4164,7 @@ class ActObj {
     }
 
 
-    static void do_enchant(CHAR_DATA ch, String argument) {
+    static void do_enchant(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int wear_level;
 
@@ -4552,27 +4223,27 @@ class ActObj {
     }
 
 
-    static void hold_a_light(CHAR_DATA ch, OBJ_DATA obj, int iWear) {
+    static void hold_a_light(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear) {
         act("$n lights $p and holds it.", ch, obj, null, TO_ROOM);
         act("You light $p and hold it.", ch, obj, null, TO_CHAR);
         equip_char(ch, obj, iWear);
     }
 
-    static void hold_a_shield(CHAR_DATA ch, OBJ_DATA obj, int iWear) {
+    static void hold_a_shield(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear) {
         act("$n wears $p as a shield.", ch, obj, null, TO_ROOM);
         act("You wear $p as a shield.", ch, obj, null, TO_CHAR);
         equip_char(ch, obj, iWear);
     }
 
-    static void hold_a_thing(CHAR_DATA ch, OBJ_DATA obj, int iWear) {
+    static void hold_a_thing(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear) {
         act("$n holds $p in $s hand.", ch, obj, null, TO_ROOM);
         act("You hold $p in your hand.", ch, obj, null, TO_CHAR);
         equip_char(ch, obj, iWear);
     }
 
-/* wear object as a secondary weapon */
+    /* wear object as a secondary weapon */
 
-    static void hold_a_wield(CHAR_DATA ch, OBJ_DATA obj, int iWear) {
+    static void hold_a_wield(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear) {
         Skill sn;
         int skill;
 
@@ -4619,7 +4290,7 @@ class ActObj {
     }
 
 
-    static void wear_a_wield(CHAR_DATA ch, OBJ_DATA obj, boolean fReplace) {
+    static void wear_a_wield(@NotNull CHAR_DATA ch, OBJ_DATA obj, boolean fReplace) {
         if (!IS_NPC(ch)
                 && get_obj_weight(obj) > str_app[get_curr_stat(ch, STAT_STR)].carry) {
             send_to_char("It is too heavy for you to wield.\n", ch);
@@ -4667,7 +4338,7 @@ class ActObj {
     }
 
 
-    static void wear_multi(CHAR_DATA ch, OBJ_DATA obj, int iWear, boolean fReplace) {
+    static void wear_multi(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear, boolean fReplace) {
         if (count_worn(ch, iWear) < max_can_wear(ch, iWear)) {
             switch (iWear) {
                 case WEAR_FINGER -> {

@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+@SuppressWarnings("unused")
 class Telnet {
 /*
  * Definitions for the TELNET protocol.
@@ -72,87 +73,32 @@ class Telnet {
     static final int TELQUAL_SEND = 1;   /* send option */
 
     static String toColor(char colorCode) {
-        String color;
-        switch (colorCode) {
-            case 'x':
-                color = "\033[m";
-                break;
-
-            case 'd':
-                color = "\033[0;30m";
-                break;
-
-            case 'r':
-                color = "\033[0;31m";
-                break;
-
-            case 'g':
-                color = "\033[0;32m";
-                break;
-
-            case 'y':
-                color = "\033[0;33m";
-                break;
-
-            case 'b':
-                color = "\033[0;34m";
-                break;
-
-            case 'm':
-                color = "\033[0;35m";
-                break;
-
-            case 'c':
-                color = "\033[0;36m";
-                break;
-
-            case 'w':
-                color = "\033[0;37m";
-                break;
+        return switch (colorCode) {
+            case 'x' -> "\033[m";
+            case 'd' -> "\033[0;30m";
+            case 'r' -> "\033[0;31m";
+            case 'g' -> "\033[0;32m";
+            case 'y' -> "\033[0;33m";
+            case 'b' -> "\033[0;34m";
+            case 'm' -> "\033[0;35m";
+            case 'c' -> "\033[0;36m";
+            case 'w' -> "\033[0;37m";
 
             // brighter
-            case 'D':
-                color = "\033[1;30m";
-                break;
-
-            case 'R':
-                color = "\033[1;31m";
-                break;
-
-            case 'G':
-                color = "\033[1;32m";
-                break;
-
-            case 'Y':
-                color = "\033[1;33m";
-                break;
-
-            case 'B':
-                color = "\033[1;34m";
-                break;
-
-            case 'M':
-                color = "\033[1;35m";
-                break;
-
-            case 'C':
-                color = "\033[1;36m";
-                break;
-
-            case 'W':
-                color = "\033[1;37m";
-                break;
+            case 'D' -> "\033[1;30m";
+            case 'R' -> "\033[1;31m";
+            case 'G' -> "\033[1;32m";
+            case 'Y' -> "\033[1;33m";
+            case 'B' -> "\033[1;34m";
+            case 'M' -> "\033[1;35m";
+            case 'C' -> "\033[1;36m";
+            case 'W' -> "\033[1;37m";
 
             // special
-            case '*':
-                color = "\007";
-                break;
-
-            default:
+            case '*' -> "\007";
+            default ->
                 //todo: warn
-                color = "";
-                break;
-        }
-        return color;
+                    "";
+        };
     }
 }

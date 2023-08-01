@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import java.util.Formatter;
 
 import static net.sf.nightworks.Comm.act;
@@ -29,7 +31,7 @@ class Quest {
 
 /* The main quest function */
 
-    static void do_quest(CHAR_DATA ch, String argument) {
+    static void do_quest(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA questman;
         OBJ_DATA obj = null, obj_next;
         OBJ_INDEX_DATA questinfoobj;
@@ -707,7 +709,7 @@ class Quest {
         send_to_char("For more information, type: help quests.\n", ch);
     }
 
-    static void generate_quest(CHAR_DATA ch, CHAR_DATA questman) {
+    static void generate_quest(@NotNull CHAR_DATA ch, CHAR_DATA questman) {
         CHAR_DATA victim;
         MOB_INDEX_DATA vsearch = null;
         ROOM_INDEX_DATA room;
@@ -914,11 +916,11 @@ class Quest {
         }
     }
 
-    static void do_tell_quest(CHAR_DATA ch, CHAR_DATA victim, String argument) {
+    static void do_tell_quest(@NotNull CHAR_DATA ch, CHAR_DATA victim, String argument) {
         send_to_char(victim.name + " tells you " + argument + "\n", ch);
     }
 
-    static CHAR_DATA get_quest_world(CHAR_DATA ch, MOB_INDEX_DATA victim) {
+    static CHAR_DATA get_quest_world(@NotNull CHAR_DATA ch, MOB_INDEX_DATA victim) {
         for (var wch = char_list; wch != null; wch = wch.next) {
             if (wch.in_room == null || wch.pIndexData != victim) {
                 continue;

@@ -1,21 +1,13 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.io.File;
 
-import static net.sf.nightworks.ActComm.do_emote;
-import static net.sf.nightworks.ActComm.do_quit_count;
-import static net.sf.nightworks.ActComm.do_yell;
-import static net.sf.nightworks.ActComm.is_same_group;
-import static net.sf.nightworks.ActComm.stop_follower;
-import static net.sf.nightworks.ActHera.check_shield_destroyed;
-import static net.sf.nightworks.ActHera.check_weapon_destroy;
-import static net.sf.nightworks.ActHera.check_weapon_destroyed;
-import static net.sf.nightworks.ActMove.do_dismount;
-import static net.sf.nightworks.ActMove.do_recall;
-import static net.sf.nightworks.ActMove.do_visible;
-import static net.sf.nightworks.ActMove.move_char;
+import static net.sf.nightworks.ActComm.*;
+import static net.sf.nightworks.ActHera.*;
+import static net.sf.nightworks.ActMove.*;
 import static net.sf.nightworks.ActObj.do_get;
 import static net.sf.nightworks.ActObj.do_sacrifice;
 import static net.sf.nightworks.ActSkill.check_improve;
@@ -25,307 +17,15 @@ import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Const.attack_table;
 import static net.sf.nightworks.Const.hometown_table;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.interpolate;
-import static net.sf.nightworks.DB.kill_table;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_door;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.tail_chain;
-import static net.sf.nightworks.Effects.cold_effect;
-import static net.sf.nightworks.Effects.fire_effect;
-import static net.sf.nightworks.Effects.shock_effect;
-import static net.sf.nightworks.Handler.affect_find;
-import static net.sf.nightworks.Handler.affect_join;
-import static net.sf.nightworks.Handler.affect_remove;
-import static net.sf.nightworks.Handler.affect_strip;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.check_immune;
-import static net.sf.nightworks.Handler.create_money;
-import static net.sf.nightworks.Handler.equip_char;
-import static net.sf.nightworks.Handler.extract_char;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_char_room;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_max_train;
-import static net.sf.nightworks.Handler.get_obj_list;
-import static net.sf.nightworks.Handler.get_shield_char;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_trust;
-import static net.sf.nightworks.Handler.get_weapon_skill;
-import static net.sf.nightworks.Handler.get_weapon_sn;
-import static net.sf.nightworks.Handler.get_wield_char;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_obj;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.remove_mind;
-import static net.sf.nightworks.Handler.skill_failure_nomessage;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Effects.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Magic.saves_spell;
 import static net.sf.nightworks.Magic.say_spell;
-import static net.sf.nightworks.MartialArt.critical_strike;
-import static net.sf.nightworks.MartialArt.do_bash;
-import static net.sf.nightworks.MartialArt.do_berserk;
-import static net.sf.nightworks.MartialArt.do_crush;
-import static net.sf.nightworks.MartialArt.do_dirt;
-import static net.sf.nightworks.MartialArt.do_disarm;
-import static net.sf.nightworks.MartialArt.do_kick;
-import static net.sf.nightworks.MartialArt.do_tail;
-import static net.sf.nightworks.MartialArt.do_trip;
-import static net.sf.nightworks.MartialArt.ground_strike;
-import static net.sf.nightworks.Nightworks.ACT_CLERIC;
-import static net.sf.nightworks.Nightworks.ACT_HUNTER;
-import static net.sf.nightworks.Nightworks.ACT_MAGE;
-import static net.sf.nightworks.Nightworks.ACT_NOALIGN;
-import static net.sf.nightworks.Nightworks.ACT_NOTRACK;
-import static net.sf.nightworks.Nightworks.ACT_PET;
-import static net.sf.nightworks.Nightworks.ACT_THIEF;
-import static net.sf.nightworks.Nightworks.ACT_WARRIOR;
-import static net.sf.nightworks.Nightworks.ACT_WIMPY;
-import static net.sf.nightworks.Nightworks.AC_BASH;
-import static net.sf.nightworks.Nightworks.AC_EXOTIC;
-import static net.sf.nightworks.Nightworks.AC_PIERCE;
-import static net.sf.nightworks.Nightworks.AC_SLASH;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_ABSORB;
-import static net.sf.nightworks.Nightworks.AFF_AURA_CHAOS;
-import static net.sf.nightworks.Nightworks.AFF_BERSERK;
-import static net.sf.nightworks.Nightworks.AFF_CAMOUFLAGE;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_EARTHFADE;
-import static net.sf.nightworks.Nightworks.AFF_FADE;
-import static net.sf.nightworks.Nightworks.AFF_FEAR;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_HIDE;
-import static net.sf.nightworks.Nightworks.AFF_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_INVISIBLE;
-import static net.sf.nightworks.Nightworks.AFF_PASS_DOOR;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.AFF_PROTECTOR;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_EVIL;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_GOOD;
-import static net.sf.nightworks.Nightworks.AFF_SANCTUARY;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_SPELLBANE;
-import static net.sf.nightworks.Nightworks.AFF_STUN;
-import static net.sf.nightworks.Nightworks.AFF_WEAK_STUN;
-import static net.sf.nightworks.Nightworks.ANGEL;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.ASSIST_ALIGN;
-import static net.sf.nightworks.Nightworks.ASSIST_ALL;
-import static net.sf.nightworks.Nightworks.ASSIST_PLAYERS;
-import static net.sf.nightworks.Nightworks.ASSIST_RACE;
-import static net.sf.nightworks.Nightworks.ASSIST_VNUM;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_CHAOS;
-import static net.sf.nightworks.Nightworks.CABAL_NONE;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.CLEVEL_OK;
-import static net.sf.nightworks.Nightworks.COND_BLOODLUST;
-import static net.sf.nightworks.Nightworks.COND_DESIRE;
-import static net.sf.nightworks.Nightworks.COND_FULL;
-import static net.sf.nightworks.Nightworks.COND_HUNGER;
-import static net.sf.nightworks.Nightworks.COND_THIRST;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.DAM_COLD;
-import static net.sf.nightworks.Nightworks.DAM_FIRE;
-import static net.sf.nightworks.Nightworks.DAM_HUNGER;
-import static net.sf.nightworks.Nightworks.DAM_LIGHTNING;
-import static net.sf.nightworks.Nightworks.DAM_LIGHT_V;
-import static net.sf.nightworks.Nightworks.DAM_NEGATIVE;
-import static net.sf.nightworks.Nightworks.DAM_NONE;
-import static net.sf.nightworks.Nightworks.DAM_PIERCE;
-import static net.sf.nightworks.Nightworks.DAM_POISON;
-import static net.sf.nightworks.Nightworks.DAM_SLASH;
-import static net.sf.nightworks.Nightworks.DAM_THIRST;
-import static net.sf.nightworks.Nightworks.DAM_TRAP_ROOM;
-import static net.sf.nightworks.Nightworks.DICE_NUMBER;
-import static net.sf.nightworks.Nightworks.DICE_TYPE;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.EX_NOFLEE;
-import static net.sf.nightworks.Nightworks.EX_NOPASS;
-import static net.sf.nightworks.Nightworks.FIGHT_DELAY_TIME;
-import static net.sf.nightworks.Nightworks.FORM_EDIBLE;
-import static net.sf.nightworks.Nightworks.FORM_INSTANT_DECAY;
-import static net.sf.nightworks.Nightworks.FORM_POISON;
-import static net.sf.nightworks.Nightworks.GET_AC;
-import static net.sf.nightworks.Nightworks.GET_DAMROLL;
-import static net.sf.nightworks.Nightworks.GET_HITROLL;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_BLINK_ON;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOLEM;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_IMMUNE;
-import static net.sf.nightworks.Nightworks.IS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OBJ_STAT;
-import static net.sf.nightworks.Nightworks.IS_QUESTOR;
-import static net.sf.nightworks.Nightworks.IS_RESISTANT;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_TRUSTED;
-import static net.sf.nightworks.Nightworks.IS_VAMPIRE;
-import static net.sf.nightworks.Nightworks.IS_VULNERABLE;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_EVIL;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_GOOD;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_NEUTRAL;
-import static net.sf.nightworks.Nightworks.ITEM_FOOD;
-import static net.sf.nightworks.Nightworks.ITEM_INVENTORY;
-import static net.sf.nightworks.Nightworks.ITEM_POTION;
-import static net.sf.nightworks.Nightworks.ITEM_ROT_DEATH;
-import static net.sf.nightworks.Nightworks.ITEM_SCROLL;
-import static net.sf.nightworks.Nightworks.ITEM_TRASH;
-import static net.sf.nightworks.Nightworks.ITEM_VIS_DEATH;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MAX_LEVEL;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_STALKER;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.MPROG_DEATH;
-import static net.sf.nightworks.Nightworks.MPROG_FIGHT;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_BRAINS;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CORPSE_PC;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GUTS;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SEVERED_HEAD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SLICED_ARM;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SLICED_LEG;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_TORN_HEART;
-import static net.sf.nightworks.Nightworks.OFF_AREA_ATTACK;
-import static net.sf.nightworks.Nightworks.OFF_BASH;
-import static net.sf.nightworks.Nightworks.OFF_BERSERK;
-import static net.sf.nightworks.Nightworks.OFF_CRUSH;
-import static net.sf.nightworks.Nightworks.OFF_DISARM;
-import static net.sf.nightworks.Nightworks.OFF_FAST;
-import static net.sf.nightworks.Nightworks.OFF_KICK;
-import static net.sf.nightworks.Nightworks.OFF_KICK_DIRT;
-import static net.sf.nightworks.Nightworks.OFF_TAIL;
-import static net.sf.nightworks.Nightworks.OFF_TRIP;
-import static net.sf.nightworks.Nightworks.OPROG_DEATH;
-import static net.sf.nightworks.Nightworks.OPROG_FIGHT;
-import static net.sf.nightworks.Nightworks.PART_ARMS;
-import static net.sf.nightworks.Nightworks.PART_BRAINS;
-import static net.sf.nightworks.Nightworks.PART_GUTS;
-import static net.sf.nightworks.Nightworks.PART_HEAD;
-import static net.sf.nightworks.Nightworks.PART_HEART;
-import static net.sf.nightworks.Nightworks.PART_LEGS;
-import static net.sf.nightworks.Nightworks.PLR_AUTOASSIST;
-import static net.sf.nightworks.Nightworks.PLR_AUTOGOLD;
-import static net.sf.nightworks.Nightworks.PLR_AUTOLOOT;
-import static net.sf.nightworks.Nightworks.PLR_AUTOSAC;
-import static net.sf.nightworks.Nightworks.PLR_BOUGHT_PET;
-import static net.sf.nightworks.Nightworks.PLR_CANINDUCT;
-import static net.sf.nightworks.Nightworks.PLR_CANLOOT;
-import static net.sf.nightworks.Nightworks.PLR_GHOST;
-import static net.sf.nightworks.Nightworks.PLR_WANTED;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_INCAP;
-import static net.sf.nightworks.Nightworks.POS_MORTAL;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SITTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.POS_STUNNED;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.RIDDEN;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MOB;
-import static net.sf.nightworks.Nightworks.SECT_INSIDE;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.STAT_CHA;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.TARGET_CHAR;
-import static net.sf.nightworks.Nightworks.TAR_CHAR_OFFENSIVE;
-import static net.sf.nightworks.Nightworks.TAR_IGNORE;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAMING;
-import static net.sf.nightworks.Nightworks.WEAPON_FROST;
-import static net.sf.nightworks.Nightworks.WEAPON_HOLY;
-import static net.sf.nightworks.Nightworks.WEAPON_KATANA;
-import static net.sf.nightworks.Nightworks.WEAPON_POISON;
-import static net.sf.nightworks.Nightworks.WEAPON_SHARP;
-import static net.sf.nightworks.Nightworks.WEAPON_SHOCKING;
-import static net.sf.nightworks.Nightworks.WEAPON_VAMPIRIC;
-import static net.sf.nightworks.Nightworks.WEAR_NONE;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.sprintf;
+import static net.sf.nightworks.MartialArt.*;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Save.save_char_obj;
-import static net.sf.nightworks.Skill.gsn_absorb;
-import static net.sf.nightworks.Skill.gsn_ambush;
-import static net.sf.nightworks.Skill.gsn_area_attack;
-import static net.sf.nightworks.Skill.gsn_armor_use;
-import static net.sf.nightworks.Skill.gsn_assassinate;
-import static net.sf.nightworks.Skill.gsn_backstab;
-import static net.sf.nightworks.Skill.gsn_bash;
-import static net.sf.nightworks.Skill.gsn_blind_fighting;
-import static net.sf.nightworks.Skill.gsn_blink;
-import static net.sf.nightworks.Skill.gsn_circle;
-import static net.sf.nightworks.Skill.gsn_cleave;
-import static net.sf.nightworks.Skill.gsn_counter;
-import static net.sf.nightworks.Skill.gsn_cross_block;
-import static net.sf.nightworks.Skill.gsn_deathblow;
-import static net.sf.nightworks.Skill.gsn_dodge;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_dual_backstab;
-import static net.sf.nightworks.Skill.gsn_enhanced_damage;
-import static net.sf.nightworks.Skill.gsn_fifth_attack;
-import static net.sf.nightworks.Skill.gsn_fourth_attack;
-import static net.sf.nightworks.Skill.gsn_hand_block;
-import static net.sf.nightworks.Skill.gsn_hand_to_hand;
-import static net.sf.nightworks.Skill.gsn_katana;
-import static net.sf.nightworks.Skill.gsn_lightning_breath;
-import static net.sf.nightworks.Skill.gsn_master_hand;
-import static net.sf.nightworks.Skill.gsn_master_sword;
-import static net.sf.nightworks.Skill.gsn_mental_knife;
-import static net.sf.nightworks.Skill.gsn_mirror;
-import static net.sf.nightworks.Skill.gsn_mortal_strike;
-import static net.sf.nightworks.Skill.gsn_parry;
-import static net.sf.nightworks.Skill.gsn_plague;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_power_stun;
-import static net.sf.nightworks.Skill.gsn_protection_cold;
-import static net.sf.nightworks.Skill.gsn_protection_heat;
-import static net.sf.nightworks.Skill.gsn_second_attack;
-import static net.sf.nightworks.Skill.gsn_second_weapon;
-import static net.sf.nightworks.Skill.gsn_secondary_attack;
-import static net.sf.nightworks.Skill.gsn_shield_block;
-import static net.sf.nightworks.Skill.gsn_sleep;
-import static net.sf.nightworks.Skill.gsn_spellbane;
-import static net.sf.nightworks.Skill.gsn_sword;
-import static net.sf.nightworks.Skill.gsn_third_attack;
-import static net.sf.nightworks.Skill.gsn_trip;
-import static net.sf.nightworks.Skill.gsn_vampiric_bite;
-import static net.sf.nightworks.Skill.gsn_witch_curse;
-import static net.sf.nightworks.Skill.gsn_x_hit;
-import static net.sf.nightworks.Skill.gsn_x_hunger;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Update.gain_condition;
 import static net.sf.nightworks.Update.gain_exp;
 import static net.sf.nightworks.util.TextUtils.capitalize;
@@ -334,10 +34,10 @@ import static net.sf.nightworks.util.TextUtils.one_argument;
 class Fight {
     public static final int MAX_DAMAGE_MESSAGE = 34;
 
-/*
- * Control the fights going on.
- * Called periodically by update_handler.
- */
+    /*
+     * Control the fights going on.
+     * Called periodically by update_handler.
+     */
 
     static void violence_update() {
         CHAR_DATA ch;
@@ -395,16 +95,16 @@ class Fight {
             }
 
             /*
-            * Fun for the whole family!
-            */
+             * Fun for the whole family!
+             */
             check_assist(ch, victim);
         }
 
     }
 
-/* for auto assisting */
+    /* for auto assisting */
 
-    static void check_assist(CHAR_DATA ch, CHAR_DATA victim) {
+    static void check_assist(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         CHAR_DATA rch, rch_next;
 
         for (rch = ch.in_room.people; rch != null; rch = rch_next) {
@@ -439,9 +139,7 @@ class Fight {
 
                 /* now check the NPC cases */
 
-                if (IS_NPC(ch))
-
-                {
+                if (IS_NPC(ch)) {
                     if ((IS_NPC(rch) && IS_SET(rch.off_flags, ASSIST_ALL))
 
                             || (IS_NPC(rch) && rch.race == ch.race
@@ -453,9 +151,7 @@ class Fight {
                             || (IS_NEUTRAL(rch) && IS_NEUTRAL(ch))))
 
                             || (rch.pIndexData == ch.pIndexData
-                            && IS_SET(rch.off_flags, ASSIST_VNUM)))
-
-                    {
+                            && IS_SET(rch.off_flags, ASSIST_VNUM))) {
                         CHAR_DATA vch;
                         CHAR_DATA target;
                         int number;
@@ -486,11 +182,11 @@ class Fight {
         }
     }
 
-/*
-* Do one group of attacks.
-*/
+    /*
+     * Do one group of attacks.
+     */
 
-    static void multi_hit(CHAR_DATA ch, CHAR_DATA victim, Skill dt) {
+    static void multi_hit(@NotNull CHAR_DATA ch, CHAR_DATA victim, Skill dt) {
         int chance;
 
         /* decrement the wait */
@@ -644,9 +340,9 @@ class Fight {
 
     }
 
-/* procedure for all mobile attacks */
+    /* procedure for all mobile attacks */
 
-    static void mob_hit(CHAR_DATA ch, CHAR_DATA victim, Skill dt) {
+    static void mob_hit(@NotNull CHAR_DATA ch, CHAR_DATA victim, Skill dt) {
         int chance, number;
         CHAR_DATA vch, vch_next;
 
@@ -796,11 +492,11 @@ class Fight {
         }
     }
 
-/*
- * Hit one guy once.
- */
+    /*
+     * Hit one guy once.
+     */
 
-    static void one_hit(CHAR_DATA ch, CHAR_DATA victim, Skill dt, boolean secondary) {
+    static void one_hit(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA victim, Skill dt, boolean secondary) {
         OBJ_DATA wield;
         int victim_ac;
         int thac0;
@@ -810,15 +506,14 @@ class Fight {
         int diceroll;
 
         var dam_type = -1;
-        boolean counter;
         boolean result;
         OBJ_DATA corpse;
         int sercount;
 
-        counter = false;
+        boolean counter = false;
 
         /* just in case */
-        if (victim == ch || ch == null || victim == null) {
+        if (victim == ch) {
             return;
         }
 
@@ -829,23 +524,23 @@ class Fight {
         }
 
         /*
-        * Can't beat a dead char!
-        * Guard against weird room-leavings.
-        */
+         * Can't beat a dead char!
+         * Guard against weird room-leavings.
+         */
         if (victim.position == POS_DEAD || ch.in_room != victim.in_room) {
             return;
         }
 
         /*
-        * Figure out the type of damage message.
-        */
+         * Figure out the type of damage message.
+         */
 
         wield = get_wield_char(ch, secondary);
 
         /*
-        * if there is no weapon held by pro-hand, and there is a weapon
-        * in the other hand, than don't fight with punch.
-        */
+         * if there is no weapon held by pro-hand, and there is a weapon
+         * in the other hand, than don't fight with punch.
+         */
         if (!secondary && dt == null && wield == null && get_wield_char(ch, true) != null) {
             if (ch.fighting != victim) {
                 secondary = true;
@@ -879,8 +574,8 @@ class Fight {
         var skill = 20 + get_weapon_skill(ch, sn);
 
         /*
-        * Calculate to-hit-armor-class-0 versus armor.
-        */
+         * Calculate to-hit-armor-class-0 versus armor.
+         */
         if (IS_NPC(ch)) {
             thac0_00 = 20;
             thac0_32 = -4;   /* as good as a thief */
@@ -977,9 +672,9 @@ class Fight {
         }
 
         /*
-        * Hit.
-        * Calc damage.
-        */
+         * Hit.
+         * Calc damage.
+         */
 
 
         if (IS_NPC(ch) && (!ch.pIndexData.new_format || wield == null)) {
@@ -1055,8 +750,8 @@ class Fight {
         }
 
         /*
-        * Bonuses.
-        */
+         * Bonuses.
+         */
         var skillLevel = get_skill(ch, gsn_enhanced_damage);
         if (skillLevel > 0) {
             diceroll = number_percent();
@@ -1345,11 +1040,11 @@ class Fight {
         tail_chain();
     }
 
-/*
-* Inflict damage from a hit.
-*/
+    /*
+     * Inflict damage from a hit.
+     */
 
-    static boolean damage(CHAR_DATA ch, CHAR_DATA victim, int dam, Skill dt, int dam_type, boolean show) {
+    static boolean damage(@NotNull CHAR_DATA ch, CHAR_DATA victim, int dam, Skill dt, int dam_type, boolean show) {
         OBJ_DATA corpse;
         boolean immune;
         int lost_exp;
@@ -1359,8 +1054,8 @@ class Fight {
         }
 
         /*
-        * Stop up any residual loopholes.
-        */
+         * Stop up any residual loopholes.
+         */
         if (dam > 1000 && !IS_IMMORTAL(ch)) {
             var buf = new TextBuffer();
             buf.sprintf("%s:Damage more than 1000 points :%d", ch.name, dam);
@@ -1387,9 +1082,9 @@ class Fight {
 
         if (victim != ch) {
             /*
-            * Certain attacks are forbidden.
-            * Most other attacks are returned.
-            */
+             * Certain attacks are forbidden.
+             * Most other attacks are returned.
+             */
             if (is_safe(ch, victim)) {
                 return false;
             }
@@ -1409,8 +1104,8 @@ class Fight {
                 }
 
                 /*
-                * If victim is charmed, ch might attack victim's master.
-                */
+                 * If victim is charmed, ch might attack victim's master.
+                 */
                 if (IS_NPC(ch)
                         && IS_NPC(victim)
                         && IS_AFFECTED(victim, AFF_CHARM)
@@ -1424,8 +1119,8 @@ class Fight {
             }
 
             /*
-            * More charm and group stuff.
-            */
+             * More charm and group stuff.
+             */
             if (victim.master == ch) {
                 stop_follower(victim);
             }
@@ -1436,8 +1131,8 @@ class Fight {
         }
 
         /*
-        * No one in combat can sneak, hide, or be invis or camoed.
-        */
+         * No one in combat can sneak, hide, or be invis or camoed.
+         */
         if (IS_SET(ch.affected_by, AFF_HIDE)
                 || IS_SET(ch.affected_by, AFF_INVISIBLE)
                 || IS_SET(ch.affected_by, AFF_SNEAK)
@@ -1449,8 +1144,8 @@ class Fight {
         }
 
         /*
-        * Damage modifiers.
-        */
+         * Damage modifiers.
+         */
         if (IS_AFFECTED(victim, AFF_SANCTUARY) && !((dt == gsn_cleave) && (number_percent() < 50))) {
             dam /= 2;
         } else if (IS_AFFECTED(victim, AFF_PROTECTOR)) {
@@ -1524,12 +1219,12 @@ class Fight {
         }
 
         /*
-        * Check for parry, and dodge.
-        */
+         * Check for parry, and dodge.
+         */
         if (dt == gsn_x_hit && ch != victim) {
             /*
-            * Some funny stuf.
-            */
+             * Some funny stuf.
+             */
             if (is_affected(victim, gsn_mirror)) {
                 act("$n shatters into tiny fragments of glass.", victim, null, null, TO_ROOM);
                 extract_char(victim, true);
@@ -1578,17 +1273,17 @@ class Fight {
             return false;
         }
 
-/* temporarily second wield doesn't inflict damage */
+        /* temporarily second wield doesn't inflict damage */
 
         if (dt == gsn_x_hit && ch != victim) {
             check_weapon_destroy(ch, victim, false);
         }
 
         /*
-        * Hurt the victim.
-        * Inform the victim of his new state.
-        * make sure that negative overflow doesn't happen!
-        */
+         * Hurt the victim.
+         * Inform the victim of his new state.
+         * make sure that negative overflow doesn't happen!
+         */
         if (dam < 0 || dam > (victim.hit + 16)) {
             victim.hit = -16;
         } else {
@@ -1651,23 +1346,23 @@ class Fight {
         }
 
         /*
-        * Sleep spells and extremely wounded folks.
-        */
+         * Sleep spells and extremely wounded folks.
+         */
         if (!IS_AWAKE(victim)) {
             stop_fighting(victim, false);
         }
 
         /*
-        * Payoff for killing things.
-        */
+         * Payoff for killing things.
+         */
         if (victim.position == POS_DEAD) {
             group_gain(ch, victim);
 
             if (!IS_NPC(victim)) {
                 /*
-                * Dying penalty:
-                * 2/3 way back.
-                */
+                 * Dying penalty:
+                 * 2/3 way back.
+                 */
 
                 if (victim == ch || (IS_NPC(ch) && (ch.master == null &&
                         ch.leader == null)) || IS_SET(victim.act, PLR_WANTED)) {
@@ -1680,8 +1375,8 @@ class Fight {
                 }
 
                 /*
-                *  Die too much and deleted ... :(
-                */
+                 *  Die too much and deleted ... :(
+                 */
                 if (!IS_NPC(victim) && (victim == ch || (IS_NPC(ch) &&
                         (ch.master == null && ch.leader == null))
                         || IS_SET(victim.act, PLR_WANTED))) {
@@ -1775,8 +1470,8 @@ class Fight {
         }
 
         /*
-        * Take care of link dead people.
-        */
+         * Take care of link dead people.
+         */
         if (!IS_NPC(victim) && victim.desc == null) {
             if (number_range(0, victim.wait) == 0) {
                 if (victim.level < 11) {
@@ -1789,8 +1484,8 @@ class Fight {
         }
 
         /*
-        * Wimp out?
-        */
+         * Wimp out?
+         */
         if (IS_NPC(victim) && dam > 0 && victim.wait < PULSE_VIOLENCE / 2) {
             if (((IS_SET(victim.act, ACT_WIMPY) && number_bits(2) == 0
                     && victim.hit < victim.max_hit / 5)
@@ -1813,7 +1508,7 @@ class Fight {
         return true;
     }
 
-    static boolean is_safe(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean is_safe(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         if (is_safe_nomessage(ch, victim)) {
             act("The gods protect $N.", ch, null, victim, TO_CHAR);
             act("The gods protect $N from $n.", ch, null, victim, TO_ROOM);
@@ -1824,7 +1519,7 @@ class Fight {
     }
 
 
-    static boolean is_safe_nomessage(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean is_safe_nomessage(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         if (victim.fighting == ch || ch == victim) {
             return false;
         }
@@ -1865,7 +1560,7 @@ class Fight {
     }
 
 
-    static boolean is_safe_spell(CHAR_DATA ch, CHAR_DATA victim, boolean area) {
+    static boolean is_safe_spell(@NotNull CHAR_DATA ch, CHAR_DATA victim, boolean area) {
 
         if (ch == victim && !area) {
             return true;
@@ -1891,11 +1586,11 @@ class Fight {
         return is_safe(ch, victim);
     }
 
-/*
-* Check for parry.
-*/
+    /*
+     * Check for parry.
+     */
 
-    static boolean check_parry(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean check_parry(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         int chance;
 
         if (!IS_AWAKE(victim)) {
@@ -1971,11 +1666,11 @@ class Fight {
         return true;
     }
 
-/*
- * check blink
- */
+    /*
+     * check blink
+     */
 
-    static boolean check_blink(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean check_blink(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         int chance;
 
         if (!IS_BLINK_ON(victim)) {
@@ -2002,11 +1697,11 @@ class Fight {
         return true;
     }
 
-/*
-* Check for shield block.
-*/
+    /*
+     * Check for shield block.
+     */
 
-    static boolean check_block(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean check_block(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         int chance;
 
         if (!IS_AWAKE(victim)) {
@@ -2038,11 +1733,11 @@ class Fight {
         return true;
     }
 
-/*
-* Check for dodge.
-*/
+    /*
+     * Check for dodge.
+     */
 
-    static boolean check_dodge(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean check_dodge(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         int chance;
 
         if (!IS_AWAKE(victim)) {
@@ -2112,11 +1807,11 @@ class Fight {
         return true;
     }
 
-/*
-* Check for cross.
-*/
+    /*
+     * Check for cross.
+     */
 
-    static boolean check_cross(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean check_cross(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         int chance;
 
         if (!IS_AWAKE(victim)) {
@@ -2193,11 +1888,11 @@ class Fight {
         return true;
     }
 
-/*
- * Check for hand.
- */
+    /*
+     * Check for hand.
+     */
 
-    static boolean check_hand(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean check_hand(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         int chance;
 
         if (!IS_AWAKE(victim)) {
@@ -2228,11 +1923,11 @@ class Fight {
         return true;
     }
 
-/*
-* Set position of a victim.
-*/
+    /*
+     * Set the position of a victim.
+     */
 
-    static void update_pos(CHAR_DATA victim) {
+    static void update_pos(@NotNull CHAR_DATA victim) {
         if (victim.hit > 0) {
             if (victim.position <= POS_STUNNED) {
                 victim.position = POS_STANDING;
@@ -2240,7 +1935,7 @@ class Fight {
             return;
         }
 
-        if (IS_NPC(victim) && victim.hit < 1) {
+        if (IS_NPC(victim)) {
             victim.position = POS_DEAD;
             return;
         }
@@ -2260,11 +1955,11 @@ class Fight {
 
     }
 
-/*
-* Start fights.
-*/
+    /*
+     * Start fights.
+     */
 
-    static void set_fighting(CHAR_DATA ch, CHAR_DATA victim) {
+    static void set_fighting(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         if (ch.fighting != null) {
             bug("Set_fighting: already fighting");
             return;
@@ -2279,11 +1974,11 @@ class Fight {
 
     }
 
-/*
-* Stop fights.
-*/
+    /*
+     * Stop fights.
+     */
 
-    static void stop_fighting(CHAR_DATA ch, boolean fBoth) {
+    static void stop_fighting(@NotNull CHAR_DATA ch, boolean fBoth) {
         CHAR_DATA fch;
 
         for (fch = char_list; fch != null; fch = fch.next) {
@@ -2296,11 +1991,11 @@ class Fight {
 
     }
 
-/*
-* Make a corpse out of a character.
-*/
+    /*
+     * Make a corpse out of a character.
+     */
 
-    static void make_corpse(CHAR_DATA ch) {
+    static void make_corpse(@NotNull CHAR_DATA ch) {
         OBJ_DATA corpse;
         OBJ_DATA obj;
         OBJ_DATA obj_next;
@@ -2392,7 +2087,7 @@ class Fight {
     /**
      * Improved Death_cry contributed by Diavolo.
      */
-    static void death_cry_org(CHAR_DATA ch, int part) {
+    static void death_cry_org(@NotNull CHAR_DATA ch, int part) {
         ROOM_INDEX_DATA was_in_room;
         String msg;
         int door;
@@ -2573,7 +2268,7 @@ class Fight {
         /* RT added to prevent infinite deaths */
         victim.act = REMOVE_BIT(victim.act, PLR_WANTED);
         victim.act = REMOVE_BIT(victim.act, PLR_BOUGHT_PET);
-/*  SET_BIT(victim.act, PLR_GHOST);    */
+        /*  SET_BIT(victim.act, PLR_GHOST);    */
 
         victim.pcdata.condition[COND_THIRST] = 40;
         victim.pcdata.condition[COND_HUNGER] = 40;
@@ -2588,8 +2283,8 @@ class Fight {
         save_char_obj(victim);
 
         /*
-        * Calm down the tracking mobiles
-        */
+         * Calm down the tracking mobiles
+         */
         for (tmp_ch = char_list; tmp_ch != null; tmp_ch = tmp_ch.next) {
             if (tmp_ch.last_fought == victim) {
                 tmp_ch.last_fought = null;
@@ -2599,7 +2294,7 @@ class Fight {
     }
 
 
-    static void group_gain(CHAR_DATA ch, CHAR_DATA victim) {
+    static void group_gain(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         CHAR_DATA gch;
         CHAR_DATA lch;
         int xp;
@@ -2611,7 +2306,7 @@ class Fight {
             return;
         }
 
-/* quest */
+        /* quest */
 
         if (IS_GOLEM(ch) && ch.master != null
                 && ch.master.clazz == Clazz.NECROMANCER) {
@@ -2626,7 +2321,7 @@ class Fight {
                 gch.pcdata.questmob = -1;
             }
         }
-/* end quest */
+        /* end quest */
 
         if (!IS_NPC(victim)) {
             return;
@@ -2694,11 +2389,11 @@ class Fight {
 
     }
 
-/*
-* Compute xp for a kill.
-* Also adjust alignment of killer.
-* Edit this function to change xp computations.
-*/
+    /*
+     * Compute xp for a kill.
+     * Also adjust alignment of killer.
+     * Edit this function to change xp computations.
+     */
 
     static int xp_compute(CHAR_DATA gch, CHAR_DATA victim, int total_levels, int members) {
         int xp;
@@ -2851,7 +2546,7 @@ class Fight {
     }
 
 
-    static void dam_message(CHAR_DATA ch, CHAR_DATA victim, int dam, Skill dt, boolean immune, int dam_type) {
+    static void dam_message(@NotNull CHAR_DATA ch, CHAR_DATA victim, int dam, Skill dt, boolean immune, int dam_type) {
         String vp, vs;
         if (dam == 0) {
             vs = "miss";
@@ -3015,7 +2710,7 @@ class Fight {
     }
 
 
-    static void do_kill(CHAR_DATA ch, String argument) {
+    static void do_kill(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA wield;
 
@@ -3089,12 +2784,12 @@ class Fight {
     }
 
 
-    static void do_murde(CHAR_DATA ch) {
+    static void do_murde(@NotNull CHAR_DATA ch) {
         send_to_char("If you want to MURDER, spell it out.\n", ch);
     }
 
 
-    static void do_murder(CHAR_DATA ch, String argument) {
+    static void do_murder(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA wield;
 
@@ -3169,7 +2864,7 @@ class Fight {
     }
 
 
-    static void do_flee(CHAR_DATA ch) {
+    static void do_flee(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA was_in;
         ROOM_INDEX_DATA now_in;
         int attempt;
@@ -3241,12 +2936,12 @@ class Fight {
     }
 
 
-    static void do_sla(CHAR_DATA ch) {
+    static void do_sla(@NotNull CHAR_DATA ch) {
         send_to_char("If you want to SLAY, spell it out.\n", ch);
     }
 
 
-    static void do_slay(CHAR_DATA ch, String argument) {
+    static void do_slay(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -3277,11 +2972,11 @@ class Fight {
         raw_kill(victim);
     }
 
-/*
- * Check for obj dodge.
- */
+    /*
+     * Check for obj dodge.
+     */
 
-    static boolean check_obj_dodge(CHAR_DATA ch, CHAR_DATA victim, OBJ_DATA obj, int bonus) {
+    static boolean check_obj_dodge(@NotNull CHAR_DATA ch, CHAR_DATA victim, OBJ_DATA obj, int bonus) {
         int chance;
 
         if (!IS_AWAKE(victim) || MOUNTED(victim) != null) {
@@ -3328,7 +3023,7 @@ class Fight {
     }
 
 
-    static void do_dishonor(CHAR_DATA ch) {
+    static void do_dishonor(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA was_in;
         ROOM_INDEX_DATA now_in;
         CHAR_DATA gch;
@@ -3413,7 +3108,7 @@ class Fight {
     }
 
 
-    static boolean mob_cast_cleric(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean mob_cast_cleric(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         Skill sn;
 
         for (; ; ) {
@@ -3480,7 +3175,7 @@ class Fight {
         return true;
     }
 
-    static boolean mob_cast_mage(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean mob_cast_mage(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
         Skill sn;
 
         for (; ; ) {

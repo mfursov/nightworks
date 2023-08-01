@@ -1,118 +1,30 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import static net.sf.nightworks.ActComm.do_cb;
-import static net.sf.nightworks.ActComm.do_say;
-import static net.sf.nightworks.ActComm.do_yell;
-import static net.sf.nightworks.ActMove.do_close;
-import static net.sf.nightworks.ActMove.do_lock;
-import static net.sf.nightworks.ActMove.do_open;
-import static net.sf.nightworks.ActMove.do_track;
-import static net.sf.nightworks.ActMove.do_unlock;
-import static net.sf.nightworks.ActMove.move_char;
-import static net.sf.nightworks.ActObj.can_loot;
-import static net.sf.nightworks.ActObj.do_drop;
-import static net.sf.nightworks.ActObj.do_get;
+import static net.sf.nightworks.ActComm.*;
+import static net.sf.nightworks.ActMove.*;
+import static net.sf.nightworks.ActObj.*;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Const.hometown_table;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.time_info;
-import static net.sf.nightworks.Fight.damage;
-import static net.sf.nightworks.Fight.do_flee;
-import static net.sf.nightworks.Fight.do_kill;
-import static net.sf.nightworks.Fight.do_murder;
-import static net.sf.nightworks.Fight.is_safe;
-import static net.sf.nightworks.Fight.mob_cast_cleric;
-import static net.sf.nightworks.Fight.mob_cast_mage;
-import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Fight.one_hit;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.extract_char;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.obj_from_obj;
-import static net.sf.nightworks.Handler.obj_from_room;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_room;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Fight.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Interp.interpret;
-import static net.sf.nightworks.Magic.say_spell;
-import static net.sf.nightworks.Magic.spell_armor;
-import static net.sf.nightworks.Magic.spell_bless;
-import static net.sf.nightworks.Magic.spell_cure_blindness;
-import static net.sf.nightworks.Magic.spell_cure_disease;
-import static net.sf.nightworks.Magic.spell_cure_light;
-import static net.sf.nightworks.Magic.spell_cure_poison;
-import static net.sf.nightworks.Magic.spell_poison;
-import static net.sf.nightworks.Magic.spell_refresh;
-import static net.sf.nightworks.MartialArt.do_backstab;
-import static net.sf.nightworks.MartialArt.do_bandage;
-import static net.sf.nightworks.MartialArt.do_resistance;
-import static net.sf.nightworks.MartialArt.do_spellbane;
-import static net.sf.nightworks.Nightworks.AFF_CALM;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_REGENERATION;
-import static net.sf.nightworks.Nightworks.AREA_HOMETOWN;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_RULER;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_NOSHOUT;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.ETHOS_LAWFUL;
-import static net.sf.nightworks.Nightworks.GROUP_VNUM_OGRES;
-import static net.sf.nightworks.Nightworks.GROUP_VNUM_TROLLS;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.ITEM_DRINK_CON;
-import static net.sf.nightworks.Nightworks.ITEM_TAKE;
-import static net.sf.nightworks.Nightworks.ITEM_TRASH;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MOB_VNUM_PATROLMAN;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OPROG_GET;
-import static net.sf.nightworks.Nightworks.PLR_WANTED;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.RIDDEN;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SPEC_FUN;
-import static net.sf.nightworks.Nightworks.TARGET_CHAR;
-import static net.sf.nightworks.Nightworks.TO_ALL;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.exit;
-import static net.sf.nightworks.Skill.gsn_assassinate;
-import static net.sf.nightworks.Skill.gsn_claw;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_resistance;
-import static net.sf.nightworks.Skill.gsn_spellbane;
-import static net.sf.nightworks.Skill.lookupSkill;
+import static net.sf.nightworks.Magic.*;
+import static net.sf.nightworks.MartialArt.*;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class Special {
-/*
- * Given a name, return the appropriate spec fun.
- */
+    /*
+     * Given a name, return the appropriate spec fun.
+     */
 
     static class SPEC_FUN_IMPL implements SPEC_FUN {
         final Method m;
@@ -123,18 +35,18 @@ class Special {
                 mm = Special.class.getDeclaredMethod(name, CHAR_DATA.class);
                 spec_table.put(name, this);
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                logError(e);
                 exit(1);
             }
             m = mm;
         }
 
-        public boolean run(CHAR_DATA ch) {
+        public boolean run(@NotNull CHAR_DATA ch) {
             boolean res = false;
             try {
                 res = (Boolean) m.invoke(null, ch);
             } catch (Exception e) {
-                e.printStackTrace();
+                logError(e);
                 exit(1);
             }
             return res;
@@ -195,13 +107,12 @@ class Special {
         return ((SPEC_FUN_IMPL) function).m.getName();
     }
 
-    static boolean spec_troll_member(CHAR_DATA ch) {
+    static boolean spec_troll_member(@NotNull CHAR_DATA ch) {
         CHAR_DATA vch, victim = null;
         int count = 0;
         String message;
 
-        if (!IS_AWAKE(ch) || IS_AFFECTED(ch, AFF_CALM) || ch.in_room == null
-                || IS_AFFECTED(ch, AFF_CHARM) || ch.fighting != null) {
+        if (!IS_AWAKE(ch) || IS_AFFECTED(ch, AFF_CALM) || ch.in_room == null || IS_AFFECTED(ch, AFF_CHARM) || ch.fighting != null) {
             return false;
         }
 
@@ -213,8 +124,7 @@ class Special {
             if (vch.pIndexData.vnum == MOB_VNUM_PATROLMAN) {
                 return false;
             }
-            if (vch.pIndexData.group == GROUP_VNUM_OGRES
-                    && ch.level > vch.level - 2 && !is_safe(ch, vch)) {
+            if (vch.pIndexData.group == GROUP_VNUM_OGRES && ch.level > vch.level - 2 && !is_safe(ch, vch)) {
                 if (number_range(0, count) == 0) {
                     victim = vch;
                 }
@@ -246,13 +156,12 @@ class Special {
     }
 
 
-    static boolean spec_ogre_member(CHAR_DATA ch) {
+    static boolean spec_ogre_member(@NotNull CHAR_DATA ch) {
         CHAR_DATA vch, victim = null;
         int count = 0;
         String message;
 
-        if (!IS_AWAKE(ch) || IS_AFFECTED(ch, AFF_CALM) || ch.in_room == null
-                || IS_AFFECTED(ch, AFF_CHARM) || ch.fighting != null) {
+        if (!IS_AWAKE(ch) || IS_AFFECTED(ch, AFF_CALM) || ch.in_room == null || IS_AFFECTED(ch, AFF_CHARM) || ch.fighting != null) {
             return false;
         }
 
@@ -266,8 +175,7 @@ class Special {
                 return false;
             }
 
-            if (vch.pIndexData.group == GROUP_VNUM_TROLLS
-                    && ch.level > vch.level - 2 && !is_safe(ch, vch)) {
+            if (vch.pIndexData.group == GROUP_VNUM_TROLLS && ch.level > vch.level - 2 && !is_safe(ch, vch)) {
                 if (number_range(0, count) == 0) {
                     victim = vch;
                 }
@@ -299,14 +207,13 @@ class Special {
         return true;
     }
 
-    static boolean spec_patrolman(CHAR_DATA ch) {
+    static boolean spec_patrolman(@NotNull CHAR_DATA ch) {
         CHAR_DATA vch, victim = null;
-/*    OBJ_DATA obj; */
+        /*    OBJ_DATA obj; */
         String message;
         int count = 0;
 
-        if (!IS_AWAKE(ch) || IS_AFFECTED(ch, AFF_CALM) || ch.in_room == null
-                || IS_AFFECTED(ch, AFF_CHARM) || ch.fighting != null) {
+        if (!IS_AWAKE(ch) || IS_AFFECTED(ch, AFF_CALM) || ch.in_room == null || IS_AFFECTED(ch, AFF_CHARM) || ch.fighting != null) {
             return false;
         }
 
@@ -318,8 +225,7 @@ class Special {
 
             if (vch.fighting != null)  /* break it up! */ {
                 if (number_range(0, count) == 0) {
-                    victim = (vch.level > vch.fighting.level)
-                            ? vch : vch.fighting;
+                    victim = (vch.level > vch.fighting.level) ? vch : vch.fighting;
                 }
                 count++;
             }
@@ -368,11 +274,11 @@ class Special {
         return true;
     }
 
-/*
-* Core procedure for dragons.
-*/
+    /*
+     * Core procedure for dragons.
+     */
 
-    static boolean dragon(CHAR_DATA ch, String spell_name) {
+    static boolean dragon(@NotNull CHAR_DATA ch, String spell_name) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         Skill sn;
@@ -383,9 +289,8 @@ class Special {
 
         for (victim = ch.in_room.people; victim != null; victim = v_next) {
             v_next = victim.next_in_room;
-            if (((RIDDEN(ch) != null && RIDDEN(ch).fighting == victim)
-                    || victim.fighting == ch)
-                    && number_bits(3) == 0) {
+            CHAR_DATA ridden = RIDDEN(ch);
+            if (((ridden != null && ridden.fighting == victim) || victim.fighting == ch) && number_bits(3) == 0) {
                 break;
             }
         }
@@ -402,11 +307,10 @@ class Special {
         return true;
     }
 
-/*
-* Special procedures for mobiles.
-*/
-
-    static boolean spec_breath_any(CHAR_DATA ch) {
+    /*
+     * Special procedures for mobiles.
+     */
+    static boolean spec_breath_any(@NotNull CHAR_DATA ch) {
         if (ch.position != POS_FIGHTING) {
             return false;
         }
@@ -422,19 +326,19 @@ class Special {
 
     }
 
-    static boolean spec_breath_acid(CHAR_DATA ch) {
+    static boolean spec_breath_acid(@NotNull CHAR_DATA ch) {
         return dragon(ch, "acid breath");
     }
 
-    static boolean spec_breath_fire(CHAR_DATA ch) {
+    static boolean spec_breath_fire(@NotNull CHAR_DATA ch) {
         return dragon(ch, "fire breath");
     }
 
-    static boolean spec_breath_frost(CHAR_DATA ch) {
+    static boolean spec_breath_frost(@NotNull CHAR_DATA ch) {
         return dragon(ch, "frost breath");
     }
 
-    static boolean spec_breath_gas(CHAR_DATA ch) {
+    static boolean spec_breath_gas(@NotNull CHAR_DATA ch) {
         if (ch.position != POS_FIGHTING) {
             return false;
         }
@@ -442,11 +346,11 @@ class Special {
         return true;
     }
 
-    static boolean spec_breath_lightning(CHAR_DATA ch) {
+    static boolean spec_breath_lightning(@NotNull CHAR_DATA ch) {
         return dragon(ch, "lightning breath");
     }
 
-    static boolean spec_cast_adept(CHAR_DATA ch) {
+    static boolean spec_cast_adept(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
 
@@ -456,8 +360,7 @@ class Special {
 
         for (victim = ch.in_room.people; victim != null; victim = v_next) {
             v_next = victim.next_in_room;
-            if (victim != ch && can_see(ch, victim) && number_bits(1) == 0
-                    && !IS_NPC(victim) && victim.level < 11) {
+            if (victim != ch && can_see(ch, victim) && number_bits(1) == 0 && !IS_NPC(victim) && victim.level < 11) {
                 break;
             }
         }
@@ -507,7 +410,7 @@ class Special {
     }
 
 
-    static boolean spec_cast_cleric(CHAR_DATA ch) {
+    static boolean spec_cast_cleric(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
 
@@ -530,7 +433,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_cast_judge(CHAR_DATA ch) {
+    static boolean spec_cast_judge(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -560,7 +463,7 @@ class Special {
     }
 
 
-    static boolean spec_cast_mage(CHAR_DATA ch) {
+    static boolean spec_cast_mage(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
 
@@ -583,7 +486,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_cast_undead(CHAR_DATA ch) {
+    static boolean spec_cast_undead(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -663,7 +566,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_executioner(CHAR_DATA ch) {
+    static boolean spec_executioner(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String crime;
@@ -676,8 +579,7 @@ class Special {
         for (victim = ch.in_room.people; victim != null; victim = v_next) {
             v_next = victim.next_in_room;
 
-            if (!IS_NPC(victim) && IS_SET(victim.act, PLR_WANTED)
-                    && can_see(ch, victim)) {
+            if (!IS_NPC(victim) && IS_SET(victim.act, PLR_WANTED) && can_see(ch, victim)) {
                 crime = "CRIMINAL";
                 break;
             }
@@ -693,7 +595,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_fido(CHAR_DATA ch) {
+    static boolean spec_fido(@NotNull CHAR_DATA ch) {
         OBJ_DATA corpse;
         OBJ_DATA c_next;
         OBJ_DATA obj;
@@ -722,7 +624,7 @@ class Special {
         return false;
     }
 
-    static boolean spec_janitor(CHAR_DATA ch) {
+    static boolean spec_janitor(@NotNull CHAR_DATA ch) {
         OBJ_DATA trash;
         OBJ_DATA trash_next;
 
@@ -735,9 +637,7 @@ class Special {
             if (!IS_SET(trash.wear_flags, ITEM_TAKE) || !can_loot(ch, trash)) {
                 continue;
             }
-            if (trash.item_type == ITEM_DRINK_CON
-                    || trash.item_type == ITEM_TRASH
-                    || trash.cost < 10) {
+            if (trash.item_type == ITEM_DRINK_CON || trash.item_type == ITEM_TRASH || trash.cost < 10) {
                 act("$n picks up some trash.", ch, null, null, TO_ROOM);
                 obj_from_room(trash);
                 obj_to_char(trash, ch);
@@ -760,7 +660,7 @@ class Special {
         static boolean move;
     }
 
-    static boolean spec_mayor(CHAR_DATA ch) {
+    static boolean spec_mayor(@NotNull CHAR_DATA ch) {
 
         OBJ_DATA key;
 
@@ -834,12 +734,10 @@ class Special {
     }
 
 
-    static boolean spec_poison(CHAR_DATA ch) {
+    static boolean spec_poison(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
 
-        if (ch.position != POS_FIGHTING
-                || (victim = ch.fighting) == null
-                || number_percent() > 2 * ch.level) {
+        if (ch.position != POS_FIGHTING || (victim = ch.fighting) == null || number_percent() > 2 * ch.level) {
             return false;
         }
 
@@ -851,7 +749,7 @@ class Special {
     }
 
 
-    static boolean spec_thief(CHAR_DATA ch) {
+    static boolean spec_thief(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         int gold, silver;
@@ -863,18 +761,13 @@ class Special {
         for (victim = ch.in_room.people; victim != null; victim = v_next) {
             v_next = victim.next_in_room;
 
-            if (IS_NPC(victim)
-                    || victim.level >= LEVEL_IMMORTAL
-                    || number_bits(5) != 0
-                    || !can_see(ch, victim)) {
+            if (IS_NPC(victim) || victim.level >= LEVEL_IMMORTAL || number_bits(5) != 0 || !can_see(ch, victim)) {
                 continue;
             }
 
             if (IS_AWAKE(victim) && number_range(0, ch.level) == 0) {
-                act("You discover $n's hands in your wallet!",
-                        ch, null, victim, TO_VICT);
-                act("$N discovers $n's hands in $S wallet!",
-                        ch, null, victim, TO_NOTVICT);
+                act("You discover $n's hands in your wallet!", ch, null, victim, TO_VICT);
+                act("$N discovers $n's hands in $S wallet!", ch, null, victim, TO_NOTVICT);
                 return true;
             } else {
                 gold = victim.gold * UMIN(number_range(1, 20), ch.level / 2) / 100;
@@ -893,7 +786,7 @@ class Special {
     }
 
 
-    static boolean spec_cast_cabal(CHAR_DATA ch) {
+    static boolean spec_cast_cabal(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
 
@@ -949,7 +842,7 @@ class Special {
         return false;
     }
 
-    static boolean spec_guard(CHAR_DATA ch) {
+    static boolean spec_guard(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         CHAR_DATA ech;
@@ -969,8 +862,7 @@ class Special {
                 continue;
             }
 
-            if (IS_SET(ch.in_room.area.area_flag, AREA_HOMETOWN)
-                    && number_percent() < 2) {
+            if (IS_SET(ch.in_room.area.area_flag, AREA_HOMETOWN) && number_percent() < 2) {
                 do_say(ch, "Do i know you?.");
                 if (str_cmp(ch.in_room.area.name, hometown_table[victim.hometown].name)) {
                     do_say(ch, "I don't remember you. Go away!");
@@ -985,11 +877,7 @@ class Special {
                 break;
             }
 
-            if (victim.fighting != null
-                    && victim.fighting != ch
-                    && victim.ethos != ETHOS_LAWFUL
-                    && !IS_GOOD(victim)
-                    && !IS_EVIL(victim.fighting)) {
+            if (victim.fighting != null && victim.fighting != ch && victim.ethos != ETHOS_LAWFUL && !IS_GOOD(victim) && !IS_EVIL(victim.fighting)) {
                 ech = victim;
                 victim = null;
                 break;
@@ -1012,7 +900,7 @@ class Special {
     }
 
 
-    static boolean spec_special_guard(CHAR_DATA ch) {
+    static boolean spec_special_guard(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim, ech;
         CHAR_DATA v_next;
         String crime;
@@ -1036,9 +924,7 @@ class Special {
                 break;
             }
 
-            if (victim.fighting != null
-                    && victim.fighting != ch
-                    && victim.fighting.cabal == CABAL_RULER) {
+            if (victim.fighting != null && victim.fighting != ch && victim.fighting.cabal == CABAL_RULER) {
                 ech = victim;
                 victim = null;
                 break;
@@ -1052,8 +938,7 @@ class Special {
         }
 
         if (ech != null) {
-            act("$n screams 'PROTECT THE INNOCENT!!  BANZAI!!",
-                    ch, null, null, TO_ROOM);
+            act("$n screams 'PROTECT THE INNOCENT!!  BANZAI!!", ch, null, null, TO_ROOM);
             multi_hit(ch, ech, null);
             return true;
         }
@@ -1061,7 +946,7 @@ class Special {
         return false;
     }
 
-    static boolean spec_stalker(CHAR_DATA ch) {
+    static boolean spec_stalker(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA wch;
         CHAR_DATA wch_next;
@@ -1108,8 +993,7 @@ class Special {
         if (ch.status == 5) {
             if (ch.in_room != get_room_index(hometown_table[victim.hometown].recall[1])) {
                 char_from_room(ch);
-                char_to_room(ch,
-                        get_room_index(hometown_table[victim.hometown].recall[i]));
+                char_to_room(ch, get_room_index(hometown_table[victim.hometown].recall[i]));
                 do_track(ch, victim.name);
                 return true;
             } else {
@@ -1122,7 +1006,7 @@ class Special {
         return false;
     }
 
-    static boolean spec_nasty(CHAR_DATA ch) {
+    static boolean spec_nasty(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim, v_next;
         long gold;
 
@@ -1133,9 +1017,7 @@ class Special {
         if (ch.position != POS_FIGHTING) {
             for (victim = ch.in_room.people; victim != null; victim = v_next) {
                 v_next = victim.next_in_room;
-                if (!IS_NPC(victim)
-                        && (victim.level > ch.level)
-                        && (victim.level < ch.level + 10)) {
+                if (!IS_NPC(victim) && (victim.level > ch.level) && (victim.level < ch.level + 10)) {
                     do_backstab(ch, victim.name);
                     if (ch.position != POS_FIGHTING) {
                         do_murder(ch, victim.name);
@@ -1154,12 +1036,9 @@ class Special {
 
         switch (number_bits(2)) {
             case 0 -> {
-                act("$n rips apart your coin purse, spilling your gold!",
-                        ch, null, victim, TO_VICT);
-                act("You slash apart $N's coin purse and gather his gold.",
-                        ch, null, victim, TO_CHAR);
-                act("$N's coin purse is ripped apart!",
-                        ch, null, victim, TO_NOTVICT);
+                act("$n rips apart your coin purse, spilling your gold!", ch, null, victim, TO_VICT);
+                act("You slash apart $N's coin purse and gather his gold.", ch, null, victim, TO_CHAR);
+                act("$N's coin purse is ripped apart!", ch, null, victim, TO_NOTVICT);
                 gold = victim.gold / 10;  /* steal 10% of his gold */
                 victim.gold -= gold;
                 ch.gold += gold;
@@ -1175,7 +1054,7 @@ class Special {
         }
     }
 
-    static boolean spec_questmaster(CHAR_DATA ch) {
+    static boolean spec_questmaster(@NotNull CHAR_DATA ch) {
         if (!IS_AWAKE(ch)) {
             return false;
         }
@@ -1186,7 +1065,7 @@ class Special {
         return false;
     }
 
-    static boolean spec_assassinater(CHAR_DATA ch) {
+    static boolean spec_assassinater(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         int rnd_say;
@@ -1234,7 +1113,7 @@ class Special {
     }
 
 
-    static boolean spec_repairman(CHAR_DATA ch) {
+    static boolean spec_repairman(@NotNull CHAR_DATA ch) {
         if (!IS_AWAKE(ch)) {
             return false;
         }
@@ -1253,7 +1132,7 @@ class Special {
         static boolean move;
     }
 
-    static boolean spec_captain(CHAR_DATA ch) {
+    static boolean spec_captain(@NotNull CHAR_DATA ch) {
 
         if (!spec_captain_data.move) {
             if (time_info.hour == 6) {
@@ -1288,17 +1167,14 @@ class Special {
                 act("{W$n lies down and falls asleep.{x", ch, null, null, TO_ROOM, POS_RESTING);
             }
             case 'a' -> act("{Y$n says 'Greetings! Good Hunting to you!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-            case 'b' ->
-                    act("{Y$n says 'Keep the streets clean please. Keep Solace tidy.'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'b' -> act("{Y$n says 'Keep the streets clean please. Keep Solace tidy.'{x", ch, null, null, TO_ROOM, POS_RESTING);
             case 'c' -> {
                 act("{Y$n says 'I must do something about all these doors.{x", ch, null, null, TO_ROOM, POS_RESTING);
                 act("{Y$n says, 'I will never get out of here.'{x", ch, null, null, TO_ROOM, POS_RESTING);
             }
             case 'd' -> act("{Y$n says 'Salutations Citizens of Solace!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-            case 'y' ->
-                    act("{Y$n says 'I hereby declare the city of Solace open!'{x", ch, null, null, TO_ROOM, POS_RESTING);
-            case 'E' ->
-                    act("{Y$n says 'I hereby declare the city of Solace closed!'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'y' -> act("{Y$n says 'I hereby declare the city of Solace open!'{x", ch, null, null, TO_ROOM, POS_RESTING);
+            case 'E' -> act("{Y$n says 'I hereby declare the city of Solace closed!'{x", ch, null, null, TO_ROOM, POS_RESTING);
             case 'O' -> {
                 do_unlock(ch, "gate");
                 do_open(ch, "gate");
@@ -1330,7 +1206,7 @@ class Special {
         static int count = 0;
     }
 
-    static boolean spec_headlamia(CHAR_DATA ch) {
+    static boolean spec_headlamia(@NotNull CHAR_DATA ch) {
         CHAR_DATA vch, vch_next;
 
         if (!spec_headlamia_data.move) {
@@ -1387,7 +1263,7 @@ class Special {
     }
 
 
-    static boolean spec_cast_beholder(CHAR_DATA ch) {
+    static boolean spec_cast_beholder(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1429,7 +1305,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_fight_enforcer(CHAR_DATA ch) {
+    static boolean spec_fight_enforcer(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1468,7 +1344,7 @@ class Special {
     }
 
 
-    static boolean spec_fight_invader(CHAR_DATA ch) {
+    static boolean spec_fight_invader(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1517,7 +1393,7 @@ class Special {
     }
 
 
-    static boolean spec_fight_ivan(CHAR_DATA ch) {
+    static boolean spec_fight_ivan(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1564,7 +1440,7 @@ class Special {
     }
 
 
-    static boolean spec_fight_seneschal(CHAR_DATA ch) {
+    static boolean spec_fight_seneschal(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1610,7 +1486,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_fight_powerman(CHAR_DATA ch) {
+    static boolean spec_fight_powerman(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
 
@@ -1655,7 +1531,7 @@ class Special {
     }
 
 
-    static boolean spec_fight_protector(CHAR_DATA ch) {
+    static boolean spec_fight_protector(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1693,7 +1569,7 @@ class Special {
         return true;
     }
 
-    static boolean spec_fight_lionguard(CHAR_DATA ch) {
+    static boolean spec_fight_lionguard(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;
@@ -1738,7 +1614,7 @@ class Special {
     }
 
 
-    static boolean spec_fight_hunter(CHAR_DATA ch) {
+    static boolean spec_fight_hunter(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA v_next;
         String spell;

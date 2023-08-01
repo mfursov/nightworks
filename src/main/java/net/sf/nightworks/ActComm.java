@@ -1,135 +1,37 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
+import net.sf.nightworks.util.TextUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import static net.sf.nightworks.ActWiz.wiznet;
-import static net.sf.nightworks.Comm.act;
-import static net.sf.nightworks.Comm.close_socket;
-import static net.sf.nightworks.Comm.page_to_char;
-import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.Comm.write_to_buffer;
+import static net.sf.nightworks.Comm.*;
 import static net.sf.nightworks.Const.language_table;
 import static net.sf.nightworks.Const.translation_table;
-import static net.sf.nightworks.DB.append_file;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.upfirst;
-import static net.sf.nightworks.Handler.affect_strip;
-import static net.sf.nightworks.Handler.back_home;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.extract_char;
-import static net.sf.nightworks.Handler.extract_char_nocount;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_char_room;
-import static net.sf.nightworks.Handler.get_char_world;
-import static net.sf.nightworks.Handler.get_total_played;
-import static net.sf.nightworks.Handler.get_trust;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.skill_failure_check;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Interp.getCommandsTable;
 import static net.sf.nightworks.Interp.interpret;
 import static net.sf.nightworks.Lookup.lang_lookup;
-import static net.sf.nightworks.Nightworks.ACT_THIEF;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_ESPIRIT;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_CHAOS;
-import static net.sf.nightworks.Nightworks.CABAL_HUNTER;
-import static net.sf.nightworks.Nightworks.CABAL_INVADER;
-import static net.sf.nightworks.Nightworks.CABAL_KNIGHT;
-import static net.sf.nightworks.Nightworks.CABAL_LIONS;
-import static net.sf.nightworks.Nightworks.CABAL_RULER;
-import static net.sf.nightworks.Nightworks.CABAL_SHALAFI;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_DEAF;
-import static net.sf.nightworks.Nightworks.COMM_NOAUCTION;
-import static net.sf.nightworks.Nightworks.COMM_NOCHANNELS;
-import static net.sf.nightworks.Nightworks.COMM_NOEMOTE;
-import static net.sf.nightworks.Nightworks.COMM_NOTELL;
-import static net.sf.nightworks.Nightworks.COMM_NOWIZ;
-import static net.sf.nightworks.Nightworks.COMM_QUIET;
-import static net.sf.nightworks.Nightworks.COMM_SNOOP_PROOF;
-import static net.sf.nightworks.Nightworks.CON_PLAYING;
-import static net.sf.nightworks.Nightworks.CON_REMORTING;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.FIGHT_DELAY_TIME;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_AWAKE;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_RAFFECTED;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.LANG_COMMON;
-import static net.sf.nightworks.Nightworks.LEVEL_HERO;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MAX_LANGUAGE;
-import static net.sf.nightworks.Nightworks.MPROG_SPEECH;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAGIC_JAR;
-import static net.sf.nightworks.Nightworks.OPROG_SPEECH;
-import static net.sf.nightworks.Nightworks.ORG_RACE;
-import static net.sf.nightworks.Nightworks.PAGELEN;
-import static net.sf.nightworks.Nightworks.PERS;
-import static net.sf.nightworks.Nightworks.PLR_CANREMORT;
-import static net.sf.nightworks.Nightworks.PLR_NOFOLLOW;
-import static net.sf.nightworks.Nightworks.PLR_NO_EXP;
-import static net.sf.nightworks.Nightworks.PLR_REMORTED;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.POS_FIGHTING;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STUNNED;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WIZ_LOGINS;
-import static net.sf.nightworks.Nightworks.atoi;
-import static net.sf.nightworks.Nightworks.auction;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.descriptor_list;
-import static net.sf.nightworks.Nightworks.iNumPlayers;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.object_list;
-import static net.sf.nightworks.Nightworks.translation_type;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Save.load_char_obj;
 import static net.sf.nightworks.Save.save_char_obj;
-import static net.sf.nightworks.Skill.gsn_charm_person;
-import static net.sf.nightworks.Skill.gsn_deafen;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_evil_spirit;
-import static net.sf.nightworks.Skill.gsn_garble;
-import static net.sf.nightworks.Skill.gsn_judge;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.Tables.ethos_table;
-import static net.sf.nightworks.util.TextUtils.capitalize;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
+import static net.sf.nightworks.util.TextUtils.*;
 
+@SuppressWarnings("unused")
 class ActComm {
-/* RT code to delete yourself */
+    /* RT code to delete yourself */
 
-    static void do_delet(CHAR_DATA ch) {
+    static void do_delet(@NotNull CHAR_DATA ch) {
         send_to_char("You must type the full command to delete yourself.\n", ch);
     }
 
-    static void do_delete(CHAR_DATA ch, String argument) {
+    static void do_delete(@NotNull CHAR_DATA ch, String argument) {
 
         if (IS_NPC(ch)) {
             return;
@@ -139,15 +41,14 @@ class ActComm {
             if (!argument.isEmpty()) {
                 send_to_char("Delete status removed.\n", ch);
                 ch.pcdata.confirm_delete = false;
-                return;
             } else {
                 wiznet("$N turns $Mself into line noise.", ch, null, 0, 0, 0);
                 ch.last_fight_time = -1;
                 do_quit_count(ch);
                 //noinspection ResultOfMethodCallIgnored
-                new File(nw_config.lib_player_dir + "/" + capitalize(ch.name)).delete();
-                return;
+                new File(nw_config.lib_player_dir + "/" + TextUtils.capitalize(ch.name)).delete();
             }
+            return;
         }
 
         if (!argument.isEmpty()) {
@@ -163,9 +64,9 @@ class ActComm {
         wiznet("$N is contemplating deletion.", ch, null, 0, 0, get_trust(ch));
     }
 
-/* RT code to display channel status */
+    /* RT code to display channel status */
 
-    static void do_channels(CHAR_DATA ch) {
+    static void do_channels(@NotNull CHAR_DATA ch) {
 
         /* lists all channels and their status */
         send_to_char("   channel     status\n", ch);
@@ -243,9 +144,9 @@ class ActComm {
         }
     }
 
-/* RT deaf blocks out all shouts */
+    /* RT deaf blocks out all shouts */
 
-    static void do_deaf(CHAR_DATA ch) {
+    static void do_deaf(@NotNull CHAR_DATA ch) {
 
         if (IS_SET(ch.comm, COMM_DEAF)) {
             send_to_char("You can now hear tells again.\n", ch);
@@ -256,9 +157,9 @@ class ActComm {
         }
     }
 
-/* RT quiet blocks out all communication */
+    /* RT quiet blocks out all communication */
 
-    static void do_quiet(CHAR_DATA ch) {
+    static void do_quiet(@NotNull CHAR_DATA ch) {
         if (IS_SET(ch.comm, COMM_QUIET)) {
             send_to_char("Quiet mode removed.\n", ch);
             ch.comm = REMOVE_BIT(ch.comm, COMM_QUIET);
@@ -268,7 +169,7 @@ class ActComm {
         }
     }
 
-    static void do_replay(CHAR_DATA ch) {
+    static void do_replay(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             send_to_char("You can't replay.\n", ch);
             return;
@@ -278,7 +179,7 @@ class ActComm {
         ch.pcdata.buffer.setLength(0);
     }
 
-    static void do_immtalk(CHAR_DATA ch, String argument) {
+    static void do_immtalk(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -308,7 +209,7 @@ class ActComm {
     }
 
 
-    static void do_say(CHAR_DATA ch, String argument) {
+    static void do_say(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA room_char;
         OBJ_DATA char_obj;
         CHAR_DATA vch;
@@ -369,7 +270,7 @@ class ActComm {
     }
 
 
-    static void do_shout(CHAR_DATA ch, String argument) {
+    static void do_shout(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -406,11 +307,11 @@ class ActComm {
     }
 
 
-    static void do_tell(CHAR_DATA ch, String argument) {
+    static void do_tell(@NotNull CHAR_DATA ch, String argument) {
 
         CHAR_DATA victim;
 
-        if (IS_SET(ch.comm, COMM_NOTELL) || IS_SET(ch.comm, COMM_DEAF)) {
+        if (IS_SET(ch.comm, COMM_NOTELL)) {
             send_to_char("Your message didn't get through.\n", ch);
             return;
         }
@@ -434,7 +335,7 @@ class ActComm {
         }
 
         /*
-         * Can tell to PC's anywhere, but NPC's only in same room.
+         * Can tell to PC's anywhere, but NPC's only in the same room.
          * -- Furey
          */
         if ((victim = get_char_world(ch, arg.toString())) == null
@@ -446,7 +347,7 @@ class ActComm {
         if (victim.desc == null && !IS_NPC(victim)) {
             act("$N seems to have misplaced $S link...try again later.", ch, null, victim, TO_CHAR);
             var buf = new TextBuffer();
-            buf.sprintf("%s tells you '%s'\n", upfirst(PERS(ch, victim)), argument);
+            buf.sprintf("%s tells you '%s'\n", DB.capitalize(PERS(ch, victim)), argument);
             victim.pcdata.buffer.append(buf.getBuffer());
             return;
         }
@@ -481,7 +382,7 @@ class ActComm {
     }
 
 
-    static void do_reply(CHAR_DATA ch, String argument) {
+    static void do_reply(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (IS_SET(ch.comm, COMM_NOTELL)) {
@@ -505,9 +406,9 @@ class ActComm {
                 buf = argument;
             }
             act("$N seems to have misplaced $S link...try again later.", ch, null, victim, TO_CHAR);
-            var tbuf = new TextBuffer();
-            tbuf.sprintf("%s tells you '%s'\n", upfirst(PERS(ch, victim)), buf);
-            victim.pcdata.buffer.append(tbuf.getBuffer());
+            var textBuffer = new TextBuffer();
+            textBuffer.sprintf("%s tells you '%s'\n", DB.capitalize(PERS(ch, victim)), buf);
+            victim.pcdata.buffer.append(textBuffer.getBuffer());
             return;
         }
 
@@ -536,11 +437,11 @@ class ActComm {
 
     }
 
-    static void do_yell(CHAR_DATA ch, String arg) {
+    static void do_yell(@NotNull CHAR_DATA ch, String arg) {
         do_yell(ch, (CharSequence) arg);
     }
 
-    static void do_yell(CHAR_DATA ch, CharSequence arg) {
+    static void do_yell(@NotNull CHAR_DATA ch, CharSequence arg) {
         DESCRIPTOR_DATA d;
 
 
@@ -572,12 +473,9 @@ class ActComm {
                 act("$n yells '{y$t{x'", ch, trans, d.character, TO_VICT, POS_DEAD);
             }
         }
-
     }
 
-
-    static void do_emote(CHAR_DATA ch, String argument) {
-
+    static void do_emote(@NotNull CHAR_DATA ch, String argument) {
         if (!IS_NPC(ch) && IS_SET(ch.comm, COMM_NOEMOTE)) {
             send_to_char("You can't show your emotions.\n", ch);
             return;
@@ -602,7 +500,7 @@ class ActComm {
     }
 
 
-    static void do_pmote(CHAR_DATA ch, String argument) {
+    static void do_pmote(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA vch;
         var matches = 0;
 
@@ -673,7 +571,7 @@ class ActComm {
 
     }
 
-    static void do_pose(CHAR_DATA ch) {
+    static void do_pose(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch) || ch.clazz.poses.isEmpty()) {
             return;
         }
@@ -689,39 +587,39 @@ class ActComm {
     }
 
 
-    static void do_bug(CHAR_DATA ch, String argument) {
+    static void do_bug(@NotNull CHAR_DATA ch, String argument) {
         append_file(ch, nw_config.note_bug_file, argument);
         send_to_char("Bug logged.\n", ch);
     }
 
-    static void do_typo(CHAR_DATA ch, String argument) {
+    static void do_typo(@NotNull CHAR_DATA ch, String argument) {
         append_file(ch, nw_config.note_typo_file, argument);
         send_to_char("Typo logged.\n", ch);
     }
 
-    static void do_rent(CHAR_DATA ch) {
+    static void do_rent(@NotNull CHAR_DATA ch) {
         send_to_char("There is no rent here.  Just save and quit.\n", ch);
     }
 
 
-    static void do_qui(CHAR_DATA ch) {
+    static void do_qui(@NotNull CHAR_DATA ch) {
         send_to_char("If you want to QUIT, you have to spell it out.\n", ch);
     }
 
 
-    static void do_quit(CHAR_DATA ch) {
+    static void do_quit(@NotNull CHAR_DATA ch) {
         quit_org(ch, false, false);
     }
 
-    static void do_quit_count(CHAR_DATA ch) {
+    static void do_quit_count(@NotNull CHAR_DATA ch) {
         quit_org(ch, true, false);
     }
 
-    static void do_quit_remort(CHAR_DATA ch) {
+    static void do_quit_remort(@NotNull CHAR_DATA ch) {
         quit_org(ch, true, true);
     }
 
-    static boolean quit_org(CHAR_DATA ch, boolean count, boolean remort) {
+    static boolean quit_org(@NotNull CHAR_DATA ch, boolean count, boolean remort) {
         DESCRIPTOR_DATA d, dr, d_next;
         CHAR_DATA vch, vch_next;
         OBJ_DATA obj, obj_next;
@@ -857,8 +755,8 @@ class ActComm {
         }
 
         /*
-        * After extract_char the ch is no longer valid!
-        */
+         * After extract_char the ch is no longer valid!
+         */
         save_char_obj(ch);
         id = ch.id;
         dr = d = ch.desc;
@@ -893,7 +791,7 @@ class ActComm {
     }
 
 
-    static void do_save(CHAR_DATA ch) {
+    static void do_save(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -908,8 +806,8 @@ class ActComm {
     }
 
 
-    static void do_follow(CHAR_DATA ch, String argument) {
-/* RT changed to allow unlimited following and follow the NOFOLLOW rules */
+    static void do_follow(@NotNull CHAR_DATA ch, String argument) {
+        /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -954,7 +852,7 @@ class ActComm {
     }
 
 
-    static void add_follower(CHAR_DATA ch, CHAR_DATA master) {
+    static void add_follower(@NotNull CHAR_DATA ch, CHAR_DATA master) {
         if (ch.master != null) {
             bug("Add_follower: non-null master.");
             return;
@@ -971,7 +869,7 @@ class ActComm {
     }
 
 
-    static void stop_follower(CHAR_DATA ch) {
+    static void stop_follower(@NotNull CHAR_DATA ch) {
         if (ch.master == null) {
             bug("Stop_follower: null master.");
             return;
@@ -994,9 +892,9 @@ class ActComm {
         ch.leader = null;
     }
 
-/* nukes charmed monsters and pets */
+    /* nukes charmed monsters and pets */
 
-    static void nuke_pets(CHAR_DATA ch) {
+    static void nuke_pets(@NotNull CHAR_DATA ch) {
         CHAR_DATA pet;
 
         if ((pet = ch.pet) != null) {
@@ -1011,7 +909,7 @@ class ActComm {
     }
 
 
-    static void die_follower(CHAR_DATA ch) {
+    static void die_follower(@NotNull CHAR_DATA ch) {
         CHAR_DATA fch;
         CHAR_DATA fch_next;
 
@@ -1037,7 +935,7 @@ class ActComm {
     }
 
 
-    static void do_order(CHAR_DATA ch, String argument) {
+    static void do_order(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         CHAR_DATA och;
         CHAR_DATA och_next;
@@ -1110,7 +1008,7 @@ class ActComm {
         }
     }
 
-    static boolean proper_order(CHAR_DATA ch, String argument) {
+    static boolean proper_order(@NotNull CHAR_DATA ch, String argument) {
         var command = new StringBuilder();
         one_argument(argument, command);
 
@@ -1144,16 +1042,14 @@ class ActComm {
         }
 
         return switch (cmd) {
-            case do_assassinate, do_ambush, do_blackjack, do_cleave, do_kill, do_murder, do_recall, do_strangle, do_vtouch ->
-                    false;
-            case do_close, do_lock, do_open, do_unlock -> true;
+            case do_assassinate, do_ambush, do_blackjack, do_cleave, do_kill, do_murder, do_recall, do_strangle, do_vtouch -> false;
             case do_backstab, do_hide, do_pick, do_sneak -> IS_SET(ch.act, ACT_THIEF);
             default -> true;
         };
     }
 
 
-    static void do_group(CHAR_DATA ch, String argument) {
+    static void do_group(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
 
@@ -1174,7 +1070,7 @@ class ActComm {
                     buf.sprintf("[%2d %s] %-16s %d/%d hp %d/%d mana %d/%d mv   %5d xp\n",
                             gch.level,
                             IS_NPC(gch) ? "Mob" : gch.clazz.who_name,
-                            capitalize(PERS(gch, ch)),
+                            TextUtils.capitalize(PERS(gch, ch)),
                             gch.hit, gch.max_hit,
                             gch.mana, gch.max_mana,
                             gch.move, gch.max_move,
@@ -1274,11 +1170,11 @@ class ActComm {
 
     }
 
-/*
-* 'Split' originally by Gnort, God of Chaos.
-*/
+    /*
+     * 'Split' originally by Gnort, God of Chaos.
+     */
 
-    static void do_split(CHAR_DATA ch, String argument) {
+    static void do_split(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA gch;
         int members;
         int amount_gold = 0, amount_silver;
@@ -1384,7 +1280,7 @@ class ActComm {
     }
 
 
-    static void do_gtell(CHAR_DATA ch, String argument) {
+    static void do_gtell(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA gch;
         int i;
 
@@ -1407,7 +1303,7 @@ class ActComm {
             buf = argument;
         }
         /*
-         * Note use of send_to_char, so gtell works on sleepers.
+         * Note the use of send_to_char, so gtell works on sleepers.
          */
 
         for (i = 0, gch = char_list; gch != null; gch = gch.next) {
@@ -1425,12 +1321,12 @@ class ActComm {
 
     }
 
-/*
-* It is very important that this be an equivalence relation:
-* (1) A ~ A
-* (2) if A ~ B then B ~ A
-* (3) if A ~ B  and B ~ C, then A ~ C
-*/
+    /*
+     * It is very important that this be an equivalence relation:
+     * (1) A ~ A
+     * (2) if A ~ B then B ~ A
+     * (3) if A ~ B  and B ~ C, then A ~ C
+     */
 
     static boolean is_same_group_old(CHAR_DATA ach, CHAR_DATA bch) {
         if (ach == null || bch == null) {
@@ -1446,9 +1342,9 @@ class ActComm {
         return ach == bch;
     }
 
-/*
-* New is_same_group by chronos
-*/
+    /*
+     * New is_same_group by chronos
+     */
 
     static boolean is_same_group(CHAR_DATA ach, CHAR_DATA bch) {
         CHAR_DATA ch, vch, ch_next, vch_next;
@@ -1474,7 +1370,7 @@ class ActComm {
     }
 
 
-    static void do_cb(CHAR_DATA ch, String argument) {
+    static void do_cb(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (ch.cabal == 0) {
@@ -1498,7 +1394,7 @@ class ActComm {
         for (d = descriptor_list; d != null; d = d.next) {
             if (d.connected == CON_PLAYING &&
                     (d.character.cabal == ch.cabal) &&
-/*             !IS_SET(d.character.comm,COMM_NOCB) &&   */
+                    /*             !IS_SET(d.character.comm,COMM_NOCB) &&   */
                     !is_affected(d.character, gsn_deafen)) {
                 act(buf.toString(), ch, buf2, d.character, TO_VICT, POS_DEAD);
             }
@@ -1506,7 +1402,7 @@ class ActComm {
 
     }
 
-    static void do_pray(CHAR_DATA ch, String argument) {
+    static void do_pray(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (IS_SET(ch.comm, COMM_NOCHANNELS)) {
@@ -1539,21 +1435,19 @@ class ActComm {
         return c;
     }
 
-/*
- * ch says
- * victim hears
- */
-
-    static String translate(CHAR_DATA ch, CHAR_DATA victim, String argument) {
+    /**
+     * ch says
+     * the victim hears
+     */
+    static String translate(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA victim, String argument) {
         var trans = new TextBuffer();
         if (argument.isEmpty()
-                || (ch == null) || (victim == null)
                 || IS_NPC(ch) || IS_NPC(victim)
                 || IS_IMMORTAL(ch) || IS_IMMORTAL(victim)
                 || ch.language == LANG_COMMON
                 || ch.language == ORG_RACE(victim).pcRace.language) {
             if (IS_IMMORTAL(victim)) {
-                trans.sprintf("{%s} %s", language_table[ch == null ? victim.language : ch.language].name, argument);
+                trans.sprintf("{%s} %s", language_table[ch.language].name, argument);
             } else {
                 trans.append(argument);
             }
@@ -1571,7 +1465,7 @@ class ActComm {
     }
 
 
-    static void do_speak(CHAR_DATA ch, String argument) {
+    static void do_speak(@NotNull CHAR_DATA ch, String argument) {
         int language;
 
         if (IS_NPC(ch)) {
@@ -1607,9 +1501,9 @@ class ActComm {
         send_to_char(buf, ch);
     }
 
-/* Thanx zihni@karmi.emu.edu.tr for the code of do_judge */
+    /* Thanx zihni@karmi.emu.edu.tr for the code of do_judge */
 
-    static void do_judge(CHAR_DATA ch, String argument) {
+    static void do_judge(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_judge, true, 0, null)) {
@@ -1624,7 +1518,7 @@ class ActComm {
             return;
         }
 
-        /* judge thru world */
+        /* judge through the world */
         if ((victim = get_char_world(ch, arg.toString())) == null) {
             send_to_char("They aren't here.\n", ch);
             return;
@@ -1643,17 +1537,17 @@ class ActComm {
         var buf = new TextBuffer();
         buf.sprintf("%s's ethos is %s and aligment is %s.\n",
                 victim.name,
-                upfirst(ethos_table[victim.ethos].name),
+                DB.capitalize(ethos_table[victim.ethos].name),
                 IS_GOOD(victim) ? "Good" : IS_EVIL(victim) ? "Evil" : "Neutral");
 
         send_to_char(buf, ch);
     }
 
-    static void do_remor(CHAR_DATA ch) {
+    static void do_remor(@NotNull CHAR_DATA ch) {
         send_to_char("If you want to REMORT, spell it out.\n", ch);
     }
 
-    static void do_remort(CHAR_DATA ch, String argument) {
+    static void do_remort(@NotNull CHAR_DATA ch, String argument) {
         int bankg, banks, qp, silver, gold;
 
         if (IS_NPC(ch) || ch.desc == null) {
@@ -1691,7 +1585,7 @@ class ActComm {
             send_to_char("             You will have additional 10 trains.\n", ch);
 
             var pbuf = ch.pcdata.pwd;
-            var remstr = nw_config.lib_player_dir + "/" + capitalize(ch.name);
+            var remstr = nw_config.lib_player_dir + "/" + TextUtils.capitalize(ch.name);
 //        String  mkstr =  nw_config.lib_remort_dir +"/"+ capitalize( ch.name ) ;
             var name = ch.name;
             var d = ch.desc;
@@ -1740,7 +1634,7 @@ class ActComm {
     }
 
 
-    static boolean cabal_area_check(CHAR_DATA ch) {
+    static boolean cabal_area_check(@NotNull CHAR_DATA ch) {
         if (ch.in_room == null || IS_IMMORTAL(ch)) {
             return false;
         }
@@ -1770,7 +1664,7 @@ class ActComm {
         return !(ch.cabal == CABAL_LIONS || str_cmp(ch.in_room.area.name, "Lions"));
     }
 
-    static boolean is_at_cabal_area(CHAR_DATA ch) {
+    static boolean is_at_cabal_area(@NotNull CHAR_DATA ch) {
         //noinspection SimplifiableIfStatement
         if (ch.in_room == null || IS_IMMORTAL(ch)) {
             return false;
@@ -1785,6 +1679,4 @@ class ActComm {
                 !str_cmp(ch.in_room.area.name, "Hunter") ||
                 !str_cmp(ch.in_room.area.name, "Lions");
     }
-
-
 }

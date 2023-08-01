@@ -1,11 +1,11 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+import net.sf.nightworks.util.Nullable;
+
 import java.util.Formatter;
 
-import static net.sf.nightworks.ActComm.die_follower;
-import static net.sf.nightworks.ActComm.do_say;
-import static net.sf.nightworks.ActComm.is_same_group;
-import static net.sf.nightworks.ActComm.nuke_pets;
+import static net.sf.nightworks.ActComm.*;
 import static net.sf.nightworks.ActInfo.do_raffects;
 import static net.sf.nightworks.ActMove.do_track;
 import static net.sf.nightworks.ActMove.do_wake;
@@ -13,560 +13,22 @@ import static net.sf.nightworks.ActWiz.do_return;
 import static net.sf.nightworks.ActWiz.find_location;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.Const.attack_table;
-import static net.sf.nightworks.Const.hometown_table;
-import static net.sf.nightworks.Const.item_table;
-import static net.sf.nightworks.Const.liq_table;
-import static net.sf.nightworks.Const.str_app;
-import static net.sf.nightworks.Const.weapon_table;
-import static net.sf.nightworks.Const.wiznet_table;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_fuzzy;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.weather_info;
+import static net.sf.nightworks.Const.*;
+import static net.sf.nightworks.DB.*;
 import static net.sf.nightworks.Fight.damage;
 import static net.sf.nightworks.Fight.stop_fighting;
 import static net.sf.nightworks.Interp.number_argument;
 import static net.sf.nightworks.Magic.saves_spell;
-import static net.sf.nightworks.Nightworks.ACT_AGGRESSIVE;
-import static net.sf.nightworks.Nightworks.ACT_CLERIC;
-import static net.sf.nightworks.Nightworks.ACT_GAIN;
-import static net.sf.nightworks.Nightworks.ACT_HUNTER;
-import static net.sf.nightworks.Nightworks.ACT_IS_CHANGER;
-import static net.sf.nightworks.Nightworks.ACT_IS_HEALER;
-import static net.sf.nightworks.Nightworks.ACT_IS_NPC;
-import static net.sf.nightworks.Nightworks.ACT_MAGE;
-import static net.sf.nightworks.Nightworks.ACT_NOALIGN;
-import static net.sf.nightworks.Nightworks.ACT_NOPURGE;
-import static net.sf.nightworks.Nightworks.ACT_PET;
-import static net.sf.nightworks.Nightworks.ACT_PRACTICE;
-import static net.sf.nightworks.Nightworks.ACT_SCAVENGER;
-import static net.sf.nightworks.Nightworks.ACT_SENTINEL;
-import static net.sf.nightworks.Nightworks.ACT_STAY_AREA;
-import static net.sf.nightworks.Nightworks.ACT_THIEF;
-import static net.sf.nightworks.Nightworks.ACT_TRAIN;
-import static net.sf.nightworks.Nightworks.ACT_UNDEAD;
-import static net.sf.nightworks.Nightworks.ACT_UPDATE_ALWAYS;
-import static net.sf.nightworks.Nightworks.ACT_WARRIOR;
-import static net.sf.nightworks.Nightworks.ACT_WIMPY;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_ACUTE_VISION;
-import static net.sf.nightworks.Nightworks.AFF_BERSERK;
-import static net.sf.nightworks.Nightworks.AFF_BLIND;
-import static net.sf.nightworks.Nightworks.AFF_BLOODTHIRST;
-import static net.sf.nightworks.Nightworks.AFF_CALM;
-import static net.sf.nightworks.Nightworks.AFF_CAMOUFLAGE;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_DARK_VISION;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_EVIL;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_FADE;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_GOOD;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_HIDDEN;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_LIFE;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_MAGIC;
-import static net.sf.nightworks.Nightworks.AFF_DETECT_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_EARTHFADE;
-import static net.sf.nightworks.Nightworks.AFF_FADE;
-import static net.sf.nightworks.Nightworks.AFF_FAERIE_FIRE;
-import static net.sf.nightworks.Nightworks.AFF_FEAR;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_FORM_GRASS;
-import static net.sf.nightworks.Nightworks.AFF_FORM_TREE;
-import static net.sf.nightworks.Nightworks.AFF_GROUNDING;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_HIDE;
-import static net.sf.nightworks.Nightworks.AFF_IMP_INVIS;
-import static net.sf.nightworks.Nightworks.AFF_INFRARED;
-import static net.sf.nightworks.Nightworks.AFF_INVISIBLE;
-import static net.sf.nightworks.Nightworks.AFF_PASS_DOOR;
-import static net.sf.nightworks.Nightworks.AFF_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_EVIL;
-import static net.sf.nightworks.Nightworks.AFF_PROTECT_GOOD;
-import static net.sf.nightworks.Nightworks.AFF_REGENERATION;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_L_SHIELD;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_POISON;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SHOCKING;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_THIEF_TRAP;
-import static net.sf.nightworks.Nightworks.AFF_SANCTUARY;
-import static net.sf.nightworks.Nightworks.AFF_SCREAM;
-import static net.sf.nightworks.Nightworks.AFF_SLEEP;
-import static net.sf.nightworks.Nightworks.AFF_SLOW;
-import static net.sf.nightworks.Nightworks.AFF_SNEAK;
-import static net.sf.nightworks.Nightworks.AFF_STUN;
-import static net.sf.nightworks.Nightworks.AFF_SWIM;
-import static net.sf.nightworks.Nightworks.AFF_WEAKEN;
-import static net.sf.nightworks.Nightworks.AFF_WEB;
-import static net.sf.nightworks.Nightworks.ALIGN_OK;
-import static net.sf.nightworks.Nightworks.APPLY_AC;
-import static net.sf.nightworks.Nightworks.APPLY_AGE;
-import static net.sf.nightworks.Nightworks.APPLY_CHA;
-import static net.sf.nightworks.Nightworks.APPLY_CLASS;
-import static net.sf.nightworks.Nightworks.APPLY_CON;
-import static net.sf.nightworks.Nightworks.APPLY_DAMROLL;
-import static net.sf.nightworks.Nightworks.APPLY_DEX;
-import static net.sf.nightworks.Nightworks.APPLY_EXP;
-import static net.sf.nightworks.Nightworks.APPLY_GOLD;
-import static net.sf.nightworks.Nightworks.APPLY_HEIGHT;
-import static net.sf.nightworks.Nightworks.APPLY_HIT;
-import static net.sf.nightworks.Nightworks.APPLY_HITROLL;
-import static net.sf.nightworks.Nightworks.APPLY_INT;
-import static net.sf.nightworks.Nightworks.APPLY_LEVEL;
-import static net.sf.nightworks.Nightworks.APPLY_MANA;
-import static net.sf.nightworks.Nightworks.APPLY_MOVE;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_ROOM_HEAL;
-import static net.sf.nightworks.Nightworks.APPLY_ROOM_MANA;
-import static net.sf.nightworks.Nightworks.APPLY_ROOM_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_SAVES;
-import static net.sf.nightworks.Nightworks.APPLY_SAVING_BREATH;
-import static net.sf.nightworks.Nightworks.APPLY_SAVING_PETRI;
-import static net.sf.nightworks.Nightworks.APPLY_SAVING_ROD;
-import static net.sf.nightworks.Nightworks.APPLY_SAVING_SPELL;
-import static net.sf.nightworks.Nightworks.APPLY_SIZE;
-import static net.sf.nightworks.Nightworks.APPLY_SPELL_AFFECT;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.APPLY_WEIGHT;
-import static net.sf.nightworks.Nightworks.APPLY_WIS;
-import static net.sf.nightworks.Nightworks.ASSIST_ALIGN;
-import static net.sf.nightworks.Nightworks.ASSIST_ALL;
-import static net.sf.nightworks.Nightworks.ASSIST_GUARD;
-import static net.sf.nightworks.Nightworks.ASSIST_PLAYERS;
-import static net.sf.nightworks.Nightworks.ASSIST_RACE;
-import static net.sf.nightworks.Nightworks.ASSIST_VNUM;
-import static net.sf.nightworks.Nightworks.CABAL_NONE;
-import static net.sf.nightworks.Nightworks.CABAL_OK;
-import static net.sf.nightworks.Nightworks.CAN_WEAR;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.CLEVEL_OK;
-import static net.sf.nightworks.Nightworks.COMM_BRIEF;
-import static net.sf.nightworks.Nightworks.COMM_COMBINE;
-import static net.sf.nightworks.Nightworks.COMM_COMPACT;
-import static net.sf.nightworks.Nightworks.COMM_DEAF;
-import static net.sf.nightworks.Nightworks.COMM_NOAUCTION;
-import static net.sf.nightworks.Nightworks.COMM_NOCHANNELS;
-import static net.sf.nightworks.Nightworks.COMM_NOEMOTE;
-import static net.sf.nightworks.Nightworks.COMM_NOGOSSIP;
-import static net.sf.nightworks.Nightworks.COMM_NOMUSIC;
-import static net.sf.nightworks.Nightworks.COMM_NOQUESTION;
-import static net.sf.nightworks.Nightworks.COMM_NOQUOTE;
-import static net.sf.nightworks.Nightworks.COMM_NOSHOUT;
-import static net.sf.nightworks.Nightworks.COMM_NOTELL;
-import static net.sf.nightworks.Nightworks.COMM_NOWIZ;
-import static net.sf.nightworks.Nightworks.COMM_PROMPT;
-import static net.sf.nightworks.Nightworks.COMM_QUIET;
-import static net.sf.nightworks.Nightworks.COMM_true_TRUST;
-import static net.sf.nightworks.Nightworks.COND_DRUNK;
-import static net.sf.nightworks.Nightworks.CONT_CLOSEABLE;
-import static net.sf.nightworks.Nightworks.CONT_CLOSED;
-import static net.sf.nightworks.Nightworks.CONT_LOCKED;
-import static net.sf.nightworks.Nightworks.CONT_PICKPROOF;
-import static net.sf.nightworks.Nightworks.DAM_ACID;
-import static net.sf.nightworks.Nightworks.DAM_BASH;
-import static net.sf.nightworks.Nightworks.DAM_CHARM;
-import static net.sf.nightworks.Nightworks.DAM_COLD;
-import static net.sf.nightworks.Nightworks.DAM_DISEASE;
-import static net.sf.nightworks.Nightworks.DAM_DROWNING;
-import static net.sf.nightworks.Nightworks.DAM_ENERGY;
-import static net.sf.nightworks.Nightworks.DAM_FIRE;
-import static net.sf.nightworks.Nightworks.DAM_HOLY;
-import static net.sf.nightworks.Nightworks.DAM_LIGHT;
-import static net.sf.nightworks.Nightworks.DAM_LIGHTNING;
-import static net.sf.nightworks.Nightworks.DAM_MENTAL;
-import static net.sf.nightworks.Nightworks.DAM_NEGATIVE;
-import static net.sf.nightworks.Nightworks.DAM_NONE;
-import static net.sf.nightworks.Nightworks.DAM_PIERCE;
-import static net.sf.nightworks.Nightworks.DAM_POISON;
-import static net.sf.nightworks.Nightworks.DAM_SLASH;
-import static net.sf.nightworks.Nightworks.DAM_SOUND;
-import static net.sf.nightworks.Nightworks.DAM_TRAP_ROOM;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.FIGHT_DELAY_TIME;
-import static net.sf.nightworks.Nightworks.FORM_AMPHIBIAN;
-import static net.sf.nightworks.Nightworks.FORM_ANIMAL;
-import static net.sf.nightworks.Nightworks.FORM_BIPED;
-import static net.sf.nightworks.Nightworks.FORM_BIRD;
-import static net.sf.nightworks.Nightworks.FORM_BLOB;
-import static net.sf.nightworks.Nightworks.FORM_CENTAUR;
-import static net.sf.nightworks.Nightworks.FORM_COLD_BLOOD;
-import static net.sf.nightworks.Nightworks.FORM_CONSTRUCT;
-import static net.sf.nightworks.Nightworks.FORM_CRUSTACEAN;
-import static net.sf.nightworks.Nightworks.FORM_DRAGON;
-import static net.sf.nightworks.Nightworks.FORM_EDIBLE;
-import static net.sf.nightworks.Nightworks.FORM_FISH;
-import static net.sf.nightworks.Nightworks.FORM_INSECT;
-import static net.sf.nightworks.Nightworks.FORM_INSTANT_DECAY;
-import static net.sf.nightworks.Nightworks.FORM_INTANGIBLE;
-import static net.sf.nightworks.Nightworks.FORM_MAGICAL;
-import static net.sf.nightworks.Nightworks.FORM_MAMMAL;
-import static net.sf.nightworks.Nightworks.FORM_MIST;
-import static net.sf.nightworks.Nightworks.FORM_OTHER;
-import static net.sf.nightworks.Nightworks.FORM_POISON;
-import static net.sf.nightworks.Nightworks.FORM_REPTILE;
-import static net.sf.nightworks.Nightworks.FORM_SENTIENT;
-import static net.sf.nightworks.Nightworks.FORM_SNAKE;
-import static net.sf.nightworks.Nightworks.FORM_SPIDER;
-import static net.sf.nightworks.Nightworks.FORM_UNDEAD;
-import static net.sf.nightworks.Nightworks.FORM_WORM;
-import static net.sf.nightworks.Nightworks.IMM_ACID;
-import static net.sf.nightworks.Nightworks.IMM_BASH;
-import static net.sf.nightworks.Nightworks.IMM_CHARM;
-import static net.sf.nightworks.Nightworks.IMM_COLD;
-import static net.sf.nightworks.Nightworks.IMM_DISEASE;
-import static net.sf.nightworks.Nightworks.IMM_DROWNING;
-import static net.sf.nightworks.Nightworks.IMM_ENERGY;
-import static net.sf.nightworks.Nightworks.IMM_FIRE;
-import static net.sf.nightworks.Nightworks.IMM_HOLY;
-import static net.sf.nightworks.Nightworks.IMM_LIGHT;
-import static net.sf.nightworks.Nightworks.IMM_LIGHTNING;
-import static net.sf.nightworks.Nightworks.IMM_MAGIC;
-import static net.sf.nightworks.Nightworks.IMM_MENTAL;
-import static net.sf.nightworks.Nightworks.IMM_NEGATIVE;
-import static net.sf.nightworks.Nightworks.IMM_PIERCE;
-import static net.sf.nightworks.Nightworks.IMM_POISON;
-import static net.sf.nightworks.Nightworks.IMM_SLASH;
-import static net.sf.nightworks.Nightworks.IMM_SOUND;
-import static net.sf.nightworks.Nightworks.IMM_SUMMON;
-import static net.sf.nightworks.Nightworks.IMM_WEAPON;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_IMMUNE;
-import static net.sf.nightworks.Nightworks.IS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.IS_NORMAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OBJ_STAT;
-import static net.sf.nightworks.Nightworks.IS_RESISTANT;
-import static net.sf.nightworks.Nightworks.IS_ROOM_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_VAMPIRE;
-import static net.sf.nightworks.Nightworks.IS_VULNERABLE;
-import static net.sf.nightworks.Nightworks.IS_WATER;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_EVIL;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_GOOD;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_NEUTRAL;
-import static net.sf.nightworks.Nightworks.ITEM_ARMOR;
-import static net.sf.nightworks.Nightworks.ITEM_BLESS;
-import static net.sf.nightworks.Nightworks.ITEM_BOAT;
-import static net.sf.nightworks.Nightworks.ITEM_BURIED;
-import static net.sf.nightworks.Nightworks.ITEM_BURN_PROOF;
-import static net.sf.nightworks.Nightworks.ITEM_CLOTHING;
-import static net.sf.nightworks.Nightworks.ITEM_CONTAINER;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_NPC;
-import static net.sf.nightworks.Nightworks.ITEM_CORPSE_PC;
-import static net.sf.nightworks.Nightworks.ITEM_DARK;
-import static net.sf.nightworks.Nightworks.ITEM_DRINK_CON;
-import static net.sf.nightworks.Nightworks.ITEM_EVIL;
-import static net.sf.nightworks.Nightworks.ITEM_FOOD;
-import static net.sf.nightworks.Nightworks.ITEM_FOUNTAIN;
-import static net.sf.nightworks.Nightworks.ITEM_FURNITURE;
-import static net.sf.nightworks.Nightworks.ITEM_GEM;
-import static net.sf.nightworks.Nightworks.ITEM_GLOW;
-import static net.sf.nightworks.Nightworks.ITEM_HOLD;
-import static net.sf.nightworks.Nightworks.ITEM_HUM;
-import static net.sf.nightworks.Nightworks.ITEM_INVENTORY;
-import static net.sf.nightworks.Nightworks.ITEM_INVIS;
-import static net.sf.nightworks.Nightworks.ITEM_JEWELRY;
-import static net.sf.nightworks.Nightworks.ITEM_JUKEBOX;
-import static net.sf.nightworks.Nightworks.ITEM_KEY;
-import static net.sf.nightworks.Nightworks.ITEM_LIGHT;
-import static net.sf.nightworks.Nightworks.ITEM_LOCK;
-import static net.sf.nightworks.Nightworks.ITEM_MAGIC;
-import static net.sf.nightworks.Nightworks.ITEM_MAP;
-import static net.sf.nightworks.Nightworks.ITEM_MONEY;
-import static net.sf.nightworks.Nightworks.ITEM_NODROP;
-import static net.sf.nightworks.Nightworks.ITEM_NOLOCATE;
-import static net.sf.nightworks.Nightworks.ITEM_NOPURGE;
-import static net.sf.nightworks.Nightworks.ITEM_NOREMOVE;
-import static net.sf.nightworks.Nightworks.ITEM_NOUNCURSE;
-import static net.sf.nightworks.Nightworks.ITEM_PILL;
-import static net.sf.nightworks.Nightworks.ITEM_PORTAL;
-import static net.sf.nightworks.Nightworks.ITEM_POTION;
-import static net.sf.nightworks.Nightworks.ITEM_ROT_DEATH;
-import static net.sf.nightworks.Nightworks.ITEM_SCROLL;
-import static net.sf.nightworks.Nightworks.ITEM_SELL_EXTRACT;
-import static net.sf.nightworks.Nightworks.ITEM_STAFF;
-import static net.sf.nightworks.Nightworks.ITEM_TAKE;
-import static net.sf.nightworks.Nightworks.ITEM_TATTOO;
-import static net.sf.nightworks.Nightworks.ITEM_TRASH;
-import static net.sf.nightworks.Nightworks.ITEM_TREASURE;
-import static net.sf.nightworks.Nightworks.ITEM_VIS_DEATH;
-import static net.sf.nightworks.Nightworks.ITEM_WAND;
-import static net.sf.nightworks.Nightworks.ITEM_WARP_STONE;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_ABOUT;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_ARMS;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_BODY;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FEET;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FINGER;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_FLOAT;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_HANDS;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_HEAD;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_LEGS;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_NECK;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_SHIELD;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_WAIST;
-import static net.sf.nightworks.Nightworks.ITEM_WEAR_WRIST;
-import static net.sf.nightworks.Nightworks.ITEM_WIELD;
-import static net.sf.nightworks.Nightworks.LEFT_HANDER;
-import static net.sf.nightworks.Nightworks.LEVEL_HERO;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.LIQ_WATER;
-import static net.sf.nightworks.Nightworks.MAX_CABAL;
-import static net.sf.nightworks.Nightworks.MAX_CHARM;
-import static net.sf.nightworks.Nightworks.MAX_FINGER;
-import static net.sf.nightworks.Nightworks.MAX_LEVEL;
-import static net.sf.nightworks.Nightworks.MAX_NECK;
-import static net.sf.nightworks.Nightworks.MAX_STUCK_IN;
-import static net.sf.nightworks.Nightworks.MAX_TATTOO;
-import static net.sf.nightworks.Nightworks.MAX_WEAR;
-import static net.sf.nightworks.Nightworks.MAX_WRIST;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_COINS;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GOLD_ONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_GOLD_SOME;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAGIC_JAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_PIT;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SILVER_ONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SILVER_SOME;
-import static net.sf.nightworks.Nightworks.OFF_AREA_ATTACK;
-import static net.sf.nightworks.Nightworks.OFF_BACKSTAB;
-import static net.sf.nightworks.Nightworks.OFF_BASH;
-import static net.sf.nightworks.Nightworks.OFF_BERSERK;
-import static net.sf.nightworks.Nightworks.OFF_CRUSH;
-import static net.sf.nightworks.Nightworks.OFF_DISARM;
-import static net.sf.nightworks.Nightworks.OFF_DODGE;
-import static net.sf.nightworks.Nightworks.OFF_FADE;
-import static net.sf.nightworks.Nightworks.OFF_FAST;
-import static net.sf.nightworks.Nightworks.OFF_KICK;
-import static net.sf.nightworks.Nightworks.OFF_KICK_DIRT;
-import static net.sf.nightworks.Nightworks.OFF_PARRY;
-import static net.sf.nightworks.Nightworks.OFF_RESCUE;
-import static net.sf.nightworks.Nightworks.OFF_TAIL;
-import static net.sf.nightworks.Nightworks.OFF_TRIP;
-import static net.sf.nightworks.Nightworks.OPROG_REMOVE;
-import static net.sf.nightworks.Nightworks.OPROG_WEAR;
-import static net.sf.nightworks.Nightworks.ORG_RACE;
-import static net.sf.nightworks.Nightworks.PART_ARMS;
-import static net.sf.nightworks.Nightworks.PART_BRAINS;
-import static net.sf.nightworks.Nightworks.PART_CLAWS;
-import static net.sf.nightworks.Nightworks.PART_EAR;
-import static net.sf.nightworks.Nightworks.PART_EYE;
-import static net.sf.nightworks.Nightworks.PART_EYESTALKS;
-import static net.sf.nightworks.Nightworks.PART_FANGS;
-import static net.sf.nightworks.Nightworks.PART_FEET;
-import static net.sf.nightworks.Nightworks.PART_FINGERS;
-import static net.sf.nightworks.Nightworks.PART_FINS;
-import static net.sf.nightworks.Nightworks.PART_GUTS;
-import static net.sf.nightworks.Nightworks.PART_HANDS;
-import static net.sf.nightworks.Nightworks.PART_HEAD;
-import static net.sf.nightworks.Nightworks.PART_HEART;
-import static net.sf.nightworks.Nightworks.PART_HORNS;
-import static net.sf.nightworks.Nightworks.PART_LEGS;
-import static net.sf.nightworks.Nightworks.PART_LONG_TONGUE;
-import static net.sf.nightworks.Nightworks.PART_SCALES;
-import static net.sf.nightworks.Nightworks.PART_TAIL;
-import static net.sf.nightworks.Nightworks.PART_TENTACLES;
-import static net.sf.nightworks.Nightworks.PART_WINGS;
-import static net.sf.nightworks.Nightworks.PLR_AUTOASSIST;
-import static net.sf.nightworks.Nightworks.PLR_AUTOEXIT;
-import static net.sf.nightworks.Nightworks.PLR_AUTOGOLD;
-import static net.sf.nightworks.Nightworks.PLR_AUTOLOOT;
-import static net.sf.nightworks.Nightworks.PLR_AUTOSAC;
-import static net.sf.nightworks.Nightworks.PLR_AUTOSPLIT;
-import static net.sf.nightworks.Nightworks.PLR_BLINK_ON;
-import static net.sf.nightworks.Nightworks.PLR_CANINDUCT;
-import static net.sf.nightworks.Nightworks.PLR_CANLOOT;
-import static net.sf.nightworks.Nightworks.PLR_CANREMORT;
-import static net.sf.nightworks.Nightworks.PLR_CHANGED_AFF;
-import static net.sf.nightworks.Nightworks.PLR_COLOR;
-import static net.sf.nightworks.Nightworks.PLR_FREEZE;
-import static net.sf.nightworks.Nightworks.PLR_GHOST;
-import static net.sf.nightworks.Nightworks.PLR_HARA_KIRI;
-import static net.sf.nightworks.Nightworks.PLR_HOLYLIGHT;
-import static net.sf.nightworks.Nightworks.PLR_LEFTHAND;
-import static net.sf.nightworks.Nightworks.PLR_LOG;
-import static net.sf.nightworks.Nightworks.PLR_NOCANCEL;
-import static net.sf.nightworks.Nightworks.PLR_NOFOLLOW;
-import static net.sf.nightworks.Nightworks.PLR_NOSUMMON;
-import static net.sf.nightworks.Nightworks.PLR_NO_EXP;
-import static net.sf.nightworks.Nightworks.PLR_NO_TITLE;
-import static net.sf.nightworks.Nightworks.PLR_PERMIT;
-import static net.sf.nightworks.Nightworks.PLR_QUESTOR;
-import static net.sf.nightworks.Nightworks.PLR_REMORTED;
-import static net.sf.nightworks.Nightworks.PLR_VAMPIRE;
-import static net.sf.nightworks.Nightworks.PLR_WANTED;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.RACE_OK;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.RES_MAGIC;
-import static net.sf.nightworks.Nightworks.RES_WEAPON;
-import static net.sf.nightworks.Nightworks.RIDDEN;
-import static net.sf.nightworks.Nightworks.RIGHT_HANDER;
-import static net.sf.nightworks.Nightworks.ROOM_BANK;
-import static net.sf.nightworks.Nightworks.ROOM_DARK;
-import static net.sf.nightworks.Nightworks.ROOM_GODS_ONLY;
-import static net.sf.nightworks.Nightworks.ROOM_HEROES_ONLY;
-import static net.sf.nightworks.Nightworks.ROOM_HISTORY_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_IMP_ONLY;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_INDOORS;
-import static net.sf.nightworks.Nightworks.ROOM_LAW;
-import static net.sf.nightworks.Nightworks.ROOM_NEWBIES_ONLY;
-import static net.sf.nightworks.Nightworks.ROOM_NOSUMMON;
-import static net.sf.nightworks.Nightworks.ROOM_NOWHERE;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MAGIC;
-import static net.sf.nightworks.Nightworks.ROOM_NO_MOB;
-import static net.sf.nightworks.Nightworks.ROOM_NO_RECALL;
-import static net.sf.nightworks.Nightworks.ROOM_PET_SHOP;
-import static net.sf.nightworks.Nightworks.ROOM_PRIVATE;
-import static net.sf.nightworks.Nightworks.ROOM_REGISTRY;
-import static net.sf.nightworks.Nightworks.ROOM_SAFE;
-import static net.sf.nightworks.Nightworks.ROOM_SOLITARY;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_LIMBO;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_TEMPLE;
-import static net.sf.nightworks.Nightworks.SECT_CITY;
-import static net.sf.nightworks.Nightworks.SECT_INSIDE;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.STAT_CHA;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.STAT_WIS;
-import static net.sf.nightworks.Nightworks.SUN_DARK;
-import static net.sf.nightworks.Nightworks.SUN_LIGHT;
-import static net.sf.nightworks.Nightworks.SUN_RISE;
-import static net.sf.nightworks.Nightworks.SUN_SET;
-import static net.sf.nightworks.Nightworks.TO_ACT_FLAG;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_IMMUNE;
-import static net.sf.nightworks.Nightworks.TO_OBJECT;
-import static net.sf.nightworks.Nightworks.TO_RACE;
-import static net.sf.nightworks.Nightworks.TO_RESIST;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_ROOM_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_ROOM_CONST;
-import static net.sf.nightworks.Nightworks.TO_ROOM_FLAGS;
-import static net.sf.nightworks.Nightworks.TO_VULN;
-import static net.sf.nightworks.Nightworks.TO_WEAPON;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.VULN_IRON;
-import static net.sf.nightworks.Nightworks.VULN_MAGIC;
-import static net.sf.nightworks.Nightworks.VULN_SILVER;
-import static net.sf.nightworks.Nightworks.VULN_WEAPON;
-import static net.sf.nightworks.Nightworks.VULN_WOOD;
-import static net.sf.nightworks.Nightworks.WEAPON_ARROW;
-import static net.sf.nightworks.Nightworks.WEAPON_AXE;
-import static net.sf.nightworks.Nightworks.WEAPON_BOW;
-import static net.sf.nightworks.Nightworks.WEAPON_DAGGER;
-import static net.sf.nightworks.Nightworks.WEAPON_EXOTIC;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAIL;
-import static net.sf.nightworks.Nightworks.WEAPON_FLAMING;
-import static net.sf.nightworks.Nightworks.WEAPON_FROST;
-import static net.sf.nightworks.Nightworks.WEAPON_HOLY;
-import static net.sf.nightworks.Nightworks.WEAPON_LANCE;
-import static net.sf.nightworks.Nightworks.WEAPON_MACE;
-import static net.sf.nightworks.Nightworks.WEAPON_POISON;
-import static net.sf.nightworks.Nightworks.WEAPON_POLEARM;
-import static net.sf.nightworks.Nightworks.WEAPON_SHARP;
-import static net.sf.nightworks.Nightworks.WEAPON_SHOCKING;
-import static net.sf.nightworks.Nightworks.WEAPON_SPEAR;
-import static net.sf.nightworks.Nightworks.WEAPON_SWORD;
-import static net.sf.nightworks.Nightworks.WEAPON_TWO_HANDS;
-import static net.sf.nightworks.Nightworks.WEAPON_VAMPIRIC;
-import static net.sf.nightworks.Nightworks.WEAPON_VORPAL;
-import static net.sf.nightworks.Nightworks.WEAPON_WHIP;
-import static net.sf.nightworks.Nightworks.WEAR_ABOUT;
-import static net.sf.nightworks.Nightworks.WEAR_ARMS;
-import static net.sf.nightworks.Nightworks.WEAR_BODY;
-import static net.sf.nightworks.Nightworks.WEAR_BOTH;
-import static net.sf.nightworks.Nightworks.WEAR_FEET;
-import static net.sf.nightworks.Nightworks.WEAR_FINGER;
-import static net.sf.nightworks.Nightworks.WEAR_HANDS;
-import static net.sf.nightworks.Nightworks.WEAR_HEAD;
-import static net.sf.nightworks.Nightworks.WEAR_LEFT;
-import static net.sf.nightworks.Nightworks.WEAR_LEGS;
-import static net.sf.nightworks.Nightworks.WEAR_NECK;
-import static net.sf.nightworks.Nightworks.WEAR_NONE;
-import static net.sf.nightworks.Nightworks.WEAR_RIGHT;
-import static net.sf.nightworks.Nightworks.WEAR_STUCK_IN;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.WEAR_WAIST;
-import static net.sf.nightworks.Nightworks.WEAR_WRIST;
-import static net.sf.nightworks.Nightworks.WEIGHT_MULT;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.currentTimeSeconds;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.limit_time;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.object_list;
-import static net.sf.nightworks.Nightworks.top_affected_room;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Recycle.free_char;
-import static net.sf.nightworks.Skill.gsn_arrow;
-import static net.sf.nightworks.Skill.gsn_axe;
-import static net.sf.nightworks.Skill.gsn_backstab;
-import static net.sf.nightworks.Skill.gsn_bash;
-import static net.sf.nightworks.Skill.gsn_berserk;
-import static net.sf.nightworks.Skill.gsn_bow;
-import static net.sf.nightworks.Skill.gsn_dagger;
-import static net.sf.nightworks.Skill.gsn_disarm;
-import static net.sf.nightworks.Skill.gsn_dodge;
-import static net.sf.nightworks.Skill.gsn_doppelganger;
-import static net.sf.nightworks.Skill.gsn_flail;
-import static net.sf.nightworks.Skill.gsn_fourth_attack;
-import static net.sf.nightworks.Skill.gsn_grip;
-import static net.sf.nightworks.Skill.gsn_hand_to_hand;
-import static net.sf.nightworks.Skill.gsn_hide;
-import static net.sf.nightworks.Skill.gsn_kick;
-import static net.sf.nightworks.Skill.gsn_lance;
-import static net.sf.nightworks.Skill.gsn_mace;
-import static net.sf.nightworks.Skill.gsn_parry;
-import static net.sf.nightworks.Skill.gsn_plague;
-import static net.sf.nightworks.Skill.gsn_polearm;
-import static net.sf.nightworks.Skill.gsn_recall;
-import static net.sf.nightworks.Skill.gsn_rescue;
-import static net.sf.nightworks.Skill.gsn_second_attack;
-import static net.sf.nightworks.Skill.gsn_second_weapon;
-import static net.sf.nightworks.Skill.gsn_settraps;
-import static net.sf.nightworks.Skill.gsn_shield_block;
-import static net.sf.nightworks.Skill.gsn_sneak;
-import static net.sf.nightworks.Skill.gsn_spear;
-import static net.sf.nightworks.Skill.gsn_sword;
-import static net.sf.nightworks.Skill.gsn_third_attack;
-import static net.sf.nightworks.Skill.gsn_trip;
-import static net.sf.nightworks.Skill.gsn_whip;
-import static net.sf.nightworks.Skill.gsn_x_hunger;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Tables.cabal_table;
-import static net.sf.nightworks.util.TextUtils.is_number;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
+import static net.sf.nightworks.util.TextUtils.*;
 
 class Handler {
-/* friend stuff -- for NPC's mostly */
+    /* friend stuff -- for NPC's mostly */
 
-    static boolean is_friend(CHAR_DATA ch, CHAR_DATA victim) {
+    static boolean is_friend(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA victim) {
         if (is_same_group(ch, victim)) {
             return true;
         }
@@ -633,7 +95,7 @@ class Handler {
         rh.went = door;
     }
 
-/* returns number of people on an object */
+    /* returns number of people on an object */
 
     static int count_users(OBJ_DATA obj) {
         CHAR_DATA fch;
@@ -652,13 +114,13 @@ class Handler {
         return count;
     }
 
-/* returns material number */
+    /* returns material number */
 
     static int material_lookup(String name) {
         return 0;
     }
 
-/* returns race number */
+    /* returns race number */
 
 
     static int liq_lookup(String name) {
@@ -673,10 +135,8 @@ class Handler {
         return LIQ_WATER;
     }
 
-    static int weapon_lookup(String name) {
-        int type;
-
-        for (type = 0; weapon_table[type].name != null; type++) {
+    static int weapon_lookup(@NotNull String name) {
+        for (int type = 0; weapon_table[type].name != null; type++) {
             if (!str_prefix(name, weapon_table[type].name)) {
                 return type;
             }
@@ -685,7 +145,7 @@ class Handler {
         return -1;
     }
 
-    static boolean cabal_ok(CHAR_DATA ch, Skill sn) {
+    static boolean cabal_ok(@NotNull CHAR_DATA ch, Skill sn) {
         int i;
 
         if (IS_NPC(ch) || sn.cabal == CABAL_NONE ||
@@ -850,7 +310,7 @@ class Handler {
         return 0;
     }
 
-/* returns a flag for wiznet */
+    /* returns a flag for wiznet */
 
     static int wiznet_lookup(String name) {
         int flag;
@@ -869,7 +329,7 @@ class Handler {
      * the 'globals' (magic and weapons) may be overriden
      * three other cases -- wood, silver, and iron -- are checked in fight.c
      */
-    static int check_immune(CHAR_DATA ch, int dam_type) {
+    static int check_immune(@NotNull CHAR_DATA ch, int dam_type) {
 
         var immune = -1;
         var def = IS_NORMAL;
@@ -947,7 +407,7 @@ class Handler {
      * checks mob format
      */
 
-    static boolean is_old_mob(CHAR_DATA ch) {
+    static boolean is_old_mob(@NotNull CHAR_DATA ch) {
         return ch.pIndexData != null && !ch.pIndexData.new_format;
     }
 
@@ -955,7 +415,7 @@ class Handler {
      * for returning skill information
      */
 
-    static int get_skill(CHAR_DATA ch, Skill sn) {
+    static int get_skill(@NotNull CHAR_DATA ch, Skill sn) {
         int skill;
 
         if (sn == null) /* shorthand for level based skills */ {
@@ -1055,9 +515,9 @@ class Handler {
 
     }
 
-/* for returning weapon information */
+    /* for returning weapon information */
 
-    static Skill get_weapon_sn(CHAR_DATA ch, boolean second) {
+    static Skill get_weapon_sn(@NotNull CHAR_DATA ch, boolean second) {
         Skill sn;
 
         var wield = get_wield_char(ch, second);
@@ -1083,7 +543,7 @@ class Handler {
         return sn;
     }
 
-    static int get_weapon_skill(CHAR_DATA ch, Skill sn) {
+    static int get_weapon_skill(@NotNull CHAR_DATA ch, Skill sn) {
         int skill;
 
         /* -1 is exotic */
@@ -1110,9 +570,9 @@ class Handler {
         return URANGE(0, skill, 100);
     }
 
-/* used to de-screw characters */
+    /* used to de-screw characters */
 
-    static void reset_char(CHAR_DATA ch) {
+    static void reset_char(@NotNull CHAR_DATA ch) {
         int loc;
         OBJ_DATA obj, obj_next;
         AFFECT_DATA af;
@@ -1135,7 +595,7 @@ class Handler {
     ch.move        = ch.max_move;
 */
 
-/* a little hack */
+        /* a little hack */
 
         ch.extracted = true;
         /* now add back spell effects */
@@ -1160,11 +620,11 @@ class Handler {
 
     }
 
-/*
-* Retrieve a character's trusted level for permission checking.
-*/
+    /*
+     * Retrieve a character's trusted level for permission checking.
+     */
 
-    static int get_trust(CHAR_DATA ch) {
+    static int get_trust(@NotNull CHAR_DATA ch) {
         if (ch.desc != null && ch.desc.original != null) {
             ch = ch.desc.original;
         }
@@ -1180,11 +640,11 @@ class Handler {
         }
     }
 
-/*
-* Retrieve a character's age.
-*/
+    /*
+     * Retrieve a character's age.
+     */
 
-    static int get_age(CHAR_DATA ch) {
+    static int get_age(@NotNull CHAR_DATA ch) {
         return 17 + (ch.played + (int) (current_time - ch.logon)) / 72000;
     }
 
@@ -1192,9 +652,9 @@ class Handler {
         return age * 72000;
     }
 
-/* command for retrieving stats */
+    /* command for retrieving stats */
 
-    static int get_curr_stat(CHAR_DATA ch, int stat) {
+    static int get_curr_stat(@NotNull CHAR_DATA ch, int stat) {
         int max;
 
         if (IS_NPC(ch) || ch.level > LEVEL_IMMORTAL) {
@@ -1207,9 +667,9 @@ class Handler {
         return URANGE(3, ch.perm_stat[stat] + ch.mod_stat[stat], max);
     }
 
-/* command for returning max training score */
+    /* command for returning max training score */
 
-    static int get_max_train(CHAR_DATA ch, int stat) {
+    static int get_max_train(@NotNull CHAR_DATA ch, int stat) {
         int max;
 
         if (IS_NPC(ch) || ch.level > LEVEL_IMMORTAL) {
@@ -1222,12 +682,12 @@ class Handler {
         return UMIN(max, 25);
     }
 
-/*
- * command for returning max training score
- * for do_train and stat2train in comm.c
- */
+    /*
+     * command for returning max training score
+     * for do_train and stat2train in comm.c
+     */
 
-    static int get_max_train2(CHAR_DATA ch, int stat) {
+    static int get_max_train2(@NotNull CHAR_DATA ch, int stat) {
         int max;
 
         if (IS_NPC(ch) || ch.level > LEVEL_IMMORTAL) {
@@ -1240,11 +700,11 @@ class Handler {
         return UMIN(max, 25);
     }
 
-/*
-* Retrieve a character's carry capacity.
-*/
+    /*
+     * Retrieve a character's carry capacity.
+     */
 
-    static int can_carry_n(CHAR_DATA ch) {
+    static int can_carry_n(@NotNull CHAR_DATA ch) {
         if (!IS_NPC(ch) && ch.level >= LEVEL_IMMORTAL) {
             return 1000;
         }
@@ -1256,11 +716,11 @@ class Handler {
         return MAX_WEAR + get_curr_stat(ch, STAT_DEX) - 10 + ch.size;
     }
 
-/*
-* Retrieve a character's carry capacity.
-*/
+    /*
+     * Retrieve a character's carry capacity.
+     */
 
-    static int can_carry_w(CHAR_DATA ch) {
+    static int can_carry_w(@NotNull CHAR_DATA ch) {
         if (!IS_NPC(ch) && ch.level >= LEVEL_IMMORTAL) {
             return 10000000;
         }
@@ -1310,7 +770,7 @@ class Handler {
         }
     }
 
-/* enchanted stuff for eq */
+    /* enchanted stuff for eq */
 
     static void affect_enchant(OBJ_DATA obj) {
         /* okay, move all the old flags into new vectors if we have to */
@@ -1337,11 +797,11 @@ class Handler {
     }
 
     private static int depth;
-/*
- * Apply or remove an affect to a character.
- */
+    /*
+     * Apply or remove an affect to a character.
+     */
 
-    static void affect_modify(CHAR_DATA ch, AFFECT_DATA paf, boolean fAdd) {
+    static void affect_modify(@NotNull CHAR_DATA ch, AFFECT_DATA paf, boolean fAdd) {
         OBJ_DATA hold;
         int mod, i;
 
@@ -1489,7 +949,7 @@ class Handler {
 
     }
 
-/* find an effect in an affect list */
+    /* find an effect in an affect list */
 
     static AFFECT_DATA affect_find(AFFECT_DATA paf, Skill sn) {
         AFFECT_DATA paf_find;
@@ -1503,9 +963,9 @@ class Handler {
         return null;
     }
 
-/* fix object affects when removing one */
+    /* fix object affects when removing one */
 
-    static void affect_check(CHAR_DATA ch, int where, long vector) {
+    static void affect_check(@NotNull CHAR_DATA ch, int where, long vector) {
         AFFECT_DATA paf;
         OBJ_DATA obj;
 
@@ -1608,13 +1068,13 @@ class Handler {
         }
     }
 
-/*
- * Give an affect to a char.
- */
+    /*
+     * Give an affect to a char.
+     */
 
     //TODO: avoid copying?
 
-    static void affect_to_char(CHAR_DATA ch, AFFECT_DATA paf) {
+    static void affect_to_char(@NotNull CHAR_DATA ch, AFFECT_DATA paf) {
         var paf_new = new AFFECT_DATA();
 
         paf_new.assignValuesFrom(paf);
@@ -1624,7 +1084,7 @@ class Handler {
         affect_modify(ch, paf_new, true);
     }
 
-/* give an affect to an object */
+    /* give an affect to an object */
 
     static void affect_to_obj(OBJ_DATA obj, AFFECT_DATA paf) {
         var paf_new = new AFFECT_DATA();
@@ -1646,11 +1106,11 @@ class Handler {
         }
     }
 
-/*
-* Remove an affect from a char.
-*/
+    /*
+     * Remove an affect from a char.
+     */
 
-    static void affect_remove(CHAR_DATA ch, AFFECT_DATA paf) {
+    static void affect_remove(@NotNull CHAR_DATA ch, AFFECT_DATA paf) {
         if (ch.affected == null) {
             bug("Affect_remove: no affect.");
             return;
@@ -1729,11 +1189,11 @@ class Handler {
         }
     }
 
-/*
-* Strip all affects of a given sn.
-*/
+    /*
+     * Strip all affects of a given sn.
+     */
 
-    static void affect_strip(CHAR_DATA ch, Skill sn) {
+    static void affect_strip(@NotNull CHAR_DATA ch, Skill sn) {
         AFFECT_DATA paf;
         AFFECT_DATA paf_next;
 
@@ -1745,11 +1205,11 @@ class Handler {
         }
     }
 
-/*
-* Return true if a char is affected by a spell.
-*/
+    /*
+     * Return true if a char is affected by a spell.
+     */
 
-    static boolean is_affected(CHAR_DATA ch, Skill sn) {
+    static boolean is_affected(@NotNull CHAR_DATA ch, Skill sn) {
         AFFECT_DATA paf;
 
         for (paf = ch.affected; paf != null; paf = paf.next) {
@@ -1761,11 +1221,11 @@ class Handler {
         return false;
     }
 
-/*
-* Add or enhance an affect.
-*/
+    /*
+     * Add or enhance an affect.
+     */
 
-    static void affect_join(CHAR_DATA ch, AFFECT_DATA paf) {
+    static void affect_join(@NotNull CHAR_DATA ch, AFFECT_DATA paf) {
         AFFECT_DATA paf_old;
         for (paf_old = ch.affected; paf_old != null; paf_old = paf_old.next) {
             if (paf_old.type == paf.type) {
@@ -1780,11 +1240,11 @@ class Handler {
         affect_to_char(ch, paf);
     }
 
-/*
-* Move a char out of a room.
-*/
+    /*
+     * Move a char out of a room.
+     */
 
-    static void char_from_room(CHAR_DATA ch) {
+    static void char_from_room(@NotNull CHAR_DATA ch) {
         var prev_room = ch.in_room;
 
         if (ch.in_room == null) {
@@ -1843,11 +1303,11 @@ class Handler {
 
     }
 
-/*
-* Move a char into a room.
-*/
+    /*
+     * Move a char into a room.
+     */
 
-    static void char_to_room(CHAR_DATA ch, ROOM_INDEX_DATA pRoomIndex) {
+    static void char_to_room(@NotNull CHAR_DATA ch, ROOM_INDEX_DATA pRoomIndex) {
 
 
         if (pRoomIndex == null) {
@@ -1925,9 +1385,9 @@ class Handler {
 
     }
 
-/*
-* Give an obj to a char.
-*/
+    /*
+     * Give an obj to a char.
+     */
 
     static void obj_to_char(OBJ_DATA obj, CHAR_DATA ch) {
         obj.next_content = ch.carrying;
@@ -1939,9 +1399,9 @@ class Handler {
         ch.carry_weight += get_obj_weight(obj);
     }
 
-/*
-* Take an obj from its character.
-*/
+    /*
+     * Take an obj from its character.
+     */
 
     static void obj_from_char(OBJ_DATA obj) {
         CHAR_DATA ch;
@@ -1979,9 +1439,9 @@ class Handler {
 
     }
 
-/*
-* Find the ac value of an obj, including position effect.
-*/
+    /*
+     * Find the ac value of an obj, including position effect.
+     */
 
     static int apply_ac(OBJ_DATA obj, int iWear, int type) {
         if (obj.item_type != ITEM_ARMOR) {
@@ -2008,11 +1468,11 @@ class Handler {
 
     }
 
-/*
-* Find a piece of eq on a character.
-*/
+    /*
+     * Find a piece of eq on a character.
+     */
 
-    static OBJ_DATA get_eq_char(CHAR_DATA ch, int iWear) {
+    static OBJ_DATA get_eq_char(@NotNull CHAR_DATA ch, int iWear) {
         OBJ_DATA obj;
 
         if (ch == null) {
@@ -2028,11 +1488,11 @@ class Handler {
         return null;
     }
 
-/*
-* Equip a char with an obj.
-*/
+    /*
+     * Equip a char with an obj.
+     */
 
-    static void equip_char(CHAR_DATA ch, OBJ_DATA obj, int iWear) {
+    static void equip_char(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear) {
         AFFECT_DATA paf;
         int i;
 
@@ -2050,8 +1510,8 @@ class Handler {
                 || IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) && IS_GOOD(ch)
                 || IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) && IS_NEUTRAL(ch)) {
             /*
-            * Thanks to Morgenes for the bug fix here!
-            */
+             * Thanks to Morgenes for the bug fix here!
+             */
             act("You are zapped by $p and drop it.", ch, obj, null, TO_CHAR);
             act("$n is zapped by $p and drops it.", ch, obj, null, TO_ROOM);
             obj_from_char(obj);
@@ -2093,11 +1553,11 @@ class Handler {
 
     }
 
-/*
-* Unequip a char with an obj.
-*/
+    /*
+     * Unequip a char with an obj.
+     */
 
-    static void unequip_char(CHAR_DATA ch, OBJ_DATA obj) {
+    static void unequip_char(@NotNull CHAR_DATA ch, OBJ_DATA obj) {
         AFFECT_DATA paf;
         AFFECT_DATA lpaf;
         AFFECT_DATA lpaf_next;
@@ -2172,9 +1632,9 @@ class Handler {
 
     }
 
-/*
-* Count occurrences of an obj in a list.
-*/
+    /*
+     * Count occurrences of an obj in a list.
+     */
 
     static int count_obj_list(OBJ_INDEX_DATA pObjIndex, OBJ_DATA list) {
         OBJ_DATA obj;
@@ -2190,9 +1650,9 @@ class Handler {
         return nMatch;
     }
 
-/*
-* Move an obj out of a room.
-*/
+    /*
+     * Move an obj out of a room.
+     */
 
     static void obj_from_room(OBJ_DATA obj) {
         ROOM_INDEX_DATA in_room;
@@ -2231,9 +1691,9 @@ class Handler {
         obj.next_content = null;
     }
 
-/*
-* Move an obj into a room.
-*/
+    /*
+     * Move an obj into a room.
+     */
 
     static void obj_to_room(OBJ_DATA obj, ROOM_INDEX_DATA pRoomIndex) {
         int i;
@@ -2279,9 +1739,9 @@ class Handler {
         }
     }
 
-/*
-* Move an object into an object.
-*/
+    /*
+     * Move an object into an object.
+     */
 
     static void obj_to_obj(OBJ_DATA obj, OBJ_DATA obj_to) {
 
@@ -2296,7 +1756,7 @@ class Handler {
 
         for (; obj_to != null; obj_to = obj_to.in_obj) {
             if (obj_to.carried_by != null) {
-/*      obj_to.carried_by.carry_number += get_obj_number( obj ); */
+                /*      obj_to.carried_by.carry_number += get_obj_number( obj ); */
                 obj_to.carried_by.carry_weight += get_obj_weight(obj)
                         * WEIGHT_MULT(obj_to) / 100;
             }
@@ -2304,9 +1764,9 @@ class Handler {
 
     }
 
-/*
-* Move an object out of an object.
-*/
+    /*
+     * Move an object out of an object.
+     */
 
     static void obj_from_obj(OBJ_DATA obj) {
         OBJ_DATA obj_from;
@@ -2339,7 +1799,7 @@ class Handler {
 
         for (; obj_from != null; obj_from = obj_from.in_obj) {
             if (obj_from.carried_by != null) {
-/*      obj_from.carried_by.carry_number -= get_obj_number( obj ); */
+                /*      obj_from.carried_by.carry_number -= get_obj_number( obj ); */
                 obj_from.carried_by.carry_weight -= get_obj_weight(obj)
                         * WEIGHT_MULT(obj_from) / 100;
             }
@@ -2347,25 +1807,25 @@ class Handler {
 
     }
 
-/*
- * Extract an object consider limit
- */
+    /*
+     * Extract an object consider limit
+     */
 
     static void extract_obj(OBJ_DATA obj) {
         extract_obj_1(obj, true);
     }
 
-/*
- * Extract an object consider limit
- */
+    /*
+     * Extract an object consider limit
+     */
 
     static void extract_obj_nocount(OBJ_DATA obj) {
         extract_obj_1(obj, false);
     }
 
-/*
- * Extract an obj from the world.
- */
+    /*
+     * Extract an obj from the world.
+     */
 
     static void extract_obj_1(OBJ_DATA obj, boolean count) {
         OBJ_DATA obj_content;
@@ -2379,7 +1839,7 @@ class Handler {
         } else {
             obj.extracted = true;
         }  /* if it hasn't been extracted yet, now
-                                   * it's being extracted. */
+         * it's being extracted. */
 
         if (obj.in_room != null) {
             obj_from_room(obj);
@@ -2437,19 +1897,19 @@ class Handler {
         }
     }
 
-    static void extract_char(CHAR_DATA ch, boolean fPull) {
+    static void extract_char(@NotNull CHAR_DATA ch, boolean fPull) {
         extract_char_org(ch, fPull, true);
     }
 
-    static void extract_char_nocount(CHAR_DATA ch, boolean fPull) {
+    static void extract_char_nocount(@NotNull CHAR_DATA ch, boolean fPull) {
         extract_char_org(ch, fPull, false);
     }
 
-/*
-* Extract a char from the world.
-*/
+    /*
+     * Extract a char from the world.
+     */
 
-    static void extract_char_org(CHAR_DATA ch, boolean fPull, boolean Count) {
+    static void extract_char_org(@NotNull CHAR_DATA ch, boolean fPull, boolean Count) {
         CHAR_DATA wch;
         OBJ_DATA obj;
         OBJ_DATA obj_next;
@@ -2462,7 +1922,7 @@ class Handler {
             } else {
                 ch.extracted = true;
             }  /* if it hasn't been extracted yet, now
-                                   * it's being extracted. */
+             * it's being extracted. */
         }
 
 
@@ -2474,9 +1934,7 @@ class Handler {
         nuke_pets(ch);
         ch.pet = null; /* just in case */
 
-        if (fPull)
-
-        {
+        if (fPull) {
             die_follower(ch);
         }
 
@@ -2549,11 +2007,11 @@ class Handler {
         free_char(ch);
     }
 
-/*
-* Find a char in the room.
-*/
+    /*
+     * Find a char in the room.
+     */
 
-    static CHAR_DATA get_char_room(CHAR_DATA ch, String argument) {
+    static CHAR_DATA get_char_room(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA rch;
         int number;
         int count;
@@ -2594,12 +2052,12 @@ class Handler {
         return null;
     }
 
-/*
-* Find a char in the room.
-* Chronos uses in act_move.c
-*/
+    /*
+     * Find a char in the room.
+     * Chronos uses in act_move.c
+     */
 
-    static CHAR_DATA get_char_room2(CHAR_DATA ch, ROOM_INDEX_DATA room, String argument, int[] number) {
+    static CHAR_DATA get_char_room2(@NotNull CHAR_DATA ch, ROOM_INDEX_DATA room, String argument, int[] number) {
         CHAR_DATA rch;
         int count;
         int ugly;
@@ -2638,11 +2096,11 @@ class Handler {
         return null;
     }
 
-/*
-* Find a char in the world.
-*/
+    /*
+     * Find a char in the world.
+     */
 
-    static CHAR_DATA get_char_world(CHAR_DATA ch, String argument) {
+    static CHAR_DATA get_char_world(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA wch;
         int number;
         int count;
@@ -2669,10 +2127,10 @@ class Handler {
         return null;
     }
 
-/*
-* Find some object with a given index data.
-* Used by area-reset 'P' command.
-*/
+    /*
+     * Find some object with a given index data.
+     * Used by area-reset 'P' command.
+     */
 
     static OBJ_DATA get_obj_type(OBJ_INDEX_DATA pObjIndex) {
         OBJ_DATA obj;
@@ -2686,11 +2144,11 @@ class Handler {
         return null;
     }
 
-/*
-* Find an obj in a list.
-*/
+    /*
+     * Find an obj in a list.
+     */
 
-    static OBJ_DATA get_obj_list(CHAR_DATA ch, String argument, OBJ_DATA list) {
+    static OBJ_DATA get_obj_list(@NotNull CHAR_DATA ch, String argument, OBJ_DATA list) {
         OBJ_DATA obj;
         int number;
         int count;
@@ -2710,11 +2168,11 @@ class Handler {
         return null;
     }
 
-/*
-* Find an obj in player's inventory.
-*/
+    /*
+     * Find an obj in player's inventory.
+     */
 
-    static OBJ_DATA get_obj_carry(CHAR_DATA ch, String argument) {
+    static OBJ_DATA get_obj_carry(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int number;
         int count;
@@ -2734,11 +2192,11 @@ class Handler {
         return null;
     }
 
-/*
-* Find an obj in player's equipment.
-*/
+    /*
+     * Find an obj in player's equipment.
+     */
 
-    static OBJ_DATA get_obj_wear(CHAR_DATA ch, String argument) {
+    static OBJ_DATA get_obj_wear(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int number;
         int count;
@@ -2760,11 +2218,11 @@ class Handler {
         return null;
     }
 
-/*
-* Find an obj in the room or in inventory.
-*/
+    /*
+     * Find an obj in the room or in inventory.
+     */
 
-    static OBJ_DATA get_obj_here(CHAR_DATA ch, String argument) {
+    static OBJ_DATA get_obj_here(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
         obj = get_obj_list(ch, argument, ch.in_room.contents);
@@ -2783,11 +2241,11 @@ class Handler {
         return null;
     }
 
-/*
-* Find an obj in the world.
-*/
+    /*
+     * Find an obj in the world.
+     */
 
-    static OBJ_DATA get_obj_world(CHAR_DATA ch, String argument) {
+    static OBJ_DATA get_obj_world(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int number;
         int count;
@@ -2812,9 +2270,9 @@ class Handler {
         return null;
     }
 
-/* deduct cost from a character */
+    /* deduct cost from a character */
 
-    static void deduct_cost(CHAR_DATA ch, int cost) {
+    static void deduct_cost(@NotNull CHAR_DATA ch, int cost) {
         int silver, gold = 0;
 
         silver = UMIN(ch.silver, cost);
@@ -2836,9 +2294,9 @@ class Handler {
             ch.silver = 0;
         }
     }
-/*
- * Create a 'money' obj.
- */
+    /*
+     * Create a 'money' obj.
+     */
 
     static OBJ_DATA create_money(int gold, int silver) {
         OBJ_DATA obj;
@@ -2883,10 +2341,10 @@ class Handler {
         return obj;
     }
 
-/*
-* Return # of objects which an object counts as.
-* Thanks to Tony Chamberlain for the correct recursive code here.
-*/
+    /*
+     * Return # of objects which an object counts as.
+     * Thanks to Tony Chamberlain for the correct recursive code here.
+     */
 
     static int get_obj_number(OBJ_DATA obj) {
         int number;
@@ -2918,9 +2376,9 @@ class Handler {
         return number;
     }
 
-/*
- * Return weight of an object, including weight of contents.
- */
+    /*
+     * Return weight of an object, including weight of contents.
+     */
 
     static int get_obj_weight(OBJ_DATA obj) {
         int weight;
@@ -2945,11 +2403,11 @@ class Handler {
         return weight;
     }
 
-/*
- * true if room is dark.
- */
+    /*
+     * true if room is dark.
+     */
 
-    static boolean room_is_dark(CHAR_DATA ch) {
+    static boolean room_is_dark(@NotNull CHAR_DATA ch) {
         var pRoomIndex = ch.in_room;
 
         if (IS_VAMPIRE(ch)) {
@@ -2993,14 +2451,14 @@ class Handler {
     }
 
 
-    static boolean is_room_owner(CHAR_DATA ch, ROOM_INDEX_DATA room) {
+    static boolean is_room_owner(@NotNull CHAR_DATA ch, ROOM_INDEX_DATA room) {
         return room.owner != null && !room.owner.isEmpty() && is_name(ch.name, room.owner);
 
     }
 
-/*
- * true if room is private.
- */
+    /*
+     * true if room is private.
+     */
 
     static boolean room_is_private(ROOM_INDEX_DATA pRoomIndex) {
         CHAR_DATA rch;
@@ -3028,9 +2486,9 @@ class Handler {
 
     }
 
-/* visibility on a room -- for entering and exits */
+    /* visibility on a room -- for entering and exits */
 
-    static boolean can_see_room(CHAR_DATA ch, ROOM_INDEX_DATA pRoomIndex) {
+    static boolean can_see_room(@NotNull CHAR_DATA ch, ROOM_INDEX_DATA pRoomIndex) {
         if (IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY)
                 && get_trust(ch) < MAX_LEVEL) {
             return false;
@@ -3052,12 +2510,12 @@ class Handler {
 
     }
 
-/*
-* true if char can see victim.
-*/
+    /*
+     * true if char can see victim.
+     */
 
-    static boolean can_see(CHAR_DATA ch, CHAR_DATA victim) {
-/* RT changed so that WIZ_INVIS has levels */
+    static boolean can_see(@NotNull CHAR_DATA ch, CHAR_DATA victim) {
+        /* RT changed so that WIZ_INVIS has levels */
         assert ch != null && victim != null;
 
         if (ch == victim) {
@@ -3138,11 +2596,11 @@ class Handler {
         return !IS_AFFECTED(victim, AFF_EARTHFADE);
     }
 
-/*
-* true if char can see obj.
-*/
+    /*
+     * true if char can see obj.
+     */
 
-    static boolean can_see_obj(CHAR_DATA ch, OBJ_DATA obj) {
+    static boolean can_see_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj) {
         if (!IS_NPC(ch) && IS_SET(ch.act, PLR_HOLYLIGHT)) {
             return true;
         }
@@ -3183,11 +2641,11 @@ class Handler {
         return true;
     }
 
-/*
-* true if char can drop obj.
-*/
+    /*
+     * true if char can drop obj.
+     */
 
-    static boolean can_drop_obj(CHAR_DATA ch, OBJ_DATA obj) {
+    static boolean can_drop_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj) {
         //noinspection SimplifiableIfStatement
         if (!IS_SET(obj.extra_flags, ITEM_NODROP)) {
             return true;
@@ -3197,9 +2655,9 @@ class Handler {
 
     }
 
-/*
-* Return ascii name of an item type.
-*/
+    /*
+     * Return ascii name of an item type.
+     */
 
     static String item_type_name(OBJ_DATA obj) {
         switch (obj.item_type) {
@@ -3293,9 +2751,9 @@ class Handler {
         return "(unknown)";
     }
 
-/*
-* Return ascii name of an affect location.
-*/
+    /*
+     * Return ascii name of an affect location.
+     */
 
     static String affect_loc_name(int location) {
         switch (location) {
@@ -3381,8 +2839,8 @@ class Handler {
     }
 
     /*
-    * Return ascii name of an affect bit vector.
-    */
+     * Return ascii name of an affect bit vector.
+     */
     private static final StringBuilder stat_buf = new StringBuilder();
 
     static String affect_bit_name(long vector) {
@@ -3477,9 +2935,9 @@ class Handler {
         return stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
-/*
-* Return ascii name of an affect bit vector.
-*/
+    /*
+     * Return ascii name of an affect bit vector.
+     */
 
     static String detect_bit_name(int vector) {
 
@@ -3529,9 +2987,9 @@ class Handler {
         return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
-/*
-* Return ascii name of extra flags vector.
-*/
+    /*
+     * Return ascii name of extra flags vector.
+     */
 
     static String extra_bit_name(long extra_flags) {
 
@@ -3605,7 +3063,7 @@ class Handler {
         return !stat_buf.isEmpty() ? stat_buf.toString() : "none";
     }
 
-/* return ascii name of an act vector */
+    /* return ascii name of an act vector */
 
     static String act_bit_name(long act_flags) {
         stat_buf.setLength(0);
@@ -4233,7 +3691,7 @@ class Handler {
     }
 
 
-    static int isn_dark_safe(CHAR_DATA ch) {
+    static int isn_dark_safe(@NotNull CHAR_DATA ch) {
         CHAR_DATA rch;
         OBJ_DATA light;
         int light_exist;
@@ -4264,14 +3722,14 @@ class Handler {
         return light_exist;
     }
 
-/*
-* Return types:
-* 0: success
-* 1: general failure
-* 2: no cabal powers
-*/
+    /*
+     * Return types:
+     * 0: success
+     * 1: general failure
+     * 2: no cabal powers
+     */
 
-    static int skill_failure_nomessage(CHAR_DATA ch, Skill skill, int npcOffFlag) {
+    static int skill_failure_nomessage(@NotNull CHAR_DATA ch, Skill skill, int npcOffFlag) {
         int i;
 
         if (IS_NPC(ch) && npcOffFlag != 0 && CABAL_OK(ch, skill) && RACE_OK(ch, skill) || IS_SET(ch.off_flags, npcOffFlag)) {
@@ -4297,7 +3755,7 @@ class Handler {
         return 1;
     }
 
-    static boolean skill_failure_check(CHAR_DATA ch, Skill skill, boolean mount_ok, int npcOffFlag, String msg) {
+    static boolean skill_failure_check(@NotNull CHAR_DATA ch, Skill skill, boolean mount_ok, int npcOffFlag, String msg) {
         if (!mount_ok && MOUNTED(ch) != null) {
             send_to_char("You can't do that while riding!\n", ch);
             return true;
@@ -4318,9 +3776,9 @@ class Handler {
         return false;
     }
 
-/*
- * Apply or remove an affect to a room.
- */
+    /*
+     * Apply or remove an affect to a room.
+     */
 
     static void affect_modify_room(ROOM_INDEX_DATA room, AFFECT_DATA paf, boolean fAdd) {
         int mod;
@@ -4354,9 +3812,9 @@ class Handler {
 
     }
 
-/*
- * Give an affect to a room.
- */
+    /*
+     * Give an affect to a room.
+     */
 
     static void affect_to_room(ROOM_INDEX_DATA room, AFFECT_DATA paf) {
         AFFECT_DATA paf_new;
@@ -4402,9 +3860,9 @@ class Handler {
         }
     }
 
-/*
- * Remove an affect from a room.
- */
+    /*
+     * Remove an affect from a room.
+     */
 
     static void affect_remove_room(ROOM_INDEX_DATA room, AFFECT_DATA paf) {
         if (room.affected == null) {
@@ -4454,9 +3912,9 @@ class Handler {
         affect_check_room(room, where, vector);
     }
 
-/*
- * Strip all affects of a given sn.
- */
+    /*
+     * Strip all affects of a given sn.
+     */
 
     static void affect_strip_room(ROOM_INDEX_DATA room, Skill sn) {
         AFFECT_DATA paf;
@@ -4471,9 +3929,9 @@ class Handler {
 
     }
 
-/*
-* Return true if a room is affected by a spell.
-*/
+    /*
+     * Return true if a room is affected by a spell.
+     */
 
     static boolean is_affected_room(ROOM_INDEX_DATA room, Skill sn) {
         AFFECT_DATA paf;
@@ -4487,9 +3945,9 @@ class Handler {
         return false;
     }
 
-/*
-* Add or enhance an affect.
-*/
+    /*
+     * Add or enhance an affect.
+     */
 
     static void affect_join_room(ROOM_INDEX_DATA room, AFFECT_DATA paf) {
         AFFECT_DATA paf_old;
@@ -4507,9 +3965,9 @@ class Handler {
         affect_to_room(room, paf);
     }
 
-/*
- * Return ascii name of an raffect location.
- */
+    /*
+     * Return ascii name of an raffect location.
+     */
 
     static String raffect_loc_name(int location) {
         switch (location) {
@@ -4527,9 +3985,9 @@ class Handler {
         return "(unknown)";
     }
 
-/*
-* Return ascii name of an affect bit vector.
-*/
+    /*
+     * Return ascii name of an affect bit vector.
+     */
 
     static String raffect_bit_name(long vector) {
         stat_buf.setLength(0);
@@ -4694,9 +4152,9 @@ class Handler {
         }
     }
 
-/*
-* Return ascii name of an affect bit vector.
-*/
+    /*
+     * Return ascii name of an affect bit vector.
+     */
 
     static String flag_room_name(long vector) {
         stat_buf.setLength(0);
@@ -4758,7 +4216,7 @@ class Handler {
     }
 
 
-    static boolean affect_check_obj(CHAR_DATA ch, long vector) {
+    static boolean affect_check_obj(@NotNull CHAR_DATA ch, long vector) {
         AFFECT_DATA paf;
         OBJ_DATA obj;
 
@@ -4786,7 +4244,7 @@ class Handler {
         return false;
     }
 
-    static int count_charmed(CHAR_DATA ch) {
+    static int count_charmed(@NotNull CHAR_DATA ch) {
         CHAR_DATA gch;
         var count = 0;
 
@@ -4806,7 +4264,7 @@ class Handler {
         return 0;
     }
 
-    static void add_mind(CHAR_DATA ch, String str) {
+    static void add_mind(@NotNull CHAR_DATA ch, String str) {
 
         if (!IS_NPC(ch) || ch.in_room == null) {
             return;
@@ -4821,7 +4279,7 @@ class Handler {
 
     }
 
-    static void remove_mind(CHAR_DATA ch, String str) {
+    static void remove_mind(@NotNull CHAR_DATA ch, String str) {
         var mind = ch.in_mind;
 
         if (!IS_NPC(ch) || ch.in_room == null
@@ -4862,7 +4320,7 @@ class Handler {
         };
     }
 
-    static void back_home(CHAR_DATA ch) {
+    static void back_home(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA location;
 
         if (!IS_NPC(ch) || ch.in_mind == null) {
@@ -4889,7 +4347,7 @@ class Handler {
 
     private static final int[] _n = new int[1];
 
-    static CHAR_DATA find_char(CHAR_DATA ch, String argument, int door, int range) {
+    static CHAR_DATA find_char(@NotNull CHAR_DATA ch, String argument, int door, int range) {
         EXIT_DATA pExit, bExit;
         ROOM_INDEX_DATA dest_room, back_room;
         CHAR_DATA target;
@@ -4945,11 +4403,11 @@ class Handler {
         return door;
     }
 
-/*
- * Find a char for spell usage.
- */
+    /*
+     * Find a char for spell usage.
+     */
 
-    static CHAR_DATA get_char_spell(CHAR_DATA ch, String argument, int[] door, int range) {
+    static CHAR_DATA get_char_spell(@NotNull CHAR_DATA ch, String argument, int[] door, int range) {
         var i = argument.indexOf('.');
         var buf = i >= 0 ? argument.substring(0, i) : argument;
         if (i == 0 || (door[0] = check_exit(buf)) == -1) {
@@ -4959,7 +4417,7 @@ class Handler {
         return find_char(ch, argument.substring(i + 1), door[0], range);
     }
 
-    static void path_to_track(CHAR_DATA ch, CHAR_DATA victim, int door) {
+    static void path_to_track(@NotNull CHAR_DATA ch, CHAR_DATA victim, int door) {
         ROOM_INDEX_DATA temp;
         EXIT_DATA pExit;
         int opdoor;
@@ -5008,16 +4466,11 @@ class Handler {
         }
     }
 
-/* new staff */
+    /* new staff */
 
-    static OBJ_DATA get_wield_char(CHAR_DATA ch, boolean second) {
-        OBJ_DATA obj;
-
-        if (ch == null) {
-            return null;
-        }
-
-        for (obj = ch.carrying; obj != null; obj = obj.next_content) {
+    @Nullable
+    static OBJ_DATA get_wield_char(@NotNull CHAR_DATA ch, boolean second) {
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (obj.item_type == ITEM_WEAPON) {
                 if (second) {
                     if (obj.wear_loc == WEAR_RIGHT && LEFT_HANDER(ch)
@@ -5033,37 +4486,25 @@ class Handler {
                 }
             }
         }
-
         return null;
     }
 
 
-    static OBJ_DATA get_shield_char(CHAR_DATA ch) {
-        OBJ_DATA obj;
-
-        if (ch == null) {
-            return null;
-        }
-
-        for (obj = ch.carrying; obj != null; obj = obj.next_content) {
+    @Nullable
+    static OBJ_DATA get_shield_char(@NotNull CHAR_DATA ch) {
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
             if ((obj.wear_loc == WEAR_LEFT || obj.wear_loc == WEAR_RIGHT ||
                     obj.wear_loc == WEAR_BOTH) && CAN_WEAR(obj, ITEM_WEAR_SHIELD)) {
                 return obj;
             }
         }
-
         return null;
     }
 
 
-    static OBJ_DATA get_hold_char(CHAR_DATA ch) {
-        OBJ_DATA obj;
-
-        if (ch == null) {
-            return null;
-        }
-
-        for (obj = ch.carrying; obj != null; obj = obj.next_content) {
+    @Nullable
+    static OBJ_DATA get_hold_char(@NotNull CHAR_DATA ch) {
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
             if ((obj.wear_loc == WEAR_LEFT || obj.wear_loc == WEAR_RIGHT ||
                     obj.wear_loc == WEAR_BOTH) && CAN_WEAR(obj, ITEM_HOLD)) {
                 return obj;
@@ -5074,23 +4515,16 @@ class Handler {
     }
 
 
-    static OBJ_DATA get_light_char(CHAR_DATA ch) {
-        OBJ_DATA obj;
-
-        if (ch == null) {
-            return null;
-        }
-
-        for (obj = ch.carrying; obj != null; obj = obj.next_content) {
+    @Nullable
+    static OBJ_DATA get_light_char(@NotNull CHAR_DATA ch) {
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (obj.item_type == ITEM_LIGHT
                     && obj.value[2] != 0
                     && (obj.wear_loc == WEAR_LEFT
                     || obj.wear_loc == WEAR_RIGHT
                     || obj.wear_loc == WEAR_BOTH)
                     || obj.wear_loc == WEAR_HEAD
-                    && IS_OBJ_STAT(obj, ITEM_GLOW))
-
-            {
+                    && IS_OBJ_STAT(obj, ITEM_GLOW)) {
                 return obj;
             }
         }
@@ -5099,31 +4533,20 @@ class Handler {
     }
 
 
-    static boolean is_wielded_char(CHAR_DATA ch, OBJ_DATA obj) {
-        OBJ_DATA w;
-
-        if (ch == null) {
-            return false;
-        }
-
-        for (w = ch.carrying; w != null; w = w.next_content) {
+    static boolean is_wielded_char(@NotNull CHAR_DATA ch, OBJ_DATA obj) {
+        for (OBJ_DATA w = ch.carrying; w != null; w = w.next_content) {
             if ((w.wear_loc == WEAR_LEFT || w.wear_loc == WEAR_RIGHT ||
                     w.wear_loc == WEAR_BOTH) && CAN_WEAR(w, ITEM_WIELD)
                     && w == obj) {
                 return true;
             }
         }
-
         return false;
     }
 
 
-    static boolean is_equiped_n_char(CHAR_DATA ch, int vnum, int iWear) {
+    static boolean is_equiped_n_char(@NotNull CHAR_DATA ch, int vnum, int iWear) {
         OBJ_DATA e;
-
-        if (ch == null) {
-            return false;
-        }
 
         for (e = ch.carrying; e != null; e = e.next_content) {
             if (e.wear_loc == iWear && e.pIndexData.vnum == vnum) {
@@ -5135,12 +4558,8 @@ class Handler {
     }
 
 
-    static boolean is_equiped_char(CHAR_DATA ch, OBJ_DATA obj, int iWear) {
+    static boolean is_equiped_char(@NotNull CHAR_DATA ch, OBJ_DATA obj, int iWear) {
         OBJ_DATA e;
-
-        if (ch == null) {
-            return false;
-        }
 
         for (e = ch.carrying; e != null; e = e.next_content) {
             if (e.wear_loc == iWear && e == obj) {
@@ -5152,26 +4571,18 @@ class Handler {
     }
 
 
-    static int count_worn(CHAR_DATA ch, int iWear) {
-        OBJ_DATA obj;
-        int count;
-
-        if (ch == null) {
-            return 0;
-        }
-
-        count = 0;
-        for (obj = ch.carrying; obj != null; obj = obj.next_content) {
+    static int count_worn(@NotNull CHAR_DATA ch, int iWear) {
+        int count = 0;
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
             if (obj.wear_loc == iWear) {
                 count++;
             }
         }
-
         return count;
     }
 
 
-    static int max_can_wear(CHAR_DATA ch, int i) {
+    static int max_can_wear(@NotNull CHAR_DATA ch, int i) {
         if (IS_NPC(ch) || !IS_SET(ch.act, PLR_REMORTED)) {
             return i == WEAR_FINGER ? MAX_FINGER :
                     i == WEAR_STUCK_IN ? MAX_STUCK_IN :
@@ -5192,7 +4603,7 @@ class Handler {
 
     }
 
-    static int get_played_time(CHAR_DATA ch, int l) {
+    static int get_played_time(@NotNull CHAR_DATA ch, int l) {
         long ref_time;
         int played;
 
@@ -5210,7 +4621,7 @@ class Handler {
         return played;
     }
 
-    static int get_total_played(CHAR_DATA ch) {
+    static int get_total_played(@NotNull CHAR_DATA ch) {
         int l, sum = 0;
 
         if (IS_NPC(ch)) {

@@ -1,6 +1,7 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.DikuTextFile;
+import net.sf.nightworks.util.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,12 +71,12 @@ class Ban {
         try {
             var fp = new DikuTextFile(nw_config.var_ban_file);
             BAN_DATA ban_last = null;
-            while (!fp.feof()) {
+            while (!fp.is_eof()) {
                 var pban = new BAN_DATA();
-                pban.name = fp.fread_word();
-                pban.level = fp.fread_number();
-                pban.ban_flags = fp.fread_flag();
-                fp.fread_to_eol();
+                pban.name = fp.read_word();
+                pban.level = fp.read_number();
+                pban.ban_flags = fp.read_flag();
+                fp.read_to_eol();
 
                 if (ban_list == null) {
                     ban_list = pban;
@@ -114,7 +115,7 @@ class Ban {
     }
 
 
-    static void ban_site(CHAR_DATA ch, String argument, boolean fPerm) {
+    static void ban_site(@NotNull CHAR_DATA ch, String argument, boolean fPerm) {
         BAN_DATA pban, prev;
         boolean prefix, suffix = false;
         int type;
@@ -216,15 +217,15 @@ class Ban {
         send_to_char(pban.name + " has been banned.\n", ch);
     }
 
-    static void do_ban(CHAR_DATA ch, String argument) {
+    static void do_ban(@NotNull CHAR_DATA ch, String argument) {
         ban_site(ch, argument, false);
     }
 
-    static void do_permban(CHAR_DATA ch, String argument) {
+    static void do_permban(@NotNull CHAR_DATA ch, String argument) {
         ban_site(ch, argument, true);
     }
 
-    static void do_allow(CHAR_DATA ch, String argument) {
+    static void do_allow(@NotNull CHAR_DATA ch, String argument) {
         BAN_DATA prev;
         BAN_DATA curr;
         var arg = new StringBuilder();

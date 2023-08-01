@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.io.File;
@@ -288,6 +289,7 @@ import static net.sf.nightworks.Update.char_update;
 import static net.sf.nightworks.Update.obj_update;
 import static net.sf.nightworks.Update.room_update;
 import static net.sf.nightworks.Update.track_update;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.UPPER;
 import static net.sf.nightworks.util.TextUtils.capitalize;
 import static net.sf.nightworks.util.TextUtils.is_number;
@@ -297,7 +299,7 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class ActWiz {
-    static void do_cabal_scan(CHAR_DATA ch) {
+    static void do_cabal_scan(@NotNull CHAR_DATA ch) {
         int i;
         OBJ_DATA in_obj;
         int show;
@@ -342,7 +344,7 @@ class ActWiz {
         }
     }
 
-    static void do_objlist(CHAR_DATA ch) {
+    static void do_objlist(@NotNull CHAR_DATA ch) {
         OBJ_DATA obj;
         try {
             try (var fp = new FileWriter("objlist.txt")) {
@@ -478,12 +480,12 @@ class ActWiz {
             }
         } catch (IOException e) {
             send_to_char("File error.\n", ch);
-            e.printStackTrace();
+            logError(e);
         }
     }
 
 
-    static void do_limited(CHAR_DATA ch, String argument) {
+    static void do_limited(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_INDEX_DATA obj_index;
         var lCount = 0;
@@ -553,7 +555,7 @@ class ActWiz {
         page_to_char(output, ch);
     }
 
-    static void do_wiznet(CHAR_DATA ch, String argument) {
+    static void do_wiznet(@NotNull CHAR_DATA ch, String argument) {
 
         if (argument.isEmpty()) {
             if (IS_SET(ch.wiznet, WIZ_ON)) {
@@ -665,7 +667,7 @@ class ActWiz {
 
     }
 
-    static void do_tick(CHAR_DATA ch, String argument) {
+    static void do_tick(@NotNull CHAR_DATA ch, String argument) {
         var argb = new StringBuilder();
         one_argument(argument, argb);
         var arg = argb.toString();
@@ -707,7 +709,7 @@ class ActWiz {
 
 /* equips a character */
 
-    static void do_outfit(CHAR_DATA ch) {
+    static void do_outfit(@NotNull CHAR_DATA ch) {
         OBJ_DATA obj;
         int vnum;
 
@@ -766,7 +768,7 @@ class ActWiz {
 
 /* RT nochannels command, for those spammers */
 
-    static void do_nochannels(CHAR_DATA ch, String argument) {
+    static void do_nochannels(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -806,7 +808,7 @@ class ActWiz {
     }
 
 
-    static void do_smote(CHAR_DATA ch, String argument) {
+    static void do_smote(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA vch;
         var matches = 0;
 
@@ -883,7 +885,7 @@ class ActWiz {
 
     }
 
-    static void do_bamfin(CHAR_DATA ch, String argument) {
+    static void do_bamfin(@NotNull CHAR_DATA ch, String argument) {
 
         if (!IS_NPC(ch)) {
             argument = smash_tilde(argument);
@@ -907,7 +909,7 @@ class ActWiz {
     }
 
 
-    static void do_bamfout(CHAR_DATA ch, String argument) {
+    static void do_bamfout(@NotNull CHAR_DATA ch, String argument) {
 
         if (!IS_NPC(ch)) {
             var buf = new TextBuffer();
@@ -932,7 +934,7 @@ class ActWiz {
     }
 
 
-    static void do_deny(CHAR_DATA ch, String argument) {
+    static void do_deny(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -968,7 +970,7 @@ class ActWiz {
     }
 
 
-    static void do_disconnect(CHAR_DATA ch, String argument) {
+    static void do_disconnect(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d, d_next;
         CHAR_DATA victim;
         var arg = new StringBuilder();
@@ -1016,7 +1018,7 @@ class ActWiz {
     }
 
 
-    static void do_echo(CHAR_DATA ch, String argument) {
+    static void do_echo(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -1037,7 +1039,7 @@ class ActWiz {
     }
 
 
-    static void do_recho(CHAR_DATA ch, String argument) {
+    static void do_recho(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -1059,7 +1061,7 @@ class ActWiz {
 
     }
 
-    static void do_zecho(CHAR_DATA ch, String argument) {
+    static void do_zecho(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -1080,7 +1082,7 @@ class ActWiz {
         }
     }
 
-    static void do_pecho(CHAR_DATA ch, String argument) {
+    static void do_pecho(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         argument = one_argument(argument, arg);
@@ -1107,7 +1109,7 @@ class ActWiz {
     }
 
 
-    static ROOM_INDEX_DATA find_location(CHAR_DATA ch, String arg) {
+    static ROOM_INDEX_DATA find_location(@NotNull CHAR_DATA ch, String arg) {
         CHAR_DATA victim;
         OBJ_DATA obj;
 
@@ -1127,7 +1129,7 @@ class ActWiz {
     }
 
 
-    static void do_transfer(CHAR_DATA ch, String argument) {
+    static void do_transfer(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         DESCRIPTOR_DATA d, d_next;
         CHAR_DATA victim;
@@ -1199,7 +1201,7 @@ class ActWiz {
     }
 
 
-    static void do_at(CHAR_DATA ch, String argument) {
+    static void do_at(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         ROOM_INDEX_DATA original;
         OBJ_DATA on;
@@ -1248,7 +1250,7 @@ class ActWiz {
     }
 
 
-    static void do_goto(CHAR_DATA ch, String argument) {
+    static void do_goto(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         CHAR_DATA rch;
 
@@ -1304,7 +1306,7 @@ class ActWiz {
         do_look(ch, "auto");
     }
 
-    static void do_violate(CHAR_DATA ch, String argument) {
+    static void do_violate(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         CHAR_DATA rch;
 
@@ -1356,7 +1358,7 @@ class ActWiz {
 
 /* RT to replace the 3 stat commands */
 
-    static void do_stat(CHAR_DATA ch, String argument) {
+    static void do_stat(@NotNull CHAR_DATA ch, String argument) {
         String string;
         OBJ_DATA obj;
         ROOM_INDEX_DATA location;
@@ -1412,7 +1414,7 @@ class ActWiz {
     }
 
 
-    static void do_rstat(CHAR_DATA ch, String argument) {
+    static void do_rstat(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         ROOM_HISTORY_DATA rh;
         OBJ_DATA obj;
@@ -1521,7 +1523,7 @@ class ActWiz {
     }
 
 
-    static void do_ostat(CHAR_DATA ch, String argument) {
+    static void do_ostat(@NotNull CHAR_DATA ch, String argument) {
 
         OBJ_DATA obj;
         var arg = new StringBuilder();
@@ -1847,7 +1849,7 @@ class ActWiz {
     }
 
 
-    static void do_mstat(CHAR_DATA ch, String argument) {
+    static void do_mstat(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -2100,7 +2102,7 @@ class ActWiz {
         send_to_char(buf, ch);
     }
 
-    static void do_vnum(CHAR_DATA ch, String argument) {
+    static void do_vnum(@NotNull CHAR_DATA ch, String argument) {
         String string;
         var argb = new StringBuilder();
         string = one_argument(argument, argb);
@@ -2128,7 +2130,7 @@ class ActWiz {
     }
 
 
-    static void do_mfind(CHAR_DATA ch, String argument) {
+    static void do_mfind(@NotNull CHAR_DATA ch, String argument) {
         MOB_INDEX_DATA pMobIndex;
         int vnum;
         int nMatch;
@@ -2171,7 +2173,7 @@ class ActWiz {
     }
 
 
-    static void do_ofind(CHAR_DATA ch, String argument) {
+    static void do_ofind(@NotNull CHAR_DATA ch, String argument) {
         OBJ_INDEX_DATA pObjIndex;
         int vnum;
         int nMatch;
@@ -2215,7 +2217,7 @@ class ActWiz {
     }
 
 
-    static void do_owhere(CHAR_DATA ch, String argument) {
+    static void do_owhere(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA in_obj;
         boolean found;
@@ -2274,7 +2276,7 @@ class ActWiz {
     }
 
 
-    static void do_mwhere(CHAR_DATA ch, String argument) {
+    static void do_mwhere(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         boolean found;
         var count = 0;
@@ -2331,17 +2333,17 @@ class ActWiz {
     }
 
 
-    static void do_reboo(CHAR_DATA ch) {
+    static void do_reboo(@NotNull CHAR_DATA ch) {
         send_to_char("If you want to REBOOT, spell it out.\n", ch);
     }
 
 
-    static void do_shutdow(CHAR_DATA ch) {
+    static void do_shutdow(@NotNull CHAR_DATA ch) {
         send_to_char("If you want to SHUTDOWN, spell it out.\n", ch);
     }
 
 
-    static void do_shutdown(CHAR_DATA ch) {
+    static void do_shutdown(@NotNull CHAR_DATA ch) {
         var buf = new TextBuffer();
         if (ch.invis_level < LEVEL_HERO) {
             buf.sprintf("Shutdown by %s.", ch.name);
@@ -2353,7 +2355,7 @@ class ActWiz {
         reboot_nightworks(false, NIGHTWORKS_SHUTDOWN);
     }
 
-    static void do_protect(CHAR_DATA ch, String argument) {
+    static void do_protect(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (argument.isEmpty()) {
@@ -2378,7 +2380,7 @@ class ActWiz {
     }
 
 
-    static void do_snoop(CHAR_DATA ch, String argument) {
+    static void do_snoop(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
         CHAR_DATA victim;
         var arg = new StringBuilder();
@@ -2446,7 +2448,7 @@ class ActWiz {
     }
 
 
-    static void do_switch(CHAR_DATA ch, String argument) {
+    static void do_switch(@NotNull CHAR_DATA ch, String argument) {
 
         CHAR_DATA victim;
         var arg = new StringBuilder();
@@ -2509,7 +2511,7 @@ class ActWiz {
     }
 
 
-    static void do_return(CHAR_DATA ch) {
+    static void do_return(@NotNull CHAR_DATA ch) {
 
         if (ch.desc == null) {
             return;
@@ -2537,7 +2539,7 @@ class ActWiz {
 
 /* trust levels for load and clone */
 
-    static boolean obj_check(CHAR_DATA ch, OBJ_DATA obj) {
+    static boolean obj_check(@NotNull CHAR_DATA ch, OBJ_DATA obj) {
         return IS_TRUSTED(ch, GOD)
                 || (IS_TRUSTED(ch, IMMORTAL) && obj.level <= 20 && obj.cost <= 1000)
                 || (IS_TRUSTED(ch, DEMI) && obj.level <= 10 && obj.cost <= 500)
@@ -2547,7 +2549,7 @@ class ActWiz {
 
 /* for clone, to insure that cloning goes many levels deep */
 
-    static void recursive_clone(CHAR_DATA ch, OBJ_DATA obj, OBJ_DATA clone) {
+    static void recursive_clone(@NotNull CHAR_DATA ch, OBJ_DATA obj, OBJ_DATA clone) {
         OBJ_DATA c_obj, t_obj;
 
 
@@ -2563,7 +2565,7 @@ class ActWiz {
 
 /* command that is similar to load */
 
-    static void do_clone(CHAR_DATA ch, String argument) {
+    static void do_clone(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         OBJ_DATA obj;
 
@@ -2664,7 +2666,7 @@ class ActWiz {
 
 /* RT to replace the two load commands */
 
-    static void do_load(CHAR_DATA ch, String argument) {
+    static void do_load(@NotNull CHAR_DATA ch, String argument) {
         var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
@@ -2690,7 +2692,7 @@ class ActWiz {
     }
 
 
-    static void do_mload(CHAR_DATA ch, String argument) {
+    static void do_mload(@NotNull CHAR_DATA ch, String argument) {
         MOB_INDEX_DATA pMobIndex;
         CHAR_DATA victim;
 
@@ -2717,7 +2719,7 @@ class ActWiz {
     }
 
 
-    static void do_oload(CHAR_DATA ch, String argument) {
+    static void do_oload(@NotNull CHAR_DATA ch, String argument) {
         OBJ_INDEX_DATA pObjIndex;
         OBJ_DATA obj;
         int level;
@@ -2763,7 +2765,7 @@ class ActWiz {
     }
 
 
-    static void do_purge(CHAR_DATA ch, String argument) {
+    static void do_purge(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA obj;
         DESCRIPTOR_DATA d;
@@ -2834,7 +2836,7 @@ class ActWiz {
     }
 
 
-    static void do_trust(CHAR_DATA ch, String argument) {
+    static void do_trust(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int level;
         var arg1 = new StringBuilder();
@@ -2866,7 +2868,7 @@ class ActWiz {
     }
 
 
-    static void do_restore(CHAR_DATA ch, String argument) {
+    static void do_restore(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         CHAR_DATA vch;
         DESCRIPTOR_DATA d;
@@ -2949,7 +2951,7 @@ class ActWiz {
     }
 
 
-    static void do_freeze(CHAR_DATA ch, String argument) {
+    static void do_freeze(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -2994,7 +2996,7 @@ class ActWiz {
     }
 
 
-    static void do_log(CHAR_DATA ch, String argument) {
+    static void do_log(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var argb = new StringBuilder();
         one_argument(argument, argb);
@@ -3040,7 +3042,7 @@ class ActWiz {
     }
 
 
-    static void do_noemote(CHAR_DATA ch, String argument) {
+    static void do_noemote(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -3078,7 +3080,7 @@ class ActWiz {
     }
 
 
-    static void do_noshout(CHAR_DATA ch, String argument) {
+    static void do_noshout(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -3122,7 +3124,7 @@ class ActWiz {
     }
 
 
-    static void do_notell(CHAR_DATA ch, String argument) {
+    static void do_notell(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -3159,7 +3161,7 @@ class ActWiz {
     }
 
 
-    static void do_peace(CHAR_DATA ch) {
+    static void do_peace(@NotNull CHAR_DATA ch) {
         CHAR_DATA rch;
 
         for (rch = ch.in_room.people; rch != null; rch = rch.next_in_room) {
@@ -3174,7 +3176,7 @@ class ActWiz {
         send_to_char("Ok.\n", ch);
     }
 
-    static void do_wizlock(CHAR_DATA ch) {
+    static void do_wizlock(@NotNull CHAR_DATA ch) {
         wizlock = !wizlock;
 
         if (wizlock) {
@@ -3190,7 +3192,7 @@ class ActWiz {
 /* RT anti-newbie code */
 
 
-    static void do_newlock(CHAR_DATA ch) {
+    static void do_newlock(@NotNull CHAR_DATA ch) {
         newlock = !newlock;
 
         if (newlock) {
@@ -3204,7 +3206,7 @@ class ActWiz {
     }
 
 
-    static void do_slookup(CHAR_DATA ch, String argument) {
+    static void do_slookup(@NotNull CHAR_DATA ch, String argument) {
         var arg = new StringBuilder();
         one_argument(argument, arg);
         if (arg.isEmpty()) {
@@ -3235,7 +3237,7 @@ class ActWiz {
 
 /* RT set replaces sset, mset, oset, and rset */
 
-    static void do_set(CHAR_DATA ch, String argument) {
+    static void do_set(@NotNull CHAR_DATA ch, String argument) {
         var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 
@@ -3274,7 +3276,7 @@ class ActWiz {
     }
 
 
-    static void do_sset(CHAR_DATA ch, String argument) {
+    static void do_sset(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int value;
         boolean fAll;
@@ -3338,7 +3340,7 @@ class ActWiz {
     }
 
 
-    static void do_string(CHAR_DATA ch, String argument) {
+    static void do_string(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA obj;
 
@@ -3475,7 +3477,7 @@ class ActWiz {
     }
 
 
-    static void do_oset(CHAR_DATA ch, String argument) {
+    static void do_oset(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int value;
         var arg1 = new StringBuilder();
@@ -3571,7 +3573,7 @@ class ActWiz {
     }
 
 
-    static void do_rset(CHAR_DATA ch, String argument) {
+    static void do_rset(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         int value;
         var arg1 = new StringBuilder();
@@ -3630,7 +3632,7 @@ class ActWiz {
     }
 
 
-    static void do_sockets(CHAR_DATA ch, String argument) {
+    static void do_sockets(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
         int count;
 
@@ -3666,7 +3668,7 @@ class ActWiz {
 * Thanks to Grodyn for pointing out bugs in this function.
 */
 
-    static void do_force(CHAR_DATA ch, String argument) {
+    static void do_force(@NotNull CHAR_DATA ch, String argument) {
         var arg = new StringBuilder();
         argument = one_argument(argument, arg);
 
@@ -3780,7 +3782,7 @@ class ActWiz {
 * New routines by Dionysos.
 */
 
-    static void do_invis(CHAR_DATA ch, String argument) {
+    static void do_invis(@NotNull CHAR_DATA ch, String argument) {
         int level;
 
         /* RT code for taking a level argument */
@@ -3816,7 +3818,7 @@ class ActWiz {
     }
 
 
-    static void do_incognito(CHAR_DATA ch, String argument) {
+    static void do_incognito(@NotNull CHAR_DATA ch, String argument) {
         int level;
 
         /* RT code for taking a level argument */
@@ -3852,7 +3854,7 @@ class ActWiz {
     }
 
 
-    static void do_holylight(CHAR_DATA ch) {
+    static void do_holylight(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -3869,11 +3871,11 @@ class ActWiz {
 
 /* prefix command: it will put the string typed on each line typed */
 
-    static void do_prefi(CHAR_DATA ch) {
+    static void do_prefi(@NotNull CHAR_DATA ch) {
         send_to_char("You cannot abbreviate the prefix command.\n", ch);
     }
 
-    static void do_prefix(CHAR_DATA ch, String argument) {
+    static void do_prefix(@NotNull CHAR_DATA ch, String argument) {
 
         if (argument.isEmpty()) {
             if (ch.prefix.isEmpty()) {
@@ -3900,7 +3902,7 @@ class ActWiz {
 
 /* RT nochannels command, for those spammers */
 
-    static void do_grant(CHAR_DATA ch, String argument) {
+    static void do_grant(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         var arg = new StringBuilder();
@@ -3928,7 +3930,7 @@ class ActWiz {
 
     }
 
-    static void do_advance(CHAR_DATA ch, String argument) {
+    static void do_advance(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int level;
         int iLevel;
@@ -4015,7 +4017,7 @@ class ActWiz {
         save_char_obj(victim);
     }
 
-    static void do_mset(CHAR_DATA ch, String argument) {
+    static void do_mset(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int value;
         var arg1 = new StringBuilder();
@@ -4434,7 +4436,7 @@ class ActWiz {
         do_mset(ch, "");
     }
 
-    static void do_induct(CHAR_DATA ch, String argument) {
+    static void do_induct(@NotNull CHAR_DATA ch, String argument) {
         String cabal;
         CHAR_DATA victim;
         int i, prev_cabal;
@@ -4539,7 +4541,7 @@ class ActWiz {
         }
     }
 
-    static void do_desocket(CHAR_DATA ch, String argument) {
+    static void do_desocket(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d, d_next;
         int socket;
         var arg = new StringBuilder();
@@ -4577,7 +4579,7 @@ class ActWiz {
 
     }
 
-    static void do_smite(CHAR_DATA ch, String argument) {
+    static void do_smite(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (argument.isEmpty()) {
@@ -4613,7 +4615,7 @@ class ActWiz {
         victim.hit = victim.hit / 2;
     }
 
-    static void do_popularity(CHAR_DATA ch) {
+    static void do_popularity(@NotNull CHAR_DATA ch) {
         AREA_DATA area;
         int i;
         var buf = new TextBuffer();
@@ -4634,7 +4636,7 @@ class ActWiz {
         page_to_char(buf, ch);
     }
 
-    static void do_ititle(CHAR_DATA ch, String argument) {
+    static void do_ititle(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         argument = one_argument(argument, arg);
@@ -4669,7 +4671,7 @@ class ActWiz {
     }
 
 
-    static void do_rename(CHAR_DATA ch, String argument) {
+    static void do_rename(@NotNull CHAR_DATA ch, String argument) {
 
         CHAR_DATA victim;
         var old_name = new StringBuilder();
@@ -4751,7 +4753,7 @@ class ActWiz {
 
     }
 
-    static void do_notitle(CHAR_DATA ch, String argument) {
+    static void do_notitle(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (!IS_IMMORTAL(ch)) {
@@ -4782,7 +4784,7 @@ class ActWiz {
     }
 
 
-    static void do_noaffect(CHAR_DATA ch, String argument) {
+    static void do_noaffect(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (!IS_IMMORTAL(ch)) {
@@ -4817,7 +4819,7 @@ class ActWiz {
 
     }
 
-    static void do_affrooms(CHAR_DATA ch) {
+    static void do_affrooms(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA room;
         ROOM_INDEX_DATA room_next;
         var count = 0;
@@ -4835,7 +4837,7 @@ class ActWiz {
         }
     }
 
-    static void do_find(CHAR_DATA ch, String argument) {
+    static void do_find(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -4857,7 +4859,7 @@ class ActWiz {
     }
 
 
-    static void do_reboot(CHAR_DATA ch, String argument) {
+    static void do_reboot(@NotNull CHAR_DATA ch, String argument) {
         var arg = new StringBuilder();
         one_argument(argument, arg);
 
@@ -4944,7 +4946,7 @@ class ActWiz {
     }
 
 
-    static void do_premort(CHAR_DATA ch, String argument) {
+    static void do_premort(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (!IS_IMMORTAL(ch)) {
@@ -4978,7 +4980,7 @@ class ActWiz {
         }
     }
 
-    static void do_maximum(CHAR_DATA ch, String argument) {
+    static void do_maximum(@NotNull CHAR_DATA ch, String argument) {
         var argb = new StringBuilder();
         argument = one_argument(argument, argb);
 

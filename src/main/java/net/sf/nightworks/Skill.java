@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -3089,7 +3091,7 @@ enum Skill {
         return null;
     }
 
-    static Skill find_spell(CHAR_DATA ch, String name) {
+    static Skill find_spell(@NotNull CHAR_DATA ch, String name) {
         /* finds a spell the character can cast if possible */
 
         if (IS_NPC(ch)) {
@@ -3144,10 +3146,10 @@ enum Skill {
     }
 
     private interface SpellFun3 {
-        void do_spell(CHAR_DATA ch);
+        void do_spell(@NotNull CHAR_DATA ch);
     }
 
     private interface SpellFun34 {
-        void do_spell(CHAR_DATA ch, Object vo);
+        void do_spell(@NotNull CHAR_DATA ch, Object vo);
     }
 }

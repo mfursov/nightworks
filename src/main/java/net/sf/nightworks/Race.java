@@ -15,7 +15,7 @@ class Race {
     // these races are the same as from configuration file
     // except 2 difference:
     // 1. Predefined race can be referenced from code by a constant
-    // 2. Predefined race must be found in configuration file during startup
+    // 2. Predefined race must be found in the configuration file during startup
     @SuppressWarnings("unused")
     static final Race
             HUMAN = new Race("human"),

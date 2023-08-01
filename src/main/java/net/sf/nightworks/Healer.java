@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import static net.sf.nightworks.ActComm.do_say;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
@@ -30,7 +32,7 @@ import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class Healer {
     @SuppressWarnings("SpellCheckingInspection")
-    static void do_heal(CHAR_DATA ch, String argument) {
+    static void do_heal(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         int cost;
         Skill sn = null;

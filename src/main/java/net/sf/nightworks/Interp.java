@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
@@ -104,7 +106,7 @@ class Interp {
      * Can be recursively called from 'at', 'order', 'force'.
      */
 
-    static void interpret(CHAR_DATA ch, String argument, boolean is_order) {
+    static void interpret(@NotNull CHAR_DATA ch, String argument, boolean is_order) {
         /*
         * Strip leading spaces.
         */
@@ -200,8 +202,7 @@ class Interp {
             logLine = "";
         }
 
-        if (((!IS_NPC(ch) && IS_SET(ch.act, PLR_LOG)) || fLogAll
-                || (cmd != null && cmd.log == LOG_ALWAYS) && !logLine.isEmpty() && logLine.charAt(0) != '\n')) {
+        if (!IS_NPC(ch) && IS_SET(ch.act, PLR_LOG) || fLogAll || cmd != null && cmd.log == LOG_ALWAYS && logLine.charAt(0) != '\n') {
             var log_buf = "Log " + ch.name + ": " + logLine;
             wiznet(log_buf, ch, null, WIZ_SECURE, 0, get_trust(ch));
             log_string(log_buf);
@@ -278,7 +279,7 @@ class Interp {
         tail_chain();
     }
 
-    private static void fadeOutToNormal(CHAR_DATA ch) {
+    private static void fadeOutToNormal(@NotNull CHAR_DATA ch) {
         affect_strip(ch, gsn_earthfade);
         ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_EARTHFADE);
         WAIT_STATE(ch, (PULSE_VIOLENCE / 2));
@@ -304,7 +305,7 @@ class Interp {
         return null;
     }
 
-    static boolean interpret_social(CHAR_DATA ch, String argument, social_type soc) {
+    static boolean interpret_social(@NotNull CHAR_DATA ch, String argument, social_type soc) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -368,11 +369,11 @@ class Interp {
     }
 
 
-    static void do_commands(CHAR_DATA ch) {
+    static void do_commands(@NotNull CHAR_DATA ch) {
         showAvailableCommands(ch, (cmd) -> cmd.level < LEVEL_HERO);
     }
 
-    private static void showAvailableCommands(CHAR_DATA ch, Function<CmdType, Boolean> cmdCheckFn) {
+    private static void showAvailableCommands(@NotNull CHAR_DATA ch, Function<CmdType, Boolean> cmdCheckFn) {
         var cmd_table = getCommandsTable();
         List<String> names = new ArrayList<>();
         for (var cmd : cmd_table) {
@@ -397,7 +398,7 @@ class Interp {
         page_to_char(buf.toString(), ch);
     }
 
-    static void do_wizhelp(CHAR_DATA ch) {
+    static void do_wizhelp(@NotNull CHAR_DATA ch) {
         showAvailableCommands(ch, (cmd) -> cmd.level >= LEVEL_HERO);
     }
 
@@ -452,11 +453,11 @@ class Interp {
         interpret(d.character, buf.toString(), false);
     }
 
-    static void do_alia(CHAR_DATA ch) {
+    static void do_alia(@NotNull CHAR_DATA ch) {
         send_to_char("I'm sorry, alias must be entered in full.\n", ch);
     }
 
-    static void do_alias(CHAR_DATA ch, String argument) {
+    static void do_alias(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA rch;
         int pos;
 
@@ -549,7 +550,7 @@ class Interp {
     }
 
 
-    static void do_unalias(CHAR_DATA ch, String argument) {
+    static void do_unalias(@NotNull CHAR_DATA ch, String argument) {
 
         int pos;
         var found = false;

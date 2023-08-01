@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.util.Formatter;
 
 import static net.sf.nightworks.Tables.flag_type;
-import static net.sf.nightworks.util.TextUtils.is_number;
-import static net.sf.nightworks.util.TextUtils.isDigit;
-import static net.sf.nightworks.util.TextUtils.isSpace;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
+import static net.sf.nightworks.util.TextUtils.*;
 
 public class DikuTextFile {
 
@@ -33,15 +30,14 @@ public class DikuTextFile {
         try (var reader = new FileReader(file)) {
             var pos = 0;
             do {
-                var dpos = reader.read(data, pos, len - pos);
-                assert (dpos >= 0);
-                pos += dpos;
+                var nCharsRead = reader.read(data, pos, len - pos);
+                assert (nCharsRead >= 0);
+                pos += nCharsRead;
             } while (pos != len);
         }
     }
 
-
-    public int fread_flag() {
+    public int read_flag() {
         int number;
         var negative = false;
 
@@ -68,7 +64,7 @@ public class DikuTextFile {
         }
 
         if (c == '|') {
-            number += fread_flag();
+            number += read_flag();
         } else if (c != ' ') {
             ungetc();
         }
@@ -88,16 +84,14 @@ public class DikuTextFile {
 
     public int flag_convert(char letter) {
         var bitsum = 0;
-        char i;
-
         if ('A' <= letter && letter <= 'Z') {
             bitsum = 1;
-            for (i = letter; i > 'A'; i--) {
+            for (int i = letter; i > 'A'; i--) {
                 bitsum *= 2;
             }
         } else if ('a' <= letter && letter <= 'z') {
             bitsum = 67108864; /* 2^26 */
-            for (i = letter; i > 'a'; i--) {
+            for (int i = letter; i > 'a'; i--) {
                 bitsum *= 2;
             }
         }
@@ -109,11 +103,11 @@ public class DikuTextFile {
      * Read and allocate space for a string from a file.
      * These strings are read-only and shared.
      * Strings are hashed:
-     * each string prepended with hash pointer to prev string,
+     * each string prepended with a hash pointer to prev string,
      * hash code is simply the string length.
-     * this function takes 40% to 50% of boot-up time.
+     * This function takes 40% to 50% of boot-up time.
      */
-    public String fread_string() {
+    public String read_string() {
         tmpBuf.setLength(0);
 
         int c;
@@ -163,22 +157,23 @@ public class DikuTextFile {
         return f.toString();
     }
 
-    public String fread_string_eol() {
+    @SuppressWarnings("UnusedReturnValue")
+    public String read_string_eol() {
         int c;
         /* Skip blanks.* Read first char. */
         do {
             c = read();
         } while (isSpace(c));
         var pos = currentPos - 1;
-        fread_to_eol();
+        read_to_eol();
         return new String(data, pos, currentPos - pos).trim();
     }
 
-/*
-* Read to end of line (for comments).
-*/
+    /*
+     * Read to end of line (for comments).
+     */
 
-    public void fread_to_eol() {
+    public void read_to_eol() {
         char c;
         do {
             c = read();
@@ -190,7 +185,7 @@ public class DikuTextFile {
     }
 
 
-    public String fread_word() {
+    public String read_word() {
         tmpBuf.setLength(0);
         char cEnd;
         do {
@@ -213,14 +208,14 @@ public class DikuTextFile {
             }
             tmpBuf.append(c);
         }
-        throw new RuntimeException("Fread_word: word too long." + buildCurrentStateInfo());
+        throw new RuntimeException("file_read_word: word is too long." + buildCurrentStateInfo());
     }
-/*
-* Read a letter from a file.
-*/
+    /*
+     * Read a letter from a file.
+     */
 
-    public char fread_letter() {
-        while (!feof()) {
+    public char read_letter() {
+        while (!is_eof()) {
             var c = read();
             if (!isSpace(c)) {
                 return c;
@@ -229,11 +224,11 @@ public class DikuTextFile {
         return END_OF_STREAM_CHAR;
     }
 
-/*
-* Read a number from a file.
-*/
+    /*
+     * Read a number from a file.
+     */
 
-    public int fread_number() {
+    public int read_number() {
         char c;
         do {
             c = read();
@@ -249,7 +244,7 @@ public class DikuTextFile {
         }
 
         if (!isDigit(c)) {
-            throw new RuntimeException("fread_number: bad format." + buildCurrentStateInfo());
+            throw new RuntimeException("file_read_number: bad format." + buildCurrentStateInfo());
 
         }
         while (isDigit(c)) {
@@ -262,7 +257,7 @@ public class DikuTextFile {
         }
 
         if (c == '|') {
-            number += fread_number();
+            number += read_number();
         } else if (c != ' ') {
             ungetc();
         }
@@ -276,7 +271,7 @@ public class DikuTextFile {
     }
 
 
-    public boolean feof() {
+    public boolean is_eof() {
         return currentPos >= data.length;
     }
 
@@ -285,7 +280,7 @@ public class DikuTextFile {
             return defaultValue;
         }
         fMatch = true;
-        return fread_word();
+        return read_word();
     }
 
 
@@ -294,7 +289,7 @@ public class DikuTextFile {
             return defaultValue;
         }
         fMatch = true;
-        return fread_string();
+        return read_string();
     }
 
     public int NKEY(String literal, String word, int defaultValue) {
@@ -302,7 +297,7 @@ public class DikuTextFile {
             return defaultValue;
         }
         fMatch = true;
-        return fread_number();
+        return read_number();
     }
 
     public long FLAG64_OLD(String literal, String word, long defaultValue) {
@@ -310,7 +305,7 @@ public class DikuTextFile {
             return defaultValue;
         }
         fMatch = true;
-        return fread_flag();
+        return read_flag();
     }
 
     public long FLAG64_KEY(String literal, String word, long defaultValue, flag_type[] table, boolean multiFlag) {
@@ -318,7 +313,7 @@ public class DikuTextFile {
             return defaultValue;
         }
         fMatch = true;
-        var str = multiFlag ? fread_string() : fread_word();
+        var str = multiFlag ? read_string() : read_word();
         long val;
         if (is_number(str)) {
             val = Integer.parseInt(str);
@@ -328,6 +323,7 @@ public class DikuTextFile {
         return val;
     }
 
+    @SuppressWarnings("unused")
     public long FLAG64_WKEY(String literal, String word, long defaultValue, flag_type[] table) {
         return (int) FLAG64_KEY(literal, word, defaultValue, table, false);
     }

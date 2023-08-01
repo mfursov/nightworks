@@ -28,8 +28,10 @@ import static net.sf.nightworks.Skill.gsn_track;
 import static net.sf.nightworks.Skill.skill_num_lookup;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.Tables.*;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.*;
 
+@SuppressWarnings("unused")
 class DB {
     /**
      * macro for flag swapping
@@ -167,7 +169,7 @@ class DB {
             load_bans();
             load_socials();
         } catch (Exception e) {
-            e.printStackTrace();
+            logError(e);
             if (currentList != null) {
                 System.err.println("Current list file state:" + currentList.buildCurrentStateInfo());
             }
@@ -181,7 +183,7 @@ class DB {
     private static void read_races() throws IOException {
         currentList = new DikuTextFile(nw_config.etc_races_list);
         for (; ; ) {
-            var raceFile = currentList.fread_word();
+            var raceFile = currentList.read_word();
             if (raceFile.charAt(0) == '#') {
                 continue;
             }
@@ -191,8 +193,8 @@ class DB {
             currentFile = new DikuTextFile(nw_config.lib_races_dir + "/" + raceFile);
             Race race = null;
             label:
-            while (!currentFile.feof()) {
-                var word = currentFile.fread_word();
+            while (!currentFile.is_eof()) {
+                var word = currentFile.read_word();
                 switch (word) {
                     case "#RACE":
                         if (race != null) {
@@ -218,17 +220,17 @@ class DB {
 
     private static Race read_race(DikuTextFile fp) throws RuntimeException {
         Race race;
-        var word = fp.fread_word();
+        var word = fp.read_word();
         fp.fMatch = false;
         if (!word.equals("Name")) {
             throw new RuntimeException("read_race: first token is not 'Name'");
         }
-        var name = fp.fread_string();
+        var name = fp.read_string();
         race = Race.createRace(name);
         race.fileName = fp.getFile().getName();
         fp.fMatch = true;
         for (; ; ) {
-            word = fp.feof() ? "End" : fp.fread_word();
+            word = fp.is_eof() ? "End" : fp.read_word();
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
                 case 'A' -> {
@@ -237,9 +239,6 @@ class DB {
                 }
                 case 'E' -> {
                     if (!str_cmp(word, "End")) {
-                        if (race == null) {
-                            throw new RuntimeException("load_race: race name undefined");
-                        }
                         return race;
                     }
                 }
@@ -253,7 +252,7 @@ class DB {
                 case 'R' -> {
                     race.res = fp.FLAG32_SKEY("Res", word, race.res, res_flags);
                     if (word.equals("Resist")) {
-                        fp.fread_string_eol();
+                        fp.read_string_eol();
                         fp.fMatch = true;
                     }
                 }
@@ -269,7 +268,7 @@ class DB {
         var pcRace = new PCRace();
         for (; ; ) {
             int i;
-            var word = fp.feof() ? "End" : fp.fread_word();
+            var word = fp.is_eof() ? "End" : fp.read_word();
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
                 case 'A':
@@ -278,7 +277,7 @@ class DB {
 
                 case 'B':
                     if (word.equals("BonusSkills")) {
-                        var skills = fp.fread_string();
+                        var skills = fp.read_string();
                         List<Skill> skillsList = new ArrayList<>();
                         while (!skills.isEmpty()) {
                             var oneSkill = new StringBuilder();
@@ -296,8 +295,8 @@ class DB {
                     break;
                 case 'C':
                     if (!str_cmp(word, "Class")) {
-                        var name = fp.fread_word();
-                        var expMult = fp.fread_number();
+                        var name = fp.read_word();
+                        var expMult = fp.read_number();
                         var clazz = Clazz.lookupClass(name);
                         var mod = new RaceToClassModifier(clazz, expMult);
                         pcRace.addClassModifier(clazz, mod);
@@ -321,7 +320,7 @@ class DB {
                     pcRace.mana_bonus = fp.NKEY("ManaBonus", word, pcRace.mana_bonus);
                     if (!fp.fMatch && !str_cmp(word, "MaxStats")) {
                         for (i = 0; i < MAX_STATS; i++) {
-                            pcRace.max_stats[i] = fp.fread_number();
+                            pcRace.max_stats[i] = fp.read_number();
                         }
                         fp.fMatch = true;
                     }
@@ -342,13 +341,13 @@ class DB {
                     pcRace.who_name = fp.SKEY("ShortName", word, pcRace.who_name);
 
                     if (word.equals("Skill")) {
-                        fp.fread_string_eol();
+                        fp.read_string_eol();
                         fp.fMatch = true;
                     }
 
                     if (!fp.fMatch && !str_cmp(word, "Stats")) {
                         for (i = 0; i < MAX_STATS; i++) {
-                            pcRace.stats[i] = fp.fread_number();
+                            pcRace.stats[i] = fp.read_number();
                         }
                         fp.fMatch = true;
                     }
@@ -363,15 +362,15 @@ class DB {
     private static void read_classes() throws IOException {
         currentList = new DikuTextFile(nw_config.etc_classes_list);
         for (; ; ) {
-            var classFile = currentList.fread_word();
+            var classFile = currentList.read_word();
             if (classFile.charAt(0) == '$') {
                 break;
             }
             currentFile = new DikuTextFile(nw_config.lib_classes_dir + "/" + classFile);
             Clazz clazz = null;
             label:
-            while (!currentFile.feof()) {
-                var word = currentFile.fread_word();
+            while (!currentFile.is_eof()) {
+                var word = currentFile.read_word();
                 switch (word) {
                     case "#CLASS":
                         if (clazz != null) {
@@ -400,7 +399,7 @@ class DB {
         Clazz clazz = null;
         for (; ; ) {
             int i;
-            var word = fp.feof() ? "End" : fp.fread_word();
+            var word = fp.is_eof() ? "End" : fp.read_word();
             fp.fMatch = false;
 
             switch (UPPER(word.charAt(0))) {
@@ -420,7 +419,7 @@ class DB {
                 }
                 case 'G' -> {
                     if (!str_cmp(word, "GuildRoom")) {
-                        var vnum = fp.fread_number();
+                        var vnum = fp.read_number();
                         clazz.guildVnums.add(vnum);
                         fp.fMatch = true;
                     }
@@ -430,7 +429,7 @@ class DB {
                 case 'N' -> {
                     if (!str_cmp(word, "Name")) {
                         fp.fMatch = true;
-                        var name = fp.fread_string();
+                        var name = fp.read_string();
                         clazz = Clazz.lookupClass(name, false);
                         if (clazz == null) {
                             clazz = new Clazz(name);
@@ -440,10 +439,10 @@ class DB {
                 case 'P' -> clazz.attr_prime = fp.FLAG32_WKEY("PrimeStat", word, clazz.attr_prime, stat_names);
                 case 'S' -> {
                     if (!str_cmp(word, "Skill")) {
-                        var skill = Skill.lookupSkill(fp.fread_word(), true);
-                        var level = fp.fread_number();
-                        var rating = fp.fread_number();
-                        var mod = fp.fread_number();
+                        var skill = Skill.lookupSkill(fp.read_word(), true);
+                        var level = fp.read_number();
+                        var rating = fp.read_number();
+                        var mod = fp.read_number();
                         skill.skill_level[clazz.id] = level;
                         skill.rating[clazz.id] = rating;
                         skill.mod[clazz.id] = mod;
@@ -456,7 +455,7 @@ class DB {
                     clazz.who_name = fp.SKEY("ShortName", word, clazz.who_name);
                     if (!str_cmp(word, "StatMod")) {
                         for (i = 0; i < MAX_STATS; i++) {
-                            clazz.stats[i] = fp.fread_number();
+                            clazz.stats[i] = fp.read_number();
                         }
                         fp.fMatch = true;
                     }
@@ -468,16 +467,16 @@ class DB {
                         int level;
                         int sex;
 
-                        level = fp.fread_number();
+                        level = fp.read_number();
                         if (level < 0 || level > MAX_LEVEL) {
                             throw new RuntimeException("load_class: invalid level: " + level);
                         }
-                        var sexStr = fp.fread_word();
+                        var sexStr = fp.read_word();
                         sex = (int) flag_type.parseFlagsValue(sexStr, sex_table);
                         if (sex != SEX_MALE && sex != SEX_FEMALE) {
                             throw new RuntimeException("load_class: invalid sex");
                         }
-                        var title = fp.fread_string();
+                        var title = fp.read_string();
                         if (sex == SEX_MALE) {
                             clazz.maleTitles[level] = title;
                         } else {
@@ -498,7 +497,7 @@ class DB {
         var pose = new Pose();
         for (; ; ) {
             int i;
-            var word = fp.feof() ? "End" : fp.fread_word();
+            var word = fp.is_eof() ? "End" : fp.read_word();
             fp.fMatch = false;
             switch (UPPER(word.charAt(0))) {
                 case 'E' -> {
@@ -561,7 +560,7 @@ class DB {
     private static void readAreas() throws IOException, NoSuchMethodException {
         currentList = new DikuTextFile(nw_config.etc_area_list);
         for (; ; ) {
-            var strArea = currentList.fread_word();
+            var strArea = currentList.read_word();
             if (strArea.charAt(0) == '$') {
                 break;
             }
@@ -574,12 +573,12 @@ class DB {
             currentFile = new DikuTextFile(nw_config.lib_area_dir + "/" + strArea);
 
             for (; ; ) {
-                if (currentFile.fread_letter() != '#') {
+                if (currentFile.read_letter() != '#') {
                     bug("Boot_db: # not found.");
                     exit(1);
                 }
 
-                var word = currentFile.fread_word();
+                var word = currentFile.read_word();
 
                 if (word.charAt(0) == '$') {
                     break;
@@ -633,16 +632,16 @@ class DB {
         var pArea = new AREA_DATA();
         pArea.reset_first = null;
         pArea.reset_last = null;
-        pArea.file_name = fp.fread_string();
-        pArea.name = fp.fread_string();
-        fp.fread_letter();
-        pArea.low_range = fp.fread_number();
-        pArea.high_range = fp.fread_number();
-        fp.fread_letter();
-        pArea.writer = fp.fread_word();
-        pArea.credits = fp.fread_string();
-        pArea.min_vnum = fp.fread_number();
-        pArea.max_vnum = fp.fread_number();
+        pArea.file_name = fp.read_string();
+        pArea.name = fp.read_string();
+        fp.read_letter();
+        pArea.low_range = fp.read_number();
+        pArea.high_range = fp.read_number();
+        fp.read_letter();
+        pArea.writer = fp.read_word();
+        pArea.credits = fp.read_string();
+        pArea.min_vnum = fp.read_number();
+        pArea.max_vnum = fp.read_number();
         pArea.age = 15;
         pArea.nplayer = 0;
         pArea.empty = false;
@@ -671,12 +670,12 @@ class DB {
         HELP_DATA pHelp;
         for (; ; ) {
             pHelp = new HELP_DATA();
-            pHelp.level = fp.fread_number();
-            pHelp.keyword = fp.fread_string();
+            pHelp.level = fp.read_number();
+            pHelp.keyword = fp.read_string();
             if (pHelp.keyword.charAt(0) == '$') {
                 break;
             }
-            pHelp.text = fp.fread_string();
+            pHelp.text = fp.read_string();
             if (!pHelp.text.isEmpty() && pHelp.text.charAt(0) == '.') {
                 pHelp.text = pHelp.text.substring(1);
             }
@@ -707,13 +706,13 @@ class DB {
             char letter;
             int iHash;
 
-            letter = fp.fread_letter();
+            letter = fp.read_letter();
             if (letter != '#') {
                 bug("Load_mobiles: # not found.");
                 exit(1);
             }
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (vnum == 0) {
                 break;
             }
@@ -728,48 +727,48 @@ class DB {
             pMobIndex = new MOB_INDEX_DATA();
             pMobIndex.vnum = vnum;
             pMobIndex.new_format = false;
-            pMobIndex.player_name = fp.fread_string();
-            pMobIndex.short_descr = fp.fread_string();
-            pMobIndex.long_descr = upfirst(fp.fread_string());
-            pMobIndex.description = upfirst(fp.fread_string());
+            pMobIndex.player_name = fp.read_string();
+            pMobIndex.short_descr = fp.read_string();
+            pMobIndex.long_descr = capitalize(fp.read_string());
+            pMobIndex.description = capitalize(fp.read_string());
 
 
-            pMobIndex.act = fp.fread_flag() | ACT_IS_NPC;
-            pMobIndex.affected_by = fp.fread_flag();
+            pMobIndex.act = fp.read_flag() | ACT_IS_NPC;
+            pMobIndex.affected_by = fp.read_flag();
             pMobIndex.practicer = 0;
 
             pMobIndex.affected_by = REMOVE_BIT(pMobIndex.affected_by, (C | D | E | F | G | Z | BIT_30));
 
             pMobIndex.pShop = null;
-            pMobIndex.alignment = fp.fread_number();
-            letter = fp.fread_letter();
-            pMobIndex.level = fp.fread_number();
+            pMobIndex.alignment = fp.read_number();
+            letter = fp.read_letter();
+            pMobIndex.level = fp.read_number();
             pMobIndex.mprogs = null;
             /*
              * The unused stuff is for imps who want to use the old-style
              * stats-in-files method.
              */
-            fp.fread_number();   /* Unused */
-            fp.fread_number();   /* Unused */
-            fp.fread_number();   /* Unused */
+            fp.read_number();   /* Unused */
+            fp.read_number();   /* Unused */
+            fp.read_number();   /* Unused */
             /* 'd'      */
-            fp.fread_letter();   /* Unused */
-            fp.fread_number();   /* Unused */
+            fp.read_letter();   /* Unused */
+            fp.read_number();   /* Unused */
             /* '+'      */
-            fp.fread_letter();   /* Unused */
-            fp.fread_number();   /* Unused */
-            fp.fread_number();   /* Unused */
+            fp.read_letter();   /* Unused */
+            fp.read_number();   /* Unused */
+            fp.read_number();   /* Unused */
             /* 'd'      */
-            fp.fread_letter();   /* Unused */
-            fp.fread_number();   /* Unused */
+            fp.read_letter();   /* Unused */
+            fp.read_number();   /* Unused */
             /* '+'      */
-            fp.fread_letter();   /* Unused */
-            fp.fread_number();   /* Unused */
-            pMobIndex.wealth = fp.fread_number() / 20;
+            fp.read_letter();   /* Unused */
+            fp.read_number();   /* Unused */
+            pMobIndex.wealth = fp.read_number() / 20;
             /* xp can't be used! */
-            fp.fread_number();   /* Unused */
-            pMobIndex.start_pos = fp.fread_number();   /* Unused */
-            pMobIndex.default_pos = fp.fread_number();   /* Unused */
+            fp.read_number();   /* Unused */
+            pMobIndex.start_pos = fp.read_number();   /* Unused */
+            pMobIndex.default_pos = fp.read_number();   /* Unused */
 
             if (pMobIndex.start_pos < POS_SLEEPING) {
                 pMobIndex.start_pos = POS_STANDING;
@@ -781,7 +780,7 @@ class DB {
             /*
              * Back to meaningful values.
              */
-            pMobIndex.sex = fp.fread_number();
+            pMobIndex.sex = fp.read_number();
 
             /* compute the race BS */
             var name = new StringBuilder();
@@ -823,10 +822,8 @@ class DB {
         }
     }
 
-    /**
-     * converts first letter to uppercase, does not affect other letters (capitalize() method does)
-     */
-    static String upfirst(String str) {
+    /** Converts the first letter to uppercase. */
+    static String capitalize(String str) {
         if (str == null || str.isEmpty()) {
             return str;
         }
@@ -844,13 +841,13 @@ class DB {
             int letter;
             int iHash;
 
-            letter = fp.fread_letter();
+            letter = fp.read_letter();
             if (letter != '#') {
                 bug("Load_objects: # not found.");
                 exit(1);
             }
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (vnum == 0) {
                 break;
             }
@@ -866,28 +863,28 @@ class DB {
             pObjIndex.vnum = vnum;
             pObjIndex.new_format = false;
             pObjIndex.reset_num = 0;
-            pObjIndex.name = fp.fread_string();
-            pObjIndex.short_descr = upfirst(fp.fread_string());
-            pObjIndex.description = upfirst(fp.fread_string());
+            pObjIndex.name = fp.read_string();
+            pObjIndex.short_descr = capitalize(fp.read_string());
+            pObjIndex.description = capitalize(fp.read_string());
             /* Action description */
-            fp.fread_string();
+            fp.read_string();
 
             pObjIndex.material = "";
 
-            pObjIndex.item_type = fp.fread_number();
-            pObjIndex.extra_flags = fp.fread_flag();
-            pObjIndex.wear_flags = fp.fread_flag();
-            pObjIndex.value[0] = fp.fread_number();
-            pObjIndex.value[1] = fp.fread_number();
-            pObjIndex.value[2] = fp.fread_number();
-            pObjIndex.value[3] = fp.fread_number();
+            pObjIndex.item_type = fp.read_number();
+            pObjIndex.extra_flags = fp.read_flag();
+            pObjIndex.wear_flags = fp.read_flag();
+            pObjIndex.value[0] = fp.read_number();
+            pObjIndex.value[1] = fp.read_number();
+            pObjIndex.value[2] = fp.read_number();
+            pObjIndex.value[3] = fp.read_number();
             pObjIndex.value[4] = 0;
             pObjIndex.level = 0;
             pObjIndex.condition = 100;
-            pObjIndex.weight = fp.fread_number();
-            pObjIndex.cost = fp.fread_number();   /* Unused */
+            pObjIndex.weight = fp.read_number();
+            pObjIndex.cost = fp.read_number();   /* Unused */
             /* Cost per day */
-            fp.fread_number();
+            fp.read_number();
             pObjIndex.limit = -1;
             pObjIndex.oprogs = null;
 
@@ -900,7 +897,7 @@ class DB {
             }
 
             for (; ; ) {
-                letter = fp.fread_letter();
+                letter = fp.read_letter();
                 if (letter == 'A') {
                     AFFECT_DATA paf;
 
@@ -909,8 +906,8 @@ class DB {
                     paf.type = null;
                     paf.level = 20; /* RT temp fix */
                     paf.duration = -1;
-                    paf.location = fp.fread_number();
-                    paf.modifier = fp.fread_number();
+                    paf.location = fp.read_number();
+                    paf.modifier = fp.read_number();
                     paf.bitvector = 0;
                     paf.next = pObjIndex.affected;
                     pObjIndex.affected = paf;
@@ -919,8 +916,8 @@ class DB {
                     EXTRA_DESCR_DATA ed;
 
                     ed = new EXTRA_DESCR_DATA();
-                    ed.keyword = fp.fread_string();
-                    ed.description = fp.fread_string();
+                    ed.keyword = fp.read_string();
+                    ed.description = fp.read_string();
                     ed.next = pObjIndex.extra_descr;
                     pObjIndex.extra_descr = ed;
                     top_ed++;
@@ -975,26 +972,26 @@ class DB {
             int letter;
             OBJ_INDEX_DATA temp_index;
 
-            if ((letter = fp.fread_letter()) == 'S') {
+            if ((letter = fp.read_letter()) == 'S') {
                 break;
             }
 
             if (letter == '*') {
-                fp.fread_to_eol();
+                fp.read_to_eol();
                 continue;
             }
 
             pReset = new RESET_DATA();
             pReset.command = (char) letter;
             /* if_flag */
-            fp.fread_number();
-            pReset.arg1 = fp.fread_number();
-            pReset.arg2 = fp.fread_number();
+            fp.read_number();
+            pReset.arg1 = fp.read_number();
+            pReset.arg2 = fp.read_number();
             pReset.arg3 = ((letter == 'G' || letter == 'R')
-                    ? 0 : fp.fread_number());
+                    ? 0 : fp.read_number());
             pReset.arg4 = ((letter == 'P' || letter == 'M')
-                    ? fp.fread_number() : 0);
-            fp.fread_to_eol();
+                    ? fp.read_number() : 0);
+            fp.read_to_eol();
 
             /*
              * Validate parameters.
@@ -1077,13 +1074,13 @@ class DB {
             int door;
             int iHash;
 
-            letter = fp.fread_letter();
+            letter = fp.read_letter();
             if (letter != '#') {
                 bug("Load_rooms: # not found.");
                 exit(1);
             }
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (vnum == 0) {
                 break;
             }
@@ -1103,17 +1100,17 @@ class DB {
             pRoomIndex.history = null;
             pRoomIndex.area = area_last;
             pRoomIndex.vnum = vnum;
-            pRoomIndex.name = fp.fread_string();
-            pRoomIndex.description = fp.fread_string();
+            pRoomIndex.name = fp.read_string();
+            pRoomIndex.description = fp.read_string();
             /* Area number */
-            fp.fread_number();
-            pRoomIndex.room_flags = fp.fread_flag();
+            fp.read_number();
+            pRoomIndex.room_flags = fp.read_flag();
 
             if (3000 <= vnum && vnum < 3400) {
                 pRoomIndex.room_flags = SET_BIT(pRoomIndex.room_flags, ROOM_LAW);
             }
 
-            pRoomIndex.sector_type = fp.fread_number();
+            pRoomIndex.sector_type = fp.read_number();
             if (pRoomIndex.sector_type < 0) {
                 perror("Invalid room sector_type=" + pRoomIndex.sector_type + " room vnum:" + pRoomIndex.vnum);
                 pRoomIndex.sector_type = 0;
@@ -1132,33 +1129,33 @@ class DB {
             pRoomIndex.aff_next = null;
 
             for (; ; ) {
-                letter = fp.fread_letter();
+                letter = fp.read_letter();
 
                 if (letter == 'S') {
                     break;
                 }
 
                 if (letter == 'H') /* healing room */ {
-                    pRoomIndex.heal_rate = fp.fread_number();
+                    pRoomIndex.heal_rate = fp.read_number();
                 } else if (letter == 'M') /* mana room */ {
-                    pRoomIndex.mana_rate = fp.fread_number();
+                    pRoomIndex.mana_rate = fp.read_number();
                 } else if (letter == 'D') {
                     EXIT_DATA pexit;
                     int locks;
 
-                    door = fp.fread_number();
+                    door = fp.read_number();
                     if (door < 0 || door > 5) {
                         bug("Fread_rooms: vnum %d has bad door number.", vnum);
                         exit(1);
                     }
 
                     pexit = new EXIT_DATA();
-                    pexit.description = fp.fread_string();
-                    pexit.keyword = fp.fread_string();
+                    pexit.description = fp.read_string();
+                    pexit.keyword = fp.read_string();
                     pexit.exit_info = 0;
-                    locks = fp.fread_number();
-                    pexit.key = fp.fread_number();
-                    pexit.vnum = fp.fread_number();
+                    locks = fp.read_number();
+                    pexit.key = fp.read_number();
+                    pexit.vnum = fp.read_number();
 
                     switch (locks) {
                         case 1 -> pexit.exit_info = EX_ISDOOR;
@@ -1175,8 +1172,8 @@ class DB {
                     EXTRA_DESCR_DATA ed;
 
                     ed = new EXTRA_DESCR_DATA();
-                    ed.keyword = fp.fread_string();
-                    ed.description = fp.fread_string();
+                    ed.keyword = fp.read_string();
+                    ed.description = fp.read_string();
                     ed.next = pRoomIndex.extra_descr;
                     pRoomIndex.extra_descr = ed;
                     top_ed++;
@@ -1186,7 +1183,7 @@ class DB {
                         exit(1);
                     }
 
-                    pRoomIndex.owner = fp.fread_string();
+                    pRoomIndex.owner = fp.read_string();
                 } else {
                     bug("Load_rooms: vnum %d has flag not 'DES'.", vnum);
                     exit(1);
@@ -1212,18 +1209,18 @@ class DB {
             int iTrade;
 
             pShop = new SHOP_DATA();
-            pShop.keeper = fp.fread_number();
+            pShop.keeper = fp.read_number();
             if (pShop.keeper == 0) {
                 break;
             }
             for (iTrade = 0; iTrade < MAX_TRADE; iTrade++) {
-                pShop.buy_type[iTrade] = fp.fread_number();
+                pShop.buy_type[iTrade] = fp.read_number();
             }
-            pShop.profit_buy = fp.fread_number();
-            pShop.profit_sell = fp.fread_number();
-            pShop.open_hour = fp.fread_number();
-            pShop.close_hour = fp.fread_number();
-            fp.fread_to_eol();
+            pShop.profit_buy = fp.read_number();
+            pShop.profit_sell = fp.read_number();
+            pShop.open_hour = fp.read_number();
+            pShop.close_hour = fp.read_number();
+            fp.read_to_eol();
             pMobIndex = get_mob_index(pShop.keeper);
             pMobIndex.pShop = pShop;
 
@@ -1249,7 +1246,7 @@ class DB {
             MOB_INDEX_DATA pMobIndex;
             char letter;
 
-            switch (letter = fp.fread_letter()) {
+            switch (letter = fp.read_letter()) {
                 default:
                     bug("Load_specials: letter '%c' not *MS.", letter);
                     exit(1);
@@ -1261,8 +1258,8 @@ class DB {
                     break;
 
                 case 'M':
-                    pMobIndex = get_mob_index(fp.fread_number());
-                    pMobIndex.spec_fun = spec_lookup(fp.fread_word());
+                    pMobIndex = get_mob_index(fp.read_number());
+                    pMobIndex.spec_fun = spec_lookup(fp.read_word());
                     if (pMobIndex.spec_fun == null) {
                         bug("Load_specials: 'M': vnum %d.", pMobIndex.vnum);
                         exit(1);
@@ -1270,7 +1267,7 @@ class DB {
                     break;
             }
 
-            fp.fread_to_eol();
+            fp.read_to_eol();
         }
     }
 
@@ -2268,7 +2265,7 @@ class DB {
      * Clear a new character.
      */
 
-    static void clear_char(CHAR_DATA ch) {
+    static void clear_char(@NotNull CHAR_DATA ch) {
         int i;
 
         ch.name = "";
@@ -2337,7 +2334,7 @@ class DB {
      * Translates mob virtual number to its obj index struct.
      * Hash table lookupRace.
      */
-
+    @Nullable
     static OBJ_INDEX_DATA get_obj_index(int vnum) {
         OBJ_INDEX_DATA pObjIndex;
         for (pObjIndex = obj_index_hash[vnum % MAX_KEY_HASH];
@@ -2358,7 +2355,7 @@ class DB {
      * Translates mob virtual number to its room index struct.
      * Hash table lookupRace.
      */
-
+    @Nullable
     static ROOM_INDEX_DATA get_room_index(int vnum) {
         ROOM_INDEX_DATA pRoomIndex;
 
@@ -2379,52 +2376,47 @@ class DB {
     }
 
 
-    static void do_areas(CHAR_DATA ch, String argument) {
-        AREA_DATA pArea1;
-        AREA_DATA pArea2;
-        int iArea;
-        int iAreaHalf;
-
+    static void do_areas(@NotNull CHAR_DATA ch, String argument) {
         if (argument != null && !argument.isEmpty()) {
             send_to_char("No argument is used with this command.\n", ch);
             return;
         }
 
-        iAreaHalf = (top_area + 1) / 2;
-        pArea1 = area_first;
-        pArea2 = area_first;
-        for (iArea = 0; iArea < iAreaHalf; iArea++) {
-            pArea2 = pArea2.next;
+        AREA_DATA area1 = area_first;
+        AREA_DATA area2 = area_first;
+        int areaIndex;
+        int halfAreasIndex = (top_area + 1) / 2;
+        for (areaIndex = 0; areaIndex < halfAreasIndex; areaIndex++) {
+            area2 = area2.next;
         }
         var bufpage = new StringBuilder(1024);
         bufpage.append("Current areas of Nightworks MUD: \n");
         var f = new Formatter(bufpage);
-        for (iArea = 0; iArea < iAreaHalf; iArea++) {
-            var buf1 = formatAreaDetails(ch, pArea1);
-            var buf2 = (pArea2 != null) ? formatAreaDetails(ch, pArea2) : "\n";
+        for (areaIndex = 0; areaIndex < halfAreasIndex; areaIndex++) {
+            var buf1 = formatAreaDetails(area1);
+            var buf2 = area2 != null ? formatAreaDetails(area2) : "\n";
             if (IS_SET(ch.act, PLR_COLOR)) {
                 f.format("%-69s %s\n", buf1, buf2);
             } else {
                 f.format("%-39s %s\n", buf1, buf2);
             }
-            assert (pArea1 != null);
-            pArea1 = pArea1.next;
-            if (pArea2 != null) {
-                pArea2 = pArea2.next;
+            area1 = area1.next;
+            if (area2 != null) {
+                area2 = area2.next;
             }
         }
         bufpage.append("\n");
         page_to_char(bufpage, ch);
     }
 
-    private static String formatAreaDetails(CHAR_DATA ch, AREA_DATA pArea) {
+    private static String formatAreaDetails(@NotNull AREA_DATA pArea) {
         var f = new Formatter();
         f.format("{W%2d %3d{x} {b%s {c%s{x", pArea.low_range, pArea.high_range, pArea.writer, pArea.credits);
         return f.toString();
     }
 
 
-    static void do_memory(CHAR_DATA ch, String argument) {
+    static void do_memory(@NotNull CHAR_DATA ch, String argument) {
         var buf = new StringBuilder(1024);
         var f = new Formatter(buf);
         f.format("Affects %5d\n", top_affect);
@@ -2443,7 +2435,7 @@ class DB {
 
     }
 
-    static void do_dump(CHAR_DATA ch, String argument) {
+    static void do_dump(@NotNull CHAR_DATA ch, String argument) {
         /* open file */
         try {
             var fp = new FileWriter("mem.dmp", false);
@@ -2553,7 +2545,7 @@ class DB {
                 fp.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
         }
     }
 
@@ -2598,9 +2590,7 @@ class DB {
 
     static int number_percent() {
         int percent;
-
         while ((percent = number_mm() & (128 - 1)) > 99) ;
-
         return 1 + percent;
     }
 
@@ -2663,7 +2653,7 @@ class DB {
      * Append a string to a file.
      */
 
-    static void append_file(CHAR_DATA ch, String file, String str) {
+    static void append_file(@NotNull CHAR_DATA ch, String file, String str) {
         if (IS_NPC(ch) || str == null) {
             return;
         }
@@ -2729,11 +2719,11 @@ class DB {
         char ch;
         OBJ_INDEX_DATA pIndex;
 
-        for (ch = fp.fread_letter(); ch != 'S'; ch = fp.fread_letter()) {
+        for (ch = fp.read_letter(); ch != 'S'; ch = fp.read_letter()) {
             switch (ch) {
                 case 'O' -> {
-                    vnum = fp.fread_number();
-                    limit = fp.fread_number();
+                    vnum = fp.read_number();
+                    limit = fp.read_number();
                     if ((pIndex = get_obj_index(vnum)) == null) {
                         bug("Load_olimits: bad vnum %d", vnum);
                         exit(1);
@@ -2741,7 +2731,7 @@ class DB {
                         pIndex.limit = limit;
                     }
                 }
-                case '*' -> fp.fread_to_eol();
+                case '*' -> fp.read_to_eol();
                 default -> {
                     bug("Load_olimits: bad command '%c'", ch);
                     exit(1);
@@ -2774,30 +2764,31 @@ class DB {
                 var fp = new DikuTextFile(file);
                 var fReadLevel = false;
                 var tplayed = 0;
-                for (int letter = fp.fread_letter(); !fp.feof(); letter = fp.fread_letter()) {
+                for (int letter = fp.read_letter(); !fp.is_eof(); letter = fp.read_letter()) {
                     if (letter == 'L') {
                         if (!fReadLevel) {
-                            var word = fp.fread_word();
+                            var word = fp.read_word();
 
                             if (!str_cmp(word, "evl") || !str_cmp(word, "ev") || !str_cmp(word, "evel")) {
-                                i = fp.fread_number();
+                                i = fp.read_number();
                                 fReadLevel = true;
                                 total_levels += UMAX(0, i - 5);
                                 log_string("[" + file.getName() + "]'s file +:" + UMAX(0, i - 5));
                             }
                         }
                     } else if (letter == 'P') {
-                        var word = fp.fread_word();
+                        var word = fp.read_word();
 
                         if (!str_cmp(word, "layLog")) {
                             int d, t, d_start, d_stop;
 
-                            fp.fread_number();    /* read the version */
+                            fp.read_number();    /* read the version */
                             while (true) {
-                                if ((d = fp.fread_number()) < 0) {
+                                d = fp.read_number();
+                                if (d < 0) {
                                     break;
                                 }
-                                t = fp.fread_number();
+                                t = fp.read_number();
 
                                 d_start = get_played_day(nw_config.max_time_log - 1);
                                 d_stop = get_played_day(0);
@@ -2809,23 +2800,24 @@ class DB {
 
                         }
                     } else if (letter == '#') {
-                        var word = fp.fread_word();
+                        var word = fp.read_word();
                         if (!str_cmp(word, "O") || !str_cmp(word, "OBJECT")) {
                             if (tplayed < nw_config.min_time_limit) {
                                 log_string("Discarding the player " + file.getName() + "'s limited equipments.");
                                 break;
                             }
 
-                            fp.fread_word();
+                            fp.read_word();
                             fBootDb = false;
-                            var vnum = fp.fread_number();
-                            if (get_obj_index(vnum) != null) {
-                                get_obj_index(vnum).count++;
+                            var vnum = fp.read_number();
+                            OBJ_INDEX_DATA obj = get_obj_index(vnum);
+                            if (obj != null) {
+                                obj.count++;
                             }
                             fBootDb = true;
                         }
                     } else {
-                        fp.fread_to_eol();
+                        fp.read_to_eol();
                     }
                 }
             } catch (IOException e) {
@@ -2854,7 +2846,7 @@ class DB {
     static void load_practicer(DikuTextFile fp) {
         for (; ; ) {
             MOB_INDEX_DATA pMobIndex;
-            int letter = fp.fread_letter();
+            int letter = fp.read_letter();
             switch (letter) {
                 default:
                     bug("Load_specials: letter '%c' not *MS.", letter);
@@ -2867,24 +2859,24 @@ class DB {
                     break;
 
                 case 'M':
-                    pMobIndex = get_mob_index(fp.fread_number());
-                    pMobIndex.practicer = SET_BIT(pMobIndex.practicer, prac_lookup(fp.fread_word()));
+                    pMobIndex = get_mob_index(fp.read_number());
+                    pMobIndex.practicer = SET_BIT(pMobIndex.practicer, prac_lookup(fp.read_word()));
                     if (pMobIndex.practicer == 0) {
                         bug("Load_practicers: 'M': vnum %d.", pMobIndex.vnum);
                         exit(1);
                     }
                     break;
             }
-            fp.fread_to_eol();
+            fp.read_to_eol();
         }
     }
 
     static void load_resetmsg(DikuTextFile fp) {
-        Serarea.resetmsg = fp.fread_string();
+        Serarea.resetmsg = fp.read_string();
     }
 
     static void load_aflag(DikuTextFile fp) {
-        Serarea.area_flag = fp.fread_flag();
+        Serarea.area_flag = fp.read_flag();
     }
 
     /*socials handling ported from SOG codebase, author: fjoe */
@@ -2894,7 +2886,7 @@ class DB {
             fp = new DikuTextFile("etc" + "/" + "socials.conf");
             var social = new social_type();
             for (; ; ) {
-                var word = fp.fread_word();
+                var word = fp.read_word();
                 if (word.isEmpty()) {
                     break;
                 }
@@ -2940,7 +2932,7 @@ class DB {
             }
         } catch (IOException e) {
             perror("Error loading socials:" + e.getMessage());
-            e.printStackTrace();
+            logError(e);
         }
     }
 
@@ -2956,13 +2948,13 @@ class DB {
             char letter;
             int iHash;
 
-            letter = fp.fread_letter();
+            letter = fp.read_letter();
             if (letter != '#') {
                 bug("Load_mobiles: # not found.");
                 exit(1);
             }
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (vnum == 0) {
                 break;
             }
@@ -2978,87 +2970,87 @@ class DB {
             pMobIndex.vnum = vnum;
             pMobIndex.new_format = true;
             newmobs++;
-            pMobIndex.player_name = fp.fread_string();
-            pMobIndex.short_descr = fp.fread_string();
-            pMobIndex.long_descr = upfirst(fp.fread_string());
-            pMobIndex.description = upfirst(fp.fread_string());
+            pMobIndex.player_name = fp.read_string();
+            pMobIndex.short_descr = fp.read_string();
+            pMobIndex.long_descr = capitalize(fp.read_string());
+            pMobIndex.description = capitalize(fp.read_string());
 
-            pMobIndex.race = Race.lookupRace(fp.fread_string());
+            pMobIndex.race = Race.lookupRace(fp.read_string());
 
 
-            pMobIndex.act = fp.fread_flag() | ACT_IS_NPC | pMobIndex.race.act;
+            pMobIndex.act = fp.read_flag() | ACT_IS_NPC | pMobIndex.race.act;
 
-            pMobIndex.affected_by = fp.fread_flag() | pMobIndex.race.aff;
+            pMobIndex.affected_by = fp.read_flag() | pMobIndex.race.aff;
             pMobIndex.practicer = 0;
             pMobIndex.affected_by = REMOVE_BIT(pMobIndex.affected_by, (C | D | E | F | G | Z | BIT_31));
 
             pMobIndex.pShop = null;
-            pMobIndex.alignment = fp.fread_number();
-            pMobIndex.group = fp.fread_number();
+            pMobIndex.alignment = fp.read_number();
+            pMobIndex.group = fp.read_number();
 
-            pMobIndex.level = fp.fread_number();
-            pMobIndex.hitroll = fp.fread_number();
+            pMobIndex.level = fp.read_number();
+            pMobIndex.hitroll = fp.read_number();
 
             /* read hit dice */
-            pMobIndex.hit[DICE_NUMBER] = fp.fread_number();
+            pMobIndex.hit[DICE_NUMBER] = fp.read_number();
             /* 'd'          */
-            fp.fread_letter();
-            pMobIndex.hit[DICE_TYPE] = fp.fread_number();
+            fp.read_letter();
+            pMobIndex.hit[DICE_TYPE] = fp.read_number();
             /* '+'          */
-            fp.fread_letter();
-            pMobIndex.hit[DICE_BONUS] = fp.fread_number();
+            fp.read_letter();
+            pMobIndex.hit[DICE_BONUS] = fp.read_number();
 
             /* read mana dice */
-            pMobIndex.mana[DICE_NUMBER] = fp.fread_number();
-            fp.fread_letter();
-            pMobIndex.mana[DICE_TYPE] = fp.fread_number();
-            fp.fread_letter();
-            pMobIndex.mana[DICE_BONUS] = fp.fread_number();
+            pMobIndex.mana[DICE_NUMBER] = fp.read_number();
+            fp.read_letter();
+            pMobIndex.mana[DICE_TYPE] = fp.read_number();
+            fp.read_letter();
+            pMobIndex.mana[DICE_BONUS] = fp.read_number();
 
             /* read damage dice */
-            pMobIndex.damage[DICE_NUMBER] = fp.fread_number();
-            fp.fread_letter();
-            pMobIndex.damage[DICE_TYPE] = fp.fread_number();
-            fp.fread_letter();
-            pMobIndex.damage[DICE_BONUS] = fp.fread_number();
-            pMobIndex.dam_type = attack_lookup(fp.fread_word());
+            pMobIndex.damage[DICE_NUMBER] = fp.read_number();
+            fp.read_letter();
+            pMobIndex.damage[DICE_TYPE] = fp.read_number();
+            fp.read_letter();
+            pMobIndex.damage[DICE_BONUS] = fp.read_number();
+            pMobIndex.dam_type = attack_lookup(fp.read_word());
 
             /* read armor class */
-            pMobIndex.ac[AC_PIERCE] = (fp.fread_number() * 10);
-            pMobIndex.ac[AC_BASH] = (fp.fread_number() * 10);
-            pMobIndex.ac[AC_SLASH] = (fp.fread_number() * 10);
-            pMobIndex.ac[AC_EXOTIC] = (fp.fread_number() * 10);
+            pMobIndex.ac[AC_PIERCE] = (fp.read_number() * 10);
+            pMobIndex.ac[AC_BASH] = (fp.read_number() * 10);
+            pMobIndex.ac[AC_SLASH] = (fp.read_number() * 10);
+            pMobIndex.ac[AC_EXOTIC] = (fp.read_number() * 10);
 
             /* read flags and add in data from the race table */
-            pMobIndex.off_flags = fp.fread_flag() | pMobIndex.race.off;
-            pMobIndex.imm_flags = fp.fread_flag() | pMobIndex.race.imm;
-            pMobIndex.res_flags = fp.fread_flag() | pMobIndex.race.res;
-            pMobIndex.vuln_flags = fp.fread_flag() | pMobIndex.race.vuln;
+            pMobIndex.off_flags = fp.read_flag() | pMobIndex.race.off;
+            pMobIndex.imm_flags = fp.read_flag() | pMobIndex.race.imm;
+            pMobIndex.res_flags = fp.read_flag() | pMobIndex.race.res;
+            pMobIndex.vuln_flags = fp.read_flag() | pMobIndex.race.vuln;
 
             /* vital statistics */
-            pMobIndex.start_pos = position_lookup(fp.fread_word());
-            pMobIndex.default_pos = position_lookup(fp.fread_word());
-            pMobIndex.sex = sex_lookup(fp.fread_word());
+            pMobIndex.start_pos = position_lookup(fp.read_word());
+            pMobIndex.default_pos = position_lookup(fp.read_word());
+            pMobIndex.sex = sex_lookup(fp.read_word());
 
-            pMobIndex.wealth = fp.fread_number();
+            pMobIndex.wealth = fp.read_number();
 
-            pMobIndex.form = fp.fread_flag() | pMobIndex.race.form;
-            pMobIndex.parts = fp.fread_flag() | pMobIndex.race.parts;
+            pMobIndex.form = fp.read_flag() | pMobIndex.race.form;
+            pMobIndex.parts = fp.read_flag() | pMobIndex.race.parts;
             /* size */
-            pMobIndex.size = size_lookup(fp.fread_word());
-            pMobIndex.material = fp.fread_word();
+            pMobIndex.size = size_lookup(fp.read_word());
+            pMobIndex.material = fp.read_word();
             pMobIndex.mprogs = null;
             pMobIndex.progtypes = 0;
 
             for (; ; ) {
-                letter = fp.fread_letter();
+                letter = fp.read_letter();
 
                 if (letter == 'F') {
 
                     int vector;
 
-                    var word = fp.fread_word();
-                    vector = fp.fread_flag();
+                    var word = fp.read_word();
+                    vector = fp.read_flag();
 
                     if (!str_prefix(word, "act")) {
                         pMobIndex.act = REMOVE_BIT(pMobIndex.act, vector);
@@ -3107,13 +3099,13 @@ class DB {
             char letter;
             int iHash;
 
-            letter = fp.fread_letter();
+            letter = fp.read_letter();
             if (letter != '#') {
                 bug("Load_objects: # not found.");
                 exit(1);
             }
 
-            vnum = fp.fread_number();
+            vnum = fp.read_number();
             if (vnum == 0) {
                 break;
             }
@@ -3130,67 +3122,67 @@ class DB {
             pObjIndex.new_format = true;
             pObjIndex.reset_num = 0;
             newobjs++;
-            pObjIndex.name = fp.fread_string();
-            pObjIndex.short_descr = fp.fread_string();
-            pObjIndex.description = fp.fread_string();
-            pObjIndex.material = fp.fread_string();
+            pObjIndex.name = fp.read_string();
+            pObjIndex.short_descr = fp.read_string();
+            pObjIndex.description = fp.read_string();
+            pObjIndex.material = fp.read_string();
 
-            pObjIndex.item_type = item_lookup(fp.fread_word());
-            pObjIndex.extra_flags = fp.fread_flag();
-            pObjIndex.wear_flags = fp.fread_flag();
+            pObjIndex.item_type = item_lookup(fp.read_word());
+            pObjIndex.extra_flags = fp.read_flag();
+            pObjIndex.wear_flags = fp.read_flag();
             switch (pObjIndex.item_type) {
                 case ITEM_WEAPON -> {
-                    pObjIndex.value[0] = weapon_type(fp.fread_word());
-                    pObjIndex.value[1] = fp.fread_number();
-                    pObjIndex.value[2] = fp.fread_number();
-                    pObjIndex.value[3] = attack_lookup(fp.fread_word());
-                    pObjIndex.value[4] = fp.fread_flag();
+                    pObjIndex.value[0] = weapon_type(fp.read_word());
+                    pObjIndex.value[1] = fp.read_number();
+                    pObjIndex.value[2] = fp.read_number();
+                    pObjIndex.value[3] = attack_lookup(fp.read_word());
+                    pObjIndex.value[4] = fp.read_flag();
                 }
                 case ITEM_CONTAINER -> {
-                    pObjIndex.value[0] = fp.fread_number();
-                    pObjIndex.value[1] = fp.fread_flag();
-                    pObjIndex.value[2] = fp.fread_number();
-                    pObjIndex.value[3] = fp.fread_number();
-                    pObjIndex.value[4] = fp.fread_number();
+                    pObjIndex.value[0] = fp.read_number();
+                    pObjIndex.value[1] = fp.read_flag();
+                    pObjIndex.value[2] = fp.read_number();
+                    pObjIndex.value[3] = fp.read_number();
+                    pObjIndex.value[4] = fp.read_number();
                 }
                 case ITEM_DRINK_CON, ITEM_FOUNTAIN -> {
-                    pObjIndex.value[0] = fp.fread_number();
-                    pObjIndex.value[1] = fp.fread_number();
-                    pObjIndex.value[2] = liq_lookup(fp.fread_word());
-                    pObjIndex.value[3] = fp.fread_number();
-                    pObjIndex.value[4] = fp.fread_number();
+                    pObjIndex.value[0] = fp.read_number();
+                    pObjIndex.value[1] = fp.read_number();
+                    pObjIndex.value[2] = liq_lookup(fp.read_word());
+                    pObjIndex.value[3] = fp.read_number();
+                    pObjIndex.value[4] = fp.read_number();
                 }
                 case ITEM_WAND, ITEM_STAFF -> {
-                    pObjIndex.value[0] = fp.fread_number();
-                    pObjIndex.value[1] = fp.fread_number();
-                    pObjIndex.value[2] = fp.fread_number();
-                    pObjIndex.value[3] = skill_num_lookup(fp.fread_word());
-                    pObjIndex.value[4] = fp.fread_number();
+                    pObjIndex.value[0] = fp.read_number();
+                    pObjIndex.value[1] = fp.read_number();
+                    pObjIndex.value[2] = fp.read_number();
+                    pObjIndex.value[3] = skill_num_lookup(fp.read_word());
+                    pObjIndex.value[4] = fp.read_number();
                 }
                 case ITEM_POTION, ITEM_PILL, ITEM_SCROLL -> {
-                    pObjIndex.value[0] = fp.fread_number();
-                    pObjIndex.value[1] = skill_num_lookup(fp.fread_word());
-                    pObjIndex.value[2] = skill_num_lookup(fp.fread_word());
-                    pObjIndex.value[3] = skill_num_lookup(fp.fread_word());
-                    pObjIndex.value[4] = skill_num_lookup(fp.fread_word());
+                    pObjIndex.value[0] = fp.read_number();
+                    pObjIndex.value[1] = skill_num_lookup(fp.read_word());
+                    pObjIndex.value[2] = skill_num_lookup(fp.read_word());
+                    pObjIndex.value[3] = skill_num_lookup(fp.read_word());
+                    pObjIndex.value[4] = skill_num_lookup(fp.read_word());
                 }
                 default -> {
-                    pObjIndex.value[0] = fp.fread_flag();
-                    pObjIndex.value[1] = fp.fread_flag();
-                    pObjIndex.value[2] = fp.fread_flag();
-                    pObjIndex.value[3] = fp.fread_flag();
-                    pObjIndex.value[4] = fp.fread_flag();
+                    pObjIndex.value[0] = fp.read_flag();
+                    pObjIndex.value[1] = fp.read_flag();
+                    pObjIndex.value[2] = fp.read_flag();
+                    pObjIndex.value[3] = fp.read_flag();
+                    pObjIndex.value[4] = fp.read_flag();
                 }
             }
-            pObjIndex.level = fp.fread_number();
-            pObjIndex.weight = fp.fread_number();
-            pObjIndex.cost = fp.fread_number();
+            pObjIndex.level = fp.read_number();
+            pObjIndex.weight = fp.read_number();
+            pObjIndex.cost = fp.read_number();
             pObjIndex.progtypes = 0;
             pObjIndex.oprogs = null;
             pObjIndex.limit = -1;
 
             /* condition */
-            letter = fp.fread_letter();
+            letter = fp.read_letter();
             switch (letter) {
                 case ('P') -> pObjIndex.condition = 100;
                 case ('G') -> pObjIndex.condition = 90;
@@ -3204,7 +3196,7 @@ class DB {
 
             for (; ; ) {
 
-                letter = fp.fread_letter();
+                letter = fp.read_letter();
 
                 if (letter == 'A') {
                     var paf = new AFFECT_DATA();
@@ -3212,15 +3204,15 @@ class DB {
                     paf.type = null;
                     paf.level = pObjIndex.level;
                     paf.duration = -1;
-                    paf.location = fp.fread_number();
-                    paf.modifier = fp.fread_number();
+                    paf.location = fp.read_number();
+                    paf.modifier = fp.read_number();
                     paf.bitvector = 0;
                     paf.next = pObjIndex.affected;
                     pObjIndex.affected = paf;
                     top_affect++;
                 } else if (letter == 'F') {
                     var paf = new AFFECT_DATA();
-                    letter = fp.fread_letter();
+                    letter = fp.read_letter();
                     switch (letter) {
                         case 'A' -> paf.where = TO_AFFECTS;
                         case 'I' -> paf.where = TO_IMMUNE;
@@ -3235,16 +3227,16 @@ class DB {
                     paf.type = null;
                     paf.level = pObjIndex.level;
                     paf.duration = -1;
-                    paf.location = fp.fread_number();
-                    paf.modifier = fp.fread_number();
-                    paf.bitvector = fp.fread_flag();
+                    paf.location = fp.read_number();
+                    paf.modifier = fp.read_number();
+                    paf.bitvector = fp.read_flag();
                     paf.next = pObjIndex.affected;
                     pObjIndex.affected = paf;
                     top_affect++;
                 } else if (letter == 'E') {
                     var ed = new EXTRA_DESCR_DATA();
-                    ed.keyword = fp.fread_string();
-                    ed.description = fp.fread_string();
+                    ed.keyword = fp.read_string();
+                    ed.description = fp.read_string();
                     ed.next = pObjIndex.extra_descr;
                     pObjIndex.extra_descr = ed;
                     top_ed++;
@@ -3273,7 +3265,7 @@ class DB {
             char letter;
 
 
-            switch (letter = fp.fread_letter()) {
+            switch (letter = fp.read_letter()) {
                 default:
                     bug("Load_omprogs: letter '%c' not *IMS.", letter);
                     exit(1);
@@ -3285,29 +3277,29 @@ class DB {
                     break;
 
                 case 'O':
-                    pObjIndex = get_obj_index(fp.fread_number());
+                    pObjIndex = get_obj_index(fp.read_number());
                     if (pObjIndex.oprogs == null) {
                         pObjIndex.oprogs = new OPROG_DATA();
                     }
 
-                    progtype = fp.fread_word();
-                    progname = fp.fread_word();
+                    progtype = fp.read_word();
+                    progname = fp.read_word();
                     oprog_set(pObjIndex, progtype, progname);
                     break;
 
                 case 'M':
-                    pMobIndex = get_mob_index(fp.fread_number());
+                    pMobIndex = get_mob_index(fp.read_number());
                     if (pMobIndex.mprogs == null) {
                         pMobIndex.mprogs = new MPROG_DATA();
                     }
 
-                    progtype = fp.fread_word();
-                    progname = fp.fread_word();
+                    progtype = fp.read_word();
+                    progname = fp.read_word();
                     mprog_set(pMobIndex, progtype, progname);
                     break;
             }
 
-            fp.fread_to_eol();
+            fp.read_to_eol();
         }
     }
 

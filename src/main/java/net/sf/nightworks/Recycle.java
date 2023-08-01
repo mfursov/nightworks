@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import static net.sf.nightworks.DB.mobile_count;
 import static net.sf.nightworks.Handler.affect_remove;
 import static net.sf.nightworks.Handler.extract_obj_nocount;
@@ -55,24 +57,20 @@ class Recycle {
     }
 
 
-    static void free_char(CHAR_DATA ch) {
-        OBJ_DATA obj;
-        OBJ_DATA obj_next;
-        AFFECT_DATA paf;
-        AFFECT_DATA paf_next;
-
-
+    static void free_char(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) {
             mobile_count--;
         }
 
         ch.extracted = true;
-        for (obj = ch.carrying; obj != null; obj = obj_next) {
+        OBJ_DATA obj_next;
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj_next) {
             obj_next = obj.next_content;
             extract_obj_nocount(obj);
         }
 
-        for (paf = ch.affected; paf != null; paf = paf_next) {
+        AFFECT_DATA paf_next;
+        for (AFFECT_DATA paf = ch.affected; paf != null; paf = paf_next) {
             paf_next = paf.next;
             affect_remove(ch, paf);
         }

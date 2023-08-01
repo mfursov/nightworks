@@ -1,190 +1,28 @@
 package net.sf.nightworks;
 
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.lang.reflect.Method;
 
-import static net.sf.nightworks.ActComm.cabal_area_check;
-import static net.sf.nightworks.ActComm.do_say;
-import static net.sf.nightworks.ActComm.do_yell;
+import static net.sf.nightworks.ActComm.*;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.dice;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.number_bits;
-import static net.sf.nightworks.DB.number_percent;
+import static net.sf.nightworks.DB.*;
 import static net.sf.nightworks.Effects.fire_effect;
-import static net.sf.nightworks.Fight.damage;
-import static net.sf.nightworks.Fight.one_hit;
-import static net.sf.nightworks.Fight.raw_kill_org;
-import static net.sf.nightworks.Handler.affect_remove;
-import static net.sf.nightworks.Handler.affect_strip;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_hold_char;
-import static net.sf.nightworks.Handler.get_shield_char;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_wield_char;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_equiped_char;
-import static net.sf.nightworks.Handler.is_wielded_char;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_from_room;
-import static net.sf.nightworks.Handler.obj_to_obj;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.unequip_char;
-import static net.sf.nightworks.Magic.obj_cast_spell;
-import static net.sf.nightworks.Magic.spell_bluefire;
-import static net.sf.nightworks.Magic.spell_cure_disease;
-import static net.sf.nightworks.Magic.spell_cure_poison;
-import static net.sf.nightworks.Magic.spell_curse;
-import static net.sf.nightworks.Magic.spell_dispel_evil;
-import static net.sf.nightworks.Magic.spell_dispel_good;
-import static net.sf.nightworks.Magic.spell_holy_word;
-import static net.sf.nightworks.Magic.spell_lightning_bolt;
-import static net.sf.nightworks.Magic.spell_poison;
-import static net.sf.nightworks.Magic.spell_remove_curse;
+import static net.sf.nightworks.Fight.*;
+import static net.sf.nightworks.Handler.*;
+import static net.sf.nightworks.Magic.*;
 import static net.sf.nightworks.Magic2.spell_scream;
 import static net.sf.nightworks.Magic2.spell_web;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_BERSERK;
-import static net.sf.nightworks.Nightworks.AFF_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_FLYING;
-import static net.sf.nightworks.Nightworks.AFF_HASTE;
-import static net.sf.nightworks.Nightworks.AFF_PLAGUE;
-import static net.sf.nightworks.Nightworks.AFF_POISON;
-import static net.sf.nightworks.Nightworks.APPLY_AC;
-import static net.sf.nightworks.Nightworks.APPLY_DAMROLL;
-import static net.sf.nightworks.Nightworks.APPLY_DEX;
-import static net.sf.nightworks.Nightworks.APPLY_HITROLL;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.APPLY_STR;
-import static net.sf.nightworks.Nightworks.CABAL_BATTLE;
-import static net.sf.nightworks.Nightworks.CABAL_CHAOS;
-import static net.sf.nightworks.Nightworks.CABAL_HUNTER;
-import static net.sf.nightworks.Nightworks.CABAL_INVADER;
-import static net.sf.nightworks.Nightworks.CABAL_KNIGHT;
-import static net.sf.nightworks.Nightworks.CABAL_LIONS;
-import static net.sf.nightworks.Nightworks.CABAL_RULER;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.DAM_FIRE;
-import static net.sf.nightworks.Nightworks.DAM_HOLY;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.MAX_CABAL;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_BATTLE_THRONE;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_CHAOS_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_HUNTER_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_INVADER_SKULL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_KNIGHT_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_LIONS_ALTAR;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_RULER_STAND;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_SHALAFI_ALTAR;
-import static net.sf.nightworks.Nightworks.OPROG_AREA;
-import static net.sf.nightworks.Nightworks.OPROG_DEATH;
-import static net.sf.nightworks.Nightworks.OPROG_DROP;
-import static net.sf.nightworks.Nightworks.OPROG_ENTRY;
-import static net.sf.nightworks.Nightworks.OPROG_FIGHT;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_AREA;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_DEATH;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_DROP;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_ENTRY;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_FIGHT;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_GET;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_GIVE;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_GREET;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_REMOVE;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_SAC;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_SPEECH;
-import static net.sf.nightworks.Nightworks.OPROG_FUN_WEAR;
-import static net.sf.nightworks.Nightworks.OPROG_GET;
-import static net.sf.nightworks.Nightworks.OPROG_GIVE;
-import static net.sf.nightworks.Nightworks.OPROG_GREET;
-import static net.sf.nightworks.Nightworks.OPROG_REMOVE;
-import static net.sf.nightworks.Nightworks.OPROG_SAC;
-import static net.sf.nightworks.Nightworks.OPROG_SPEECH;
-import static net.sf.nightworks.Nightworks.OPROG_WEAR;
-import static net.sf.nightworks.Nightworks.POS_DEAD;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.RES_COLD;
-import static net.sf.nightworks.Nightworks.RES_FIRE;
-import static net.sf.nightworks.Nightworks.SECT_FIELD;
-import static net.sf.nightworks.Nightworks.SECT_FOREST;
-import static net.sf.nightworks.Nightworks.SECT_HILLS;
-import static net.sf.nightworks.Nightworks.SECT_MOUNTAIN;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.TARGET_CHAR;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_RESIST;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_KATANA;
-import static net.sf.nightworks.Nightworks.WEAR_ARMS;
-import static net.sf.nightworks.Nightworks.WEAR_FINGER;
-import static net.sf.nightworks.Nightworks.WEAR_HANDS;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.exit;
-import static net.sf.nightworks.Skill.gsn_acid_blast;
-import static net.sf.nightworks.Skill.gsn_berserk;
-import static net.sf.nightworks.Skill.gsn_blackguard;
-import static net.sf.nightworks.Skill.gsn_bless;
-import static net.sf.nightworks.Skill.gsn_blindness;
-import static net.sf.nightworks.Skill.gsn_burning_hands;
-import static net.sf.nightworks.Skill.gsn_confuse;
-import static net.sf.nightworks.Skill.gsn_cure_critical;
-import static net.sf.nightworks.Skill.gsn_cure_light;
-import static net.sf.nightworks.Skill.gsn_cure_serious;
-import static net.sf.nightworks.Skill.gsn_curse;
-import static net.sf.nightworks.Skill.gsn_demonfire;
-import static net.sf.nightworks.Skill.gsn_dispel_evil;
-import static net.sf.nightworks.Skill.gsn_dispel_good;
-import static net.sf.nightworks.Skill.gsn_dragon_breath;
-import static net.sf.nightworks.Skill.gsn_dragon_strength;
-import static net.sf.nightworks.Skill.gsn_faerie_fire;
-import static net.sf.nightworks.Skill.gsn_fire_breath;
-import static net.sf.nightworks.Skill.gsn_fire_shield;
-import static net.sf.nightworks.Skill.gsn_fly;
-import static net.sf.nightworks.Skill.gsn_garble;
-import static net.sf.nightworks.Skill.gsn_giant_strength;
-import static net.sf.nightworks.Skill.gsn_haste;
-import static net.sf.nightworks.Skill.gsn_headguard;
-import static net.sf.nightworks.Skill.gsn_kassandra;
-import static net.sf.nightworks.Skill.gsn_lightning_bolt;
-import static net.sf.nightworks.Skill.gsn_lightning_breath;
-import static net.sf.nightworks.Skill.gsn_matandra;
-import static net.sf.nightworks.Skill.gsn_mirror;
-import static net.sf.nightworks.Skill.gsn_neckguard;
-import static net.sf.nightworks.Skill.gsn_plague;
-import static net.sf.nightworks.Skill.gsn_poison;
-import static net.sf.nightworks.Skill.gsn_ranger_staff;
-import static net.sf.nightworks.Skill.gsn_scream;
-import static net.sf.nightworks.Skill.gsn_sebat;
-import static net.sf.nightworks.Skill.gsn_shield;
-import static net.sf.nightworks.Skill.gsn_slow;
-import static net.sf.nightworks.Skill.gsn_weaken;
-import static net.sf.nightworks.Skill.gsn_x_hit;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Tables.cabal_table;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
+@SuppressWarnings("unused")
 class ObjProg {
     static void oprog_set(OBJ_INDEX_DATA objindex, String progtype, String name) throws NoSuchMethodException {
         var found = true;
@@ -236,7 +74,7 @@ class ObjProg {
         }
     }
 
-    private static Method resolveMethod(String name, Class... params) throws NoSuchMethodException {
+    private static Method resolveMethod(@NotNull String name, Class... params) throws NoSuchMethodException {
         return ObjProg.class.getDeclaredMethod(name, params);
     }
 
@@ -244,11 +82,11 @@ class ObjProg {
         return new OPROG_FUN_REMOVE() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
 
-            public void run(OBJ_DATA obj, CHAR_DATA ch) {
+            public void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -258,11 +96,11 @@ class ObjProg {
         return new OPROG_FUN_GET() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
 
-            public void run(OBJ_DATA obj, CHAR_DATA ch) {
+            public void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -272,11 +110,11 @@ class ObjProg {
         return new OPROG_FUN_DROP() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
 
-            public void run(OBJ_DATA obj, CHAR_DATA ch) {
+            public void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -286,11 +124,11 @@ class ObjProg {
         return new OPROG_FUN_SAC() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
 
-            public boolean run(OBJ_DATA obj, CHAR_DATA ch) {
+            public boolean run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     return (Boolean) m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                     return false;
                 }
             }
@@ -301,11 +139,11 @@ class ObjProg {
         return new OPROG_FUN_ENTRY() {
             final Method m = resolveMethod(name, OBJ_DATA.class);
 
-            public void run(OBJ_DATA obj) {
+            public void run(@NotNull OBJ_DATA obj) {
                 try {
                     m.invoke(null, obj);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -315,11 +153,11 @@ class ObjProg {
         return new OPROG_FUN_GIVE() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class, CHAR_DATA.class);
 
-            public void run(OBJ_DATA obj, CHAR_DATA from, CHAR_DATA to) {
+            public void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA from, @NotNull CHAR_DATA to) {
                 try {
                     m.invoke(null, obj, from, to);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -329,11 +167,11 @@ class ObjProg {
         return new OPROG_FUN_GREET() {
             final Method m = resolveMethod(name, OBJ_DATA.class);
 
-            public void run(OBJ_DATA obj, CHAR_DATA ch) {
+            public void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -343,11 +181,11 @@ class ObjProg {
         return new OPROG_FUN_FIGHT() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
 
-            public void run(OBJ_DATA obj, CHAR_DATA ch) {
+            public void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         };
@@ -357,11 +195,11 @@ class ObjProg {
         return new OPROG_FUN_DEATH() {
             final Method m = resolveMethod(name, OBJ_DATA.class, CHAR_DATA.class);
 
-            public boolean run(OBJ_DATA obj, CHAR_DATA ch) {
+            public boolean run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
                 try {
                     return (Boolean) m.invoke(null, obj, ch);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logError(e);
                     return false;
                 }
             }
@@ -374,7 +212,7 @@ class ObjProg {
             try {
                 m.invoke(null, obj, ch);
             } catch (Exception e) {
-                e.printStackTrace();
+                logError(e);
             }
         };
     }
@@ -385,7 +223,7 @@ class ObjProg {
             try {
                 m.invoke(null, obj);
             } catch (Exception e) {
-                e.printStackTrace();
+                logError(e);
             }
         };
     }
@@ -396,7 +234,7 @@ class ObjProg {
             try {
                 m.invoke(null, obj, ch);
             } catch (Exception e) {
-                e.printStackTrace();
+                logError(e);
             }
         };
     }
@@ -978,22 +816,15 @@ class ObjProg {
 
 
     static void fight_prog_tattoo_eros(OBJ_DATA obj, CHAR_DATA ch) {
-        Skill sn;
         if (get_eq_char(ch, WEAR_TATTOO) == obj) {
             switch (number_bits(5)) {
                 case 0, 1 -> {
-                    if ((sn = Skill.gsn_heal) == null) {
-                        break;
-                    }
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
-                    obj_cast_spell(sn, ch.level, ch, ch, obj);
+                    obj_cast_spell(Skill.gsn_heal, ch.level, ch, ch, obj);
                 }
                 case 2 -> {
-                    if ((sn = Skill.gsn_mass_healing) == null) {
-                        break;
-                    }
                     act("{cThe tattoo on your shoulder glows blue.{x", ch, null, null, TO_CHAR, POS_DEAD);
-                    obj_cast_spell(sn, ch.level, ch, ch, obj);
+                    obj_cast_spell(Skill.gsn_mass_healing, ch.level, ch, ch, obj);
                 }
             }
         }
@@ -1386,11 +1217,11 @@ class ObjProg {
     }
 
 
-    static void fight_prog_rose_shield(OBJ_DATA obj, CHAR_DATA ch) {
-        if (!((ch.in_room.sector_type != SECT_FIELD) ||
-                (ch.in_room.sector_type != SECT_FOREST) ||
-                (ch.in_room.sector_type != SECT_MOUNTAIN) ||
-                (ch.in_room.sector_type != SECT_HILLS))) {
+    static void fight_prog_rose_shield(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch) {
+        if (ch.in_room.sector_type != SECT_FIELD &&
+                ch.in_room.sector_type != SECT_FOREST &&
+                ch.in_room.sector_type != SECT_MOUNTAIN &&
+                ch.in_room.sector_type != SECT_HILLS) {
             return;
         }
 
@@ -1441,19 +1272,19 @@ class ObjProg {
         act("$p's eye opens.", ch, obj, null, TO_ROOM);
         if (ch.level <= 10) {
             obj.value[2] = 2;
-        } else if (ch.level > 10 && ch.level <= 20) {
+        } else if (ch.level <= 20) {
             obj.value[2] = 3;
-        } else if (ch.level > 20 && ch.level <= 30) {
+        } else if (ch.level <= 30) {
             obj.value[2] = 4;
-        } else if (ch.level > 30 && ch.level <= 40) {
+        } else if (ch.level <= 40) {
             obj.value[2] = 5;
-        } else if (ch.level > 40 && ch.level <= 50) {
+        } else if (ch.level <= 50) {
             obj.value[2] = 6;
-        } else if (ch.level > 50 && ch.level <= 60) {
+        } else if (ch.level <= 60) {
             obj.value[2] = 7;
-        } else if (ch.level > 60 && ch.level <= 70) {
+        } else if (ch.level <= 70) {
             obj.value[2] = 9;
-        } else if (ch.level > 70 && ch.level <= 80) {
+        } else if (ch.level <= 80) {
             obj.value[2] = 11;
         } else {
             obj.value[2] = 12;
@@ -1467,19 +1298,19 @@ class ObjProg {
                 && obj.extra_descr.description.contains(ch.name)) {
             if (ch.level <= 10) {
                 obj.value[2] = 2;
-            } else if (ch.level > 10 && ch.level <= 20) {
+            } else if (ch.level <= 20) {
                 obj.value[2] = 3;
-            } else if (ch.level > 20 && ch.level <= 30) {
+            } else if (ch.level <= 30) {
                 obj.value[2] = 4;
-            } else if (ch.level > 30 && ch.level <= 40) {
+            } else if (ch.level <= 40) {
                 obj.value[2] = 5;
-            } else if (ch.level > 40 && ch.level <= 50) {
+            } else if (ch.level <= 50) {
                 obj.value[2] = 6;
-            } else if (ch.level > 50 && ch.level <= 60) {
+            } else if (ch.level <= 60) {
                 obj.value[2] = 7;
-            } else if (ch.level > 60 && ch.level <= 70) {
+            } else if (ch.level <= 70) {
                 obj.value[2] = 9;
-            } else if (ch.level > 70 && ch.level <= 80) {
+            } else if (ch.level <= 80) {
                 obj.value[2] = 11;
             } else {
                 obj.value[2] = 12;

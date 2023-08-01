@@ -1,6 +1,7 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.DikuTextFile;
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.io.BufferedWriter;
@@ -38,6 +39,7 @@ import static net.sf.nightworks.Nightworks.exit;
 import static net.sf.nightworks.Nightworks.nw_config;
 import static net.sf.nightworks.Nightworks.perror;
 import static net.sf.nightworks.Tables.cabal_table;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.is_number;
 import static net.sf.nightworks.util.TextUtils.isSpace;
 import static net.sf.nightworks.util.TextUtils.one_argument;
@@ -54,7 +56,7 @@ class Note {
     private static NOTE_DATA news_list = null;
     private static NOTE_DATA changes_list = null;
 
-    static int count_spool(CHAR_DATA ch, NOTE_DATA spool) {
+    static int count_spool(@NotNull CHAR_DATA ch, NOTE_DATA spool) {
         var count = 0;
         for (var pnote = spool; pnote != null; pnote = pnote.next) {
             if (!hide_note(ch, pnote)) {
@@ -65,7 +67,7 @@ class Note {
         return count;
     }
 
-    static void do_unread(CHAR_DATA ch, String argument) {
+    static void do_unread(@NotNull CHAR_DATA ch, String argument) {
         int count;
         var found = false;
 
@@ -99,23 +101,23 @@ class Note {
         }
     }
 
-    static void do_note(CHAR_DATA ch, String argument) {
+    static void do_note(@NotNull CHAR_DATA ch, String argument) {
         parse_note(ch, argument, NOTE_NOTE);
     }
 
-    static void do_idea(CHAR_DATA ch, String argument) {
+    static void do_idea(@NotNull CHAR_DATA ch, String argument) {
         parse_note(ch, argument, NOTE_IDEA);
     }
 
-    static void do_penalty(CHAR_DATA ch, String argument) {
+    static void do_penalty(@NotNull CHAR_DATA ch, String argument) {
         parse_note(ch, argument, NOTE_PENALTY);
     }
 
-    static void do_news(CHAR_DATA ch, String argument) {
+    static void do_news(@NotNull CHAR_DATA ch, String argument) {
         parse_note(ch, argument, NOTE_NEWS);
     }
 
-    static void do_changes(CHAR_DATA ch, String argument) {
+    static void do_changes(@NotNull CHAR_DATA ch, String argument) {
         parse_note(ch, argument, NOTE_CHANGES);
     }
 
@@ -157,7 +159,7 @@ class Note {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
         }
     }
 
@@ -189,47 +191,47 @@ class Note {
             for (; ; ) {
                 char letter;
                 do {
-                    if (fp.feof()) {
+                    if (fp.is_eof()) {
                         break;
                     }
                     letter = fp.read();
                 } while (isSpace(letter));
-                if (fp.feof()) {
+                if (fp.is_eof()) {
                     return list;
                 }
                 fp.ungetc();
 
                 var pnote = new NOTE_DATA();
 
-                if (str_cmp(fp.fread_word(), "sender")) {
+                if (str_cmp(fp.read_word(), "sender")) {
                     break;
                 }
-                pnote.sender = fp.fread_string();
+                pnote.sender = fp.read_string();
 
-                if (str_cmp(fp.fread_word(), "date")) {
+                if (str_cmp(fp.read_word(), "date")) {
                     break;
                 }
-                pnote.date = fp.fread_string();
+                pnote.date = fp.read_string();
 
-                if (str_cmp(fp.fread_word(), "stamp")) {
+                if (str_cmp(fp.read_word(), "stamp")) {
                     break;
                 }
-                pnote.date_stamp = fp.fread_number();
+                pnote.date_stamp = fp.read_number();
 
-                if (str_cmp(fp.fread_word(), "to")) {
+                if (str_cmp(fp.read_word(), "to")) {
                     break;
                 }
-                pnote.to_list = fp.fread_string();
+                pnote.to_list = fp.read_string();
 
-                if (str_cmp(fp.fread_word(), "subject")) {
+                if (str_cmp(fp.read_word(), "subject")) {
                     break;
                 }
-                pnote.subject = fp.fread_string();
+                pnote.subject = fp.read_string();
 
-                if (str_cmp(fp.fread_word(), "text")) {
+                if (str_cmp(fp.read_word(), "text")) {
                     break;
                 }
-                pnote.text = fp.fread_string();
+                pnote.text = fp.read_string();
 
                 if (free_time != 0 && pnote.date_stamp < current_time - free_time) {
                     continue;
@@ -248,7 +250,7 @@ class Note {
             bug("Load_notes: bad key word.");
             exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
             perror("login thread:" + name);
         }
         return null;
@@ -289,7 +291,7 @@ class Note {
                 prepareNote(fp, pnote);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
             perror(name);
         }
     }
@@ -307,7 +309,7 @@ class Note {
         return note_list;
     }
 
-    static boolean is_note_to(CHAR_DATA ch, NOTE_DATA pnote) {
+    static boolean is_note_to(@NotNull CHAR_DATA ch, NOTE_DATA pnote) {
         if (!str_cmp(ch.name, pnote.sender)) {
             return true;
         }
@@ -330,7 +332,7 @@ class Note {
     }
 
 
-    static void note_attach(CHAR_DATA ch, int type) {
+    static void note_attach(@NotNull CHAR_DATA ch, int type) {
         NOTE_DATA pnote;
 
         if (ch.pnote != null) {
@@ -350,7 +352,7 @@ class Note {
     }
 
 
-    static void note_remove(CHAR_DATA ch, NOTE_DATA pnote, boolean delete) {
+    static void note_remove(@NotNull CHAR_DATA ch, NOTE_DATA pnote, boolean delete) {
 
         if (!delete) {
             /* make a new list */
@@ -409,7 +411,7 @@ class Note {
         return note_list;
     }
 
-    static boolean hide_note(CHAR_DATA ch, NOTE_DATA pnote) {
+    static boolean hide_note(@NotNull CHAR_DATA ch, NOTE_DATA pnote) {
         int last_read;
 
         if (IS_NPC(ch)) {
@@ -440,7 +442,7 @@ class Note {
 
     }
 
-    static void update_read(CHAR_DATA ch, NOTE_DATA pnote) {
+    static void update_read(@NotNull CHAR_DATA ch, NOTE_DATA pnote) {
         int stamp;
 
         if (IS_NPC(ch)) {
@@ -460,7 +462,7 @@ class Note {
         }
     }
 
-    static void parse_note(CHAR_DATA ch, String argument, int type) {
+    static void parse_note(@NotNull CHAR_DATA ch, String argument, int type) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -675,7 +677,7 @@ class Note {
                 return;
             }
             var buf = ch.pnote.text;
-            for (len = buf.length(); len > 0; len--) {
+            for (len = buf.length(); --len >= 0;) {
                 if (buf.charAt(len) == '\r') {
                     if (!found)  /* back it up */ {
                         if (len > 0) {

@@ -1,152 +1,31 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import static net.sf.nightworks.ActComm.do_say;
 import static net.sf.nightworks.ActInfo.do_look;
-import static net.sf.nightworks.ActMove.dir_name;
-import static net.sf.nightworks.ActMove.do_open;
-import static net.sf.nightworks.ActMove.do_stand;
-import static net.sf.nightworks.ActMove.move_char;
+import static net.sf.nightworks.ActMove.*;
 import static net.sf.nightworks.ActSkill.check_improve;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.DB.number_door;
-import static net.sf.nightworks.DB.number_percent;
-import static net.sf.nightworks.DB.number_range;
+import static net.sf.nightworks.DB.*;
 import static net.sf.nightworks.Fight.multi_hit;
-import static net.sf.nightworks.Handler.affect_to_char;
-import static net.sf.nightworks.Handler.affect_to_room;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.can_see_room;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.check_material;
-import static net.sf.nightworks.Handler.extract_obj;
-import static net.sf.nightworks.Handler.get_char_room;
-import static net.sf.nightworks.Handler.get_char_world;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_eq_char;
-import static net.sf.nightworks.Handler.get_hold_char;
-import static net.sf.nightworks.Handler.get_obj_carry;
-import static net.sf.nightworks.Handler.get_obj_list;
-import static net.sf.nightworks.Handler.get_shield_char;
-import static net.sf.nightworks.Handler.get_skill;
-import static net.sf.nightworks.Handler.get_weapon_sn;
-import static net.sf.nightworks.Handler.get_wield_char;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_affected_room;
-import static net.sf.nightworks.Handler.is_metal;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.item_type_name;
-import static net.sf.nightworks.Handler.obj_from_char;
-import static net.sf.nightworks.Handler.obj_from_room;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.obj_to_room;
-import static net.sf.nightworks.Handler.room_is_private;
-import static net.sf.nightworks.Handler.skill_failure_check;
-import static net.sf.nightworks.Handler.unequip_char;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Interp.number_argument;
 import static net.sf.nightworks.Magic.do_cast;
 import static net.sf.nightworks.Magic.spell_identify;
-import static net.sf.nightworks.Nightworks.ACT_AGGRESSIVE;
-import static net.sf.nightworks.Nightworks.ACT_IS_HEALER;
-import static net.sf.nightworks.Nightworks.AFFECT_DATA;
-import static net.sf.nightworks.Nightworks.AFF_CHARM;
-import static net.sf.nightworks.Nightworks.AFF_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_CURSE;
-import static net.sf.nightworks.Nightworks.AFF_ROOM_THIEF_TRAP;
-import static net.sf.nightworks.Nightworks.ANGEL;
-import static net.sf.nightworks.Nightworks.APPLY_NONE;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_NOAUCTION;
-import static net.sf.nightworks.Nightworks.CON_PLAYING;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.FIGHT_DELAY_TIME;
-import static net.sf.nightworks.Nightworks.GATE_BUGGY;
-import static net.sf.nightworks.Nightworks.GATE_GOWITH;
-import static net.sf.nightworks.Nightworks.GATE_NOCURSE;
-import static net.sf.nightworks.Nightworks.GATE_NORMAL_EXIT;
-import static net.sf.nightworks.Nightworks.GATE_RANDOM;
-import static net.sf.nightworks.Nightworks.IMPLEMENTOR;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_OBJ_STAT;
-import static net.sf.nightworks.Nightworks.IS_RAFFECTED;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.IS_TRUSTED;
-import static net.sf.nightworks.Nightworks.IS_WEAPON_STAT;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_EVIL;
-import static net.sf.nightworks.Nightworks.ITEM_ANTI_NEUTRAL;
-import static net.sf.nightworks.Nightworks.ITEM_ARMOR;
-import static net.sf.nightworks.Nightworks.ITEM_BLESS;
-import static net.sf.nightworks.Nightworks.ITEM_MAGIC;
-import static net.sf.nightworks.Nightworks.ITEM_PORTAL;
-import static net.sf.nightworks.Nightworks.ITEM_SCROLL;
-import static net.sf.nightworks.Nightworks.ITEM_STAFF;
-import static net.sf.nightworks.Nightworks.ITEM_WAND;
-import static net.sf.nightworks.Nightworks.ITEM_WEAPON;
-import static net.sf.nightworks.Nightworks.MAX_CABAL;
-import static net.sf.nightworks.Nightworks.MAX_WEAR;
-import static net.sf.nightworks.Nightworks.MOUNTED;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_HAMMER;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.POS_SLEEPING;
-import static net.sf.nightworks.Nightworks.POS_STANDING;
-import static net.sf.nightworks.Nightworks.PULSE_AUCTION;
-import static net.sf.nightworks.Nightworks.PULSE_VIOLENCE;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.ROOM_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.ROOM_LAW;
-import static net.sf.nightworks.Nightworks.ROOM_NO_RECALL;
-import static net.sf.nightworks.Nightworks.ROOM_PRIVATE;
-import static net.sf.nightworks.Nightworks.ROOM_SAFE;
-import static net.sf.nightworks.Nightworks.ROOM_SOLITARY;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.TO_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_ROOM_AFFECTS;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.WAIT_STATE;
-import static net.sf.nightworks.Nightworks.WEAPON_SHARP;
-import static net.sf.nightworks.Nightworks.WEAR_BOTH;
-import static net.sf.nightworks.Nightworks.WEAR_LEFT;
-import static net.sf.nightworks.Nightworks.WEAR_RIGHT;
-import static net.sf.nightworks.Nightworks.WEAR_STUCK_IN;
-import static net.sf.nightworks.Nightworks.WEAR_TATTOO;
-import static net.sf.nightworks.Nightworks.atoi;
-import static net.sf.nightworks.Nightworks.auction;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.descriptor_list;
-import static net.sf.nightworks.Nightworks.sprintf;
-import static net.sf.nightworks.Skill.gsn_axe;
-import static net.sf.nightworks.Skill.gsn_hunt;
-import static net.sf.nightworks.Skill.gsn_settraps;
-import static net.sf.nightworks.Skill.gsn_smithing;
-import static net.sf.nightworks.Skill.gsn_world_find;
+import static net.sf.nightworks.Nightworks.*;
+import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.Tables.cabal_table;
-import static net.sf.nightworks.util.TextUtils.isDigit;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.smash_tilde;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
+import static net.sf.nightworks.util.TextUtils.*;
 
 class ActHera {
     /**
      * random room generation procedure
      */
-    static ROOM_INDEX_DATA get_random_room(CHAR_DATA ch) {
+    static ROOM_INDEX_DATA get_random_room(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA room;
 
         for (; ; ) {
@@ -167,9 +46,9 @@ class ActHera {
         return room;
     }
 
-/* RT Enter portals */
+    /* RT Enter portals */
 
-    static void do_enter(CHAR_DATA ch, String argument) {
+    static void do_enter(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA location;
 
         if (ch.fighting != null) {
@@ -332,7 +211,7 @@ class ActHera {
         send_to_char("Nope, can't do it.\n", ch);
     }
 
-    static void do_settraps(CHAR_DATA ch) {
+    static void do_settraps(@NotNull CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_settraps, false, 0, "You don't know how to set traps.\n")) {
             return;
         }
@@ -395,7 +274,7 @@ class ActHera {
 
     }
 
-    static CHAR_DATA get_char_area(CHAR_DATA ch, String argument) {
+    static CHAR_DATA get_char_area(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA ach;
         int number;
         int count;
@@ -435,7 +314,7 @@ class ActHera {
     }
 
 
-    static void do_hunt(CHAR_DATA ch, String argument) {
+    static void do_hunt(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int direction, i;
         boolean fArea, ok;
@@ -452,7 +331,7 @@ class ActHera {
             return;
         }
 
-/*  fArea = ( get_trust(ch) < MAX_LEVEL ); */
+        /*  fArea = ( get_trust(ch) < MAX_LEVEL ); */
         fArea = !(IS_IMMORTAL(ch));
 
         if (number_percent() < get_skill(ch, gsn_world_find)) {
@@ -485,8 +364,8 @@ class ActHera {
         }
 
         /*
-        * Deduct some movement.
-        */
+         * Deduct some movement.
+         */
         if (!IS_IMMORTAL(ch)) {
             if (ch.endur > 2) {
                 ch.endur -= 3;
@@ -513,8 +392,8 @@ class ActHera {
         }
 
         /*
-        * Give a random direction if the player misses the die roll.
-        */
+         * Give a random direction if the player misses the die roll.
+         */
         if (IS_NPC(ch) && number_percent() > 75)        /* NPC @ 25% */ {
             log_string("Do PC hunt");
             ok = false;
@@ -537,26 +416,26 @@ class ActHera {
                 return;
             }
             /*
-            * Display the results of the search.
-            */
+             * Display the results of the search.
+             */
         }
         var buf = new TextBuffer();
         buf.sprintf("$N is %s from here.", dir_name[direction]);
         act(buf, ch, null, victim, TO_CHAR);
     }
 
-/*
-* revised by chronos.
-*/
+    /*
+     * revised by chronos.
+     */
 
-    static void hunt_victim(CHAR_DATA ch) {
+    static void hunt_victim(@NotNull CHAR_DATA ch) {
         int dir;
         boolean found;
         CHAR_DATA tmp;
 
         /*
-        * Make sure the victim still exists.
-        */
+         * Make sure the victim still exists.
+         */
         var buf = new TextBuffer();
         for (found = false, tmp = char_list; tmp != null && !found; tmp = tmp.next) {
             if (ch.hunting == tmp) {
@@ -598,7 +477,7 @@ class ActHera {
         dir = find_path(ch.in_room.vnum, ch.hunting.in_room.vnum, ch, -40000, true);
 
         if (dir < 0 || dir > 5) {
-/* 1 */
+            /* 1 */
             if (get_char_area(ch, ch.hunting.name) != null && ch.level > 35) {
                 sprintf(buf, "portal %s", ch.hunting.name);
                 log_string("mob portal");
@@ -662,7 +541,7 @@ class ActHera {
      */
 
 
-    static void damage_to_obj(CHAR_DATA ch, OBJ_DATA wield, OBJ_DATA worn, int damage) {
+    static void damage_to_obj(@NotNull CHAR_DATA ch, OBJ_DATA wield, OBJ_DATA worn, int damage) {
 
         if (damage == 0) {
             return;
@@ -695,7 +574,7 @@ class ActHera {
     }
 
 
-    static void check_weapon_destroy(CHAR_DATA ch, CHAR_DATA victim, boolean second) {
+    static void check_weapon_destroy(@NotNull CHAR_DATA ch, CHAR_DATA victim, boolean second) {
         OBJ_DATA wield, destroy;
         var chance = 0;
 
@@ -758,7 +637,7 @@ class ActHera {
                 chance += skill - 85;
                 chance += get_curr_stat(ch, STAT_STR);
 
-/*   chance /= 2;   */
+                /*   chance /= 2;   */
                 if (number_percent() < chance && chance > 50) {
                     damage_to_obj(ch, wield, destroy, (chance / 5));
                     break;
@@ -808,7 +687,7 @@ class ActHera {
                 chance += skill - 85;
                 chance += get_curr_stat(ch, STAT_STR);
 
-/*   chance /= 2;   */
+                /*   chance /= 2;   */
                 if (number_percent() < chance && chance > 50) {
                     damage_to_obj(ch, wield, destroy, chance / 5);
                     break;
@@ -819,7 +698,7 @@ class ActHera {
     }
 
 
-    static void do_repair(CHAR_DATA ch, String argument) {
+    static void do_repair(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         OBJ_DATA obj;
         int cost;
@@ -888,7 +767,7 @@ class ActHera {
         obj.condition = 100;
     }
 
-    static void do_estimate(CHAR_DATA ch, String argument) {
+    static void do_estimate(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         CHAR_DATA mob;
         int cost;
@@ -939,7 +818,7 @@ class ActHera {
         do_say(mob, buf.toString());
     }
 
-    static void do_restring(CHAR_DATA ch, String argument) {
+    static void do_restring(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         OBJ_DATA obj;
         var cost = 2000;
@@ -1007,21 +886,21 @@ class ActHera {
         send_to_char(" This is your ONE AND ONLY Warning.\n", ch);
     }
 
-    static void check_shield_destroyed(CHAR_DATA ch, CHAR_DATA victim, boolean second) {
-        OBJ_DATA wield, destroy;
+    static void check_shield_destroyed(@NotNull CHAR_DATA ch, CHAR_DATA victim, boolean second) {
         var chance = 0;
 
         if (IS_NPC(victim) || number_percent() < 94) {
             return;
         }
 
-        if ((wield = get_wield_char(ch, second)) == null) {
+        OBJ_DATA wield = get_wield_char(ch, second);
+        if (wield == null) {
             return;
         }
         var sn = get_weapon_sn(ch, second);
         var skill = get_skill(ch, sn);
 
-        destroy = get_shield_char(victim);
+        OBJ_DATA destroy = get_shield_char(victim);
 
         if (destroy == null) {
             return;
@@ -1071,7 +950,7 @@ class ActHera {
             chance += skill - 85;
             chance += get_curr_stat(ch, STAT_STR);
 
-/*   chance /= 2;   */
+            /*   chance /= 2;   */
             if (number_percent() < chance && chance > 20) {
                 damage_to_obj(ch, wield, destroy, (chance / 4));
             }
@@ -1114,14 +993,14 @@ class ActHera {
             chance += skill - 85;
             chance += get_curr_stat(ch, STAT_STR);
 
-/*   chance /= 2;   */
+            /*   chance /= 2;   */
             if (number_percent() < chance && chance > 20) {
                 damage_to_obj(ch, wield, destroy, (chance / 4));
             }
         }
     }
 
-    static void check_weapon_destroyed(CHAR_DATA ch, CHAR_DATA victim, boolean second) {
+    static void check_weapon_destroyed(@NotNull CHAR_DATA ch, CHAR_DATA victim, boolean second) {
         OBJ_DATA wield, destroy;
         var chance = 0;
 
@@ -1184,7 +1063,7 @@ class ActHera {
             chance += skill - 85;
             chance += get_curr_stat(ch, STAT_STR);
 
-/*   chance /= 2;   */
+            /*   chance /= 2;   */
             if (number_percent() < (chance / 2) && chance > 20) {
                 damage_to_obj(ch, wield, destroy, (chance / 4));
             }
@@ -1227,7 +1106,7 @@ class ActHera {
             chance += skill - 85;
             chance += get_curr_stat(ch, STAT_STR);
 
-/*   chance /= 2;   */
+            /*   chance /= 2;   */
             if (number_percent() < (chance / 2) && chance > 20) {
                 damage_to_obj(ch, wield, destroy, chance / 4);
             }
@@ -1235,7 +1114,7 @@ class ActHera {
     }
 
 
-    static void do_smithing(CHAR_DATA ch, String argument) {
+    static void do_smithing(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         OBJ_DATA hammer;
 
@@ -1513,7 +1392,7 @@ class ActHera {
     } /* func */
 
 
-    static void do_auction(CHAR_DATA ch, String argument) {
+    static void do_auction(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int i;
         var arg1 = new StringBuilder();

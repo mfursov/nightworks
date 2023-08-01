@@ -33,7 +33,7 @@ public final class TextBuffer implements CharSequence {
         return this;
     }
 
-    public String toString() {
+    public @NotNull String toString() {
         return sb.toString();
     }
 
@@ -49,16 +49,18 @@ public final class TextBuffer implements CharSequence {
         return sb.length();
     }
 
-    public void upfirst() {
+    public void capitalize() {
+        if (sb.isEmpty()) {
+            return;
+        }
         sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
     }
-
 
     public char charAt(int index) {
         return sb.charAt(index);
     }
 
-    public CharSequence subSequence(int start, int end) {
+    public @NotNull CharSequence subSequence(int start, int end) {
         return sb.subSequence(start, end);
     }
 }

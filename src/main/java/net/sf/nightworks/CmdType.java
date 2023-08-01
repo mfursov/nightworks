@@ -29,7 +29,7 @@ public enum CmdType {
 
     /*
     * Common other commands.
-    * Placed here so one and two letter abbreviations work.
+    * Placed here as one and two letter abbreviations work.
     */
     do_at("at", ActWiz::do_at, POS_DEAD, Interp.L6, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
     do_cast("cast", Magic::do_cast, POS_FIGHTING, 0, Interp.LOG_NORMAL, 0),

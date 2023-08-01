@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import static net.sf.nightworks.ActComm.do_yell;
@@ -24,10 +25,10 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 class MartialArt {
 /*
  * Disarm a creature.
- * Caller must check for successful attack.
+ * Caller must check for a successful attack.
  */
 
-    static void disarm(CHAR_DATA ch, CHAR_DATA victim, boolean disarm_second) {
+    static void disarm(@NotNull CHAR_DATA ch, CHAR_DATA victim, boolean disarm_second) {
         OBJ_DATA obj;
 
         if (disarm_second) {
@@ -92,7 +93,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 */
     }
 
-    static void do_berserk(CHAR_DATA ch) {
+    static void do_berserk(@NotNull CHAR_DATA ch) {
         int chance, hp_percent;
 
         if (skill_failure_check(ch, gsn_berserk, false, OFF_BERSERK, "You turn red in the face, but nothing happens.\n")) {
@@ -168,7 +169,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_bash(CHAR_DATA ch, String argument) {
+    static void do_bash(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance, wait;
         int damage_bash;
@@ -314,7 +315,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_dirt(CHAR_DATA ch, String argument) {
+    static void do_dirt(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
 
@@ -449,7 +450,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_trip(CHAR_DATA ch, String argument) {
+    static void do_trip(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
 
@@ -563,7 +564,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_backstab(CHAR_DATA ch, String argument) {
+    static void do_backstab(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA obj;
 
@@ -647,7 +648,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_cleave(CHAR_DATA ch, String argument) {
+    static void do_cleave(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_cleave, false, 0, "You don't know how to cleave.\n")) {
@@ -716,7 +717,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_ambush(CHAR_DATA ch, String argument) {
+    static void do_ambush(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_ambush, false, 0, "You don't know how to ambush.\n")) {
@@ -777,7 +778,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_rescue(CHAR_DATA ch, String argument) {
+    static void do_rescue(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         CHAR_DATA fch;
         var arg = new StringBuilder();
@@ -847,7 +848,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_kick(CHAR_DATA ch) {
+    static void do_kick(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         int kick_dam;
         int chance;
@@ -880,7 +881,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_circle(CHAR_DATA ch) {
+    static void do_circle(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         CHAR_DATA person;
         boolean second;
@@ -930,7 +931,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_disarm(CHAR_DATA ch, String argument) {
+    static void do_disarm(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance, hth, ch_weapon, vict_weapon, ch_vict_weapon;
         var disarm_second = false;
@@ -1010,7 +1011,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_nerve(CHAR_DATA ch, String argument) {
+    static void do_nerve(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -1077,7 +1078,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_endure(CHAR_DATA ch) {
+    static void do_endure(@NotNull CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_endure, false, 0, "You lack the concentration.\n")) {
             return;
@@ -1107,7 +1108,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         check_improve(ch, gsn_endure, true, 1);
     }
 
-    static void do_tame(CHAR_DATA ch, String argument) {
+    static void do_tame(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -1156,7 +1157,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_assassinate(CHAR_DATA ch, String argument) {
+    static void do_assassinate(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_assassinate, false, 0, null)) {
@@ -1254,7 +1255,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_caltraps(CHAR_DATA ch) {
+    static void do_caltraps(@NotNull CHAR_DATA ch) {
         var victim = ch.fighting;
 
         if (skill_failure_check(ch, gsn_caltraps, false, 0, "Caltraps? Is that a dance step?\n")) {
@@ -1323,7 +1324,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_throw(CHAR_DATA ch, String argument) {
+    static void do_throw(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
         var arg = new StringBuilder();
@@ -1414,7 +1415,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_strangle(CHAR_DATA ch, String argument) {
+    static void do_strangle(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
 
@@ -1514,7 +1515,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_blackjack(CHAR_DATA ch, String argument) {
+    static void do_blackjack(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
 
@@ -1619,7 +1620,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_bloodthirst(CHAR_DATA ch) {
+    static void do_bloodthirst(@NotNull CHAR_DATA ch) {
         int chance, hp_percent;
 
         if (skill_failure_check(ch, gsn_bloodthirst, true, 0, "You're not that thirsty.\n")) {
@@ -1684,7 +1685,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_spellbane(CHAR_DATA ch) {
+    static void do_spellbane(@NotNull CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_spellbane, true, 0, null)) {
             return;
@@ -1714,7 +1715,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_resistance(CHAR_DATA ch) {
+    static void do_resistance(@NotNull CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_resistance, true, 0, null)) {
             return;
         }
@@ -1759,7 +1760,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_trophy(CHAR_DATA ch, String argument) {
+    static void do_trophy(@NotNull CHAR_DATA ch, String argument) {
         int trophy_vnum;
         OBJ_DATA trophy;
         OBJ_DATA part;
@@ -1893,7 +1894,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_truesight(CHAR_DATA ch) {
+    static void do_truesight(@NotNull CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_truesight, true, 0, null)) {
             return;
         }
@@ -1950,7 +1951,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_warcry(CHAR_DATA ch) {
+    static void do_warcry(@NotNull CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_warcry, true, 0, null)) {
             return;
@@ -1992,7 +1993,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         send_to_char("You feel righteous as you yell out your warcry.\n", ch);
     }
 
-    static void do_guard(CHAR_DATA ch, String argument) {
+    static void do_guard(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -2082,7 +2083,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static CHAR_DATA check_guard(CHAR_DATA ch, CHAR_DATA mob) {
+    static CHAR_DATA check_guard(@NotNull CHAR_DATA ch, CHAR_DATA mob) {
         int chance;
 
         if (ch.guarded_by == null ||
@@ -2105,7 +2106,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_explode(CHAR_DATA ch, String argument) {
+    static void do_explode(@NotNull CHAR_DATA ch, String argument) {
         var victim = ch.fighting;
         int dam = 0, hp_dam, dice_dam, mana;
         int hpch, level = ch.level;
@@ -2182,7 +2183,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_target(CHAR_DATA ch, String argument) {
+    static void do_target(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
 
@@ -2234,7 +2235,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_tiger(CHAR_DATA ch) {
+    static void do_tiger(@NotNull CHAR_DATA ch) {
         int chance, hp_percent;
 
         if (skill_failure_check(ch, gsn_tiger_power, false, 0, null)) {
@@ -2322,7 +2323,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_hara(CHAR_DATA ch) {
+    static void do_hara(@NotNull CHAR_DATA ch) {
         int chance;
 
         if (skill_failure_check(ch, gsn_hara_kiri, false, 0, null)) {
@@ -2395,7 +2396,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
  * ground strike
 */
 
-    static int ground_strike(CHAR_DATA ch, CHAR_DATA victim, int dam) {
+    static int ground_strike(@NotNull CHAR_DATA ch, CHAR_DATA victim, int dam) {
         int diceroll;
 
         if (skill_failure_nomessage(ch, gsn_ground_strike, 0) != 0) {
@@ -2466,7 +2467,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
  * critical strike
 */
 
-    static int critical_strike(CHAR_DATA ch, CHAR_DATA victim, int dam) {
+    static int critical_strike(@NotNull CHAR_DATA ch, CHAR_DATA victim, int dam) {
         int diceroll;
 
         if (skill_failure_nomessage(ch, gsn_critical, 0) != 0) {
@@ -2532,7 +2533,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         return dam;
     }
 
-    static void do_shield(CHAR_DATA ch) {
+    static void do_shield(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         int chance, ch_weapon, vict_shield;
         OBJ_DATA shield, axe;
@@ -2608,7 +2609,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_weapon(CHAR_DATA ch) {
+    static void do_weapon(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         OBJ_DATA wield, axe;
         int chance, ch_weapon, vict_weapon;
@@ -2683,7 +2684,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_tail(CHAR_DATA ch, String argument) {
+    static void do_tail(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance, wait;
         int damage_tail;
@@ -2824,7 +2825,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-    static void do_concentrate(CHAR_DATA ch) {
+    static void do_concentrate(@NotNull CHAR_DATA ch) {
         int chance;
 
         if (skill_failure_check(ch, gsn_concentrate, false, 0,
@@ -2888,7 +2889,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_bandage(CHAR_DATA ch) {
+    static void do_bandage(@NotNull CHAR_DATA ch) {
         int heal;
 
         if (skill_failure_check(ch, gsn_bandage, false, 0, null)) {
@@ -2934,7 +2935,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_katana(CHAR_DATA ch, String argument) {
+    static void do_katana(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA katana;
         OBJ_DATA part;
         var arg = new StringBuilder();
@@ -3029,7 +3030,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_crush(CHAR_DATA ch) {
+    static void do_crush(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         int chance, wait;
         int damage_crush;
@@ -3138,7 +3139,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_sense(CHAR_DATA ch) {
+    static void do_sense(@NotNull CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_sense_life, true, 0, null)) {
             return;
         }
@@ -3181,7 +3182,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_poison_smoke(CHAR_DATA ch) {
+    static void do_poison_smoke(@NotNull CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
 
         if (skill_failure_check(ch, gsn_poison_smoke, true, 0, null)) {
@@ -3233,7 +3234,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
 
     }
 
-    static void do_blindness_dust(CHAR_DATA ch) {
+    static void do_blindness_dust(@NotNull CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
 
         if (skill_failure_check(ch, gsn_blindness_dust, true, 0, null)) {
@@ -3284,7 +3285,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_lash(CHAR_DATA ch, String argument) {
+    static void do_lash(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
         int damage_lash;
@@ -3394,7 +3395,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
     }
 
 
-    static void do_claw(CHAR_DATA ch, String argument) {
+    static void do_claw(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int chance;
         int damage_claw;

@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.util.Formatter;
@@ -20,7 +21,8 @@ import static net.sf.nightworks.Magic.saves_spell;
 import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Skill.*;
 import static net.sf.nightworks.Update.gain_exp;
-import static net.sf.nightworks.util.TextUtils.*;
+import static net.sf.nightworks.util.TextUtils.one_argument;
+import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class ActMove {
 
@@ -30,8 +32,7 @@ class ActMove {
 
     static final int[] movement_loss = {1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6};
 
-
-    static void move_char(CHAR_DATA ch, int door) {
+    static void move_char(@NotNull CHAR_DATA ch, int door) {
         CHAR_DATA fch;
         CHAR_DATA fch_next;
         ROOM_INDEX_DATA in_room;
@@ -362,36 +363,36 @@ class ActMove {
     }
 
 
-    static void do_north(CHAR_DATA ch) {
+    static void do_north(@NotNull CHAR_DATA ch) {
         move_char(ch, DIR_NORTH);
     }
 
 
-    static void do_east(CHAR_DATA ch) {
+    static void do_east(@NotNull CHAR_DATA ch) {
         move_char(ch, DIR_EAST);
     }
 
 
-    static void do_south(CHAR_DATA ch) {
+    static void do_south(@NotNull CHAR_DATA ch) {
         move_char(ch, DIR_SOUTH);
     }
 
 
-    static void do_west(CHAR_DATA ch) {
+    static void do_west(@NotNull CHAR_DATA ch) {
         move_char(ch, DIR_WEST);
     }
 
 
-    static void do_up(CHAR_DATA ch) {
+    static void do_up(@NotNull CHAR_DATA ch) {
         move_char(ch, DIR_UP);
     }
 
 
-    static void do_down(CHAR_DATA ch) {
+    static void do_down(@NotNull CHAR_DATA ch) {
         move_char(ch, DIR_DOWN);
     }
 
-    static void do_run(CHAR_DATA ch, String argument) {
+    static void do_run(@NotNull CHAR_DATA ch, String argument) {
         var arg1 = new StringBuilder();
         var arg2 = new StringBuilder();
         argument = one_argument(argument, arg1);
@@ -410,7 +411,7 @@ class ActMove {
     }
 
 
-    static int find_exit(CHAR_DATA ch, String arg) {
+    static int find_exit(@NotNull CHAR_DATA ch, String arg) {
         int door;
 
         if (!str_cmp(arg, "n") || !str_cmp(arg, "north")) {
@@ -434,7 +435,7 @@ class ActMove {
     }
 
 
-    static int find_door(CHAR_DATA ch, String arg) {
+    static int find_door(@NotNull CHAR_DATA ch, String arg) {
         EXIT_DATA pexit;
         int door;
 
@@ -480,7 +481,7 @@ class ActMove {
 
     static final String[] distance = {"right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."};
 
-    static void do_scan2(CHAR_DATA ch) {
+    static void do_scan2(@NotNull CHAR_DATA ch) {
         act("$n looks all around.", ch, null, null, TO_ROOM);
         send_to_char("Looking around you see:\n", ch);
         scan_list(ch.in_room, ch, 0, -1);
@@ -524,7 +525,7 @@ class ActMove {
         send_to_char(buf, ch);
     }
 
-    static void do_open(CHAR_DATA ch, String argument) {
+    static void do_open(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int door;
 
@@ -619,7 +620,7 @@ class ActMove {
     }
 
 
-    static void do_close(CHAR_DATA ch, String argument) {
+    static void do_close(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int door;
         var arg = new StringBuilder();
@@ -706,7 +707,7 @@ class ActMove {
      * Added can_see check. Kio.
      */
 
-    static boolean has_key(CHAR_DATA ch, int key) {
+    static boolean has_key(@NotNull CHAR_DATA ch, int key) {
         OBJ_DATA obj;
 
         for (obj = ch.carrying; obj != null; obj = obj.next_content) {
@@ -720,7 +721,7 @@ class ActMove {
         return false;
     }
 
-    static boolean has_key_ground(CHAR_DATA ch, int key) {
+    static boolean has_key_ground(@NotNull CHAR_DATA ch, int key) {
         OBJ_DATA obj;
 
         for (obj = ch.in_room.contents; obj != null; obj = obj.next_content) {
@@ -735,7 +736,7 @@ class ActMove {
     }
 
 
-    static void do_lock(CHAR_DATA ch, String argument) {
+    static void do_lock(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int door;
         CHAR_DATA rch;
@@ -851,7 +852,7 @@ class ActMove {
     }
 
 
-    static void do_unlock(CHAR_DATA ch, String argument) {
+    static void do_unlock(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
         int door;
         CHAR_DATA rch;
@@ -968,7 +969,7 @@ class ActMove {
     }
 
 
-    static void do_pick(CHAR_DATA ch, String argument) {
+    static void do_pick(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA gch;
         OBJ_DATA obj;
         int door;
@@ -1101,7 +1102,7 @@ class ActMove {
     }
 
 
-    static void do_stand(CHAR_DATA ch, String argument) {
+    static void do_stand(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj = null;
 
         if (!argument.isEmpty()) {
@@ -1177,7 +1178,7 @@ class ActMove {
     }
 
 
-    static void do_rest(CHAR_DATA ch, String argument) {
+    static void do_rest(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
         if (ch.position == POS_FIGHTING) {
@@ -1291,7 +1292,7 @@ class ActMove {
     }
 
 
-    static void do_sit(CHAR_DATA ch, String argument) {
+    static void do_sit(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
         if (ch.position == POS_FIGHTING) {
@@ -1397,7 +1398,7 @@ class ActMove {
     }
 
 
-    static void do_sleep(CHAR_DATA ch, String argument) {
+    static void do_sleep(@NotNull CHAR_DATA ch, String argument) {
         OBJ_DATA obj;
 
         if (MOUNTED(ch) != null) {
@@ -1460,7 +1461,7 @@ class ActMove {
     }
 
 
-    static void do_wake(CHAR_DATA ch, String argument) {
+    static void do_wake(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         var arg = new StringBuilder();
@@ -1495,7 +1496,7 @@ class ActMove {
     }
 
 
-    static void do_sneak(CHAR_DATA ch) {
+    static void do_sneak(@NotNull CHAR_DATA ch) {
 
         if (MOUNTED(ch) != null) {
             send_to_char("You can't sneak while mounted.\n", ch);
@@ -1533,7 +1534,7 @@ class ActMove {
     }
 
 
-    static void do_hide(CHAR_DATA ch) {
+    static void do_hide(@NotNull CHAR_DATA ch) {
         int forest;
 
         if (MOUNTED(ch) != null) {
@@ -1568,7 +1569,7 @@ class ActMove {
 
     }
 
-    static void do_camouflage(CHAR_DATA ch) {
+    static void do_camouflage(@NotNull CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_camouflage, false, 0,
                 "You don't know how to camouflage yourself.\n")) {
@@ -1614,7 +1615,7 @@ class ActMove {
      * Contributed by Alander
      */
 
-    static void do_visible(CHAR_DATA ch) {
+    static void do_visible(@NotNull CHAR_DATA ch) {
         if (IS_SET(ch.affected_by, AFF_HIDE)) {
             send_to_char("You step out of the shadows.\n", ch);
             ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_HIDE);
@@ -1661,7 +1662,7 @@ class ActMove {
         }
     }
 
-    static void do_recall(CHAR_DATA ch) {
+    static void do_recall(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA location;
         int point;
         int lose, skill;
@@ -1754,7 +1755,7 @@ class ActMove {
     }
 
 
-    static void do_train(CHAR_DATA ch, String argument) {
+    static void do_train(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
         var stat = -1;
         String pOutput = null;
@@ -1899,7 +1900,7 @@ class ActMove {
 
     static String[] door = {"north", "east", "south", "west", "up", "down", "that way"};
 
-    static void do_track(CHAR_DATA ch, String argument) {
+    static void do_track(@NotNull CHAR_DATA ch, String argument) {
         ROOM_HISTORY_DATA rh;
         EXIT_DATA pexit;
         int d;
@@ -1943,7 +1944,7 @@ class ActMove {
     }
 
 
-    static void do_vampire(CHAR_DATA ch) {
+    static void do_vampire(@NotNull CHAR_DATA ch) {
         int level, duration;
 
         if (skill_failure_check(ch, gsn_vampire, false, 0,
@@ -2041,7 +2042,7 @@ class ActMove {
         act("You cannot recognize $n anymore.", ch, null, null, TO_ROOM);
     }
 
-    static void do_vbite(CHAR_DATA ch, String argument) {
+    static void do_vbite(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         var arg = new StringBuilder();
@@ -2124,7 +2125,7 @@ class ActMove {
         }
     }
 
-    static void do_bash_door(CHAR_DATA ch, String argument) {
+    static void do_bash_door(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA gch;
         var chance = 0;
         int damage_bash, door;
@@ -2254,7 +2255,7 @@ class ActMove {
         }
     }
 
-    static void do_blink(CHAR_DATA ch, String argument) {
+    static void do_blink(@NotNull CHAR_DATA ch, String argument) {
         var arg = new StringBuilder();
         one_argument(argument, arg);
 
@@ -2285,7 +2286,7 @@ class ActMove {
         send_to_char(buf, ch);
     }
 
-    static void do_vanish(CHAR_DATA ch) {
+    static void do_vanish(@NotNull CHAR_DATA ch) {
         int i;
 
         if (skill_failure_check(ch, gsn_vanish, false, 0, null)) {
@@ -2347,7 +2348,7 @@ class ActMove {
         stop_fighting(ch, true);
     }
 
-    static void do_detect_sneak(CHAR_DATA ch) {
+    static void do_detect_sneak(@NotNull CHAR_DATA ch) {
 
         if (skill_failure_check(ch, gsn_detect_sneak, false, 0, null)) {
             return;
@@ -2372,7 +2373,7 @@ class ActMove {
     }
 
 
-    static void do_fade(CHAR_DATA ch) {
+    static void do_fade(@NotNull CHAR_DATA ch) {
         if (skill_failure_check(ch, gsn_fade, false, 0, null)) {
             return;
         }
@@ -2389,7 +2390,7 @@ class ActMove {
 
     }
 
-    static void do_vtouch(CHAR_DATA ch, String argument) {
+    static void do_vtouch(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_vampiric_touch, false, 0, "You lack the skill to draining touch.\n")) {
@@ -2490,7 +2491,7 @@ class ActMove {
         }
     }
 
-    static void do_fly(CHAR_DATA ch, String argument) {
+    static void do_fly(@NotNull CHAR_DATA ch, String argument) {
 
         if (IS_NPC(ch)) {
             return;
@@ -2529,7 +2530,7 @@ class ActMove {
     }
 
 
-    static void do_push(CHAR_DATA ch, String argument) {
+    static void do_push(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         int percent;
         int door;
@@ -2659,7 +2660,7 @@ class ActMove {
     }
 
 
-    static void do_crecall(CHAR_DATA ch) {
+    static void do_crecall(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA location;
         var point = ROOM_VNUM_BATTLE;
 
@@ -2731,7 +2732,7 @@ class ActMove {
 
     }
 
-    static void do_escape(CHAR_DATA ch, String argument) {
+    static void do_escape(@NotNull CHAR_DATA ch, String argument) {
         ROOM_INDEX_DATA was_in;
         ROOM_INDEX_DATA now_in;
         int door;
@@ -2808,7 +2809,7 @@ class ActMove {
         }
     }
 
-    static void do_layhands(CHAR_DATA ch, String argument) {
+    static void do_layhands(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_lay_hands, false, 0, "You lack the skill to heal others with touching.\n")) {
@@ -2845,7 +2846,7 @@ class ActMove {
 
     }
 
-    static boolean mount_success(CHAR_DATA ch, CHAR_DATA mount, boolean canattack) {
+    static boolean mount_success(@NotNull CHAR_DATA ch, CHAR_DATA mount, boolean canattack) {
         int percent;
         int success;
 
@@ -2905,7 +2906,7 @@ class ActMove {
      * It is not finished yet to implement all.
      */
 
-    static void do_mount(CHAR_DATA ch, String argument) {
+    static void do_mount(@NotNull CHAR_DATA ch, String argument) {
 
         var arg = new StringBuilder();
         one_argument(argument, arg);
@@ -2982,7 +2983,7 @@ class ActMove {
         ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_IMP_INVIS);
     }
 
-    static void do_dismount(CHAR_DATA ch) {
+    static void do_dismount(@NotNull CHAR_DATA ch) {
         var mount = MOUNTED(ch);
         if (mount != null) {
             act("You dismount from $N.", ch, null, mount, TO_CHAR);
@@ -2996,7 +2997,7 @@ class ActMove {
         }
     }
 
-    static int send_arrow(CHAR_DATA ch, CHAR_DATA victim, OBJ_DATA arrow, int door, int chance, int bonus) {
+    static int send_arrow(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA victim, @NotNull OBJ_DATA arrow, int door, int chance, int bonus) {
         EXIT_DATA pExit;
         ROOM_INDEX_DATA dest_room;
         int damroll = 0, hitroll = 0;
@@ -3138,7 +3139,7 @@ class ActMove {
     }
 
 
-    static void do_shoot(CHAR_DATA ch, String argument) {
+    static void do_shoot(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA wield;
         OBJ_DATA arrow;
@@ -3233,7 +3234,7 @@ class ActMove {
     }
 
 
-    static String find_way(CHAR_DATA ch, ROOM_INDEX_DATA rstart, ROOM_INDEX_DATA rend) {
+    static String find_way(@NotNull CHAR_DATA ch, ROOM_INDEX_DATA rstart, ROOM_INDEX_DATA rend) {
         int direction;
         EXIT_DATA pExit;
         int i;
@@ -3264,7 +3265,7 @@ class ActMove {
         return buf.toString();
     }
 
-    static void do_human(CHAR_DATA ch) {
+    static void do_human(@NotNull CHAR_DATA ch) {
         if (ch.clazz != Clazz.VAMPIRE) {
             send_to_char("Huh?\n", ch);
             return;
@@ -3281,7 +3282,7 @@ class ActMove {
     }
 
 
-    static void do_throw_spear(CHAR_DATA ch, String argument) {
+    static void do_throw_spear(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA spear;
         int chance, direction;
@@ -3370,14 +3371,8 @@ class ActMove {
         check_improve(ch, gsn_spear, true, 1);
     }
 
-    static OBJ_DATA get_weapon_char(CHAR_DATA ch, int wType) {
-        OBJ_DATA obj;
-
-        if (ch == null) {
-            return null;
-        }
-
-        for (obj = ch.carrying; obj != null; obj = obj.next_content) {
+    static OBJ_DATA get_weapon_char(@NotNull CHAR_DATA ch, int wType) {
+        for (OBJ_DATA obj = ch.carrying; obj != null; obj = obj.next_content) {
             if ((obj.wear_loc == WEAR_LEFT || obj.wear_loc == WEAR_RIGHT || obj.wear_loc == WEAR_BOTH)) {
                 if (obj.value[0] == wType) {
                     return obj;

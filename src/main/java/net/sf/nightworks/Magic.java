@@ -416,7 +416,7 @@ class Magic {
             new syl_type("", "")
     };
 
-    static void say_spell(CHAR_DATA ch, Skill sn) {
+    static void say_spell(@NotNull CHAR_DATA ch, Skill sn) {
         var buf = new TextBuffer();
         for (int pos = 0, length = 0; pos < sn.name.length(); pos += length) {
             for (var sylType : syl_table) {
@@ -515,7 +515,7 @@ class Magic {
     /**
      * for finding mana costs -- temporary version
      */
-    static int mana_cost(CHAR_DATA ch, int min_mana, int level) {
+    static int mana_cost(@NotNull CHAR_DATA ch, int min_mana, int level) {
         if (ch.level + 2 == level) {
             return 1000;
         }
@@ -526,7 +526,7 @@ class Magic {
      * for casting different rooms
      * returned value is the range
      */
-    static int allowed_other(CHAR_DATA ch, Skill sn) {
+    static int allowed_other(@NotNull CHAR_DATA ch, Skill sn) {
         if (sn.minimum_position == POS_STANDING || sn.skill_level[ch.clazz.id] < 26
                 || sn == find_spell(ch, "chain lightning")) {
             return 0;
@@ -541,7 +541,7 @@ class Magic {
     static String target_name;
     static int[] door = new int[]{0};
 
-    static void do_cast(CHAR_DATA ch, String argument) {
+    static void do_cast(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         OBJ_DATA obj;
         Object vo;
@@ -1895,7 +1895,7 @@ class Magic {
         act("$p suddenly appears.", ch, mushroom, null, TO_CHAR);
     }
 
-    static void spell_create_rose(CHAR_DATA ch) {
+    static void spell_create_rose(@NotNull CHAR_DATA ch) {
         OBJ_DATA rose;
         rose = create_object(get_obj_index(OBJ_VNUM_ROSE), 0);
         act("$n has created a beautiful red rose.", ch, rose, null, TO_ROOM);
@@ -2315,7 +2315,7 @@ class Magic {
     }
 
 
-    static void spell_detect_poison(CHAR_DATA ch, Object vo) {
+    static void spell_detect_poison(@NotNull CHAR_DATA ch, Object vo) {
         var obj = (OBJ_DATA) vo;
 
         if (obj.item_type == ITEM_DRINK_CON || obj.item_type == ITEM_FOOD) {
@@ -3632,7 +3632,7 @@ class Magic {
         ch.hit /= (4 / 3);
     }
 
-    static void spell_identify(CHAR_DATA ch, Object vo) {
+    static void spell_identify(@NotNull CHAR_DATA ch, Object vo) {
         var obj = (OBJ_DATA) vo;
         var buf = new TextBuffer();
         buf.sprintf("Object '%s' is type %s, extra flags %s.\nWeight is %d, value is %d, level is %d.\n",
@@ -3861,7 +3861,7 @@ class Magic {
     }
 
 
-    static void spell_know_alignment(CHAR_DATA ch, Object vo) {
+    static void spell_know_alignment(@NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
         String msg;
 
@@ -3930,7 +3930,7 @@ class Magic {
 
             prepareCarriedByText(ch, obj, buf);
 
-            buf.upfirst();
+            buf.capitalize();
 
             if (number >= max_found) {
                 break;
@@ -3946,7 +3946,7 @@ class Magic {
 
     }
 
-    private static void prepareCarriedByText(CHAR_DATA ch, OBJ_DATA obj, TextBuffer buf) {
+    private static void prepareCarriedByText(@NotNull CHAR_DATA ch, OBJ_DATA obj, TextBuffer buf) {
         OBJ_DATA in_obj;
         for (in_obj = obj; in_obj.in_obj != null; in_obj = in_obj.in_obj) {
         }
@@ -4069,7 +4069,7 @@ class Magic {
     }
 
 
-    static void spell_null(CHAR_DATA ch) {
+    static void spell_null(@NotNull CHAR_DATA ch) {
         send_to_char("That's not a spell!\n", ch);
     }
 
@@ -4687,7 +4687,7 @@ class Magic {
         var buf2 = new TextBuffer();
         sprintf(buf1, "%s says '%s'.\n", speaker, target_name);
         sprintf(buf2, "Someone makes %s say '%s'.\n", speaker, target_name);
-        buf1.upfirst();
+        buf1.capitalize();
 
         var speakerName = speaker.toString();
         for (vch = ch.in_room.people; vch != null; vch = vch.next_in_room) {
@@ -4720,7 +4720,7 @@ class Magic {
 
 /* RT recall spell is back */
 
-    static void spell_word_of_recall(CHAR_DATA ch, Object vo) {
+    static void spell_word_of_recall(@NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
         ROOM_INDEX_DATA location;
         int to_room_vnum;
@@ -4994,7 +4994,7 @@ class Magic {
     /**
      * Spells for mega1.are from Glop/Erkenbrand.
      */
-    static void spell_general_purpose(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_general_purpose(@NotNull Skill sn, int level, @NotNull CHAR_DATA ch, @NotNull Object vo) {
         var victim = (CHAR_DATA) vo;
         int dam;
 
@@ -5005,7 +5005,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_PIERCE, true);
     }
 
-    static void spell_high_explosive(Skill sn, int level, CHAR_DATA ch, Object vo) {
+    static void spell_high_explosive(@NotNull Skill sn, int level, @NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
         int dam;
 
@@ -5039,7 +5039,7 @@ class Magic {
             number++;
 
             prepareCarriedByText(ch, obj, buf);
-            buf.upfirst();
+            buf.capitalize();
 
             buffer.append(buf);
 
@@ -5628,7 +5628,7 @@ class Magic {
     }
 
 
-    static void spell_take_revenge(CHAR_DATA ch) {
+    static void spell_take_revenge(@NotNull CHAR_DATA ch) {
         OBJ_DATA obj;
         OBJ_DATA in_obj;
         ROOM_INDEX_DATA room = null;
@@ -6312,7 +6312,7 @@ class Magic {
         send_to_char("Your body is surrounded by an energy field.\n", ch);
     }
 
-    static void spell_transfer_object(CHAR_DATA ch) {
+    static void spell_transfer_object(@NotNull CHAR_DATA ch) {
         send_to_char("Not implemented!\n", ch);
     }
 

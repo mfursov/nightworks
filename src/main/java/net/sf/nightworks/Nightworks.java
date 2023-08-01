@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import java.nio.channels.SocketChannel;
@@ -7,11 +8,11 @@ import java.util.ArrayList;
 
 import static net.sf.nightworks.Const.dex_app;
 import static net.sf.nightworks.Const.str_app;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_trust;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Skill.MAX_SKILLS;
+import static net.sf.nightworks.util.Logger.logError;
 
+@SuppressWarnings("unused")
 final class Nightworks {
 
 
@@ -20,118 +21,115 @@ final class Nightworks {
     static final int MAX_TIME_LIMIT = 43200;    /* 720 Hours */
 
     static final String DEFAULT_PROMPT = "<{c%n{x: %h/%Hhp %m/%Mm %v/%Vmv tnl:%X {c%e{x Opp:%o> ";
-/*
- * Function types.
- */
 
     interface SPEC_FUN {
-        boolean run(CHAR_DATA ch);
+        boolean run(@NotNull CHAR_DATA ch);
 
         String getName();
     }
 
     interface DO_FUN {
-        void run(CHAR_DATA ch, String argument);
+        void run(@NotNull CHAR_DATA ch, @NotNull String argument);
     }
 
     interface MPROG_FUN_BRIBE {
-        void run(CHAR_DATA mob, CHAR_DATA ch, int amount);
+        void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, int amount);
     }
 
     interface MPROG_FUN_ENTRY {
-        void run(CHAR_DATA mob);
+        void run(@NotNull CHAR_DATA mob);
     }
 
     interface MPROG_FUN_GREET {
-        void run(CHAR_DATA mob, CHAR_DATA ch);
+        void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch);
     }
 
     interface MPROG_FUN_GIVE {
-        void run(CHAR_DATA mob, CHAR_DATA ch, OBJ_DATA obj);
+        void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, @NotNull OBJ_DATA obj);
     }
 
 
     interface MPROG_FUN_FIGHT {
-        void run(CHAR_DATA mob, CHAR_DATA victim);
+        void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA victim);
     }
 
 
     interface MPROG_FUN_DEATH {
-        boolean run(CHAR_DATA mob);
+        boolean run(@NotNull CHAR_DATA mob);
     }
 
     interface MPROG_FUN_AREA {
-        void run(CHAR_DATA mob);
+        void run(@NotNull CHAR_DATA mob);
     }
 
     interface MPROG_FUN_SPEECH {
-        void run(CHAR_DATA mob, CHAR_DATA ch, String speech);
+        void run(@NotNull CHAR_DATA mob, @NotNull CHAR_DATA ch, @NotNull String speech);
     }
 
 
     interface OPROG_FUN_WEAR {
-        void run(OBJ_DATA obj, CHAR_DATA ch);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_REMOVE {
-        void run(OBJ_DATA obj, CHAR_DATA ch);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_GET {
-        void run(OBJ_DATA obj, CHAR_DATA ch);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_DROP {
-        void run(OBJ_DATA obj, CHAR_DATA ch);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_SAC {
-        boolean run(OBJ_DATA obj, CHAR_DATA ch);
+        boolean run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_ENTRY {
-        void run(OBJ_DATA obj);
+        void run(@NotNull OBJ_DATA obj);
     }
 
     interface OPROG_FUN_GIVE {
-        void run(OBJ_DATA obj, CHAR_DATA from, CHAR_DATA to);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA from, @NotNull CHAR_DATA to);
     }
 
     interface OPROG_FUN_GREET {
-        void run(OBJ_DATA obj, CHAR_DATA ch);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_FIGHT {
-        void run(OBJ_DATA obj, CHAR_DATA ch);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_DEATH {
-        boolean run(OBJ_DATA obj, CHAR_DATA ch);
+        boolean run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch);
     }
 
     interface OPROG_FUN_SPEECH {
-        void run(OBJ_DATA obj, CHAR_DATA ch, String speech);
+        void run(@NotNull OBJ_DATA obj, @NotNull CHAR_DATA ch, @NotNull String speech);
     }
 
     interface OPROG_FUN_AREA {
-        void run(OBJ_DATA obj);
+        void run(@NotNull OBJ_DATA obj);
     }
 
     /*
-    *  COMMAND extra bits..
-    */
+     *  COMMAND extra bits..
+     */
     static final int CMD_KEEP_HIDE = 1;
     static final int CMD_GHOST = 2;
 
     /*
-    * String and memory management parameters.
-    */
+     * String and memory management parameters.
+     */
     static final int MAX_KEY_HASH = 1024;
     static final int MAX_STRING_LENGTH = 4608;
     static final int MAX_INPUT_LENGTH = 256;
     static final int PAGELEN = 22;
 
-/* RT ASCII conversions -- used so we can have letters in this file */
+    /* RT ASCII conversions -- used so we can have letters in this file */
 
     static final int A = 1;
     static final int B = 1 << 1;
@@ -220,8 +218,8 @@ final class Nightworks {
     static final int OPROG_AREA = (L);
 
     /*
-    * Game parameters.
-    */
+     * Game parameters.
+     */
     static final int NIGHTWORKS_REBOOT = 0;
     static final int NIGHTWORKS_SHUTDOWN = 1;
 
@@ -279,9 +277,9 @@ final class Nightworks {
     static final int ETHOS_CHAOTIC = 3;
 
 
-/*
- * Cabal structure
- */
+    /*
+     * Cabal structure
+     */
 
     static final class cabal_type {
         final String long_name;
@@ -328,7 +326,7 @@ final class Nightworks {
     static final int RELIGION_PROMETHEUS = 16;
     static final int RELIGION_EROS = 17;
 
-/* Religion structure */
+    /* Religion structure */
 
     static final class religion_type {
         final String leader;
@@ -343,16 +341,16 @@ final class Nightworks {
     }
 
     /*
-    *  minimum pk level
-    */
+     *  minimum pk level
+     */
     static final int PK_MIN_LEVEL = 5;
 
     static final int MAX_NEWBIES = 120;   /* number of newbies allowed */
     static final int MAX_OLDIES = 999;  /* number of oldies allowed */
 
-/*
- * Site ban structure.
- */
+    /*
+     * Site ban structure.
+     */
 
     static final int BAN_SUFFIX = A;
     static final int BAN_PREFIX = B;
@@ -387,8 +385,8 @@ final class Nightworks {
     }
 
     /*
-    * Time and weather stuff.
-    */
+     * Time and weather stuff.
+     */
     static final int SUN_DARK = 0;
     static final int SUN_RISE = 1;
     static final int SUN_LIGHT = 2;
@@ -415,8 +413,8 @@ final class Nightworks {
     }
 
     /*
-    * Connected state for a channel.
-    */
+     * Connected state for a channel.
+     */
     static final int CON_PLAYING = 0;
     static final int CON_GET_NAME = 1;
     static final int CON_GET_OLD_PASSWORD = 2;
@@ -441,9 +439,9 @@ final class Nightworks {
     static final int CON_READ_NEWBIE = 21;
     static final int CON_REMORTING = 22;
 
-/*
-* Descriptor (channel) structure.
-*/
+    /*
+     * Descriptor (channel) structure.
+     */
 
     static final class DESCRIPTOR_DATA {
         DESCRIPTOR_DATA next;
@@ -476,9 +474,9 @@ final class Nightworks {
         int showstr_point;
     }
 
-/*
-* Attribute bonus structures.
-*/
+    /*
+     * Attribute bonus structures.
+     */
 
     static final class str_app_type {
         final int tohit;
@@ -529,17 +527,17 @@ final class Nightworks {
     }
 
     /*
-    * TO types for act.
-    */
+     * TO types for act.
+     */
     static final int TO_ROOM = 0;
     static final int TO_NOTVICT = 1;
     static final int TO_VICT = 2;
     static final int TO_CHAR = 3;
     static final int TO_ALL = 4;
 
-/*
-* Help table types.
-*/
+    /*
+     * Help table types.
+     */
 
     static final class HELP_DATA {
         HELP_DATA next;
@@ -549,8 +547,8 @@ final class Nightworks {
     }
 
     /*
-    * Shop types.
-    */
+     * Shop types.
+     */
     static final int MAX_TRADE = 5;
 
     static final class SHOP_DATA {
@@ -563,9 +561,9 @@ final class Nightworks {
         int close_hour;     /* First closing hour       */
     }
 
-/*
-* Per-class stuff.
-*/
+    /*
+     * Per-class stuff.
+     */
 
     static final int MAX_GUILD = 6;
     static final int MAX_STATS = 6;
@@ -710,9 +708,9 @@ final class Nightworks {
     static final int APPLY_ROOM_HEAL = 1;
     static final int APPLY_ROOM_MANA = 2;
 
-/*
- * A kill structure (indexed by level).
- */
+    /*
+     * A kill structure (indexed by level).
+     */
 
     static final class KILL_DATA {
         int number;
@@ -729,10 +727,10 @@ final class Nightworks {
      * *************************************************************************
      */
 
-/*
- * Well known mob virtual numbers.
- * Defined in #MOBILES.
- */
+    /*
+     * Well known mob virtual numbers.
+     * Defined in #MOBILES.
+     */
     static final int MOB_VNUM_CITYGUARD = 3060;
     static final int MOB_VNUM_VAGABOND = 3063;
     static final int MOB_VNUM_CAT = 3066;
@@ -849,15 +847,15 @@ final class Nightworks {
     static final int GFLAG_WIZARD = (X);
 
     /*
-    * AREA FLAGS
-    */
+     * AREA FLAGS
+     */
     static final int AREA_HOMETOWN = (A);
     static final int AREA_PROTECTED = (B);
 
     /*
-    * ACT bits for mobs.  *ACT*
-    * Used in #MOBILES.
-    */
+     * ACT bits for mobs.  *ACT*
+     * Used in #MOBILES.
+     */
     static final int ACT_IS_NPC = (A);/* Auto set for mobs    */
     static final int ACT_SENTINEL = (B);    /* Stays in one room    */
     static final int ACT_SCAVENGER = (C);     /* Picks up objects */
@@ -1072,9 +1070,9 @@ final class Nightworks {
     static final int PART_TUSKS = (Y);
 
     /*
-    * Bits for 'affected_by'.  *AFF*
-    * Used in #MOBILES.
-    */
+     * Bits for 'affected_by'.  *AFF*
+     * Used in #MOBILES.
+     */
     static final long AFF_BLIND = (A);
     static final long AFF_INVISIBLE = (B);
     static final long AFF_IMP_INVIS = (C);
@@ -1135,8 +1133,8 @@ final class Nightworks {
     static final long AFF_ACUTE_VISION = BIT_54;
 
     /*
-    * *AFF* bits for rooms
-    */
+     * *AFF* bits for rooms
+     */
     static final int AFF_ROOM_SHOCKING = (A);
     static final int AFF_ROOM_L_SHIELD = (B);
     static final int AFF_ROOM_THIEF_TRAP = (C);
@@ -1151,9 +1149,9 @@ final class Nightworks {
 
 
     /*
-    * Sex.
-    * Used in #MOBILES.
-    */
+     * Sex.
+     * Used in #MOBILES.
+     */
     static final int SEX_MALE = 1;
     static final int SEX_FEMALE = 2;
 
@@ -1178,9 +1176,9 @@ final class Nightworks {
     static final int SIZE_GARGANTUAN = 6;
 
     /*
-    * Well known object virtual numbers.
-    * Defined in #OBJECTS.
-    */
+     * Well known object virtual numbers.
+     * Defined in #OBJECTS.
+     */
     static final int OBJ_VNUM_SILVER_ONE = 1;
     static final int OBJ_VNUM_GOLD_ONE = 2;
     static final int OBJ_VNUM_GOLD_SOME = 3;
@@ -1305,9 +1303,9 @@ final class Nightworks {
     static final int QUEST_ITEM5 = 29;
 
     /*
-    * Item types.
-    * Used in #OBJECTS.
-    */
+     * Item types.
+     * Used in #OBJECTS.
+     */
     static final int ITEM_LIGHT = 1;
     static final int ITEM_SCROLL = 2;
     static final int ITEM_WAND = 3;
@@ -1340,9 +1338,9 @@ final class Nightworks {
     static final int ITEM_TATTOO = 35;
 
     /*
-    * Extra flags.  *EXT*
-    * Used in #OBJECTS.
-    */
+     * Extra flags.  *EXT*
+     * Used in #OBJECTS.
+     */
     static final int ITEM_GLOW = (A);
     static final int ITEM_HUM = (B);
     static final int ITEM_DARK = (C);
@@ -1372,9 +1370,9 @@ final class Nightworks {
     static final int ITEM_BURIED = BIT_27;
 
     /*
-    * Wear flags.   *WEAR*
-    * Used in #OBJECTS.
-    */
+     * Wear flags.   *WEAR*
+     * Used in #OBJECTS.
+     */
     static final int ITEM_TAKE = (A);
     static final int ITEM_WEAR_FINGER = (B);
     static final int ITEM_WEAR_NECK = (C);
@@ -1446,9 +1444,9 @@ final class Nightworks {
     static final int PUT_INSIDE = (P);
 
     /*
-    * Apply types (for affects).
-    * Used in #OBJECTS.
-    */
+     * Apply types (for affects).
+     * Used in #OBJECTS.
+     */
     static final int APPLY_NONE = 0;
     static final int APPLY_STR = 1;
     static final int APPLY_DEX = 2;
@@ -1479,9 +1477,9 @@ final class Nightworks {
     static final int APPLY_SIZE = 26;
 
     /*
-    * Values for containers (value[1]).
-    * Used in #OBJECTS.
-    */
+     * Values for containers (value[1]).
+     * Used in #OBJECTS.
+     */
     static final int CONT_CLOSEABLE = 1;
     static final int CONT_PICKPROOF = 2;
     static final int CONT_CLOSED = 4;
@@ -1492,9 +1490,9 @@ final class Nightworks {
 
 
     /*
-    * Well known room virtual numbers.
-    * Defined in #ROOMS.
-    */
+     * Well known room virtual numbers.
+     * Defined in #ROOMS.
+     */
     static final int ROOM_VNUM_LIMBO = 2;
     static final int ROOM_VNUM_CHAT = 1200;
     static final int ROOM_VNUM_TEMPLE = 3001;
@@ -1507,9 +1505,9 @@ final class Nightworks {
     static final int ROOM_VNUM_BATTLE = 541;
 
     /*
-    * Room flags.
-    * Used in #ROOMS.
-    */
+     * Room flags.
+     * Used in #ROOMS.
+     */
     static final int ROOM_DARK = (A);
     static final int ROOM_NO_MOB = (C);
     static final int ROOM_INDOORS = (D);
@@ -1530,9 +1528,9 @@ final class Nightworks {
     static final int ROOM_REGISTRY = BIT_27;
 
     /*
-    * Directions.
-    * Used in #ROOMS.
-    */
+     * Directions.
+     * Used in #ROOMS.
+     */
     static final int DIR_NORTH = 0;
     static final int DIR_EAST = 1;
     static final int DIR_SOUTH = 2;
@@ -1541,9 +1539,9 @@ final class Nightworks {
     static final int DIR_DOWN = 5;
 
     /*
-    * Exit flags.
-    * Used in #ROOMS.
-    */
+     * Exit flags.
+     * Used in #ROOMS.
+     */
     static final int EX_ISDOOR = (A);
     static final int EX_CLOSED = (B);
     static final int EX_LOCKED = (C);
@@ -1557,9 +1555,9 @@ final class Nightworks {
     static final int EX_NOLOCK = (L);
 
     /*
-    * Sector types.
-    * Used in #ROOMS.
-    */
+     * Sector types.
+     * Used in #ROOMS.
+     */
     static final int SECT_INSIDE = 0;
     static final int SECT_CITY = 1;
     static final int SECT_FIELD = 2;
@@ -1574,9 +1572,9 @@ final class Nightworks {
     static final int SECT_MAX = 11;
 
     /*
-    * Equpiment wear locations.
-    * Used in #RESETS.
-    */
+     * Equpiment wear locations.
+     * Used in #RESETS.
+     */
     static final int OWEAR_NONE = -1;
     static final int OWEAR_LIGHT = 0;
     static final int OWEAR_FINGER_L = 1;
@@ -1638,9 +1636,9 @@ final class Nightworks {
      * *************************************************************************
      */
 
-/*
- * Conditions.
- */
+    /*
+     * Conditions.
+     */
     static final int COND_DRUNK = 0;
     static final int COND_FULL = 1;
     static final int COND_THIRST = 2;
@@ -1651,8 +1649,8 @@ final class Nightworks {
     static final int MAX_COND = 6;
 
     /*
-    * Positions.
-    */
+     * Positions.
+     */
     static final int POS_DEAD = 0;
     static final int POS_MORTAL = 1;
     static final int POS_INCAP = 2;
@@ -1664,8 +1662,8 @@ final class Nightworks {
     static final int POS_STANDING = 8;
 
     /*
-    * ACT bits for players.
-    */
+     * ACT bits for players.
+     */
     static final int PLR_IS_NPC = (A)     /* Don't EVER set.  */;
     static final int PLR_BOUGHT_PET = (B);
 
@@ -1704,35 +1702,35 @@ final class Nightworks {
     static final int PLR_BLINK_ON = BIT_30;
 
 
-    static boolean IS_QUESTOR(CHAR_DATA ch) {
+    static boolean IS_QUESTOR(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, PLR_QUESTOR);
     }
 
-    static boolean IS_VAMPIRE(CHAR_DATA ch) {
+    static boolean IS_VAMPIRE(@NotNull CHAR_DATA ch) {
         return !IS_NPC(ch) && IS_SET(ch.act, PLR_VAMPIRE);
     }
 
-    static boolean IS_HARA_KIRI(CHAR_DATA ch) {
+    static boolean IS_HARA_KIRI(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, PLR_HARA_KIRI);
     }
 
-    static boolean CANT_CHANGE_TITLE(CHAR_DATA ch) {
+    static boolean CANT_CHANGE_TITLE(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, PLR_NO_TITLE);
     }
 
-    static boolean IS_BLINK_ON(CHAR_DATA ch) {
+    static boolean IS_BLINK_ON(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, PLR_BLINK_ON);
     }
 
-    static boolean CANT_GAIN_EXP(CHAR_DATA ch) {
+    static boolean CANT_GAIN_EXP(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, PLR_NO_EXP);
     }
 
-    static boolean RIGHT_HANDER(CHAR_DATA ch) {
+    static boolean RIGHT_HANDER(@NotNull CHAR_DATA ch) {
         return IS_NPC(ch) || !IS_SET(ch.act, PLR_LEFTHAND);
     }
 
-    static boolean LEFT_HANDER(CHAR_DATA ch) {
+    static boolean LEFT_HANDER(@NotNull CHAR_DATA ch) {
         return !IS_NPC(ch) && IS_SET(ch.act, PLR_LEFTHAND);
     }
 
@@ -1811,9 +1809,9 @@ final class Nightworks {
     static final int WIZ_PREFIX = (S);
     static final int WIZ_SPAM = (T);
 
-/*
- * language staff
- */
+    /*
+     * language staff
+     */
 
     static final class language_type {
         final String name;
@@ -1836,9 +1834,9 @@ final class Nightworks {
         }
     }
 
-/*
- * auction data
- */
+    /*
+     * auction data
+     */
 
     static final class AUCTION_DATA {
         OBJ_DATA item;   /* a pointer to the item */
@@ -1849,10 +1847,10 @@ final class Nightworks {
         int pulse;  /* how many pulses (.25 sec) until another call-out ? */
     }
 
-/*
- * Prototype for a mob.
- * This is the in-memory version of #MOBILES.
- */
+    /*
+     * Prototype for a mob.
+     * This is the in-memory version of #MOBILES.
+     */
 
     static final class MOB_INDEX_DATA {
         MOB_INDEX_DATA next;
@@ -1901,7 +1899,7 @@ final class Nightworks {
     static final int MEM_HOSTILE = C;
     static final int MEM_AFRAID = D;
 
-/* memory for mobs */
+    /* memory for mobs */
 
     static final class MEM_DATA {
         MEM_DATA next;
@@ -1938,9 +1936,9 @@ final class Nightworks {
         OPROG_FUN_AREA area_prog;
     }
 
-/*
-* One character (PC or NPC). *CHAR_DATA*
-*/
+    /*
+     * One character (PC or NPC). *CHAR_DATA*
+     */
 
     static final class CHAR_DATA {
         CHAR_DATA next;
@@ -2047,9 +2045,9 @@ final class Nightworks {
         int language;
     }
 
-/*
-* Data which only PC's have.
-*/
+    /*
+     * Data which only PC's have.
+     */
 
     static final class PC_DATA {
         PC_DATA next;
@@ -2095,8 +2093,8 @@ final class Nightworks {
     }
 
     /*
-    * Liquids.
-    */
+     * Liquids.
+     */
     static final int LIQ_WATER = 0;
 
     static final class liq_type {
@@ -2111,9 +2109,9 @@ final class Nightworks {
         }
     }
 
-/*
-* Extra description data for a room or object.
-*/
+    /*
+     * Extra description data for a room or object.
+     */
 
     static final class EXTRA_DESCR_DATA {
         EXTRA_DESCR_DATA next; /* Next in list                     */
@@ -2122,9 +2120,9 @@ final class Nightworks {
         String description = "";          /* What to see                      */
     }
 
-/*
-* Prototype for an object.  *OID*
-*/
+    /*
+     * Prototype for an object.  *OID*
+     */
 
     static final class OBJ_INDEX_DATA {
         OBJ_INDEX_DATA next;
@@ -2151,9 +2149,9 @@ final class Nightworks {
         OPROG_DATA oprogs;
     }
 
-/*
-* One object.  *OD*
-*/
+    /*
+     * One object.  *OD*
+     */
 
     static final class OBJ_DATA {
         OBJ_DATA next;
@@ -2191,9 +2189,9 @@ final class Nightworks {
         int water_float;
     }
 
-/*
-* Exit data.
-*/
+    /*
+     * Exit data.
+     */
 
     static final class EXIT_DATA {
         ROOM_INDEX_DATA to_room;
@@ -2205,22 +2203,22 @@ final class Nightworks {
         String description;
     }
 
-/*
-* Reset commands:
-*   '*': comment
-*   'M': read a mobile
-*   'O': read an object
-*   'P': put object in object
-*   'G': give object to mobile
-*   'E': equip object to mobile
-*   'D': set state of door
-*   'R': randomize room exits
-*   'S': stop (end of list)
-*/
+    /*
+     * Reset commands:
+     *   '*': comment
+     *   'M': read a mobile
+     *   'O': read an object
+     *   'P': put object in object
+     *   'G': give object to mobile
+     *   'E': equip object to mobile
+     *   'D': set state of door
+     *   'R': randomize room exits
+     *   'S': stop (end of list)
+     */
 
-/*
- * Area-reset definition.
- */
+    /*
+     * Area-reset definition.
+     */
 
     static final class RESET_DATA {
         RESET_DATA next;
@@ -2231,9 +2229,9 @@ final class Nightworks {
         int arg4;
     }
 
-/*
-* Area definition.
-*/
+    /*
+     * Area definition.
+     */
 
     static final class AREA_DATA {
         AREA_DATA next;
@@ -2261,9 +2259,9 @@ final class Nightworks {
         ROOM_HISTORY_DATA next;
     }
 
-/*
- * Room type.
- */
+    /*
+     * Room type.
+     */
 
     static final class ROOM_INDEX_DATA {
         ROOM_INDEX_DATA next;
@@ -2290,8 +2288,8 @@ final class Nightworks {
 
 
     /*
-    *  Target types.
-    */
+     *  Target types.
+     */
     static final int TAR_IGNORE = 0;
     static final int TAR_CHAR_OFFENSIVE = 1;
     static final int TAR_CHAR_DEFENSIVE = 2;
@@ -2305,13 +2303,13 @@ final class Nightworks {
     static final int TARGET_ROOM = 2;
     static final int TARGET_NONE = 3;
 
-/*
-* ActSkill include spells as a particular case.
-*/
+    /*
+     * ActSkill include spells as a particular case.
+     */
 
-/*
-* Utility macros.
-*/
+    /*
+     * Utility macros.
+     */
 
     static int UMIN(int a, int b) {
         return Math.min(a, b);
@@ -2357,27 +2355,27 @@ final class Nightworks {
         return max == 0 ? 0 : (cur * 100) / max;
     }
 
-/*
- * Character macros.
- */
+    /*
+     * Character macros.
+     */
 
-    static boolean IS_NPC(CHAR_DATA ch) {
+    static boolean IS_NPC(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, ACT_IS_NPC);
     }
 
-    static boolean IS_IMMORTAL(CHAR_DATA ch) {
+    static boolean IS_IMMORTAL(@NotNull CHAR_DATA ch) {
         return get_trust(ch) >= LEVEL_IMMORTAL;
     }
 
-    static boolean IS_HERO(CHAR_DATA ch) {
+    static boolean IS_HERO(@NotNull CHAR_DATA ch) {
         return get_trust(ch) >= LEVEL_HERO;
     }
 
-    static boolean IS_TRUSTED(CHAR_DATA ch, int level) {
+    static boolean IS_TRUSTED(@NotNull CHAR_DATA ch, int level) {
         return get_trust(ch) >= level;
     }
 
-    static boolean IS_AFFECTED(CHAR_DATA ch, long sn) {
+    static boolean IS_AFFECTED(@NotNull CHAR_DATA ch, long sn) {
         return IS_SET(ch.affected_by, sn);
     }
 
@@ -2385,11 +2383,11 @@ final class Nightworks {
         return IS_SET(m.affected_by, sn);
     }
 
-    static boolean IS_PK(CHAR_DATA ch, CHAR_DATA vt) {
+    static boolean IS_PK(@NotNull CHAR_DATA ch, CHAR_DATA vt) {
         return !IS_NPC(ch) & !IS_NPC(vt);
     }
 
-    static void SET_ORG_RACE(CHAR_DATA ch, Race race) {
+    static void SET_ORG_RACE(@NotNull CHAR_DATA ch, Race race) {
         if (IS_NPC(ch)) {
             ch.pIndexData.race = race;
         } else {
@@ -2397,23 +2395,23 @@ final class Nightworks {
         }
     }
 
-    static Race ORG_RACE(CHAR_DATA ch) {
+    static Race ORG_RACE(@NotNull CHAR_DATA ch) {
         return IS_NPC(ch) ? ch.pIndexData.race : ch.pcdata.race;
     }
 
-    static int GET_AGE(CHAR_DATA ch) {
+    static int GET_AGE(@NotNull CHAR_DATA ch) {
         return (int) (17 + (ch.played + current_time - ch.logon) / 72000);
     }
 
-    static boolean IS_GOOD(CHAR_DATA ch) {
+    static boolean IS_GOOD(@NotNull CHAR_DATA ch) {
         return ch.alignment >= 350;
     }
 
-    static boolean IS_EVIL(CHAR_DATA ch) {
+    static boolean IS_EVIL(@NotNull CHAR_DATA ch) {
         return ch.alignment <= -350;
     }
 
-    static boolean IS_NEUTRAL(CHAR_DATA ch) {
+    static boolean IS_NEUTRAL(@NotNull CHAR_DATA ch) {
         return !IS_GOOD(ch) && !IS_EVIL(ch);
     }
 
@@ -2429,40 +2427,40 @@ final class Nightworks {
         return !IS_GOOD(ch) && !IS_EVIL(ch);
     }
 
-    static boolean IS_AWAKE(CHAR_DATA ch) {
+    static boolean IS_AWAKE(@NotNull CHAR_DATA ch) {
         return ch.position > POS_SLEEPING;
     }
 
-    static int GET_AC(CHAR_DATA ch, int type) {
+    static int GET_AC(@NotNull CHAR_DATA ch, int type) {
         return ch.armor[type] + (IS_AWAKE(ch) ? dex_app[get_curr_stat(ch, STAT_DEX)].defensive : 0);
     }
 
-    static int GET_HITROLL(CHAR_DATA ch) {
+    static int GET_HITROLL(@NotNull CHAR_DATA ch) {
         return ch.hitroll + str_app[get_curr_stat(ch, STAT_STR)].tohit;
     }
 
-    static int GET_DAMROLL(CHAR_DATA ch) {
+    static int GET_DAMROLL(@NotNull CHAR_DATA ch) {
         return ch.damroll + str_app[get_curr_stat(ch, STAT_STR)].todam;
     }
 
-    static boolean IS_OUTSIDE(CHAR_DATA ch) {
+    static boolean IS_OUTSIDE(@NotNull CHAR_DATA ch) {
         return !IS_SET(ch.in_room.room_flags, ROOM_INDOORS);
     }
 
-    static void WAIT_STATE(CHAR_DATA ch, int npulse) {
+    static void WAIT_STATE(@NotNull CHAR_DATA ch, int npulse) {
         ch.wait = (IS_IMMORTAL(ch) ? 1 : UMAX(ch.wait, npulse));
     }
 
-    static void DAZE_STATE(CHAR_DATA ch, int npulse) {
+    static void DAZE_STATE(@NotNull CHAR_DATA ch, int npulse) {
         ch.daze = UMAX(ch.daze, npulse);
     }
 
-    static int get_carry_weight(CHAR_DATA ch) {
+    static int get_carry_weight(@NotNull CHAR_DATA ch) {
         return ch.carry_weight + ch.silver / 10 + ch.gold * 2 / 5;
     }
-/*
- * room macros
- */
+    /*
+     * room macros
+     */
 
     static boolean IS_ROOM_AFFECTED(ROOM_INDEX_DATA room, int sn) {
         return IS_SET(room.affected_by, sn);
@@ -2472,27 +2470,27 @@ final class Nightworks {
         return IS_SET(room.affected_by, sn);
     }
 
-    static CHAR_DATA MOUNTED(CHAR_DATA ch) {
+    static CHAR_DATA MOUNTED(@NotNull CHAR_DATA ch) {
         return !IS_NPC(ch) && ch.mount != null && ch.riding ? ch.mount : null;
     }
 
-    static CHAR_DATA RIDDEN(CHAR_DATA ch) {
+    static CHAR_DATA RIDDEN(@NotNull CHAR_DATA ch) {
         return IS_NPC(ch) && ch.mount != null && ch.riding ? ch.mount : null;
     }
 
-    static boolean IS_DRUNK(CHAR_DATA ch) {
+    static boolean IS_DRUNK(@NotNull CHAR_DATA ch) {
         return !IS_NPC(ch) && ch.pcdata.condition[COND_DRUNK] > 10;
     }
 
-    static boolean IS_GOLEM(CHAR_DATA ch) {
+    static boolean IS_GOLEM(@NotNull CHAR_DATA ch) {
         return IS_NPC(ch) && (ch.pIndexData.vnum == MOB_VNUM_LESSER_GOLEM
                 || ch.pIndexData.vnum == MOB_VNUM_STONE_GOLEM
                 || ch.pIndexData.vnum == MOB_VNUM_IRON_GOLEM
                 || ch.pIndexData.vnum == MOB_VNUM_ADAMANTITE_GOLEM);
     }
-/*
- * Object macros.
- */
+    /*
+     * Object macros.
+     */
 
     static boolean CAN_WEAR(OBJ_INDEX_DATA obj, int part) {
         return IS_SET(obj.wear_flags, part);
@@ -2518,36 +2516,36 @@ final class Nightworks {
         return obj.item_type == ITEM_CONTAINER ? obj.value[4] : 100;
     }
 
-/* skill defines */
+    /* skill defines */
 
-    static boolean CLEVEL_OK(CHAR_DATA ch, Skill skill) {
+    static boolean CLEVEL_OK(@NotNull CHAR_DATA ch, Skill skill) {
         return ch.level >= skill.skill_level[ch.clazz.id];
     }
 
-    static boolean RACE_OK(CHAR_DATA ch, Skill skill) {
+    static boolean RACE_OK(@NotNull CHAR_DATA ch, Skill skill) {
         return skill.race == null || skill.race == ch.race;
     }
 
-    static boolean CABAL_OK(CHAR_DATA ch, Skill skill) {
+    static boolean CABAL_OK(@NotNull CHAR_DATA ch, Skill skill) {
         return skill.cabal == CABAL_NONE || skill.cabal == ch.cabal;
     }
 
-    static boolean ALIGN_OK(CHAR_DATA ch, Skill skill) {
+    static boolean ALIGN_OK(@NotNull CHAR_DATA ch, Skill skill) {
         return skill.align == -1 || skill.align == ch.alignment;
     }
 
-/*
- * Description macros.
- */
+    /*
+     * Description macros.
+     */
 
-    static String PERS(CHAR_DATA ch, CHAR_DATA looker) {
+    static String PERS(@NotNull CHAR_DATA ch, CHAR_DATA looker) {
         return can_see(looker, ch) ?
                 IS_NPC(ch) ? ch.short_descr : ((IS_VAMPIRE(ch) && !IS_IMMORTAL(looker)) ? "An ugly creature" : ch.name)
                 : (!IS_NPC(ch) && ch.level > LEVEL_HERO) ? "an immortal" : "someone";
     }
-/* new defines */
+    /* new defines */
 
-    static int MAX_CHARM(CHAR_DATA ch) {
+    static int MAX_CHARM(@NotNull CHAR_DATA ch) {
         return (get_curr_stat(ch, STAT_INT) / 6) + ch.level / 45;
     }
 
@@ -2574,13 +2572,13 @@ final class Nightworks {
 
 
     /*
-    * Global constants.
-    */
+     * Global constants.
+     */
     static final ArrayList<social_type> social_table = new ArrayList<>(MAX_SOCIALS);
 
     /*
-    * Global variables.
-    */
+     * Global variables.
+     */
     static final Configuration nw_config = new Configuration();
 
     static AREA_DATA area_first;
@@ -2607,7 +2605,7 @@ final class Nightworks {
 
 
     static void exit(int code) {
-        new Exception("Exiting with code " + code + " ...").printStackTrace();
+        logError(new Exception("Exiting with code " + code + " ..."));
         System.exit(1);
     }
 

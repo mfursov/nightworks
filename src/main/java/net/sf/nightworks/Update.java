@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import java.util.Formatter;
 
 import static net.sf.nightworks.ActComm.do_quit;
@@ -37,8 +39,7 @@ public class Update {
      */
 
 
-    static void advance_level(CHAR_DATA ch) {
-
+    static void advance_level(@NotNull CHAR_DATA ch) {
         int add_hp;
         int add_mana;
         int add_move;
@@ -88,7 +89,7 @@ public class Update {
     }
 
 
-    static void gain_exp(CHAR_DATA ch, int gain) {
+    static void gain_exp(@NotNull CHAR_DATA ch, int gain) {
 
         if (IS_NPC(ch) || ch.level >= LEVEL_HERO) {
             return;
@@ -133,7 +134,7 @@ public class Update {
      * Regeneration stuff.
      */
 
-    static int hit_gain(CHAR_DATA ch) {
+    static int hit_gain(@NotNull CHAR_DATA ch) {
         int gain;
         int number;
 
@@ -225,7 +226,7 @@ public class Update {
     }
 
 
-    static int mana_gain(CHAR_DATA ch) {
+    static int mana_gain(@NotNull CHAR_DATA ch) {
         int gain;
         int number;
 
@@ -316,7 +317,7 @@ public class Update {
     }
 
 
-    static int move_gain(CHAR_DATA ch) {
+    static int move_gain(@NotNull CHAR_DATA ch) {
         int gain;
 
         if (ch.in_room == null) {
@@ -370,7 +371,7 @@ public class Update {
     }
 
 
-    static void gain_condition(CHAR_DATA ch, int iCond, int value) {
+    static void gain_condition(@NotNull CHAR_DATA ch, int iCond, int value) {
         int condition;
         int damage_hunger;
         CHAR_DATA vch, vch_next;
@@ -1184,7 +1185,7 @@ public class Update {
                 }
             }
 
-            if (IS_AFFECTED(ch, AFF_PLAGUE) && ch != null) {
+            if (IS_AFFECTED(ch, AFF_PLAGUE)) {
                 AFFECT_DATA af;
                 CHAR_DATA vch;
                 int dam;
@@ -1237,8 +1238,7 @@ public class Update {
                 } else {
                     damage(ch, ch, dam, gsn_plague, DAM_DISEASE, false);
                 }
-            } else if (IS_AFFECTED(ch, AFF_POISON) && ch != null
-                    && !IS_AFFECTED(ch, AFF_SLOW)) {
+            } else if (IS_AFFECTED(ch, AFF_POISON) && !IS_AFFECTED(ch, AFF_SLOW)) {
                 var poison = affect_find(ch.affected, gsn_poison);
 
                 if (poison != null) {

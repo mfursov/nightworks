@@ -1,5 +1,6 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
 
 import static net.sf.nightworks.ActComm.*;
@@ -26,7 +27,7 @@ import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class Magic2 {
 
-    static ROOM_INDEX_DATA check_place(CHAR_DATA ch, String argument) {
+    static ROOM_INDEX_DATA check_place(@NotNull CHAR_DATA ch, String argument) {
         EXIT_DATA pExit;
         ROOM_INDEX_DATA dest_room;
         int number, door;
@@ -250,7 +251,7 @@ class Magic2 {
 
     }
 
-    static void spell_poison_smoke(CHAR_DATA ch) {
+    static void spell_poison_smoke(@NotNull CHAR_DATA ch) {
 
         CHAR_DATA tmp_vict;
 
@@ -282,7 +283,7 @@ class Magic2 {
         }
     }
 
-    static void spell_blindness_dust(CHAR_DATA ch) {
+    static void spell_blindness_dust(@NotNull CHAR_DATA ch) {
         CHAR_DATA tmp_vict;
 
         send_to_char("A cloud of dust fills in the room.\n", ch);
@@ -450,7 +451,7 @@ class Magic2 {
         obj_to_char(staff, ch);
     }
 
-    static void spell_vanish(CHAR_DATA ch, Object vo) {
+    static void spell_vanish(@NotNull CHAR_DATA ch, Object vo) {
         ROOM_INDEX_DATA pRoomIndex = null;
         var victim = (CHAR_DATA) vo;
         int i;
@@ -998,7 +999,7 @@ class Magic2 {
 
     }
 
-    static void spell_eyes(CHAR_DATA ch) {
+    static void spell_eyes(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         ROOM_INDEX_DATA ori_room;
 
@@ -1380,7 +1381,7 @@ class Magic2 {
     }
 
     @SuppressWarnings("UnusedParameters")
-    static void spell_amnesia(CHAR_DATA ch, Object vo) {
+    static void spell_amnesia(@NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
 
         if (IS_NPC(victim)) {
@@ -1443,7 +1444,7 @@ class Magic2 {
         obj_to_char(blade, ch);
     }
 
-    static void spell_tattoo(CHAR_DATA ch, Object vo) {
+    static void spell_tattoo(@NotNull CHAR_DATA ch, Object vo) {
         OBJ_DATA tattoo;
         var victim = (CHAR_DATA) vo;
         int i;
@@ -1479,7 +1480,7 @@ class Magic2 {
         send_to_char("You don't have a religious tattoo.\n", ch);
     }
 
-    static void spell_remove_tattoo(CHAR_DATA ch, Object vo) {
+    static void spell_remove_tattoo(@NotNull CHAR_DATA ch, Object vo) {
         OBJ_DATA tattoo;
         var victim = (CHAR_DATA) vo;
 
@@ -1980,7 +1981,7 @@ class Magic2 {
 
     }
 
-    static void spell_remove_badge(CHAR_DATA ch, Object vo) {
+    static void spell_remove_badge(@NotNull CHAR_DATA ch, Object vo) {
         OBJ_DATA badge;
         var victim = (CHAR_DATA) vo;
         OBJ_DATA obj_next;
@@ -3173,7 +3174,7 @@ class Magic2 {
         }
     }
 
-    static void spell_mend(CHAR_DATA ch, Object vo) {
+    static void spell_mend(@NotNull CHAR_DATA ch, Object vo) {
         var obj = (OBJ_DATA) vo;
         int result, skill;
 
@@ -3249,7 +3250,7 @@ class Magic2 {
     }
 
 
-    static void spell_link(CHAR_DATA ch, Object vo) {
+    static void spell_link(@NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
         int random, tmpmana;
 
@@ -3285,7 +3286,7 @@ class Magic2 {
         raw_kill(victim);
     }
 
-    static void spell_eyed_sword(CHAR_DATA ch) {
+    static void spell_eyed_sword(@NotNull CHAR_DATA ch) {
         OBJ_DATA eyed;
         int i;
 /*
@@ -3730,7 +3731,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_fire_shield(CHAR_DATA ch) {
+    static void spell_fire_shield(@NotNull CHAR_DATA ch) {
         OBJ_DATA fire;
         int i;
 
@@ -3912,7 +3913,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         }
     }
 
-    static void spell_hallucination(CHAR_DATA ch) {
+    static void spell_hallucination(@NotNull CHAR_DATA ch) {
         send_to_char("That spell is under construction.\n", ch);
     }
 
@@ -4652,7 +4653,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_sanctify_lands(CHAR_DATA ch) {
+    static void spell_sanctify_lands(@NotNull CHAR_DATA ch) {
         if (number_bits(1) == 0) {
             send_to_char("You failed.\n", ch);
             return;
@@ -5196,7 +5197,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
     }
 
 
-    static void spell_farsight(CHAR_DATA ch) {
+    static void spell_farsight(@NotNull CHAR_DATA ch) {
         ROOM_INDEX_DATA room, oldr;
 
         if ((room = check_place(ch, target_name)) == null) {
@@ -5520,7 +5521,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
 
     }
 
-    static void spell_eyes_of_tiger(CHAR_DATA ch) {
+    static void spell_eyes_of_tiger(@NotNull CHAR_DATA ch) {
         CHAR_DATA victim;
         ROOM_INDEX_DATA ori_room;
 
@@ -5898,7 +5899,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         send_to_char("But it ain't dead!!\n", ch);
     }
 
-    static void spell_soul_bind(CHAR_DATA ch, Object vo) {
+    static void spell_soul_bind(@NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
 
         if (ch.pet != null) {

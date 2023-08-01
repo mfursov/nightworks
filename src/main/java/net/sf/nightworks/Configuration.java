@@ -15,7 +15,7 @@ class Configuration {
 
     Configuration() {
         //TODO: read from system properties, use hardcoded values as default
-        port_num = 4000;
+        port_num = 4004;
 
         lib_area_dir = "./lib/areas";
         lib_races_dir = "./lib/races";

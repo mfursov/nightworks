@@ -1,6 +1,8 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
+import net.sf.nightworks.util.TextUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -40,7 +42,6 @@ import static net.sf.nightworks.DB.log_string;
 import static net.sf.nightworks.DB.mob_index_hash;
 import static net.sf.nightworks.DB.number_range;
 import static net.sf.nightworks.DB.time_info;
-import static net.sf.nightworks.DB.upfirst;
 import static net.sf.nightworks.Handler.can_see;
 import static net.sf.nightworks.Handler.can_see_obj;
 import static net.sf.nightworks.Handler.can_see_room;
@@ -95,7 +96,6 @@ import static net.sf.nightworks.Nightworks.ETHOS_ANY;
 import static net.sf.nightworks.Nightworks.ETHOS_CHAOTIC;
 import static net.sf.nightworks.Nightworks.ETHOS_LAWFUL;
 import static net.sf.nightworks.Nightworks.ETHOS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.EXIT_DATA;
 import static net.sf.nightworks.Nightworks.EX_CLOSED;
 import static net.sf.nightworks.Nightworks.IS_AFFECTED;
 import static net.sf.nightworks.Nightworks.IS_EVIL;
@@ -189,8 +189,8 @@ import static net.sf.nightworks.Telnet.TELOPT_ECHO;
 import static net.sf.nightworks.Telnet.WILL;
 import static net.sf.nightworks.Telnet.WONT;
 import static net.sf.nightworks.Update.update_handler;
+import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.UPPER;
-import static net.sf.nightworks.util.TextUtils.capitalize;
 import static net.sf.nightworks.util.TextUtils.isSpace;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
@@ -250,6 +250,7 @@ class Comm {
                 serverChannel.close();
             }
         } catch (IOException e) {
+            logError(e);
             System.exit(-1);
         }
         /*
@@ -369,11 +370,11 @@ class Comm {
                 try {
                     Thread.sleep(1000 / PULSE_PER_SECOND);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logError(e);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
         }
     }
 
@@ -476,7 +477,7 @@ class Comm {
         try {
             dclose.descriptor.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
         }
     }
 
@@ -529,7 +530,7 @@ class Comm {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
         }
         return true;
     }
@@ -647,7 +648,7 @@ class Comm {
                 } else {
                     wound = "is nearly dead.";
                 }
-                write_to_buffer(d, upfirst(IS_NPC(victim) ? victim.short_descr : victim.name) + " " + wound + "\n");
+                write_to_buffer(d, DB.capitalize(IS_NPC(victim) ? victim.short_descr : victim.name) + " " + wound + "\n");
             }
 
 
@@ -689,7 +690,7 @@ class Comm {
     /**
      * Bust a prompt (player settable prompt) coded by Morgenes for Aldara Mud
      */
-    static void bust_a_prompt(CHAR_DATA ch) {
+    static void bust_a_prompt(@NotNull CHAR_DATA ch) {
         var str = ch.prompt;
 
         if (str == null || str.length() == 0) {
@@ -929,7 +930,7 @@ class Comm {
                     close_socket(d);
                     return;
                 }
-                argument = upfirst(argument);
+                argument = DB.capitalize(argument);
                 if (!check_parse_name(argument)) {
                     write_to_buffer(d, "Illegal name, try another.\nName: ");
                     return;
@@ -1545,7 +1546,7 @@ class Comm {
                     var chooseEthos = true;
                     if (ch.clazz.ethos != ETHOS_ANY) {
                         ch.ethos = ch.clazz.ethos;
-                        write_to_buffer(d1, "You are " + upfirst(ethos_table[ch.ethos].name) + ".\n");
+                        write_to_buffer(d1, "You are " + DB.capitalize(ethos_table[ch.ethos].name) + ".\n");
                         chooseEthos = false;
                     }
                     if (chooseEthos) {
@@ -1741,7 +1742,7 @@ class Comm {
             return false;
         }
 
-        if (!str_cmp(capitalize(name), "Chronos") || !str_prefix("Chro", name)
+        if (!str_cmp(TextUtils.capitalize(name), "Chronos") || !str_prefix("Chro", name)
                 || !str_suffix("ronos", name)) {
             return false;
         }
@@ -1851,9 +1852,8 @@ class Comm {
     }
 
 
-    static void stop_idling(CHAR_DATA ch) {
-        if (ch == null || ch.desc == null || ch.desc.connected != CON_PLAYING || ch.was_in_room == null
-                || ch.in_room != get_room_index(ROOM_VNUM_LIMBO)) {
+    static void stop_idling(@NotNull CHAR_DATA ch) {
+        if (ch.desc == null || ch.desc.connected != CON_PLAYING || ch.was_in_room == null || ch.in_room != get_room_index(ROOM_VNUM_LIMBO)) {
             return;
         }
 
@@ -1940,7 +1940,7 @@ class Comm {
 
 /* quick sex fixer */
 
-    static void fix_sex(CHAR_DATA ch) {
+    static void fix_sex(@NotNull CHAR_DATA ch) {
         if (ch.sex < 0 || ch.sex > 2) {
             ch.sex = IS_NPC(ch) ? 0 : ch.pcdata.true_sex;
         }
@@ -2097,7 +2097,7 @@ class Comm {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logError(e);
         }
         return 1;
     }
@@ -2106,7 +2106,7 @@ class Comm {
  * Function for save processes.
  */
 
-    static String get_stat_alias(CHAR_DATA ch, int where) {
+    static String get_stat_alias(@NotNull CHAR_DATA ch, int where) {
         String stat;
         int istat;
 
@@ -2223,15 +2223,15 @@ class Comm {
 
     }
 
-    static int sex_ok(CHAR_DATA ch, int clazz) {
+    static int sex_ok(@NotNull CHAR_DATA ch, int clazz) {
         return 1;
     }
 
-    static boolean class_ok(CHAR_DATA ch, Clazz clazz) {
+    static boolean class_ok(@NotNull CHAR_DATA ch, Clazz clazz) {
         return ORG_RACE(ch).pcRace.getClassModifier(clazz).expMult != -1 && (ch.sex & clazz.sex) > 0;
     }
 
-    static int align_restrict(CHAR_DATA ch) {
+    static int align_restrict(@NotNull CHAR_DATA ch) {
         var d = ch.desc;
 
         if (IS_SET(ORG_RACE(ch).pcRace.align, CR_GOOD) || IS_SET(ch.clazz.align, CR_GOOD)) {
@@ -2254,7 +2254,7 @@ class Comm {
         return N_ALIGN_ALL;
     }
 
-    static boolean hometown_check(CHAR_DATA ch) {
+    static boolean hometown_check(@NotNull CHAR_DATA ch) {
         var d = ch.desc;
 
         if (ch.clazz == Clazz.NECROMANCER || ch.clazz == Clazz.VAMPIRE) {
@@ -2276,7 +2276,7 @@ class Comm {
         return false;
     }
 
-    static boolean hometown_ok(CHAR_DATA ch, int home) {
+    static boolean hometown_ok(@NotNull CHAR_DATA ch, int home) {
         return !(!IS_NEUTRAL(ch) && home == 3);
     }
 }

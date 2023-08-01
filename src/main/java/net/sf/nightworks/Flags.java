@@ -1,5 +1,7 @@
 package net.sf.nightworks;
 
+import net.sf.nightworks.util.NotNull;
+
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Handler.get_char_world;
 import static net.sf.nightworks.Lookup.flag_lookup;
@@ -21,7 +23,7 @@ import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class Flags {
 
-    static void do_flag(CHAR_DATA ch, String argument) {
+    static void do_flag(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
         flag_type[] flag_table;
 
