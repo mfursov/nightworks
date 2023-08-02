@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Formatter;
 
-import static net.sf.nightworks.Comm.dump_to_scr;
 import static net.sf.nightworks.Comm.page_to_char;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Handler.get_trust;
@@ -26,6 +25,7 @@ import static net.sf.nightworks.Nightworks.SET_BIT;
 import static net.sf.nightworks.Nightworks.nw_config;
 import static net.sf.nightworks.Nightworks.perror;
 import static net.sf.nightworks.Save.print_flags;
+import static net.sf.nightworks.util.Logger.log;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
@@ -47,7 +47,7 @@ class Ban {
                     if (IS_SET(pban.ban_flags, BAN_PERMANENT)) {
                         found = true;
                         f.format("%-20s %-2d %s\n", pban.name, pban.level, print_flags(pban.ban_flags));
-                        dump_to_scr(buf.toString());
+                        log(buf.toString());
                         buf.setLength(0);
                         f.format("%-20s %-2d %s\n", pban.name, pban.level, print_flags(pban.ban_flags));
                         fp.writeChars(buf.toString());

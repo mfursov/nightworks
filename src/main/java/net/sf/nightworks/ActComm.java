@@ -32,11 +32,9 @@ class ActComm {
     }
 
     static void do_delete(@NotNull CHAR_DATA ch, String argument) {
-
         if (IS_NPC(ch)) {
             return;
         }
-
         if (ch.pcdata.confirm_delete) {
             if (!argument.isEmpty()) {
                 send_to_char("Delete status removed.\n", ch);
@@ -58,8 +56,7 @@ class ActComm {
 
         send_to_char("Type delete again to confirm this command.\n", ch);
         send_to_char("WARNING: this command is irreversible.\n", ch);
-        send_to_char("Typing delete with an argument will undo delete status.\n",
-                ch);
+        send_to_char("Typing delete with an argument will undo delete status.\n", ch);
         ch.pcdata.confirm_delete = true;
         wiznet("$N is contemplating deletion.", ch, null, 0, 0, get_trust(ch));
     }

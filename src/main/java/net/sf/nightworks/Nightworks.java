@@ -442,7 +442,6 @@ final class Nightworks {
     /*
      * Descriptor (channel) structure.
      */
-
     static final class DESCRIPTOR_DATA {
         DESCRIPTOR_DATA next;
         DESCRIPTOR_DATA snoop_by;

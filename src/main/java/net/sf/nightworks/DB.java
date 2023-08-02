@@ -28,6 +28,7 @@ import static net.sf.nightworks.Skill.gsn_track;
 import static net.sf.nightworks.Skill.skill_num_lookup;
 import static net.sf.nightworks.Special.spec_lookup;
 import static net.sf.nightworks.Tables.*;
+import static net.sf.nightworks.util.Logger.log;
 import static net.sf.nightworks.util.Logger.logError;
 import static net.sf.nightworks.util.TextUtils.*;
 
@@ -1563,7 +1564,7 @@ class DB {
                     }
                     if ((pObjIndex.limit != -1) && (pObjIndex.count >= pObjIndex.limit)) {
                         last = false;
-                        dump_to_scr("Reseting area: [P] OBJ limit reached\n");
+                        log("Reseting area: [P] OBJ limit reached\n");
                         break;
                     }
                     while (count < pReset.arg4) {
@@ -2096,7 +2097,7 @@ class DB {
         }
         if ((obj.pIndexData.limit != -1) && (obj.pIndexData.count >= obj.pIndexData.limit)) {
             if (pObjIndex.new_format) {
-                dump_to_scr("");
+                log("");
             }
         }
 

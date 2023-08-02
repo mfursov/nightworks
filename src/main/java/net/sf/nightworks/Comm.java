@@ -14,166 +14,19 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static net.sf.nightworks.ActComm.cabal_area_check;
-import static net.sf.nightworks.ActInfo.do_help;
-import static net.sf.nightworks.ActInfo.do_look;
-import static net.sf.nightworks.ActInfo.max_on;
-import static net.sf.nightworks.ActInfo.set_title;
-import static net.sf.nightworks.ActSkill.base_exp;
-import static net.sf.nightworks.ActSkill.exp_per_level;
-import static net.sf.nightworks.ActSkill.exp_to_level;
+import static net.sf.nightworks.ActInfo.*;
+import static net.sf.nightworks.ActSkill.*;
 import static net.sf.nightworks.ActWiz.do_outfit;
 import static net.sf.nightworks.ActWiz.wiznet;
 import static net.sf.nightworks.Ban.check_ban;
 import static net.sf.nightworks.Const.hometown_table;
-import static net.sf.nightworks.DB.boot_db;
-import static net.sf.nightworks.DB.bug;
-import static net.sf.nightworks.DB.create_object;
-import static net.sf.nightworks.DB.get_obj_index;
-import static net.sf.nightworks.DB.get_room_index;
-import static net.sf.nightworks.DB.help_greeting;
-import static net.sf.nightworks.DB.log_string;
-import static net.sf.nightworks.DB.mob_index_hash;
-import static net.sf.nightworks.DB.number_range;
-import static net.sf.nightworks.DB.time_info;
-import static net.sf.nightworks.Handler.can_see;
-import static net.sf.nightworks.Handler.can_see_obj;
-import static net.sf.nightworks.Handler.can_see_room;
-import static net.sf.nightworks.Handler.char_from_room;
-import static net.sf.nightworks.Handler.char_to_room;
-import static net.sf.nightworks.Handler.extract_char;
-import static net.sf.nightworks.Handler.get_curr_stat;
-import static net.sf.nightworks.Handler.get_light_char;
-import static net.sf.nightworks.Handler.get_obj_realnumber;
-import static net.sf.nightworks.Handler.get_trust;
-import static net.sf.nightworks.Handler.get_weapon_sn;
-import static net.sf.nightworks.Handler.is_affected;
-import static net.sf.nightworks.Handler.is_name;
-import static net.sf.nightworks.Handler.obj_to_char;
-import static net.sf.nightworks.Handler.reset_char;
-import static net.sf.nightworks.Handler.room_is_dark;
+import static net.sf.nightworks.DB.*;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Interp.substitute_alias;
-import static net.sf.nightworks.Nightworks.AFF_BLIND;
-import static net.sf.nightworks.Nightworks.AFF_INFRARED;
-import static net.sf.nightworks.Nightworks.AREA_DATA;
-import static net.sf.nightworks.Nightworks.BAN_ALL;
-import static net.sf.nightworks.Nightworks.BAN_NEWBIES;
-import static net.sf.nightworks.Nightworks.BAN_PLAYER;
-import static net.sf.nightworks.Nightworks.CHAR_DATA;
-import static net.sf.nightworks.Nightworks.COMM_COMPACT;
-import static net.sf.nightworks.Nightworks.COMM_PROMPT;
-import static net.sf.nightworks.Nightworks.COMM_TELNET_GA;
-import static net.sf.nightworks.Nightworks.CON_ACCEPT_STATS;
-import static net.sf.nightworks.Nightworks.CON_BREAK_CONNECT;
-import static net.sf.nightworks.Nightworks.CON_CONFIRM_NEW_NAME;
-import static net.sf.nightworks.Nightworks.CON_CONFIRM_NEW_PASSWORD;
-import static net.sf.nightworks.Nightworks.CON_CREATE_DONE;
-import static net.sf.nightworks.Nightworks.CON_GET_ALIGNMENT;
-import static net.sf.nightworks.Nightworks.CON_GET_ETHOS;
-import static net.sf.nightworks.Nightworks.CON_GET_NAME;
-import static net.sf.nightworks.Nightworks.CON_GET_NEW_CLASS;
-import static net.sf.nightworks.Nightworks.CON_GET_NEW_PASSWORD;
-import static net.sf.nightworks.Nightworks.CON_GET_NEW_RACE;
-import static net.sf.nightworks.Nightworks.CON_GET_NEW_SEX;
-import static net.sf.nightworks.Nightworks.CON_GET_OLD_PASSWORD;
-import static net.sf.nightworks.Nightworks.CON_PICK_HOMETOWN;
-import static net.sf.nightworks.Nightworks.CON_PLAYING;
-import static net.sf.nightworks.Nightworks.CON_READ_IMOTD;
-import static net.sf.nightworks.Nightworks.CON_READ_MOTD;
-import static net.sf.nightworks.Nightworks.CON_READ_NEWBIE;
-import static net.sf.nightworks.Nightworks.CON_REMORTING;
-import static net.sf.nightworks.Nightworks.CR_EVIL;
-import static net.sf.nightworks.Nightworks.CR_GOOD;
-import static net.sf.nightworks.Nightworks.CR_NEUTRAL;
-import static net.sf.nightworks.Nightworks.DESCRIPTOR_DATA;
-import static net.sf.nightworks.Nightworks.ETHOS_ANY;
-import static net.sf.nightworks.Nightworks.ETHOS_CHAOTIC;
-import static net.sf.nightworks.Nightworks.ETHOS_LAWFUL;
-import static net.sf.nightworks.Nightworks.ETHOS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.EX_CLOSED;
-import static net.sf.nightworks.Nightworks.IS_AFFECTED;
-import static net.sf.nightworks.Nightworks.IS_EVIL;
-import static net.sf.nightworks.Nightworks.IS_GOOD;
-import static net.sf.nightworks.Nightworks.IS_HERO;
-import static net.sf.nightworks.Nightworks.IS_IMMORTAL;
-import static net.sf.nightworks.Nightworks.IS_NEUTRAL;
-import static net.sf.nightworks.Nightworks.IS_NPC;
-import static net.sf.nightworks.Nightworks.IS_QUESTOR;
-import static net.sf.nightworks.Nightworks.IS_SET;
-import static net.sf.nightworks.Nightworks.LEVEL_IMMORTAL;
-import static net.sf.nightworks.Nightworks.MAX_INPUT_LENGTH;
-import static net.sf.nightworks.Nightworks.MAX_KEY_HASH;
-import static net.sf.nightworks.Nightworks.MAX_STATS;
-import static net.sf.nightworks.Nightworks.MAX_TIME_LOG;
-import static net.sf.nightworks.Nightworks.MOB_INDEX_DATA;
-import static net.sf.nightworks.Nightworks.N_ALIGN_ALL;
-import static net.sf.nightworks.Nightworks.N_ALIGN_EVIL;
-import static net.sf.nightworks.Nightworks.N_ALIGN_GOOD;
-import static net.sf.nightworks.Nightworks.N_ALIGN_NEUTRAL;
-import static net.sf.nightworks.Nightworks.OBJ_DATA;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAP;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAP_NT;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAP_OFCOL;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAP_OLD;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAP_SM;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_MAP_TITAN;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_NMAP1;
-import static net.sf.nightworks.Nightworks.OBJ_VNUM_NMAP2;
-import static net.sf.nightworks.Nightworks.ORG_RACE;
-import static net.sf.nightworks.Nightworks.PERS;
-import static net.sf.nightworks.Nightworks.PLR_CANINDUCT;
-import static net.sf.nightworks.Nightworks.PLR_CANREMORT;
-import static net.sf.nightworks.Nightworks.PLR_CHANGED_AFF;
-import static net.sf.nightworks.Nightworks.PLR_DENY;
-import static net.sf.nightworks.Nightworks.PLR_HOLYLIGHT;
-import static net.sf.nightworks.Nightworks.PLR_NO_EXP;
-import static net.sf.nightworks.Nightworks.PLR_QUESTOR;
-import static net.sf.nightworks.Nightworks.PLR_REMORTED;
-import static net.sf.nightworks.Nightworks.POS_RESTING;
-import static net.sf.nightworks.Nightworks.PULSE_PER_SECOND;
-import static net.sf.nightworks.Nightworks.REMOVE_BIT;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_CHAT;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_LIMBO;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_SCHOOL;
-import static net.sf.nightworks.Nightworks.ROOM_VNUM_TEMPLE;
-import static net.sf.nightworks.Nightworks.SET_BIT;
-import static net.sf.nightworks.Nightworks.SET_ORG_RACE;
-import static net.sf.nightworks.Nightworks.SEX_FEMALE;
-import static net.sf.nightworks.Nightworks.SEX_MALE;
-import static net.sf.nightworks.Nightworks.STAT_CHA;
-import static net.sf.nightworks.Nightworks.STAT_CON;
-import static net.sf.nightworks.Nightworks.STAT_DEX;
-import static net.sf.nightworks.Nightworks.STAT_INT;
-import static net.sf.nightworks.Nightworks.STAT_STR;
-import static net.sf.nightworks.Nightworks.STAT_WIS;
-import static net.sf.nightworks.Nightworks.TO_CHAR;
-import static net.sf.nightworks.Nightworks.TO_NOTVICT;
-import static net.sf.nightworks.Nightworks.TO_ROOM;
-import static net.sf.nightworks.Nightworks.TO_VICT;
-import static net.sf.nightworks.Nightworks.UMAX;
-import static net.sf.nightworks.Nightworks.UMIN;
-import static net.sf.nightworks.Nightworks.URANGE;
-import static net.sf.nightworks.Nightworks.WIZ_LINKS;
-import static net.sf.nightworks.Nightworks.WIZ_LOGINS;
-import static net.sf.nightworks.Nightworks.WIZ_SPAM;
-import static net.sf.nightworks.Nightworks.area_first;
-import static net.sf.nightworks.Nightworks.char_list;
-import static net.sf.nightworks.Nightworks.crypt;
-import static net.sf.nightworks.Nightworks.currentTimeSeconds;
-import static net.sf.nightworks.Nightworks.current_time;
-import static net.sf.nightworks.Nightworks.descriptor_list;
-import static net.sf.nightworks.Nightworks.iNumPlayers;
-import static net.sf.nightworks.Nightworks.limit_time;
-import static net.sf.nightworks.Nightworks.max_newbies;
-import static net.sf.nightworks.Nightworks.max_oldies;
-import static net.sf.nightworks.Nightworks.nw_config;
-import static net.sf.nightworks.Nightworks.perror;
+import static net.sf.nightworks.Nightworks.*;
 import static net.sf.nightworks.Note.do_unread;
 import static net.sf.nightworks.Recycle.free_char;
 import static net.sf.nightworks.Save.load_char_obj;
@@ -181,21 +34,10 @@ import static net.sf.nightworks.Save.save_char_obj;
 import static net.sf.nightworks.Skill.gsn_doppelganger;
 import static net.sf.nightworks.Skill.gsn_recall;
 import static net.sf.nightworks.Tables.ethos_table;
-import static net.sf.nightworks.Telnet.DO;
-import static net.sf.nightworks.Telnet.DONT;
-import static net.sf.nightworks.Telnet.GA;
-import static net.sf.nightworks.Telnet.IAC;
-import static net.sf.nightworks.Telnet.TELOPT_ECHO;
-import static net.sf.nightworks.Telnet.WILL;
-import static net.sf.nightworks.Telnet.WONT;
+import static net.sf.nightworks.Telnet.*;
 import static net.sf.nightworks.Update.update_handler;
 import static net.sf.nightworks.util.Logger.logError;
-import static net.sf.nightworks.util.TextUtils.UPPER;
-import static net.sf.nightworks.util.TextUtils.isSpace;
-import static net.sf.nightworks.util.TextUtils.one_argument;
-import static net.sf.nightworks.util.TextUtils.str_cmp;
-import static net.sf.nightworks.util.TextUtils.str_prefix;
-import static net.sf.nightworks.util.TextUtils.str_suffix;
+import static net.sf.nightworks.util.TextUtils.*;
 
 /**
  * This file contains all of the OS-dependent stuff:
@@ -217,8 +59,8 @@ class Comm {
     private static final byte[] go_ahead_telnet_command = new byte[]{IAC, GA};
 
     /*
-    * Global variables.
-    */
+     * Global variables.
+     */
     private static DESCRIPTOR_DATA d_next;     /* Next descriptor in loop  */
     private static int boot_time;      /* time of boot */
     static boolean wizlock;        /* Game is wizlocked        */
@@ -227,16 +69,13 @@ class Comm {
     static int nw_exit;  /* Exit Code */
 
 
-    private static final String usage = "Usage:\n  <num>\t[ #port ] \n \t\t[ <--help|-h> ] \n \t\t[ <--root-dir|-rd> <dir_name> ]  \n \t\t[ <--config-file|-c> <config_file> ] ";
-
     private static Selector selector = null;
     private static ServerSocketChannel serverChannel = null;
 
-
     public static void main(String[] args) {
         /*
-        * Init time.
-        */
+         * Init time.
+         */
         limit_time = boot_time = current_time = currentTimeSeconds();
 
         // Run the game.
@@ -254,8 +93,8 @@ class Comm {
             System.exit(-1);
         }
         /*
-        * That's all, folks.
-        */
+         * That's all, folks.
+         */
 
         log_area_popularity();
         log_string("Normal termination of game.");
@@ -330,9 +169,11 @@ class Comm {
                         continue;
                     }
                     read_from_buffer(d);
-                    if (d.incomm.length() != 0) {
+                    if (!d.incomm.isEmpty()) {
                         d.fcommand = true;
-                        stop_idling(d.character);
+                        if (d.character != null) {
+                            stop_idling(d.character);
+                        }
                         if (d.showstr_point != 0) {
                             show_string(d, d.incomm);
                         } else if (d.connected == CON_PLAYING) {
@@ -397,13 +238,13 @@ class Comm {
 //      }
 
         /*
-        * Swiftest: I added the following to ban sites.  I don't
-        * endorse banning of sites, but Copper has few descriptors now
-        * and some people from certain sites keep abusing access by
-        * using automated 'autodialers' and leaving connections hanging.
-        *
-        * Furey: added suffix check by request of Nickel of HiddenWorlds.
-        */
+         * Swiftest: I added the following to ban sites.  I don't
+         * endorse banning of sites, but Copper has few descriptors now
+         * and some people from certain sites keep abusing access by
+         * using automated 'autodialers' and leaving connections hanging.
+         *
+         * Furey: added suffix check by request of Nickel of HiddenWorlds.
+         */
         if (check_ban(dnew.host, BAN_ALL)) {
             write_to_descriptor(channel, "Your site has been banned from this mud.\n");
             channel.close();
@@ -504,30 +345,28 @@ class Comm {
             byteBuffer.flip();
             while (byteBuffer.remaining() > 0) {
                 var c = byteBuffer.get();
-                if (c > 0) {
-                    if (c == IAC) { //Interpret As Command
+                if (c == IAC) { //Interpret As Command
+                    if (byteBuffer.remaining() == 0) {
+                        break;
+                    }
+                    c = byteBuffer.get();
+                    if (c != IAC) { // this is a real command
                         if (byteBuffer.remaining() == 0) {
                             break;
                         }
                         c = byteBuffer.get();
-                        if (c != IAC) { // this is a real command
-                            if (byteBuffer.remaining() == 0) {
-                                break;
-                            }
-                            c = byteBuffer.get();
-                            if (c == WILL) { // if command is WILL echo DON'T
-                                write_to_buffer(d, new byte[]{IAC, WONT, c}); // we do not want any command (do not support)
-                            } else if (c == DO) {// if command is DO echo WON'T
-                                write_to_buffer(d, new byte[]{IAC, DONT, c});
-                            }
-                            continue;
+                        if (c == WILL) { // if command is WILL echo DON'T
+                            write_to_buffer(d, new byte[]{IAC, WONT, c}); // we do not want any command (do not support)
+                        } else if (c == DO) {// if command is DO echo WON'T
+                            write_to_buffer(d, new byte[]{IAC, DONT, c});
                         }
-                    }
-                    if (c == '\r' || c == '\b') {
                         continue;
                     }
-                    d.inbuf.append((char) c);
                 }
+                if (c == '\r' || c == '\b') {
+                    continue;
+                }
+                d.inbuf.append((char) c);
             }
         } catch (IOException e) {
             logError(e);
@@ -535,21 +374,21 @@ class Comm {
         return true;
     }
 
-/*
-* Transfer one line from input buffer to input line.
-*/
+    /*
+     * Transfer one line from input buffer to input line.
+     */
 
     static void read_from_buffer(DESCRIPTOR_DATA d) {
         /*
-        * Hold horses if pending command already.
-        */
+         * Hold horses if pending command already.
+         */
         if (d.incomm.length() != 0) {
             return;
         }
 
         /*
-        * Look for at least one new line.
-        */
+         * Look for at least one new line.
+         */
         var lineEnd = d.inbuf.indexOf("\n");
         if (lineEnd == -1) {
             return;
@@ -566,8 +405,8 @@ class Comm {
         }
 
         /*
-        * Deal with bozos with #repeat 1000 ...
-        */
+         * Deal with bozos with #repeat 1000 ...
+         */
         if (d.incomm.length() > 1 || d.incomm.charAt(0) == '!') {
             if (d.incomm.charAt(0) != '!' && !d.incomm.equals(d.inlast)) {
                 d.repeat = 0;
@@ -593,8 +432,8 @@ class Comm {
         }
 
         /*
-        * Do '!' substitution.
-        */
+         * Do '!' substitution.
+         */
         if (d.incomm.charAt(0) == '!') {
             d.incomm = d.inlast;
         } else {
@@ -602,13 +441,13 @@ class Comm {
         }
     }
 
-/*
-* Low level output function.
-*/
+    /*
+     * Low level output function.
+     */
 
-/*
- * Some specials added by KIO
- */
+    /*
+     * Some specials added by KIO
+     */
 
     static boolean process_output(DESCRIPTOR_DATA d, boolean fPrompt) {
         // Bust a prompt.
@@ -715,12 +554,7 @@ class Comm {
                     var doors = new StringBuilder();
                     for (var door = 0; door < 6; door++) {
                         var pexit = ch.in_room.exit[door];
-                        if (pexit != null
-                                && pexit.to_room != null
-                                && (can_see_room(ch, pexit.to_room)
-                                || (IS_AFFECTED(ch, AFF_INFRARED)
-                                && !IS_AFFECTED(ch, AFF_BLIND)))
-                                && !IS_SET(pexit.exit_info, EX_CLOSED)) {
+                        if (pexit != null && pexit.to_room != null && (can_see_room(ch, pexit.to_room) || (IS_AFFECTED(ch, AFF_INFRARED) && !IS_AFFECTED(ch, AFF_BLIND))) && !IS_SET(pexit.exit_info, EX_CLOSED)) {
                             doors.append(dir_name_char[door]);
                         }
                     }
@@ -753,8 +587,7 @@ class Comm {
 /***** FInished ****/
 
                 /* Thanx to zihni:  T for time */
-                case 'T' ->
-                        i = ((time_info.hour % 12 == 0) ? 12 : time_info.hour % 12) + " " + (time_info.hour >= 12 ? "pm" : "am");
+                case 'T' -> i = ((time_info.hour % 12 == 0) ? 12 : time_info.hour % 12) + " " + (time_info.hour >= 12 ? "pm" : "am");
                 case 'h' -> i = String.valueOf(ch.hit);
                 case 'H' -> i = String.valueOf(ch.max_hit);
                 case 'm' -> i = String.valueOf(ch.mana);
@@ -768,8 +601,7 @@ class Comm {
                 case 'a' -> i = IS_GOOD(ch) ? "good" : IS_EVIL(ch) ? "evil" : "neutral";
                 case 'r' -> {
                     if (ch.in_room != null) {
-                        i = ((!IS_NPC(ch) && IS_SET(ch.act, PLR_HOLYLIGHT))
-                                || (!IS_AFFECTED(ch, AFF_BLIND) && !room_is_dark(ch))) ? ch.in_room.name : "darkness";
+                        i = ((!IS_NPC(ch) && IS_SET(ch.act, PLR_HOLYLIGHT)) || (!IS_AFFECTED(ch, AFF_BLIND) && !room_is_dark(ch))) ? ch.in_room.name : "darkness";
                     } else {
                         i = " ";
                     }
@@ -799,19 +631,19 @@ class Comm {
         }
     }
 
-/*
-* Append onto an output buffer.
-*/
+    /*
+     * Append onto an output buffer.
+     */
 
-    private static void write_to_buffer(DESCRIPTOR_DATA snoop_by, ArrayList outbuf) {
+    private static void write_to_buffer(@NotNull DESCRIPTOR_DATA snoop_by, @NotNull ArrayList outbuf) {
         snoop_by.outbuf.addAll(outbuf);
     }
 
-    static void write_to_buffer(DESCRIPTOR_DATA d, byte[] data) {
+    static void write_to_buffer(@NotNull DESCRIPTOR_DATA d, byte @NotNull [] data) {
         d.outbuf.add(data);
     }
 
-    static void write_to_buffer(DESCRIPTOR_DATA d, CharSequence txt) {
+    static void write_to_buffer(@NotNull DESCRIPTOR_DATA d, @NotNull CharSequence txt) {
         // Initial \n if needed.
         if (d.outbuf.isEmpty() && !d.fcommand) {
             d.outbuf.add("\n");
@@ -826,17 +658,17 @@ class Comm {
         d.outbuf.add(txt.toString());//create a copy if textbuffer
     }
 
-/*
-* Lowest level output function.
-* Write a block of text to the file descriptor.
-* If this gives errors on very long blocks (like 'ofind all'),
-*   try lowering the max block size.
-*/
+    /*
+     * Lowest level output function.
+     * Write a block of text to the file descriptor.
+     * If this gives errors on very long blocks (like 'ofind all'),
+     *   try lowering the max block size.
+     */
 
 
     private static final StringBuilder outBuf = new StringBuilder(1000);
 
-    static boolean write_to_descriptor(SocketChannel desc, Object data) {
+    static boolean write_to_descriptor(@NotNull SocketChannel desc, @NotNull Object data) {
         try {
             ByteBuffer buf;
             if (data instanceof CharSequence) {
@@ -875,7 +707,7 @@ class Comm {
     }
 
 
-    static int search_sockets(DESCRIPTOR_DATA inp) {
+    static int search_sockets(@NotNull DESCRIPTOR_DATA inp) {
         DESCRIPTOR_DATA d;
 
         if (IS_IMMORTAL(inp.character)) {
@@ -907,9 +739,9 @@ class Comm {
         return false;
     }
 
-/*
-* Deal with sockets that haven't logged in yet.
-*/
+    /*
+     * Deal with sockets that haven't logged in yet.
+     */
 
     static void nanny(DESCRIPTOR_DATA d, String argument) {
         boolean fOld;
@@ -966,18 +798,14 @@ class Comm {
 
                     if (!IS_IMMORTAL(ch) && !IS_SET(ch.act, PLR_CANINDUCT)) {
                         if (iNumPlayers >= max_oldies && fOld) {
-                            var buf = "\nThere are currently " + iNumPlayers
-                                    + " players mudding out of a maximum of " + max_oldies + ".\n" +
-                                    "Please try again soon.\n";
+                            var buf = "\nThere are currently " + iNumPlayers + " players mudding out of a maximum of " + max_oldies + ".\n" + "Please try again soon.\n";
                             write_to_buffer(d, buf);
                             close_socket(d);
                             return;
                         }
 
                         if (iNumPlayers >= max_newbies && !fOld) {
-                            var buf = "\nThere are currently " + iNumPlayers + " players mudding."
-                                    + "New player creation is limited to \n"
-                                    + "when there are less than " + max_newbies + " players. Please try again soon.\n";
+                            var buf = "\nThere are currently " + iNumPlayers + " players mudding." + "New player creation is limited to \n" + "when there are less than " + max_newbies + " players. Please try again soon.\n";
                             write_to_buffer(d, buf);
                             close_socket(d);
                             return;
@@ -1006,8 +834,7 @@ class Comm {
                     }
 
                     if (check_name_connected(d, argument)) {
-                        write_to_buffer(d,
-                                "That player is already playing, try another.\nName: ");
+                        write_to_buffer(d, "That player is already playing, try another.\nName: ");
                         free_char(d.character);
                         d.character = null;
                         d.connected = CON_GET_NAME;
@@ -1088,21 +915,20 @@ class Comm {
                 }
 
                 /* This player tried to use the clone cheat --
-            * Log in once, connect a second time and enter only name,
-                * drop all and quit with first character, finish login with second.
-                * This clones the player's inventory.
-                */
+                 * Log in once, connect a second time and enter only name,
+                 * drop all and quit with first character, finish login with second.
+                 * This clones the player's inventory.
+                 */
                 if (obj_count != obj_count2) {
                     log_string(ch.name + "@" + d.host + " tried to use the clone cheat.");
                     send_to_char("The gods frown upon your actions.\n", ch);
                 }
                 break;
-/* RT code for breaking link */
+            /* RT code for breaking link */
 
             case CON_BREAK_CONNECT:
                 switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
-                    case 'y':
-                    case 'Y':
+                    case 'y', 'Y' -> {
                         for (var d_old = descriptor_list; d_old != null; d_old = d_next) {
                             d_next = d_old.next;
                             if (d_old == d || d_old.character == null) {
@@ -1123,44 +949,33 @@ class Comm {
                             d.character = null;
                         }
                         d.connected = CON_GET_NAME;
-                        break;
-
-                    case 'n':
-                    case 'N':
+                    }
+                    case 'n', 'N' -> {
                         write_to_buffer(d, "Name: ");
                         if (d.character != null) {
                             free_char(d.character);
                             d.character = null;
                         }
                         d.connected = CON_GET_NAME;
-                        break;
-
-                    default:
-                        write_to_buffer(d, "Please type Y or N? ");
-                        break;
+                    }
+                    default -> write_to_buffer(d, "Please type Y or N? ");
                 }
                 break;
 
             case CON_CONFIRM_NEW_NAME:
                 switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
-                    case 'y':
-                    case 'Y':
+                    case 'y', 'Y' -> {
                         write_to_buffer(d, "New character.\nGive me a password for " + ch.name + ": ");
                         write_to_buffer(d, echo_off_telnet_command);
                         d.connected = CON_GET_NEW_PASSWORD;
-                        break;
-
-                    case 'n':
-                    case 'N':
+                    }
+                    case 'n', 'N' -> {
                         write_to_buffer(d, "Ok, what IS it, then? ");
                         free_char(d.character);
                         d.character = null;
                         d.connected = CON_GET_NAME;
-                        break;
-
-                    default:
-                        write_to_buffer(d, "Please type Yes or No? ");
-                        break;
+                    }
+                    default -> write_to_buffer(d, "Please type Yes or No? ");
                 }
                 break;
 
@@ -1243,8 +1058,7 @@ class Comm {
                         write_to_buffer(d, ") ");
                     }
                     write_to_buffer(d, "\n");
-                    write_to_buffer(d,
-                            "What is your race? (help for more information) ");
+                    write_to_buffer(d, "What is your race? (help for more information) ");
                     break;
                 }
 
@@ -1291,19 +1105,18 @@ class Comm {
 
             case CON_GET_NEW_SEX:
                 switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
-                    case 'm':
-                    case 'M':
+                    case 'm', 'M' -> {
                         ch.sex = SEX_MALE;
                         ch.pcdata.true_sex = SEX_MALE;
-                        break;
-                    case 'f':
-                    case 'F':
+                    }
+                    case 'f', 'F' -> {
                         ch.sex = SEX_FEMALE;
                         ch.pcdata.true_sex = SEX_FEMALE;
-                        break;
-                    default:
+                    }
+                    default -> {
                         write_to_buffer(d, "That's not a sex.\nWhat IS your sex? ");
                         return;
+                    }
                 }
 
                 do_help(ch, "class help");
@@ -1362,13 +1175,7 @@ class Comm {
                 }
             {
                 var statsf = new Formatter();
-                statsf.format("Str:%s  Int:%s  Wis:%s  Dex:%s  Con:%s Cha:%s \n Accept (Y/N)? ",
-                        get_stat_alias(ch, STAT_STR),
-                        get_stat_alias(ch, STAT_INT),
-                        get_stat_alias(ch, STAT_WIS),
-                        get_stat_alias(ch, STAT_DEX),
-                        get_stat_alias(ch, STAT_CON),
-                        get_stat_alias(ch, STAT_CHA));
+                statsf.format("Str:%s  Int:%s  Wis:%s  Dex:%s  Con:%s Cha:%s \n Accept (Y/N)? ", get_stat_alias(ch, STAT_STR), get_stat_alias(ch, STAT_INT), get_stat_alias(ch, STAT_WIS), get_stat_alias(ch, STAT_DEX), get_stat_alias(ch, STAT_CON), get_stat_alias(ch, STAT_CHA));
 
 
                 do_help(ch, "stats");
@@ -1381,13 +1188,8 @@ class Comm {
 
             case CON_ACCEPT_STATS:
                 switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
-                    case 'H':
-                    case 'h':
-                    case '?':
-                        do_help(ch, "stats");
-                        break;
-                    case 'y':
-                    case 'Y':
+                    case 'H', 'h', '?' -> do_help(ch, "stats");
+                    case 'y', 'Y' -> {
                         for (var i = 0; i < MAX_STATS; i++) {
                             ch.mod_stat[i] = 0;
                         }
@@ -1401,57 +1203,43 @@ class Comm {
                             ch.endur = 100;
                             d.connected = CON_PICK_HOMETOWN;
                         }
-                        break;
-
-                    case 'n':
-                    case 'N':
-
+                    }
+                    case 'n', 'N' -> {
                         for (var i = 0; i < MAX_STATS; i++) {
                             ch.perm_stat[i] = number_range(10, (20 + ORG_RACE(ch).pcRace.stats[i] + ch.clazz.stats[i]));
                             ch.perm_stat[i] = UMIN(25, ch.perm_stat[i]);
                         }
-                    {
-                        var statsf = new Formatter();
-                        statsf.format("Str:%s  Int:%s  Wis:%s  Dex:%s  Con:%s Cha:%s \n Accept (Y/N)? ",
-                                get_stat_alias(ch, STAT_STR),
-                                get_stat_alias(ch, STAT_INT),
-                                get_stat_alias(ch, STAT_WIS),
-                                get_stat_alias(ch, STAT_DEX),
-                                get_stat_alias(ch, STAT_CON),
-                                get_stat_alias(ch, STAT_CHA));
+                        {
+                            var statsf = new Formatter();
+                            statsf.format("Str:%s  Int:%s  Wis:%s  Dex:%s  Con:%s Cha:%s \n Accept (Y/N)? ", get_stat_alias(ch, STAT_STR), get_stat_alias(ch, STAT_INT), get_stat_alias(ch, STAT_WIS), get_stat_alias(ch, STAT_DEX), get_stat_alias(ch, STAT_CON), get_stat_alias(ch, STAT_CHA));
 
-                        write_to_buffer(d, statsf.toString());
-                        d.connected = CON_ACCEPT_STATS;
+                            write_to_buffer(d, statsf.toString());
+                            d.connected = CON_ACCEPT_STATS;
+                        }
                     }
-                    break;
-
-                    default:
-                        write_to_buffer(d, "Please answer (Y/N)? ");
-                        break;
+                    default -> write_to_buffer(d, "Please answer (Y/N)? ");
                 }
                 break;
 
             case CON_GET_ALIGNMENT:
                 switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
-                    case 'g':
-                    case 'G':
+                    case 'g', 'G' -> {
                         ch.alignment = 1000;
                         write_to_buffer(d, "Now your character is good.\n");
-                        break;
-                    case 'n':
-                    case 'N':
+                    }
+                    case 'n', 'N' -> {
                         ch.alignment = 0;
                         write_to_buffer(d, "Now your character is neutral.\n");
-                        break;
-                    case 'e':
-                    case 'E':
+                    }
+                    case 'e', 'E' -> {
                         ch.alignment = -1000;
                         write_to_buffer(d, "Now your character is evil.\n");
-                        break;
-                    default:
+                    }
+                    default -> {
                         write_to_buffer(d, "That's not a valid alignment.\n");
                         write_to_buffer(d, "Which alignment (G/N/E)? ");
                         return;
+                    }
                 }
                 write_to_buffer(d, "\n[Hit Return to Continue]\n");
                 ch.endur = 100;
@@ -1515,30 +1303,27 @@ class Comm {
             case CON_GET_ETHOS:
                 if (ch.endur == 0) {
                     switch (argument.length() == 0 ? 'x' : argument.charAt(0)) {
-                        case 'H':
-                        case 'h':
-                        case '?':
+                        case 'H', 'h', '?' -> {
                             do_help(ch, "alignment");
                             return;
-                        case 'L':
-                        case 'l':
+                        }
+                        case 'L', 'l' -> {
                             write_to_buffer(d, "\nNow you are lawful-" + (IS_GOOD(ch) ? "good" : IS_EVIL(ch) ? "evil" : "neutral") + ".\n");
                             ch.ethos = ETHOS_LAWFUL;
-                            break;
-                        case 'N':
-                        case 'n':
+                        }
+                        case 'N', 'n' -> {
                             write_to_buffer(d, "\nNow you are neutral-" + (IS_GOOD(ch) ? "good" : IS_EVIL(ch) ? "evil" : "neutral") + ".\n");
                             ch.ethos = ETHOS_NEUTRAL;
-                            break;
-                        case 'C':
-                        case 'c':
+                        }
+                        case 'C', 'c' -> {
                             write_to_buffer(d, "\nNow you are chaotic-" + (IS_GOOD(ch) ? "good" : IS_EVIL(ch) ? "evil" : "neutral") + ".\n");
                             ch.ethos = ETHOS_CHAOTIC;
-                            break;
-                        default:
+                        }
+                        default -> {
                             write_to_buffer(d, "\nThat is not a valid ethos.\n");
                             write_to_buffer(d, "What ethos do you want, (L/N/C) <type help for more info> ?");
                             return;
+                        }
                     }
                 } else {
                     ch.endur = 0;
@@ -1580,9 +1365,7 @@ class Comm {
                 break;
 
             case CON_READ_MOTD:
-                write_to_buffer(d,
-                        "\nWelcome to Multi User Dungeon of Nightworks. Enjoy!!...\n"
-                );
+                write_to_buffer(d, "\nWelcome to Multi User Dungeon of Nightworks. Enjoy!!...\n");
                 ch.next = char_list;
                 char_list = ch;
                 d.connected = CON_PLAYING;
@@ -1730,26 +1513,25 @@ class Comm {
         }
     }
 
-/*
-* Parse a name for acceptability.
-*/
+    /*
+     * Parse a name for acceptability.
+     */
 
     static boolean check_parse_name(String name) {
         /*
-        * Reserved words.
-        */
+         * Reserved words.
+         */
         if (is_name(name, "all auto immortal self someone something the you demise balance circle loner honor")) {
             return false;
         }
 
-        if (!str_cmp(TextUtils.capitalize(name), "Chronos") || !str_prefix("Chro", name)
-                || !str_suffix("ronos", name)) {
+        if (!str_cmp(TextUtils.capitalize(name), "Chronos") || !str_prefix("Chro", name) || !str_suffix("ronos", name)) {
             return false;
         }
 
         /*
-        * Length restrictions.
-        */
+         * Length restrictions.
+         */
 
         if (name.length() < 2) {
             return false;
@@ -1760,8 +1542,8 @@ class Comm {
         }
 
         /*
-        * Alphanumerics only.
-        */
+         * Alphanumerics only.
+         */
         {
             var total_caps = 0;
             for (var i = 0; i < name.length(); i++) {
@@ -1780,16 +1562,14 @@ class Comm {
         }
 
         /*
-        * Prevent players from naming themselves after mobs.
-        */
+         * Prevent players from naming themselves after mobs.
+         */
         {
             MOB_INDEX_DATA pMobIndex;
             int iHash;
 
             for (iHash = 0; iHash < MAX_KEY_HASH; iHash++) {
-                for (pMobIndex = mob_index_hash[iHash];
-                     pMobIndex != null;
-                     pMobIndex = pMobIndex.next) {
+                for (pMobIndex = mob_index_hash[iHash]; pMobIndex != null; pMobIndex = pMobIndex.next) {
                     if (is_name(name, pMobIndex.player_name)) {
                         return false;
                     }
@@ -1800,11 +1580,11 @@ class Comm {
         return true;
     }
 
-/*
-* Look for link-dead player to reconnect.
-*/
+    /*
+     * Look for link-dead player to reconnect.
+     */
 
-    static boolean check_reconnect(DESCRIPTOR_DATA d, String name, boolean fConn) {
+    static boolean check_reconnect(@NotNull DESCRIPTOR_DATA d, String name, boolean fConn) {
         for (var ch = char_list; ch != null; ch = ch.next) {
             if (!IS_NPC(ch) && (!fConn || ch.desc == null) && !str_cmp(d.character.name, ch.name)) {
                 if (!fConn) {
@@ -1833,15 +1613,13 @@ class Comm {
         return false;
     }
 
-/*
-* Check if already playing.
-*/
+    /*
+     * Check if already playing.
+     */
 
     static boolean check_playing(DESCRIPTOR_DATA d, String name) {
         for (var dold = descriptor_list; dold != null; dold = dold.next) {
-            if (dold != d && dold.character != null && dold.connected != CON_GET_NAME
-                    && dold.connected != CON_GET_OLD_PASSWORD
-                    && !str_cmp(name, dold.original != null ? dold.original.name : dold.character.name)) {
+            if (dold != d && dold.character != null && dold.connected != CON_GET_NAME && dold.connected != CON_GET_OLD_PASSWORD && !str_cmp(name, dold.original != null ? dold.original.name : dold.character.name)) {
                 write_to_buffer(d, "That character is already playing.\n");
                 write_to_buffer(d, "Do you wish to connect anyway (Y/N)?");
                 d.connected = CON_BREAK_CONNECT;
@@ -1864,25 +1642,22 @@ class Comm {
         act("$n has returned from the void.", ch, null, null, TO_ROOM);
     }
 
-/*
-* Write to one char.
-*/
-
-
-    static void send_to_char(CharSequence txt, CHAR_DATA ch) {
-        if (txt != null && ch.desc != null) {
+    /*
+     * Write to one char.
+     */
+    static void send_to_char(@NotNull CharSequence txt, @NotNull CHAR_DATA ch) {
+        if (ch.desc != null) {
             write_to_buffer(ch.desc, txt);
         }
     }
-/*
-* Send a page to one char.
-*/
 
-    static void page_to_char(CharSequence txt, CHAR_DATA ch) {
-        if (txt == null || ch.desc == null) {
-            return; /* ben yazdim ibrahim */
+    /*
+     * Send a page to one char.
+     */
+    static void page_to_char(@NotNull CharSequence txt, @NotNull CHAR_DATA ch) {
+        if (ch.desc == null) {
+            return;
         }
-
         if (ch.lines == 0) {
             send_to_char(txt, ch);
             return;
@@ -1893,9 +1668,9 @@ class Comm {
         show_string(ch.desc, "");
     }
 
-/* string pager */
+    /* string pager */
 
-    static void show_string(DESCRIPTOR_DATA d, String input) {
+    static void show_string(@NotNull DESCRIPTOR_DATA d, @NotNull String input) {
         var buf = new StringBuilder();
         one_argument(input, buf);
         if (!buf.isEmpty()) {
@@ -1938,16 +1713,8 @@ class Comm {
         }
     }
 
-/* quick sex fixer */
-
-    static void fix_sex(@NotNull CHAR_DATA ch) {
-        if (ch.sex < 0 || ch.sex > 2) {
-            ch.sex = IS_NPC(ch) ? 0 : ch.pcdata.true_sex;
-        }
-    }
-
-    static void act(CharSequence seq, CHAR_DATA ch, Object arg1, Object arg2, int type) {
-        if (seq == null || seq.isEmpty()) {
+    static void act(@NotNull CharSequence seq, @NotNull CHAR_DATA ch, Object arg1, Object arg2, int type) {
+        if (seq.isEmpty()) {
             return;
         }
         act(seq.toString(), ch, arg1, arg2, type, POS_RESTING);
@@ -1958,14 +1725,14 @@ class Comm {
     static final String[] him_her = {"it", "him", "her"};
     static final String[] his_her = {"its", "his", "her"};
 
-    static void act(String actStr, CHAR_DATA ch, Object arg1, Object arg2, int type, int min_pos) {
+    static void act(@NotNull String actStr, @NotNull CHAR_DATA ch, Object arg1, Object arg2, int type, int min_pos) {
         // Discard null and zero-length messages: useful to avoid null-checks in clients
-        if (actStr == null || actStr.length() == 0) {
+        if (actStr.isEmpty()) {
             return;
         }
 
         /* discard null rooms and chars */
-        if (ch == null || ch.in_room == null) {
+        if (ch.in_room == null) {
             return;
         }
 
@@ -2019,28 +1786,20 @@ class Comm {
                     /* Thx alex for 't' idea */
                     case 't' -> i = (String) arg1;
                     case 'T' -> i = (String) arg2;
-                    case 'n' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            PERS(ch.doppel, to) : PERS(ch, to);
-                    case 'N' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            PERS(vch.doppel, to) : PERS(vch, to);
-                    case 'e' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            he_she[URANGE(0, ch.doppel.sex, 2)] :
-                            he_she[URANGE(0, ch.sex, 2)];
-                    case 'E' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            he_she[URANGE(0, vch.doppel.sex, 2)] :
-                            he_she[URANGE(0, vch.sex, 2)];
-                    case 'm' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            him_her[URANGE(0, ch.doppel.sex, 2)] :
-                            him_her[URANGE(0, ch.sex, 2)];
-                    case 'M' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            him_her[URANGE(0, vch.doppel.sex, 2)] :
-                            him_her[URANGE(0, vch.sex, 2)];
-                    case 's' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            his_her[URANGE(0, ch.doppel.sex, 2)] :
-                            his_her[URANGE(0, ch.sex, 2)];
-                    case 'S' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ?
-                            his_her[URANGE(0, vch.doppel.sex, 2)] :
-                            his_her[URANGE(0, vch.sex, 2)];
+                    case 'n' -> i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? PERS(ch.doppel, to) : PERS(ch, to);
+                    case 'N' -> i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? PERS(vch.doppel, to) : PERS(vch, to);
+                    case 'e' ->
+                            i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? he_she[URANGE(0, ch.doppel.sex, 2)] : he_she[URANGE(0, ch.sex, 2)];
+                    case 'E' ->
+                            i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? he_she[URANGE(0, vch.doppel.sex, 2)] : he_she[URANGE(0, vch.sex, 2)];
+                    case 'm' ->
+                            i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? him_her[URANGE(0, ch.doppel.sex, 2)] : him_her[URANGE(0, ch.sex, 2)];
+                    case 'M' ->
+                            i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? him_her[URANGE(0, vch.doppel.sex, 2)] : him_her[URANGE(0, vch.sex, 2)];
+                    case 's' ->
+                            i = (is_affected(ch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? his_her[URANGE(0, ch.doppel.sex, 2)] : his_her[URANGE(0, ch.sex, 2)];
+                    case 'S' ->
+                            i = (is_affected(vch, gsn_doppelganger) && !IS_SET(to.act, PLR_HOLYLIGHT)) ? his_her[URANGE(0, vch.doppel.sex, 2)] : his_her[URANGE(0, vch.sex, 2)];
                     case 'p' -> i = can_see_obj(to, (OBJ_DATA) arg1) ? ((OBJ_DATA) arg1).short_descr : "something";
                     case 'P' -> i = can_see_obj(to, (OBJ_DATA) arg2) ? ((OBJ_DATA) arg2).short_descr : "something";
                     case 'd' -> {
@@ -2068,17 +1827,8 @@ class Comm {
         }
     }
 
-/*
-*  writes bug directly to user screen.
-*/
 
-    static void dump_to_scr(String text) {
-        System.out.println(text);
-    }
-
-
-    static int log_area_popularity() {
-        AREA_DATA area;
+    static void log_area_popularity() {
         var file = new File("area_stat.txt");
         if (file.exists()) {
             //noinspection ResultOfMethodCallIgnored
@@ -2088,7 +1838,7 @@ class Comm {
             try (var fp = new FileWriter(nw_config.var_astat_file, true)) {
                 var f = new Formatter(fp);
                 f.format("\nBooted %s Area popularity statistics (in String  ticks)\n", new Date(boot_time));
-                for (area = area_first; area != null; area = area.next) {
+                for (AREA_DATA area = area_first; area != null; area = area.next) {
                     if (area.count >= 5000000) {
                         f.format("%-60s overflow\n", area.name);
                     } else {
@@ -2099,19 +1849,16 @@ class Comm {
         } catch (IOException e) {
             logError(e);
         }
-        return 1;
     }
 
-/*
- * Function for save processes.
- */
+    /*
+     * Function for save processes.
+     */
 
     static String get_stat_alias(@NotNull CHAR_DATA ch, int where) {
         String stat;
-        int istat;
-
         if (where == STAT_STR) {
-            istat = get_curr_stat(ch, STAT_STR);
+            int istat = get_curr_stat(ch, STAT_STR);
             if (istat > 22) {
                 stat = "Titantic";
             } else if (istat >= 20) {
@@ -2129,7 +1876,7 @@ class Comm {
         }
 
         if (where == STAT_WIS) {
-            istat = get_curr_stat(ch, STAT_WIS);
+            int istat = get_curr_stat(ch, STAT_WIS);
             if (istat > 22) {
                 stat = "Excellent";
             } else if (istat >= 20) {
@@ -2147,7 +1894,7 @@ class Comm {
         }
 
         if (where == STAT_CON) {
-            istat = get_curr_stat(ch, STAT_CON);
+            int istat = get_curr_stat(ch, STAT_CON);
             if (istat > 22) {
                 stat = "Iron";
             } else if (istat >= 20) {
@@ -2165,7 +1912,7 @@ class Comm {
         }
 
         if (where == STAT_INT) {
-            istat = get_curr_stat(ch, STAT_INT);
+            int istat = get_curr_stat(ch, STAT_INT);
             if (istat > 22) {
                 stat = "Genious";
             } else if (istat >= 20) {
@@ -2183,7 +1930,7 @@ class Comm {
         }
 
         if (where == STAT_DEX) {
-            istat = get_curr_stat(ch, STAT_DEX);
+            int istat = get_curr_stat(ch, STAT_DEX);
             if (istat > 22) {
                 stat = "Fast";
             } else if (istat >= 20) {
@@ -2201,7 +1948,7 @@ class Comm {
         }
 
         if (where == STAT_CHA) {
-            istat = get_curr_stat(ch, STAT_CHA);
+            int istat = get_curr_stat(ch, STAT_CHA);
             if (istat > 22) {
                 stat = "Charismatic";
             } else if (istat >= 20) {
@@ -2217,17 +1964,11 @@ class Comm {
             }
             return stat;
         }
-
         bug("stat_alias: Bad stat number.");
         return null;
-
     }
 
-    static int sex_ok(@NotNull CHAR_DATA ch, int clazz) {
-        return 1;
-    }
-
-    static boolean class_ok(@NotNull CHAR_DATA ch, Clazz clazz) {
+    static boolean class_ok(@NotNull CHAR_DATA ch, @NotNull Clazz clazz) {
         return ORG_RACE(ch).pcRace.getClassModifier(clazz).expMult != -1 && (ch.sex & clazz.sex) > 0;
     }
 

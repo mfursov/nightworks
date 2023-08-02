@@ -5,4 +5,7 @@ public class Logger {
         //noinspection CallToPrintStackTrace
         error.printStackTrace();
     }
+    public static void log(@NotNull CharSequence message) {
+        System.out.println(message);
+    }
 }
