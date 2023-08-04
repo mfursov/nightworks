@@ -1,17 +1,17 @@
 package net.sf.nightworks;
 
 class Configuration {
-/*
-* Data files used by the server.
-*
-* AREA_LIST contains a list of areas to boot.
-* All files are read in completely at bootup.
-* Most output files (bug, idea, typo, shutdown) are append-only.
-*
-* The null_FILE is held open so that we have a stream handle in reserve,
-*   so players can go ahead and telnet to all the other descriptors.
-* Then we close it whenever we need to open a file (e.g. a save file).
-*/
+    /*
+     * Data files used by the server.
+     *
+     * AREA_LIST contains a list of areas to boot.
+     * All files are read in completely at bootup.
+     * Most output files (bug, idea, typo, shutdown) are append-only.
+     *
+     * The null_FILE is held open so that we have a stream handle in reserve,
+     *   so players can go ahead and telnet to all the other descriptors.
+     * Then we close it whenever we need to open a file (e.g. a save file).
+     */
 
     Configuration() {
         //TODO: read from system properties, use hardcoded values as default

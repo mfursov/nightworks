@@ -31,7 +31,7 @@ class ActComm {
         send_to_char("You must type the full command to delete yourself.\n", ch);
     }
 
-    static void do_delete(@NotNull CHAR_DATA ch, String argument) {
+    static void do_delete(@NotNull CHAR_DATA ch, @NotNull String argument) {
         if (IS_NPC(ch)) {
             return;
         }
@@ -128,7 +128,7 @@ class ActComm {
 
     }
 
-    static void garble(StringBuilder garbled, String speech) {
+    static void garble(@NotNull StringBuilder garbled, @NotNull String speech) {
         for (var i = 0; i < speech.length(); i++) {
             var c = speech.charAt(i);
             if (c >= 'a' && c <= 'z') {
@@ -176,7 +176,7 @@ class ActComm {
         ch.pcdata.buffer.setLength(0);
     }
 
-    static void do_immtalk(@NotNull CHAR_DATA ch, String argument) {
+    static void do_immtalk(@NotNull CHAR_DATA ch, @NotNull String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -206,7 +206,7 @@ class ActComm {
     }
 
 
-    static void do_say(@NotNull CHAR_DATA ch, String argument) {
+    static void do_say(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA room_char;
         OBJ_DATA char_obj;
         CHAR_DATA vch;
@@ -267,7 +267,7 @@ class ActComm {
     }
 
 
-    static void do_shout(@NotNull CHAR_DATA ch, String argument) {
+    static void do_shout(@NotNull CHAR_DATA ch, @NotNull String argument) {
         DESCRIPTOR_DATA d;
 
         if (argument.isEmpty()) {
@@ -304,7 +304,7 @@ class ActComm {
     }
 
 
-    static void do_tell(@NotNull CHAR_DATA ch, String argument) {
+    static void do_tell(@NotNull CHAR_DATA ch, @NotNull String argument) {
 
         CHAR_DATA victim;
 
@@ -379,7 +379,7 @@ class ActComm {
     }
 
 
-    static void do_reply(@NotNull CHAR_DATA ch, String argument) {
+    static void do_reply(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA victim;
 
         if (IS_SET(ch.comm, COMM_NOTELL)) {
@@ -434,11 +434,11 @@ class ActComm {
 
     }
 
-    static void do_yell(@NotNull CHAR_DATA ch, String arg) {
+    static void do_yell(@NotNull CHAR_DATA ch, @NotNull String arg) {
         do_yell(ch, (CharSequence) arg);
     }
 
-    static void do_yell(@NotNull CHAR_DATA ch, CharSequence arg) {
+    static void do_yell(@NotNull CHAR_DATA ch, @NotNull CharSequence arg) {
         DESCRIPTOR_DATA d;
 
 
@@ -472,7 +472,7 @@ class ActComm {
         }
     }
 
-    static void do_emote(@NotNull CHAR_DATA ch, String argument) {
+    static void do_emote(@NotNull CHAR_DATA ch, @NotNull String argument) {
         if (!IS_NPC(ch) && IS_SET(ch.comm, COMM_NOEMOTE)) {
             send_to_char("You can't show your emotions.\n", ch);
             return;
@@ -497,7 +497,7 @@ class ActComm {
     }
 
 
-    static void do_pmote(@NotNull CHAR_DATA ch, String argument) {
+    static void do_pmote(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA vch;
         var matches = 0;
 
@@ -584,12 +584,12 @@ class ActComm {
     }
 
 
-    static void do_bug(@NotNull CHAR_DATA ch, String argument) {
+    static void do_bug(@NotNull CHAR_DATA ch, @NotNull String argument) {
         append_file(ch, nw_config.note_bug_file, argument);
         send_to_char("Bug logged.\n", ch);
     }
 
-    static void do_typo(@NotNull CHAR_DATA ch, String argument) {
+    static void do_typo(@NotNull CHAR_DATA ch, @NotNull String argument) {
         append_file(ch, nw_config.note_typo_file, argument);
         send_to_char("Typo logged.\n", ch);
     }
@@ -803,7 +803,7 @@ class ActComm {
     }
 
 
-    static void do_follow(@NotNull CHAR_DATA ch, String argument) {
+    static void do_follow(@NotNull CHAR_DATA ch, @NotNull String argument) {
         /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
         CHAR_DATA victim;
         var arg = new StringBuilder();
@@ -849,7 +849,7 @@ class ActComm {
     }
 
 
-    static void add_follower(@NotNull CHAR_DATA ch, CHAR_DATA master) {
+    static void add_follower(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA master) {
         if (ch.master != null) {
             bug("Add_follower: non-null master.");
             return;
@@ -932,7 +932,7 @@ class ActComm {
     }
 
 
-    static void do_order(@NotNull CHAR_DATA ch, String argument) {
+    static void do_order(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA victim;
         CHAR_DATA och;
         CHAR_DATA och_next;
@@ -1005,7 +1005,7 @@ class ActComm {
         }
     }
 
-    static boolean proper_order(@NotNull CHAR_DATA ch, String argument) {
+    static boolean proper_order(@NotNull CHAR_DATA ch, @NotNull String argument) {
         var command = new StringBuilder();
         one_argument(argument, command);
 
@@ -1046,7 +1046,7 @@ class ActComm {
     }
 
 
-    static void do_group(@NotNull CHAR_DATA ch, String argument) {
+    static void do_group(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA victim;
         var arg = new StringBuilder();
 
@@ -1171,7 +1171,7 @@ class ActComm {
      * 'Split' originally by Gnort, God of Chaos.
      */
 
-    static void do_split(@NotNull CHAR_DATA ch, String argument) {
+    static void do_split(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA gch;
         int members;
         int amount_gold = 0, amount_silver;
@@ -1277,7 +1277,7 @@ class ActComm {
     }
 
 
-    static void do_gtell(@NotNull CHAR_DATA ch, String argument) {
+    static void do_gtell(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA gch;
         int i;
 
@@ -1325,11 +1325,7 @@ class ActComm {
      * (3) if A ~ B  and B ~ C, then A ~ C
      */
 
-    static boolean is_same_group_old(CHAR_DATA ach, CHAR_DATA bch) {
-        if (ach == null || bch == null) {
-            return false;
-        }
-
+    static boolean is_same_group_old(@NotNull CHAR_DATA ach, @NotNull CHAR_DATA bch) {
         if (ach.leader != null) {
             ach = ach.leader;
         }
@@ -1343,7 +1339,7 @@ class ActComm {
      * New is_same_group by chronos
      */
 
-    static boolean is_same_group(CHAR_DATA ach, CHAR_DATA bch) {
+    static boolean is_same_group(@NotNull CHAR_DATA ach, @NotNull CHAR_DATA bch) {
         CHAR_DATA ch, vch, ch_next, vch_next;
         int count, vcount;
 
@@ -1367,7 +1363,7 @@ class ActComm {
     }
 
 
-    static void do_cb(@NotNull CHAR_DATA ch, String argument) {
+    static void do_cb(@NotNull CHAR_DATA ch, @NotNull String argument) {
         DESCRIPTOR_DATA d;
 
         if (ch.cabal == 0) {
@@ -1399,7 +1395,7 @@ class ActComm {
 
     }
 
-    static void do_pray(@NotNull CHAR_DATA ch, String argument) {
+    static void do_pray(@NotNull CHAR_DATA ch, @NotNull String argument) {
         DESCRIPTOR_DATA d;
 
         if (IS_SET(ch.comm, COMM_NOCHANNELS)) {
@@ -1436,7 +1432,7 @@ class ActComm {
      * ch says
      * the victim hears
      */
-    static String translate(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA victim, String argument) {
+    static String translate(@NotNull CHAR_DATA ch, @NotNull CHAR_DATA victim, @NotNull String argument) {
         var trans = new TextBuffer();
         if (argument.isEmpty()
                 || IS_NPC(ch) || IS_NPC(victim)
@@ -1462,7 +1458,7 @@ class ActComm {
     }
 
 
-    static void do_speak(@NotNull CHAR_DATA ch, String argument) {
+    static void do_speak(@NotNull CHAR_DATA ch, @NotNull String argument) {
         int language;
 
         if (IS_NPC(ch)) {
@@ -1500,7 +1496,7 @@ class ActComm {
 
     /* Thanx zihni@karmi.emu.edu.tr for the code of do_judge */
 
-    static void do_judge(@NotNull CHAR_DATA ch, String argument) {
+    static void do_judge(@NotNull CHAR_DATA ch, @NotNull String argument) {
         CHAR_DATA victim;
 
         if (skill_failure_check(ch, gsn_judge, true, 0, null)) {
@@ -1544,7 +1540,7 @@ class ActComm {
         send_to_char("If you want to REMORT, spell it out.\n", ch);
     }
 
-    static void do_remort(@NotNull CHAR_DATA ch, String argument) {
+    static void do_remort(@NotNull CHAR_DATA ch, @NotNull String argument) {
         int bankg, banks, qp, silver, gold;
 
         if (IS_NPC(ch) || ch.desc == null) {

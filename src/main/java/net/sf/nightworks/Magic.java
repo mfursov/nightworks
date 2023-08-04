@@ -489,7 +489,7 @@ class Magic {
         return number_percent() < save;
     }
 
-/* co-routine for dispel magic and cancellation */
+    /* co-routine for dispel magic and cancellation */
 
     static boolean check_dispel(int dis_level, CHAR_DATA victim, Skill sn) {
 
@@ -1099,9 +1099,9 @@ class Magic {
         }
     }
 
-/*
-* Spell functions.
-*/
+    /*
+     * Spell functions.
+     */
 
     static void spell_acid_blast(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -1307,7 +1307,7 @@ class Magic {
 
     }
 
-/* RT calm spell stops all fighting in the room */
+    /* RT calm spell stops all fighting in the room */
 
     static void spell_calm(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
@@ -1981,7 +1981,7 @@ class Magic {
         }
     }
 
-/* RT added to cure plague */
+    /* RT added to cure plague */
 
     static void spell_cure_disease(int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -2125,7 +2125,7 @@ class Magic {
         }
     }
 
-/* RT replacement demonfire spell */
+    /* RT replacement demonfire spell */
 
     static void spell_demonfire(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -2151,7 +2151,7 @@ class Magic {
         spell_curse(gsn_curse, 3 * level / 4, ch, victim, TARGET_CHAR);
     }
 
-/* added by chronos */
+    /* added by chronos */
 
     static void spell_bluefire(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -2390,7 +2390,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_NEGATIVE, true);
     }
 
-/* modified for enhanced use */
+    /* modified for enhanced use */
 
     static void spell_dispel_magic(int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -3004,10 +3004,10 @@ class Magic {
 
     }
 
-/*
-* Drain XP, MANA, HP.
-* Caster gains HP.
-*/
+    /*
+     * Drain XP, MANA, HP.
+     * Caster gains HP.
+     */
 
     static void spell_energy_drain(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -3255,7 +3255,7 @@ class Magic {
         act("$n's feet rise off the ground.", victim, null, null, TO_ROOM);
     }
 
-/* RT clerical berserking spell */
+    /* RT clerical berserking spell */
 
     static void spell_frenzy(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -3282,7 +3282,7 @@ class Magic {
         if ((IS_GOOD(ch) && !IS_GOOD(victim)) ||
                 (IS_NEUTRAL(ch) && !IS_NEUTRAL(victim)) ||
                 (IS_EVIL(ch) && !IS_EVIL(victim))
-                ) {
+        ) {
             act("Your god doesn't seem to like $N", ch, null, victim, TO_CHAR);
             return;
         }
@@ -3324,7 +3324,7 @@ class Magic {
                 || IS_SET(victim.in_room.room_flags, ROOM_NOSUMMON)
                 || victim.level >= level + 3
                 || saves_spell(level, victim, DAM_OTHER)
-/*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
+                /*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
                 || (IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.imm_flags, IMM_SUMMON))
                 || (!IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.act, PLR_NOSUMMON))
                 || (!IS_NPC(victim) && ch.in_room.area != victim.in_room.area)
@@ -3390,7 +3390,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_HARM, true);
     }
 
-/* RT haste spell */
+    /* RT haste spell */
 
     static void spell_haste(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -3558,7 +3558,7 @@ class Magic {
         }
     }
 
-/* RT really nasty high-level attack spell */
+    /* RT really nasty high-level attack spell */
 
     static void spell_holy_word(Skill sn, int level, CHAR_DATA ch) {
         CHAR_DATA vch;
@@ -4099,7 +4099,7 @@ class Magic {
         send_to_char("You turn translucent.\n", victim);
     }
 
-/* RT plague spell, very nasty */
+    /* RT plague spell, very nasty */
 
     static void spell_plague(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -4718,7 +4718,7 @@ class Magic {
         act("$n looks tired and weak.", victim, null, null, TO_ROOM);
     }
 
-/* RT recall spell is back */
+    /* RT recall spell is back */
 
     static void spell_word_of_recall(@NotNull CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -4784,9 +4784,9 @@ class Magic {
 
     }
 
-/*
- * Draconian spells.
- */
+    /*
+     * Draconian spells.
+     */
 
     static void spell_acid_breath(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -5140,7 +5140,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_ACID, true);
     }
 
-/* energy spells */
+    /* energy spells */
 
     static void spell_etheral_fist(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -5195,7 +5195,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_ENERGY, true);
         WAIT_STATE(victim, sn.beats);
     }
-/* mental */
+    /* mental */
 
     static void spell_mind_wrack(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -5222,7 +5222,7 @@ class Magic {
                 ch, null, victim, TO_NOTVICT);
         damage(ch, victim, dam, sn, DAM_MENTAL, true);
     }
-/* acid */
+    /* acid */
 
     static void spell_sulfurus_spray(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -5263,7 +5263,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_ACID, true);
     }
 
-/*  Electrical  */
+    /*  Electrical  */
 
     static void spell_galvanic_whip(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -5305,7 +5305,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_LIGHTNING, true);
     }
 
-/* negative */
+    /* negative */
 
     static void spell_hand_of_undead(Skill sn, int level, CHAR_DATA ch, Object vo) {
         var victim = (CHAR_DATA) vo;
@@ -5336,7 +5336,7 @@ class Magic {
         damage(ch, victim, dam, sn, DAM_NEGATIVE, true);
     }
 
-/* travel via astral plains */
+    /* travel via astral plains */
 
     static void spell_astral_walk(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
@@ -5353,7 +5353,7 @@ class Magic {
                 || IS_SET(ch.in_room.room_flags, ROOM_NOSUMMON)
                 || IS_SET(victim.in_room.room_flags, ROOM_NOSUMMON)
                 || victim.level >= level + 3
-/*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
+                /*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
                 || saves_spell(level, victim, DAM_OTHER)
                 || (IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.imm_flags, IMM_SUMMON))
                 || (!IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.act, PLR_NOSUMMON))
@@ -5384,7 +5384,7 @@ class Magic {
         }
     }
 
-/* vampire version astral walk */
+    /* vampire version astral walk */
 
     static void spell_mist_walk(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
@@ -5401,7 +5401,7 @@ class Magic {
                 || IS_SET(ch.in_room.room_flags, ROOM_NOSUMMON)
                 || IS_SET(victim.in_room.room_flags, ROOM_NOSUMMON)
                 || victim.level >= level - 5
-/*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
+                /*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
                 || saves_spell(level, victim, DAM_OTHER)
                 || (IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.imm_flags, IMM_SUMMON))
                 || (!IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.act, PLR_NOSUMMON))
@@ -5422,7 +5422,7 @@ class Magic {
 
     }
 
-/*  Cleric version of astra_walk  */
+    /*  Cleric version of astra_walk  */
 
     static void spell_solar_flight(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
@@ -5443,7 +5443,7 @@ class Magic {
                 || IS_SET(ch.in_room.room_flags, ROOM_NOSUMMON)
                 || IS_SET(victim.in_room.room_flags, ROOM_NOSUMMON)
                 || victim.level >= level + 1
-/*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
+                /*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
                 || saves_spell(level, victim, DAM_OTHER)
                 || (IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.imm_flags, IMM_SUMMON))
                 || (!IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.act, PLR_NOSUMMON))
@@ -5464,7 +5464,7 @@ class Magic {
 
     }
 
-/* travel via astral plains */
+    /* travel via astral plains */
 
     static void spell_helical_flow(int level, CHAR_DATA ch) {
         CHAR_DATA victim;
@@ -5480,7 +5480,7 @@ class Magic {
                 || IS_SET(ch.in_room.room_flags, ROOM_NOSUMMON)
                 || IS_SET(victim.in_room.room_flags, ROOM_NOSUMMON)
                 || victim.level >= level + 3
-/*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
+                /*    ||   (!IS_NPC(victim) && victim.level >= LEVEL_HERO)  * NOT trust */
                 || saves_spell(level, victim, DAM_OTHER)
                 || (IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.imm_flags, IMM_SUMMON))
                 || (!IS_NPC(victim) && is_safe_nomessage(ch, victim) && IS_SET(victim.act, PLR_NOSUMMON))

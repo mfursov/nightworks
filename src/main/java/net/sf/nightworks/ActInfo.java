@@ -154,10 +154,10 @@ class ActInfo {
         return buf.toString();
     }
 
-/*
-* Show a list to a character.
-* Can coalesce duplicated items.
-*/
+    /*
+     * Show a list to a character.
+     * Can coalesce duplicated items.
+     */
 
     static void show_list_to_char(OBJ_DATA list, CHAR_DATA ch, boolean fShort, boolean fShowNothing) {
 
@@ -191,9 +191,9 @@ class ActInfo {
 
                 if (IS_NPC(ch) || IS_SET(ch.comm, COMM_COMBINE)) {
                     /*
-                    * Look for duplicates, case sensitive.
-                    * Matches tend to be near end so run loop backwords.
-                    */
+                     * Look for duplicates, case sensitive.
+                     * Matches tend to be near end so run loop backwords.
+                     */
                     for (var iShow = nShow - 1; iShow >= 0; iShow--) {
                         if (prgpstrShow[iShow].equals(pstrShow)) {
                             prgnShow[iShow]++;
@@ -204,8 +204,8 @@ class ActInfo {
                 }
 
                 /*
-                * Couldn't combine, or didn't want to.
-                */
+                 * Couldn't combine, or didn't want to.
+                 */
                 if (!fCombine) {
                     prgpstrShow[nShow] = pstrShow;
                     prgnShow[nShow] = 1;
@@ -250,8 +250,8 @@ class ActInfo {
     static void show_char_to_char_0(CHAR_DATA victim, CHAR_DATA ch) {
         var buf = new StringBuilder();
         /*
-        * Quest staff
-        */
+         * Quest staff
+         */
         if (!IS_NPC(ch) && IS_NPC(victim)
                 && ch.pcdata.questmob > 0
                 && victim.pIndexData.vnum == ch.pcdata.questmob) {
@@ -604,7 +604,7 @@ class ActInfo {
         }
     }
 
-/* changes your scroll */
+    /* changes your scroll */
 
     static void do_scroll(@NotNull CHAR_DATA ch, String argument) {
         int lines;
@@ -645,7 +645,7 @@ class ActInfo {
         ch.lines = lines - 2;
     }
 
-/* RT does socials */
+    /* RT does socials */
 
     static void do_socials(@NotNull CHAR_DATA ch) {
         var col = 0;
@@ -663,7 +663,7 @@ class ActInfo {
         }
     }
 
-/* RT Commands to replace news, motd, imotd, etc from ROM */
+    /* RT Commands to replace news, motd, imotd, etc from ROM */
 
     static void do_motd(@NotNull CHAR_DATA ch) {
         do_help(ch, "motd");
@@ -1380,7 +1380,7 @@ class ActInfo {
 
     }
 
-/* RT added back for the hell of it */
+    /* RT added back for the hell of it */
 
     static void do_read(@NotNull CHAR_DATA ch, String argument) {
         do_look(ch, argument);
@@ -1435,9 +1435,9 @@ class ActInfo {
 
     }
 
-/*
-* Thanks to Zrin for auto-exit part.
-*/
+    /*
+     * Thanks to Zrin for auto-exit part.
+     */
 
     static void do_exits(@NotNull CHAR_DATA ch, String argument) {
         EXIT_DATA pexit;
@@ -1687,8 +1687,8 @@ class ActInfo {
                 }
 
                 /*
-                * Strip leading '.' to allow initial blanks.
-                */
+                 * Strip leading '.' to allow initial blanks.
+                 */
                 page_to_char(pHelp.text, ch);
                 return;
             }
@@ -1696,7 +1696,7 @@ class ActInfo {
         send_to_char("No help on that word.\n", ch);
     }
 
-/* whois command */
+    /* whois command */
 
     static void do_whois(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
@@ -1780,8 +1780,8 @@ class ActInfo {
                     titlebuf = wch.pcdata.title;
                 }
                 /*
-                * Format it up.
-                */
+                 * Format it up.
+                 */
                 var level_buf = new TextBuffer();
                 level_buf.sprintf("{c%2d{x", wch.level);
                 var classbuf = "{Y" + clazz + "{x";
@@ -1818,9 +1818,9 @@ class ActInfo {
         page_to_char(output.toString(), ch);
     }
 
-/*
-* New 'who' command originally by Alander of Rivers of Mud.
-*/
+    /*
+     * New 'who' command originally by Alander of Rivers of Mud.
+     */
 
 
     static void do_count(@NotNull CHAR_DATA ch) {
@@ -2016,9 +2016,7 @@ class ActInfo {
                         && !(fPKonly && is_safe_nomessage(ch, victim))
                         && victim.in_room != null
                         && victim.in_room.area == ch.in_room.area
-                        && can_see(ch, victim))
-
-                {
+                        && can_see(ch, victim)) {
                     found = true;
                     buf.sprintf("%s%-28s %s\n",
                             (is_safe_nomessage(ch,
@@ -2335,9 +2333,9 @@ class ActInfo {
         }
     }
 
-/*
-* 'Wimpy' originally by Dionysos.
-*/
+    /*
+     * 'Wimpy' originally by Dionysos.
+     */
 
     static void do_wimpy(@NotNull CHAR_DATA ch, String argument) {
         int wimpy;
@@ -2437,7 +2435,7 @@ class ActInfo {
         send_to_char("Ok.\n", ch);
     }
 
-/* RT configure command */
+    /* RT configure command */
 
     static void do_scan(@NotNull CHAR_DATA ch, String argument) {
         String dir2;
@@ -2453,9 +2451,7 @@ class ActInfo {
         var dir = new StringBuilder();
         one_argument(argument, dir);
 
-        if (dir.isEmpty())
-
-        {
+        if (dir.isEmpty()) {
             do_scan2(ch);
             return;
         }
@@ -3024,7 +3020,7 @@ class ActInfo {
         if (!IS_NPC(ch) && ch.pcdata.condition[COND_THIRST] <= 0) {
             send_to_char("You are thirsty.\n", ch);
         }
-/*    if ( !IS_NPC(ch) && ch.pcdata.condition[COND_FULL]   ==  0 ) */
+        /*    if ( !IS_NPC(ch) && ch.pcdata.condition[COND_FULL]   ==  0 ) */
         if (!IS_NPC(ch) && ch.pcdata.condition[COND_HUNGER] <= 0) {
             send_to_char("You are hungry.\n", ch);
         }
@@ -3335,7 +3331,7 @@ class ActInfo {
 
     }
 
-/* object condition aliases */
+    /* object condition aliases */
 
     static String get_cond_alias(OBJ_DATA obj) {
         String stat;
@@ -3360,7 +3356,7 @@ class ActInfo {
         return stat;
     }
 
-/* room affects */
+    /* room affects */
 
     static void do_raffects(@NotNull CHAR_DATA ch) {
         if (ch.in_room.affected != null) {
@@ -3401,7 +3397,7 @@ class ActInfo {
 
     }
 
-/* new practice */
+    /* new practice */
 
     static void do_pracnew(@NotNull CHAR_DATA ch, String argument) {
         if (IS_NPC(ch)) {
@@ -3510,9 +3506,9 @@ class ActInfo {
         }
     }
 
-/*
-* New 'who_col' command by chronos
-*/
+    /*
+     * New 'who_col' command by chronos
+     */
 
     static void do_who(@NotNull CHAR_DATA ch, String argument) {
         DESCRIPTOR_DATA d;
@@ -3535,8 +3531,8 @@ class ActInfo {
         Set<Race> rgfRaces = null;
 
         /*
-        * Parse arguments.
-        */
+         * Parse arguments.
+         */
         var nNumber = 0;
         var vnum = 0;
         for (; ; ) {
@@ -3640,8 +3636,8 @@ class ActInfo {
             } else {
 
                 /*
-                * Look for classes to turn on.
-                */
+                 * Look for classes to turn on.
+                 */
                 if (arg.charAt(0) == 'i') {
                     fImmortalOnly = true;
                 } else {
@@ -3676,9 +3672,9 @@ class ActInfo {
             CHAR_DATA wch;
 
             /*
-            * Check for match against restrictions.
-            * Don't use trust as that exposes trusted mortals.
-            */
+             * Check for match against restrictions.
+             * Don't use trust as that exposes trusted mortals.
+             */
             if (d.connected != CON_PLAYING || !can_see(ch, d.character)) {
                 continue;
             }
@@ -3712,8 +3708,8 @@ class ActInfo {
             nMatch++;
 
             /*
-            * Figure out what to print for class.
-            */
+             * Figure out what to print for class.
+             */
             String clazz = switch (wch.level) {
                 default -> wch.clazz.who_name;
                 case MAX_LEVEL -> "IMP";
@@ -3752,15 +3748,13 @@ class ActInfo {
             var act_buf = IS_SET(ch.act, PLR_WANTED) ? "{W(WANTED){x " : "";
             var titlebuf = IS_NPC(wch) ? "Believer of Chronos." : wch.pcdata.title;
             /*
-            * Format it up.
-            */
+             * Format it up.
+             */
             var level_buf = new TextBuffer();
             level_buf.sprintf("{c%2d{x", wch.level);
             var classbuf = "{Y" + clazz + "{x";
 
-            if (IS_TRUSTED(ch, LEVEL_IMMORTAL) || ch == wch || wch.level >= LEVEL_HERO)
-
-            {
+            if (IS_TRUSTED(ch, LEVEL_IMMORTAL) || ch == wch || wch.level >= LEVEL_HERO) {
                 buf.sprintf("[%2d %s %s] %s %s %s %s %s\n",
                         wch.level,
                         wch.race.pcRace != null ? wch.race.pcRace.who_name : "     ",
@@ -3771,11 +3765,11 @@ class ActInfo {
                         wch.name,
                         titlebuf);
             } else
-/*    buf.sprintf( "[%s %s %s] %s%s%s%s%s\n",    */ {
+                /*    buf.sprintf( "[%s %s %s] %s%s%s%s%s\n",    */ {
                 buf.sprintf("[%s %s    ] %s %s %s %s %s\n",
                         (get_curr_stat(wch, STAT_CHA) < 18) ? level_buf : "  ",
                         wch.race.pcRace != null ? wch.race.pcRace.who_name : "     ",
-/*      classbuf,   */
+                        /*      classbuf,   */
                         pk_buf,
                         cabalbuf,
                         act_buf,
@@ -4121,7 +4115,7 @@ class ActInfo {
             buf.sprintf("     | {WYou are thirsty.                                                {G|\n");
             send_to_char(buf, ch);
         }
-/*    if ( !IS_NPC(ch) && ch.pcdata.condition[COND_FULL]   ==  0 ) */
+        /*    if ( !IS_NPC(ch) && ch.pcdata.condition[COND_FULL]   ==  0 ) */
         if (!IS_NPC(ch) && ch.pcdata.condition[COND_HUNGER] <= 0) {
             ekle = 1;
             buf.sprintf("     | {WYou are hungry.                                                 {G|\n");

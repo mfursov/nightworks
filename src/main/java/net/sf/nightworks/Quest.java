@@ -23,13 +23,13 @@ class Quest {
     private static final int QUEST_OBJQUEST3 = 86;
     private static final int QUEST_OBJQUEST4 = 97;
 
-/* CHANCE function. I use this everywhere in my code, very handy :> */
+    /* CHANCE function. I use this everywhere in my code, very handy :> */
 
     static boolean chance(int num) {
         return number_range(1, 100) <= num;
     }
 
-/* The main quest function */
+    /* The main quest function */
 
     static void do_quest(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA questman;
@@ -882,7 +882,7 @@ class Quest {
         }
     }
 
-/* Called from update_handler() by pulse_area */
+    /* Called from update_handler() by pulse_area */
 
     static void quest_update() {
         CHAR_DATA ch, ch_next;

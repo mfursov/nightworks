@@ -535,9 +535,7 @@ class MobProg {
         }
     }
 
-    static void give_prog_solamnia(CHAR_DATA mob, CHAR_DATA ch, OBJ_DATA obj)
-
-    {
+    static void give_prog_solamnia(CHAR_DATA mob, CHAR_DATA ch, OBJ_DATA obj) {
         OBJ_DATA kassandra;
 
         if (obj.pIndexData.vnum == 2438) {

@@ -587,10 +587,10 @@ class Const {
                     new liq_type(null, null, new int[]{0, 0, 0, 0, 0})
             };
 
-/*
- * The skill and spell table.
- * Slot numbers must never be changed as they appear in #OBJECTS sections.
-*/
+    /*
+     * The skill and spell table.
+     * Slot numbers must never be changed as they appear in #OBJECTS sections.
+     */
 
 
 }

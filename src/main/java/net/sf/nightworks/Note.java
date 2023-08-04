@@ -677,7 +677,7 @@ class Note {
                 return;
             }
             var buf = ch.pnote.text;
-            for (len = buf.length(); --len >= 0;) {
+            for (len = buf.length(); --len >= 0; ) {
                 if (buf.charAt(len) == '\r') {
                     if (!found)  /* back it up */ {
                         if (len > 0) {

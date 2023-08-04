@@ -41,16 +41,16 @@ class Save {
     }
 
     /*
-    * Array of containers read for proper re-nesting of objects.
-    */
+     * Array of containers read for proper re-nesting of objects.
+     */
     private static final int MAX_NEST = 100;
     private static final OBJ_DATA[] rgObjNest = new OBJ_DATA[MAX_NEST];
 
-/*
-* Save a character and inventory.
-* Would be cool to save NPC's too for quest purposes,
-*   some of the infrastructure is provided.
-*/
+    /*
+     * Save a character and inventory.
+     * Would be cool to save NPC's too for quest purposes,
+     *   some of the infrastructure is provided.
+     */
 
     static void save_char_obj(@NotNull CHAR_DATA ch) {
 
@@ -101,9 +101,9 @@ class Save {
         new File(nw_config.pl_temp_file).renameTo(new File(fileName));
     }
 
-/*
-* Write the char.
-*/
+    /*
+     * Write the char.
+     */
 
 
     static void fwrite_char(@NotNull CHAR_DATA ch, TextBuffer fp) {
@@ -295,7 +295,7 @@ class Save {
             );
         }
 
-/* quest done by chronos */
+        /* quest done by chronos */
 
         if (ch.pcdata.questpoints != 0) {
             fp.sprintf(false, "QuestPnts %d\n", ch.pcdata.questpoints);
@@ -329,7 +329,7 @@ class Save {
         fp.sprintf(false, "End\n\n");
     }
 
-/* write a pet */
+    /* write a pet */
 
     static void fwrite_pet(CHAR_DATA pet, TextBuffer fp) {
         AFFECT_DATA paf;
@@ -414,9 +414,9 @@ class Save {
         fp.sprintf(false, "End\n");
     }
 
-/*
- * Write an object and its contents.
- */
+    /*
+     * Write an object and its contents.
+     */
 
     static void fwrite_obj(@NotNull CHAR_DATA ch, OBJ_DATA obj, TextBuffer fp, int iNest) {
         EXTRA_DESCR_DATA ed;
@@ -424,9 +424,9 @@ class Save {
         int i;
 
         /*
-        * Slick recursion to write lists backwards,
-        *   so loading them will load in forwards order.
-        */
+         * Slick recursion to write lists backwards,
+         *   so loading them will load in forwards order.
+         */
         if (obj.next_content != null) {
             fwrite_obj(ch, obj.next_content, fp, iNest);
         }
@@ -438,8 +438,8 @@ class Save {
         }
 
         /*
-        * Castrate storage characters.
-        */
+         * Castrate storage characters.
+         */
         if (((ch.level < 10) && (obj.pIndexData.limit != -1))
                 || (obj.item_type == ITEM_KEY && obj.value[0] == 0)
                 || (obj.item_type == ITEM_MAP && obj.value[0] == 0)
@@ -563,9 +563,9 @@ class Save {
 
     }
 
-/*
-* Load a char and inventory into a new ch structure.
-*/
+    /*
+     * Load a char and inventory into a new ch structure.
+     */
 
     static boolean load_char_obj(@NotNull DESCRIPTOR_DATA d, @NotNull String name) {
         CHAR_DATA ch;
@@ -707,9 +707,9 @@ class Save {
             }
 
             /*
-            * Add the bonus time now, because we don't allow old players
-            * to be loaded with limited equipments!
-            */
+             * Add the bonus time now, because we don't allow old players
+             * to be loaded with limited equipments!
+             */
             if (IS_SET(ch.pcdata.time_flag, TLP_NOLOG)) {
                 int l, add_time;
 
@@ -726,9 +726,9 @@ class Save {
         return found;
     }
 
-/*
-* Read in a char.
-*/
+    /*
+     * Read in a char.
+     */
 
 
     static void fread_char(@NotNull CHAR_DATA ch, DikuTextFile fp) {
@@ -1119,7 +1119,7 @@ class Save {
         }
     }
 
-/* load a pet from the forgotten reaches */
+    /* load a pet from the forgotten reaches */
 
 
     static void fread_pet(@NotNull CHAR_DATA ch, DikuTextFile fp) {

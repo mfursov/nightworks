@@ -2413,7 +2413,7 @@ class Magic2 {
                     && !IS_SET(vch.in_room.room_flags, ROOM_NO_RECALL)
                     && !IS_IMMORTAL(vch)
                     && ((IS_NPC(vch) && !IS_SET(vch.act, ACT_AGGRESSIVE)) ||
-/*      (!IS_NPC(vch) && vch.level > PK_MIN_LEVEL && (vch.level < level || */
+                    /*      (!IS_NPC(vch) && vch.level > PK_MIN_LEVEL && (vch.level < level || */
                     (!IS_NPC(vch) && vch.level > PK_MIN_LEVEL && (
                             !is_safe_nomessage(ch, vch)))) && vch != ch
                     && !IS_SET(vch.imm_flags, IMM_SUMMON)) {
@@ -2727,7 +2727,7 @@ class Magic2 {
             } else {
                 WAIT_STATE(vch, (sn.beats + PULSE_VIOLENCE));
                 scream_effect(vch, level, dam, TARGET_CHAR);
-/*      damage(ch,vch,dam,sn,DAM_ENERGY,true); */
+                /*      damage(ch,vch,dam,sn,DAM_ENERGY,true); */
                 if (vch.fighting != null) {
                     stop_fighting(vch, true);
                 }
@@ -2752,7 +2752,7 @@ class Magic2 {
             send_to_char("You can't be much more vampire!\n", ch);
             return;
         }
-/* haste */
+        /* haste */
         var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
@@ -2763,7 +2763,7 @@ class Magic2 {
         af.bitvector = AFF_HASTE;
         affect_to_char(ch, af);
 
-/* giant strength */
+        /* giant strength */
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2773,7 +2773,7 @@ class Magic2 {
         af.bitvector = 0;
         affect_to_char(ch, af);
 
-/* cusse */
+        /* cusse */
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2783,7 +2783,7 @@ class Magic2 {
         af.bitvector = AFF_SNEAK;
         affect_to_char(ch, af);
 
-/* damroll */
+        /* damroll */
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -2793,7 +2793,7 @@ class Magic2 {
         af.bitvector = AFF_BERSERK;
         affect_to_char(ch, af);
 
-/* vampire flag */
+        /* vampire flag */
         af.where = TO_ACT_FLAG;
         af.type = sn;
         af.level = level;
@@ -5382,7 +5382,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
             return;
         }
 
-/* haste */
+        /* haste */
         var af = new AFFECT_DATA();
         af.where = TO_AFFECTS;
         af.type = sn;
@@ -5393,7 +5393,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         af.bitvector = AFF_HASTE;
         affect_to_char(ch, af);
 
-/* damroll */
+        /* damroll */
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;
@@ -5403,7 +5403,7 @@ ch.quest=    SET_BIT(ch.quest,QUEST_EYE);
         af.bitvector = AFF_BERSERK;
         affect_to_char(ch, af);
 
-/* infravision */
+        /* infravision */
         af.where = TO_AFFECTS;
         af.type = sn;
         af.level = level;

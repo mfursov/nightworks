@@ -453,24 +453,18 @@ class ActWiz {
                                     ff.format("Weapons flags: %s\n", weapon_bit_name(obj.value[4]));
                                 }
                             }
-                            case ITEM_ARMOR ->
-                                    ff.format("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n",
-                                            obj.value[0], obj.value[1], obj.value[2], obj.value[3]);
+                            case ITEM_ARMOR -> ff.format("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n",
+                                    obj.value[0], obj.value[1], obj.value[2], obj.value[3]);
                         }
                         for (var paf = obj.pIndexData.affected; paf != null; paf = paf.next) {
                             ff.format("  Affects %s by %d.\n", affect_loc_name(paf.location), paf.modifier);
                             if (paf.bitvector != 0) {
                                 switch (paf.where) {
-                                    case TO_AFFECTS ->
-                                            ff.format("   Adds %s affect.\n", affect_bit_name(paf.bitvector));
-                                    case TO_OBJECT ->
-                                            ff.format("   Adds %s object flag.\n", extra_bit_name(paf.bitvector));
-                                    case TO_IMMUNE ->
-                                            ff.format("   Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
-                                    case TO_RESIST ->
-                                            ff.format("   Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
-                                    case TO_VULN ->
-                                            ff.format("   Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
+                                    case TO_AFFECTS -> ff.format("   Adds %s affect.\n", affect_bit_name(paf.bitvector));
+                                    case TO_OBJECT -> ff.format("   Adds %s object flag.\n", extra_bit_name(paf.bitvector));
+                                    case TO_IMMUNE -> ff.format("   Adds immunity to %s.\n", imm_bit_name(paf.bitvector));
+                                    case TO_RESIST -> ff.format("   Adds resistance to %s.\n", imm_bit_name(paf.bitvector));
+                                    case TO_VULN -> ff.format("   Adds vulnerability to %s.\n", imm_bit_name(paf.bitvector));
                                     default -> ff.format("   Unknown bit %d: %d\n", paf.where, paf.bitvector);
                                 }
                             }
@@ -707,7 +701,7 @@ class ActWiz {
         do_tick(ch, "");
     }
 
-/* equips a character */
+    /* equips a character */
 
     static void do_outfit(@NotNull CHAR_DATA ch) {
         OBJ_DATA obj;
@@ -766,7 +760,7 @@ class ActWiz {
         send_to_char("Try 'wear <object name>' to wear the object.\r\n\n", ch);
     }
 
-/* RT nochannels command, for those spammers */
+    /* RT nochannels command, for those spammers */
 
     static void do_nochannels(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
@@ -1168,7 +1162,7 @@ class ActWiz {
                 return;
             }
 
-/*  if ( !is_room_owner(ch,location) && room_is_private( location ) */
+            /*  if ( !is_room_owner(ch,location) && room_is_private( location ) */
             if (room_is_private(location)
                     && get_trust(ch) < MAX_LEVEL) {
                 send_to_char("That room is private right now.\n", ch);
@@ -1220,7 +1214,7 @@ class ActWiz {
             return;
         }
 
-/*    if (!is_room_owner(ch,location) && room_is_private( location ) */
+        /*    if (!is_room_owner(ch,location) && room_is_private( location ) */
         if (room_is_private(location)
                 && get_trust(ch) < MAX_LEVEL) {
             send_to_char("That room is private right now.\n", ch);
@@ -1356,7 +1350,7 @@ class ActWiz {
         do_look(ch, "auto");
     }
 
-/* RT to replace the 3 stat commands */
+    /* RT to replace the 3 stat commands */
 
     static void do_stat(@NotNull CHAR_DATA ch, String argument) {
         String string;
@@ -1428,7 +1422,7 @@ class ActWiz {
             return;
         }
 
-/*    if (!is_room_owner(ch,location) && ch.in_room != location  */
+        /*    if (!is_room_owner(ch,location) && ch.in_room != location  */
         if (ch.in_room != location
                 && room_is_private(location) && !IS_TRUSTED(ch, IMPLEMENTOR)) {
             send_to_char("That room is private right now.\n", ch);
@@ -2537,7 +2531,7 @@ class ActWiz {
         ch.desc = null;
     }
 
-/* trust levels for load and clone */
+    /* trust levels for load and clone */
 
     static boolean obj_check(@NotNull CHAR_DATA ch, OBJ_DATA obj) {
         return IS_TRUSTED(ch, GOD)
@@ -2547,7 +2541,7 @@ class ActWiz {
                 || (IS_TRUSTED(ch, AVATAR) && obj.level == 0 && obj.cost <= 100);
     }
 
-/* for clone, to insure that cloning goes many levels deep */
+    /* for clone, to insure that cloning goes many levels deep */
 
     static void recursive_clone(@NotNull CHAR_DATA ch, OBJ_DATA obj, OBJ_DATA clone) {
         OBJ_DATA c_obj, t_obj;
@@ -2563,7 +2557,7 @@ class ActWiz {
         }
     }
 
-/* command that is similar to load */
+    /* command that is similar to load */
 
     static void do_clone(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA mob;
@@ -2664,7 +2658,7 @@ class ActWiz {
         }
     }
 
-/* RT to replace the two load commands */
+    /* RT to replace the two load commands */
 
     static void do_load(@NotNull CHAR_DATA ch, String argument) {
         var argb = new StringBuilder();
@@ -3189,7 +3183,7 @@ class ActWiz {
 
     }
 
-/* RT anti-newbie code */
+    /* RT anti-newbie code */
 
 
     static void do_newlock(@NotNull CHAR_DATA ch) {
@@ -3235,7 +3229,7 @@ class ActWiz {
 
     }
 
-/* RT set replaces sset, mset, oset, and rset */
+    /* RT set replaces sset, mset, oset, and rset */
 
     static void do_set(@NotNull CHAR_DATA ch, String argument) {
         var argb = new StringBuilder();
@@ -3596,7 +3590,7 @@ class ActWiz {
             return;
         }
 
-/*    if (!is_room_owner(ch,location) && ch.in_room != location  */
+        /*    if (!is_room_owner(ch,location) && ch.in_room != location  */
         if (ch.in_room != location
                 && room_is_private(location) && !IS_TRUSTED(ch, IMPLEMENTOR)) {
             send_to_char("That room is private right now.\n", ch);
@@ -3664,9 +3658,9 @@ class ActWiz {
         page_to_char(buf, ch);
     }
 
-/*
-* Thanks to Grodyn for pointing out bugs in this function.
-*/
+    /*
+     * Thanks to Grodyn for pointing out bugs in this function.
+     */
 
     static void do_force(@NotNull CHAR_DATA ch, String argument) {
         var arg = new StringBuilder();
@@ -3778,9 +3772,9 @@ class ActWiz {
         send_to_char("Ok.\n", ch);
     }
 
-/*
-* New routines by Dionysos.
-*/
+    /*
+     * New routines by Dionysos.
+     */
 
     static void do_invis(@NotNull CHAR_DATA ch, String argument) {
         int level;
@@ -3790,9 +3784,7 @@ class ActWiz {
         one_argument(argument, arg);
 
         if (arg.isEmpty())
-            /* take the default path */
-
-        {
+            /* take the default path */ {
             if (ch.invis_level != 0) {
                 ch.invis_level = 0;
                 act("$n slowly fades into existence.", ch, null, null, TO_ROOM);
@@ -3826,9 +3818,7 @@ class ActWiz {
         one_argument(argument, arg);
 
         if (arg.isEmpty())
-            /* take the default path */
-
-        {
+            /* take the default path */ {
             if (ch.incog_level != 0) {
                 ch.incog_level = 0;
                 act("$n is no longer cloaked.", ch, null, null, TO_ROOM);
@@ -3869,7 +3859,7 @@ class ActWiz {
 
     }
 
-/* prefix command: it will put the string typed on each line typed */
+    /* prefix command: it will put the string typed on each line typed */
 
     static void do_prefi(@NotNull CHAR_DATA ch) {
         send_to_char("You cannot abbreviate the prefix command.\n", ch);
@@ -3900,7 +3890,7 @@ class ActWiz {
 
     }
 
-/* RT nochannels command, for those spammers */
+    /* RT nochannels command, for those spammers */
 
     static void do_grant(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA victim;
@@ -4431,8 +4421,8 @@ class ActWiz {
         }
 
         /*
-        * Generate usage message.
-        */
+         * Generate usage message.
+         */
         do_mset(ch, "");
     }
 
@@ -4738,9 +4728,9 @@ class ActWiz {
 
         strsave = nw_config.lib_player_dir + "/" + capitalize(victim.name);
 
-/*
- * NOTE: Players who are level 1 do NOT get saved under a new name
- */
+        /*
+         * NOTE: Players who are level 1 do NOT get saved under a new name
+         */
         victim.name = capitalize(new_name.toString());
 
         save_char_obj(victim);

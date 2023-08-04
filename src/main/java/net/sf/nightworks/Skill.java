@@ -68,7 +68,7 @@ enum Skill {
 
     /*
      * Magic spells.
-    */
+     */
     gsn_absorb(
             "absorb", Magic::spell_absorb,
             TAR_CHAR_SELF, POS_STANDING, SLOT(707), 100, 12,
@@ -1470,9 +1470,9 @@ enum Skill {
             null, ALIGN_NONE, GROUP_TRANSPORTATION
     ),
 
-/*
- * Dragon breath
-**/
+    /*
+     * Dragon breath
+     **/
 
     gsn_acid_breath(
             "acid breath", Magic::spell_acid_breath,
@@ -1560,7 +1560,7 @@ enum Skill {
     /*
      * ActSkill for mobiles. (general purpose and high explosive from
      * Glop/Erkenbrand
-    **/
+     **/
     gsn_crush(
             "crush",
             TAR_IGNORE, POS_FIGHTING, SLOT(0), 0, 18,
@@ -1587,7 +1587,7 @@ enum Skill {
             null, ALIGN_NONE, GROUP_FIGHTMASTER
     ),
 
-/* combat and weapons skills*/
+    /* combat and weapons skills*/
 
     gsn_arrow(
             "arrow",
@@ -2236,7 +2236,7 @@ enum Skill {
             null, ALIGN_NONE, GROUP_FIGHTMASTER
     ),
 
-/* non-combat skills*/
+    /* non-combat skills*/
 
     gsn_blue_arrow(
             "blue arrow",
@@ -2418,7 +2418,7 @@ enum Skill {
             null, ALIGN_NONE, GROUP_WIZARD
     ),
 
-/* cabals*/
+    /* cabals*/
 
     gsn_mortal_strike(
             "mortal strike",
@@ -2839,7 +2839,7 @@ enum Skill {
             CABAL_LIONS, null, ALIGN_NONE, GROUP_CABAL
     ),
 
-/* object spells*/
+    /* object spells*/
 
     gsn_terangreal(
             "terangreal", Magic2::spell_terangreal,
@@ -3065,8 +3065,8 @@ enum Skill {
     }
 
     /*
-    * Lookup a skill by name.
-    */
+     * Lookup a skill by name.
+     */
     static Skill lookupSkill(String name) {
         if (name.isEmpty()) {
             return null;

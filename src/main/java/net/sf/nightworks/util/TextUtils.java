@@ -144,7 +144,7 @@ public class TextUtils {
         return argument;
     }
 
-    public static String[] arr(String ... args) {
+    public static String[] arr(String... args) {
         return args;
     }
 

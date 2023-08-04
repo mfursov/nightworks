@@ -23,10 +23,10 @@ import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 class MartialArt {
-/*
- * Disarm a creature.
- * Caller must check for a successful attack.
- */
+    /*
+     * Disarm a creature.
+     * Caller must check for a successful attack.
+     */
 
     static void disarm(@NotNull CHAR_DATA ch, CHAR_DATA victim, boolean disarm_second) {
         OBJ_DATA obj;
@@ -2392,9 +2392,9 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         }
     }
 
-/*
- * ground strike
-*/
+    /*
+     * ground strike
+     */
 
     static int ground_strike(@NotNull CHAR_DATA ch, CHAR_DATA victim, int dam) {
         int diceroll;
@@ -2463,9 +2463,9 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         return dam;
     }
 
-/*
- * critical strike
-*/
+    /*
+     * critical strike
+     */
 
     static int critical_strike(@NotNull CHAR_DATA ch, CHAR_DATA victim, int dam) {
         int diceroll;
@@ -2581,7 +2581,7 @@ act( "$C$N wields his second weapon as first!{x",  ch, null, victim,
         chance -= 2 * get_curr_stat(victim, STAT_STR);
 
         /* level */
-/*    chance += (ch.level - victim.level) * 2; */
+        /*    chance += (ch.level - victim.level) * 2; */
         chance += ch.level - victim.level;
         chance += axe.level - shield.level;
 

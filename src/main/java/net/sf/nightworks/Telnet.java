@@ -2,9 +2,9 @@ package net.sf.nightworks;
 
 @SuppressWarnings("unused")
 class Telnet {
-/*
- * Definitions for the TELNET protocol.
- */
+    /*
+     * Definitions for the TELNET protocol.
+     */
 
     static final byte IAC = (byte) 255;  /* interpret as command: */
     static final byte DONT = (byte) 254;    /* you are not to use option */

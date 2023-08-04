@@ -1,14 +1,15 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.NotNull;
-import net.sf.nightworks.util.TextBuffer;
-
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-
+import net.sf.nightworks.util.NotNull;
+import net.sf.nightworks.util.Nullable;
+import net.sf.nightworks.util.TextBuffer;
 import static net.sf.nightworks.Const.dex_app;
 import static net.sf.nightworks.Const.str_app;
-import static net.sf.nightworks.Handler.*;
+import static net.sf.nightworks.Handler.can_see;
+import static net.sf.nightworks.Handler.get_curr_stat;
+import static net.sf.nightworks.Handler.get_trust;
 import static net.sf.nightworks.Skill.MAX_SKILLS;
 import static net.sf.nightworks.util.Logger.logError;
 
@@ -658,7 +659,7 @@ final class Nightworks {
      * An affect.
      */
     static final class AFFECT_DATA {
-        AFFECT_DATA next;
+        @Nullable AFFECT_DATA next;
         boolean valid;
         int where;
         Skill type;
@@ -669,7 +670,7 @@ final class Nightworks {
         Object objModifier;
         long bitvector;
 
-        void assignValuesFrom(AFFECT_DATA source) {
+        void assignValuesFrom(@NotNull AFFECT_DATA source) {
             next = source.next;
             valid = source.valid;
             where = source.where;
@@ -680,10 +681,7 @@ final class Nightworks {
             modifier = source.modifier;
             objModifier = source.objModifier;
             bitvector = source.bitvector;
-
         }
-
-
     }
 
 
@@ -1899,7 +1897,6 @@ final class Nightworks {
     static final int MEM_AFRAID = D;
 
     /* memory for mobs */
-
     static final class MEM_DATA {
         MEM_DATA next;
         boolean valid;
@@ -1935,17 +1932,21 @@ final class Nightworks {
         OPROG_FUN_AREA area_prog;
     }
 
-    /*
-     * One character (PC or NPC). *CHAR_DATA*
-     */
-
+    /* One character (PC or NPC). */
     static final class CHAR_DATA {
+        /** Next character in the world. */
         CHAR_DATA next;
+        /** Next character in the room. */
         CHAR_DATA next_in_room;
+        /** Master of the character. */
         CHAR_DATA master;
+        /** Current group leader. */
         CHAR_DATA leader;
-        CHAR_DATA fighting;
+        /** Reply-to target. */
         CHAR_DATA reply;
+        /** Fighting target. */
+        CHAR_DATA fighting;
+        /** The last fighting target. */
         CHAR_DATA last_fought;
         long last_fight_time;
         long last_death_time;
@@ -1953,10 +1954,15 @@ final class Nightworks {
         CHAR_DATA doppel;
         CHAR_DATA guarding;
         CHAR_DATA guarded_by;
+        /** Mob memory data. */
         MEM_DATA memory;
+        /** Spec fun for mobs. */
         SPEC_FUN spec_fun;
+        /** Mob prototype info. */
         MOB_INDEX_DATA pIndexData;
+        /** Network descriptor. */
         DESCRIPTOR_DATA desc;
+        /** List of affections. */
         AFFECT_DATA affected;
         NOTE_DATA pnote;
         OBJ_DATA carrying;
@@ -1964,9 +1970,10 @@ final class Nightworks {
         ROOM_INDEX_DATA in_room;
         ROOM_INDEX_DATA was_in_room;
         AREA_DATA zone;
+        /** Player data. Only PCs have it. */
         PC_DATA pcdata;
         boolean valid;
-        String name;
+        String name = "";
         int id;
         String short_descr;
         String long_descr;
@@ -1975,8 +1982,8 @@ final class Nightworks {
         String prefix;
         int group;
         int sex;
+        Race race = Race.HUMAN;
         Clazz clazz;
-        Race race;
         int cabal;
         int hometown;
         int ethos;
@@ -2037,9 +2044,9 @@ final class Nightworks {
         String in_mind;
         int quest;
         int religion;
-        CHAR_DATA hunting;    /* hunt data */
+        CHAR_DATA hunting;
         int endur;
-        boolean riding; /* mount data */
+        boolean riding;
         CHAR_DATA mount;
         int language;
     }
@@ -2357,7 +2364,6 @@ final class Nightworks {
     /*
      * Character macros.
      */
-
     static boolean IS_NPC(@NotNull CHAR_DATA ch) {
         return IS_SET(ch.act, ACT_IS_NPC);
     }

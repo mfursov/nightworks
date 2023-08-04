@@ -17,8 +17,8 @@ import static net.sf.nightworks.util.TextUtils.arr;
 @SuppressWarnings("SpellCheckingInspection")
 public enum CmdType {
     /*
-    * Common movement commands.
-    */
+     * Common movement commands.
+     */
     do_north("north", ActMove::do_north, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
     do_east("east", ActMove::do_east, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
     do_south("south", ActMove::do_south, POS_STANDING, 0, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
@@ -28,9 +28,9 @@ public enum CmdType {
     do_run("run", ActMove::do_run, POS_STANDING, Interp.ML, Interp.LOG_NEVER, CMD_KEEP_HIDE | CMD_GHOST),
 
     /*
-    * Common other commands.
-    * Placed here as one and two letter abbreviations work.
-    */
+     * Common other commands.
+     * Placed here as one and two letter abbreviations work.
+     */
     do_at("at", ActWiz::do_at, POS_DEAD, Interp.L6, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
     do_cast("cast", Magic::do_cast, POS_FIGHTING, 0, Interp.LOG_NORMAL, 0),
     do_claw("claw", MartialArt::do_claw, POS_FIGHTING, 0, Interp.LOG_NORMAL, 0),
@@ -60,8 +60,8 @@ public enum CmdType {
     do_wizhelp("wizhelp", Interp::do_wizhelp, POS_DEAD, Interp.IM, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
 
     /*
-    * Informational commands.
-    */
+     * Informational commands.
+     */
     do_affects("affects", ActInfo::do_affects, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
     do_areas("areas", DB::do_areas, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
     do_balance("balance", ActObj::do_balance, POS_STANDING, 0, Interp.LOG_NORMAL, 0),
@@ -102,8 +102,8 @@ public enum CmdType {
     do_worth("worth", ActInfo::do_worth, POS_SLEEPING, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
 
     /*
-    * Configuration commands.
-    */
+     * Configuration commands.
+     */
     do_alia("alia", Interp::do_alia, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
     do_alias("alias", Interp::do_alias, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
     do_clear("clear", ActInfo::do_clear, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
@@ -138,8 +138,8 @@ public enum CmdType {
     do_wimpy("wimpy", ActInfo::do_wimpy, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
 
     /*
-    * Communication commands.
-    */
+     * Communication commands.
+     */
     do_bear_call("bearcall", ActInfo::do_bear_call, POS_FIGHTING, 0, Interp.LOG_NORMAL, 0),
     do_cb("cb", ActComm::do_cb, POS_SLEEPING, 0, Interp.LOG_NORMAL, CMD_GHOST),
     do_deaf("deaf", ActComm::do_deaf, POS_DEAD, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
@@ -159,8 +159,8 @@ public enum CmdType {
     do_yell("yell", ActComm::do_yell, POS_RESTING, 0, Interp.LOG_NORMAL, CMD_GHOST),
 
     /*
-    * Object manipulation commands.
-    */
+     * Object manipulation commands.
+     */
     do_brandish("brandish", ActObj::do_brandish, POS_RESTING, 0, Interp.LOG_NORMAL, 0),
     do_bury("bury", ActObj::do_bury, POS_STANDING, 0, Interp.LOG_NORMAL, 0),
     do_butcher("butcher", ActObj::do_butcher, POS_STANDING, 0, Interp.LOG_NORMAL, 0),
@@ -197,8 +197,8 @@ public enum CmdType {
     do_zap("zap", ActObj::do_zap, POS_RESTING, 0, Interp.LOG_NORMAL, 0),
 
     /*
-    * Combat commands.
-    */
+     * Combat commands.
+     */
     do_ambush("ambush", MartialArt::do_ambush, POS_STANDING, 0, Interp.LOG_NORMAL, 0),
     do_assassinate("assassinate", MartialArt::do_assassinate, POS_STANDING, 0, Interp.LOG_NORMAL, 0),
     do_bash("bash", MartialArt::do_bash, POS_FIGHTING, 0, Interp.LOG_NORMAL, 0),
@@ -249,8 +249,8 @@ public enum CmdType {
     do_blink("blink", ActMove::do_blink, POS_FIGHTING, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE),
 
     /*
-    * Miscellaneous commands.
-    */
+     * Miscellaneous commands.
+     */
     do_endure("endure", MartialArt::do_endure, POS_STANDING, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE),
     do_follow("follow", ActComm::do_follow, POS_RESTING, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE),
     do_gain("gain", ActSkill::do_gain, POS_STANDING, 0, Interp.LOG_NORMAL, 0),
@@ -279,8 +279,8 @@ public enum CmdType {
     do_where("where", ActInfo::do_where, POS_RESTING, 0, Interp.LOG_NORMAL, CMD_KEEP_HIDE | CMD_GHOST),
 
     /*
-    * Immortal commands.
-    */
+     * Immortal commands.
+     */
     do_advance("advance", ActWiz::do_advance, POS_DEAD, Interp.ML, Interp.LOG_ALWAYS, CMD_KEEP_HIDE | CMD_GHOST),
     do_set("set", ActWiz::do_set, POS_DEAD, Interp.ML, Interp.LOG_ALWAYS, CMD_KEEP_HIDE | CMD_GHOST),
     do_dump("dump", DB::do_dump, POS_DEAD, Interp.ML, Interp.LOG_ALWAYS, CMD_KEEP_HIDE | CMD_GHOST),

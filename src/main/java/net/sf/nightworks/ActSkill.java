@@ -46,7 +46,7 @@ import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.str_prefix;
 
 class ActSkill {
-/* used to converter of prac and train */
+    /* used to converter of prac and train */
 
     static void do_gain(@NotNull CHAR_DATA ch, String argument) {
         CHAR_DATA trainer;
@@ -112,7 +112,7 @@ class ActSkill {
 
     }
 
-/* RT spells and skills show the players spells (or skills) */
+    /* RT spells and skills show the players spells (or skills) */
 
     static void do_spells(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) {
@@ -128,7 +128,7 @@ class ActSkill {
         for (var sn : skills) {
             if (sn.skill_level[ch.clazz.id] < LEVEL_HERO && sn.isSpell() && RACE_OK(ch, sn) &&
                     (sn.cabal == ch.cabal || sn.cabal == CABAL_NONE)
-                    ) {
+            ) {
                 buf.setLength(0);
                 found = true;
                 var lev = sn.skill_level[ch.clazz.id];
@@ -258,7 +258,7 @@ class ActSkill {
         return expl * ORG_RACE(ch).pcRace.getClassModifier(ch.clazz).expMult / 100;
     }
 
-/* checks for skill improvement */
+    /* checks for skill improvement */
 
     static void check_improve(@NotNull CHAR_DATA ch, Skill sn, boolean success, int multiplier) {
         int chance;
@@ -303,7 +303,7 @@ class ActSkill {
         }
     }
 
-/* use for adding all skills available for that ch  */
+    /* use for adding all skills available for that ch  */
 
     static void group_add(@NotNull CHAR_DATA ch) {
         if (IS_NPC(ch)) /* NPCs do not have skills */ {
@@ -383,7 +383,7 @@ class ActSkill {
         page_to_char(output.toString(), ch);
     }
 
-/* returns group number */
+    /* returns group number */
 
     static int group_lookup(String name) {
         int gr;

@@ -70,7 +70,7 @@ import static net.sf.nightworks.util.TextUtils.str_prefix;
 import static net.sf.nightworks.util.TextUtils.trimSpaces;
 
 class Interp {
-/* this is a listing of all the commands and command related data */
+    /* this is a listing of all the commands and command related data */
 
     /* for command types */
     static final int ML = MAX_LEVEL;/* implementor */
@@ -108,8 +108,8 @@ class Interp {
 
     static void interpret(@NotNull CHAR_DATA ch, String argument, boolean is_order) {
         /*
-        * Strip leading spaces.
-        */
+         * Strip leading spaces.
+         */
         argument = smash_tilde(argument);
         argument = trimSpaces(argument, 0);
         if (argument.isEmpty()) {
@@ -117,18 +117,18 @@ class Interp {
         }
 
         /*
-        * Implement freeze command.
-        */
+         * Implement freeze command.
+         */
         if (!IS_NPC(ch) && IS_SET(ch.act, PLR_FREEZE)) {
             send_to_char("You're totally frozen!\n", ch);
             return;
         }
 
         /*
-        * Grab the command word.
-        * Special parsing so ' can be a command,
-        * also no spaces needed after punctuation.
-        */
+         * Grab the command word.
+         * Special parsing so ' can be a command,
+         * also no spaces needed after punctuation.
+         */
         var logLine = argument;
         var command = new StringBuilder();
         var pos = 0;
@@ -142,8 +142,8 @@ class Interp {
         }
 
         /*
-        * Look for command in command table.
-        */
+         * Look for command in command table.
+         */
         var trust = get_trust(ch);
 
         var commandsTable = getCommandsTable();
@@ -162,7 +162,7 @@ class Interp {
                 send_to_char("You are STUNNED to do that.\n", ch);
                 return;
             }
-                /* Come out of hiding for most commands */
+            /* Come out of hiding for most commands */
             if (IS_AFFECTED(ch, AFF_HIDE) && !IS_NPC(ch) && (c.extra & CMD_KEEP_HIDE) == 0) {
                 ch.affected_by = REMOVE_BIT(ch.affected_by, AFF_HIDE);
                 send_to_char("You step out of the shadows.\n", ch);
@@ -186,7 +186,7 @@ class Interp {
                 fadeOutToNormal(ch);
             }
 
-                /* prevent ghosts from doing a bunch of commands */
+            /* prevent ghosts from doing a bunch of commands */
             if (IS_SET(ch.act, PLR_GHOST) && !IS_NPC(ch) && (c.extra & CMD_GHOST) == 0) {
                 continue;
             }
@@ -196,8 +196,8 @@ class Interp {
         }
 
         /*
-        * Log and snoop.
-        */
+         * Log and snoop.
+         */
         if (cmd == null || cmd.log == LOG_NEVER) {
             logLine = "";
         }
@@ -256,8 +256,8 @@ class Interp {
         }
 
         /*
-        * Character not in position for command?
-        */
+         * Character not in position for command?
+         */
         if (ch.position < minPos) {
             switch (ch.position) {
                 case POS_DEAD -> send_to_char("Lie still; you are DEAD.\n", ch);

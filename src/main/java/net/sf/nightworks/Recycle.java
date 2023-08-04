@@ -3,8 +3,7 @@ package net.sf.nightworks;
 import net.sf.nightworks.util.NotNull;
 
 import static net.sf.nightworks.DB.mobile_count;
-import static net.sf.nightworks.Handler.affect_remove;
-import static net.sf.nightworks.Handler.extract_obj_nocount;
+import static net.sf.nightworks.Handler.*;
 import static net.sf.nightworks.Nightworks.AFFECT_DATA;
 import static net.sf.nightworks.Nightworks.CHAR_DATA;
 import static net.sf.nightworks.Nightworks.ETHOS_ANY;
