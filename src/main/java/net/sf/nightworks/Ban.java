@@ -1,13 +1,11 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.DikuTextFile;
-import net.sf.nightworks.util.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Formatter;
-
+import net.sf.nightworks.util.DikuTextFile;
+import net.sf.nightworks.util.NotNull;
 import static net.sf.nightworks.Comm.page_to_char;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Handler.get_trust;

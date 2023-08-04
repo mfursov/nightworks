@@ -1,9 +1,7 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.NotNull;
-
 import java.util.Formatter;
-
+import net.sf.nightworks.util.NotNull;
 import static net.sf.nightworks.ActComm.do_say;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.page_to_char;

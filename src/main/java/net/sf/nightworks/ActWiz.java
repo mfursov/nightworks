@@ -1,15 +1,12 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.NotNull;
-import net.sf.nightworks.util.TextBuffer;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
-
+import net.sf.nightworks.util.NotNull;
+import net.sf.nightworks.util.TextBuffer;
 import static net.sf.nightworks.ActComm.do_quit;
 import static net.sf.nightworks.ActInfo.do_look;
 import static net.sf.nightworks.ActInfo.get_cond_alias;

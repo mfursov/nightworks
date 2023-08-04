@@ -1,11 +1,9 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.NotNull;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
+import net.sf.nightworks.util.NotNull;
 import static net.sf.nightworks.Handler.skill_failure_nomessage;
 import static net.sf.nightworks.Nightworks.ALIGN_NONE;
 import static net.sf.nightworks.Nightworks.CABAL_BATTLE;

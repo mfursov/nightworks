@@ -1,7 +1,6 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.NotNull;
-
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.Handler.get_char_world;
 import static net.sf.nightworks.Lookup.flag_lookup;

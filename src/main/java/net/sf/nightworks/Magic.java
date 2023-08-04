@@ -2,7 +2,6 @@ package net.sf.nightworks;
 
 import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
-
 import static net.sf.nightworks.ActComm.add_follower;
 import static net.sf.nightworks.ActComm.cabal_area_check;
 import static net.sf.nightworks.ActComm.do_yell;

@@ -1,16 +1,14 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.DikuTextFile;
-import net.sf.nightworks.util.NotNull;
-import net.sf.nightworks.util.TextBuffer;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Formatter;
-
+import net.sf.nightworks.util.DikuTextFile;
+import net.sf.nightworks.util.NotNull;
+import net.sf.nightworks.util.TextBuffer;
 import static net.sf.nightworks.Comm.page_to_char;
 import static net.sf.nightworks.Comm.send_to_char;
 import static net.sf.nightworks.DB.bug;
@@ -40,8 +38,8 @@ import static net.sf.nightworks.Nightworks.nw_config;
 import static net.sf.nightworks.Nightworks.perror;
 import static net.sf.nightworks.Tables.cabal_table;
 import static net.sf.nightworks.util.Logger.logError;
-import static net.sf.nightworks.util.TextUtils.is_number;
 import static net.sf.nightworks.util.TextUtils.isSpace;
+import static net.sf.nightworks.util.TextUtils.is_number;
 import static net.sf.nightworks.util.TextUtils.one_argument;
 import static net.sf.nightworks.util.TextUtils.smash_tilde;
 import static net.sf.nightworks.util.TextUtils.str_cmp;

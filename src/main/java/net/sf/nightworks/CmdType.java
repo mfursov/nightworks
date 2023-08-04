@@ -1,10 +1,8 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.Nightworks.CHAR_DATA;
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
+import net.sf.nightworks.Nightworks.CHAR_DATA;
 import static net.sf.nightworks.Nightworks.CMD_GHOST;
 import static net.sf.nightworks.Nightworks.CMD_KEEP_HIDE;
 import static net.sf.nightworks.Nightworks.POS_DEAD;

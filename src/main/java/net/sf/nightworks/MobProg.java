@@ -1,10 +1,8 @@
 package net.sf.nightworks;
 
+import java.lang.reflect.Method;
 import net.sf.nightworks.util.NotNull;
 import net.sf.nightworks.util.TextBuffer;
-
-import java.lang.reflect.Method;
-
 import static net.sf.nightworks.ActComm.do_cb;
 import static net.sf.nightworks.ActComm.do_say;
 import static net.sf.nightworks.ActComm.do_yell;

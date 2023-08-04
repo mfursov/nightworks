@@ -1,12 +1,10 @@
 package net.sf.nightworks;
 
-import net.sf.nightworks.util.NotNull;
-
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.function.Function;
-
+import net.sf.nightworks.util.NotNull;
 import static net.sf.nightworks.ActWiz.wiznet;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.page_to_char;

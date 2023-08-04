@@ -1,7 +1,6 @@
 package net.sf.nightworks;
 
 import net.sf.nightworks.util.NotNull;
-
 import static net.sf.nightworks.ActComm.do_say;
 import static net.sf.nightworks.Comm.act;
 import static net.sf.nightworks.Comm.send_to_char;

@@ -3,7 +3,6 @@ package net.sf.nightworks;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import static net.sf.nightworks.Nightworks.MAX_STATS;
 
 class Race {

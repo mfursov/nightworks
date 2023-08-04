@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Formatter;
-
 import static net.sf.nightworks.Tables.flag_type;
-import static net.sf.nightworks.util.TextUtils.*;
+import static net.sf.nightworks.util.TextUtils.isDigit;
+import static net.sf.nightworks.util.TextUtils.isSpace;
+import static net.sf.nightworks.util.TextUtils.is_number;
+import static net.sf.nightworks.util.TextUtils.str_cmp;
 
 public class DikuTextFile {
 
